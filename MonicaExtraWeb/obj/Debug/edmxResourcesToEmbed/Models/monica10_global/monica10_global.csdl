@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="monica10_globalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="empresa">
+    <Key>
+      <PropertyRef Name="empresa_id" />
+    </Key>
+    <Property Name="empresa_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Nombre_empresa" Type="String" MaxLength="80" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="base_de_datos" Type="String" MaxLength="20" FixedLength="true" Unicode="true" Nullable="false" />
+    <Property Name="Condicion" Type="Int32" Nullable="false" />
+    <Property Name="icono_asociado" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="folder_empresa" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Registro_Tributario_empresa" Type="String" MaxLength="15" FixedLength="true" Unicode="true" />
+    <Property Name="direccion1" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="direccion2" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="direccion3" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="Telefono1" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
+    <Property Name="celular" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
+    <Property Name="Fax" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
+    <Property Name="correo_electronico" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="sitio_web" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="registro_empresarial" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="barrio_distrito" Type="String" MaxLength="120" FixedLength="true" Unicode="true" />
+    <Property Name="ciudad" Type="String" MaxLength="100" FixedLength="true" Unicode="true" />
+    <Property Name="codigo_postal" Type="String" MaxLength="40" FixedLength="true" Unicode="true" />
+    <Property Name="pais" Type="String" MaxLength="10" FixedLength="true" Unicode="true" />
+    <Property Name="logo" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+  </EntityType>
+  <EntityContainer Name="monica10_globalEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="empresas" EntityType="Self.empresa" />
+  </EntityContainer>
+</Schema>

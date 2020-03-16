@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "SeleccionarEmpresa";
+}
+
+<div id="app">
+    <div id="SeleccionarEmpresa">
+        <div class="card align-middle" style="width: 35rem;">
+            <div class="card-header">
+                <h5>SELECCIONE LA EMPRESA A TRABAJAR</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tr v-for="empresa in Empresas">
+                        <td>{{empresa.empresa_id}}</td>
+                        <td>{{empresa.Nombre_empresa}}</td>
+                        <td><input type="button" class="btn btn-primary" value="Seleccionar" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                Empresas: JSON.parse('@ViewBag.empresas'.replace(/&quot;/g, '"'))
+            }
+        });
+    </script>
+}   

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="monica10_globalModelStoreContainer" CdmEntityContainer="monica10_globalEntities">
+    <EntitySetMapping Name="empresas">
+      <EntityTypeMapping TypeName="monica10_globalModel.empresa">
+        <MappingFragment StoreEntitySet="empresas">
+          <ScalarProperty Name="empresa_id" ColumnName="empresa_id" />
+          <ScalarProperty Name="Nombre_empresa" ColumnName="Nombre_empresa" />
+          <ScalarProperty Name="base_de_datos" ColumnName="base_de_datos" />
+          <ScalarProperty Name="Condicion" ColumnName="Condicion" />
+          <ScalarProperty Name="icono_asociado" ColumnName="icono_asociado" />
+          <ScalarProperty Name="folder_empresa" ColumnName="folder_empresa" />
+          <ScalarProperty Name="Registro_Tributario_empresa" ColumnName="Registro_Tributario_empresa" />
+          <ScalarProperty Name="direccion1" ColumnName="direccion1" />
+          <ScalarProperty Name="direccion2" ColumnName="direccion2" />
+          <ScalarProperty Name="direccion3" ColumnName="direccion3" />
+          <ScalarProperty Name="Telefono1" ColumnName="Telefono1" />
+          <ScalarProperty Name="celular" ColumnName="celular" />
+          <ScalarProperty Name="Fax" ColumnName="Fax" />
+          <ScalarProperty Name="correo_electronico" ColumnName="correo_electronico" />
+          <ScalarProperty Name="sitio_web" ColumnName="sitio_web" />
+          <ScalarProperty Name="registro_empresarial" ColumnName="registro_empresarial" />
+          <ScalarProperty Name="barrio_distrito" ColumnName="barrio_distrito" />
+          <ScalarProperty Name="ciudad" ColumnName="ciudad" />
+          <ScalarProperty Name="codigo_postal" ColumnName="codigo_postal" />
+          <ScalarProperty Name="pais" ColumnName="pais" />
+          <ScalarProperty Name="logo" ColumnName="logo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="monica10_globalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="empresas">
+    <Key>
+      <PropertyRef Name="empresa_id" />
+    </Key>
+    <Property Name="empresa_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Nombre_empresa" Type="nchar" MaxLength="80" Nullable="false" />
+    <Property Name="base_de_datos" Type="nchar" MaxLength="20" Nullable="false" />
+    <Property Name="Condicion" Type="int" Nullable="false" />
+    <Property Name="icono_asociado" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="folder_empresa" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Registro_Tributario_empresa" Type="nchar" MaxLength="15" />
+    <Property Name="direccion1" Type="nchar" MaxLength="120" />
+    <Property Name="direccion2" Type="nchar" MaxLength="120" />
+    <Property Name="direccion3" Type="nchar" MaxLength="120" />
+    <Property Name="Telefono1" Type="nchar" MaxLength="40" />
+    <Property Name="celular" Type="nchar" MaxLength="40" />
+    <Property Name="Fax" Type="nchar" MaxLength="40" />
+    <Property Name="correo_electronico" Type="nchar" MaxLength="120" />
+    <Property Name="sitio_web" Type="nchar" MaxLength="120" />
+    <Property Name="registro_empresarial" Type="nchar" MaxLength="120" />
+    <Property Name="barrio_distrito" Type="nchar" MaxLength="120" />
+    <Property Name="ciudad" Type="nchar" MaxLength="100" />
+    <Property Name="codigo_postal" Type="nchar" MaxLength="40" />
+    <Property Name="pais" Type="nchar" MaxLength="10" />
+    <Property Name="logo" Type="varchar(max)" />
+  </EntityType>
+  <EntityContainer Name="monica10_globalModelStoreContainer">
+    <EntitySet Name="empresas" EntityType="Self.empresas" Schema="dbo" store:Type="Tables" />
+  </EntityContainer>
+</Schema>
