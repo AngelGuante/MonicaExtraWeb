@@ -78,3 +78,9 @@ D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\EntityFramewo
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\EntityFramework.SqlServer.dll
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\EntityFramework.xml
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\EntityFramework.SqlServer.xml
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Net.Http.Formatting.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Web.Http.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Web.Http.WebHost.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Net.Http.Formatting.xml
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Web.Http.xml
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\System.Web.Http.WebHost.xml

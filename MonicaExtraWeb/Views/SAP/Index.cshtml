@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "SeleccionarEmpresa";
+}
+
+<div id="app">
+    @*  DIV PARA SELECCIONAR UNA EMPRESA*@
+    <div id="SeleccionarEmpresa">
+        <div class="card align-middle" style="width: 35rem;">
+            <div class="card-header">
+                <h5>SELECCIONE LA EMPRESA A TRABAJAR</h5>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tr v-for="empresa in Empresas">
+                        <td>{{empresa.empresa_id}}</td>
+                        <td>{{empresa.Nombre_empresa}}</td>
+                        <td><input v-on:click="EmpresaSeleccionada(empresa.empresa_id)" type="button" class="btn btn-primary" value="Seleccionar" /></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    @*  DIV DEL MENU*@
+    <div id="menu" hidden>
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" alt="Card image cap">
+            <div class="card-body">
+                <h5 class="card-title">CONTROL DE CAJA CHICA</h5>
+                <p class="card-text">Crear movimientos, hacer pagos, ver reportes concernientes a la caja.</p>
+                <input v-on:click="ListadoMovimientosCaja" type="button" class="btn btn-primary" value="Ver" />
+            </div>
+        </div>
+    </div>
+
+    @*  DIV QUE MUESTRA UN LISTADO DE LOS MOVIEMIENTOS (BOTON DEL MENU 'CONTROL DE CAJA CHICA')*@
+    <div id="ListadoMovimientos" hidden>
+        <div>
+            <button v-on:click="MovimientosCRUD" type="button" class="btn btn-secondary">Movimientos de caja</button>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Numero transaccion</th>
+                    <th scope="col">Beneficiario</th>
+                    <th scope="col">Concepto</th>
+                    <th scope="col">Monto</th>
+                    <th scope="col">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="movimiento in Movimientos">
+                    <td>{{movimiento.NumeroTransacion}}</td>
+                    <td>{{movimiento.Beneficiario}}</td>
+                    <td>{{movimiento.Concepto}}</td>
+                    <td>{{movimiento.Monto}}</td>
+                    <td>{{movimiento.Fecha}}</td>
+                </tr>
+        </table>
+    </div>
+
+    <div id="MovimientosCRUD" hidden>
+        <div id="DatosBasicos">
+            <div>
+                <label>Fecha Emicion</label>
+                <input type="date" />
+            </div>
+
+            <div>
+                <label>Cargado a</label>
+                <select>
+                    <option>--</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Monto</label>
+                <input type="number" />
+            </div>
+
+            <div>
+                <label>Concepto</label>
+                <input type="text" />
+            </div>
+        </div>
+
+        <div id="DatoFiscales">
+            <div>
+                <label>RNC</label>
+                <input type="number" />
+            </div>
+
+            <div>
+                <label>NCF</label>
+                <input type="number" />
+            </div>
+
+            <div>
+                <label>Clasificacion Fiscal</label>
+                <select>
+                    <option>--</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Valor sin ITBIs</label>
+                <input type="number" />
+            </div>
+
+            <div>
+                <label>ITBIs facturado</label>
+                <input type="number" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                ApiRuta: '/API/ASPISAP/',
+                Empresas: [],
+                Movimientos: [],
+                Movimiento: {
+                }
+            },
+            created: function () {
+                $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
+                    this.Empresas = response.Empresas;
+                });
+            },
+            methods: {
+                EmpresaSeleccionada(idEmpresa) {
+                    $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
+                        if (xhr.status == 200) {
+                            document.getElementById('SeleccionarEmpresa').hidden = true;
+                            document.getElementById('menu').hidden = false;
+                        }
+                        else if (xhr.status == 204)
+                            alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
+                    });
+                },
+
+                ListadoMovimientosCaja() {
+                    document.getElementById('menu').hidden = true;
+                    document.getElementById('ListadoMovimientos').hidden = false;
+                    $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
+                        this.Movimientos = response.movimientos;
+                    });
+                },
+
+                MovimientosCRUD() {
+                    document.getElementById('ListadoMovimientos').hidden = true;
+                    document.getElementById('MovimientosCRUD').hidden = false;
+
+                }
+            }
+        });
+    </script>
+}   

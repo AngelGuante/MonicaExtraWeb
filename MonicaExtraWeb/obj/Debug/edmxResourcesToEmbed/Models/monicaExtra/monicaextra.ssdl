@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="monica10Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="usuarios">
+    <Key>
+      <PropertyRef Name="id_usuario" />
+    </Key>
+    <Property Name="id_usuario" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="usuario" Type="varchar" MaxLength="50" />
+    <Property Name="clave" Type="varchar(max)" />
+    <Property Name="categoria" Type="varchar" MaxLength="20" />
+    <Property Name="activo" Type="bit" />
+    <Property Name="nombre_completo" Type="varchar" MaxLength="200" />
+    <Property Name="animal" Type="varchar(max)" />
+    <Property Name="plato" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="cierrecaja">
+    <Key>
+      <PropertyRef Name="NumeroCierre" />
+    </Key>
+    <Property Name="NumeroCierre" Type="smallint" Nullable="false" />
+    <Property Name="FechaProceso" Type="varchar" MaxLength="19" />
+    <Property Name="FechaInicial" Type="varchar" MaxLength="19" />
+    <Property Name="FechaFinal" Type="varchar" MaxLength="19" />
+    <Property Name="NumeroCaja" Type="smallint" />
+    <Property Name="SaldoFinal" Type="int" />
+    <Property Name="Comentario" Type="varchar" MaxLength="13" />
+  </EntityType>
+  <EntityType Name="clasificacionfiscal">
+    <Key>
+      <PropertyRef Name="NumeroTransacion" />
+    </Key>
+    <Property Name="NumeroTransacion" Type="smallint" Nullable="false" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="54" />
+    <Property Name="Tipo" Type="varchar" MaxLength="1" />
+  </EntityType>
+  <EntityType Name="clasificacionmovicaja">
+    <Key>
+      <PropertyRef Name="NumeroTransacion" />
+    </Key>
+    <Property Name="NumeroTransacion" Type="smallint" Nullable="false" />
+    <Property Name="Descripcion" Type="varchar" MaxLength="24" />
+    <Property Name="Tipo" Type="varchar" MaxLength="1" />
+    <Property Name="FijarTipo" Type="smallint" />
+    <Property Name="Contable" Type="varchar" MaxLength="1" />
+    <Property Name="Visible" Type="smallint" />
+  </EntityType>
+  <EntityType Name="movimientocaja">
+    <Key>
+      <PropertyRef Name="NumeroTransacion" />
+    </Key>
+    <Property Name="NumeroTransacion" Type="smallint" Nullable="false" />
+    <Property Name="Beneficiario" Type="varchar" MaxLength="12" />
+    <Property Name="Concepto" Type="varchar" MaxLength="37" />
+    <Property Name="Rnc" Type="varchar" MaxLength="10" />
+    <Property Name="Ncf" Type="varchar" MaxLength="1" />
+    <Property Name="TipoMovimiento" Type="smallint" />
+    <Property Name="Monto" Type="decimal" Precision="8" Scale="2" />
+    <Property Name="Itebis" Type="varchar" MaxLength="8" />
+    <Property Name="Neto" Type="decimal" Precision="8" Scale="2" />
+    <Property Name="Soporte" Type="varchar" MaxLength="1" />
+    <Property Name="Fecha" Type="varchar" MaxLength="19" />
+    <Property Name="Saldo" Type="int" />
+    <Property Name="EntradaSalida" Type="varchar" MaxLength="1" />
+    <Property Name="CodigoCajero" Type="varchar" MaxLength="1" />
+    <Property Name="NumeroCaja" Type="smallint" />
+    <Property Name="TipoMoneda" Type="varchar" MaxLength="1" />
+    <Property Name="TasaCambio" Type="decimal" Precision="5" Scale="4" />
+    <Property Name="Estatus" Type="smallint" />
+    <Property Name="Clasificancf" Type="smallint" />
+    <Property Name="NumeroCierre" Type="smallint" />
+  </EntityType>
+  <EntityContainer Name="monica10ModelStoreContainer">
+    <EntitySet Name="usuarios" EntityType="Self.usuarios" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="cierrecaja" EntityType="Self.cierrecaja" Schema="monicaextra" store:Type="Tables" />
+    <EntitySet Name="clasificacionfiscal" EntityType="Self.clasificacionfiscal" Schema="monicaextra" store:Type="Tables" />
+    <EntitySet Name="clasificacionmovicaja" EntityType="Self.clasificacionmovicaja" Schema="monicaextra" store:Type="Tables" />
+    <EntitySet Name="movimientocaja" EntityType="Self.movimientocaja" Schema="monicaextra" store:Type="Tables" />
+  </EntityContainer>
+</Schema>

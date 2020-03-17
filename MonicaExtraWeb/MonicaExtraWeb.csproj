@@ -57,6 +57,9 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.7\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
@@ -65,6 +68,12 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Web.Http, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.7\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.7\lib\net45\System.Web.Http.WebHost.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
@@ -130,6 +139,8 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
     <Compile Include="Global.asax.cs">
@@ -152,6 +163,36 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>monica10_global.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\cierrecaja.cs">
+      <DependentUpon>monicaextra.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\clasificacionfiscal.cs">
+      <DependentUpon>monicaextra.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\clasificacionmovicaja.cs">
+      <DependentUpon>monicaextra.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\monicaextra.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>monicaextra.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\monicaextra.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>monicaextra.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\monicaextra.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>monicaextra.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\movimientocaja.cs">
+      <DependentUpon>monicaextra.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\monicaExtra\usuario.cs">
+      <DependentUpon>monicaextra.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -182,6 +223,16 @@
     <Content Include="Models\monica10_global\monica10_global.edmx.diagram">
       <DependentUpon>monica10_global.edmx</DependentUpon>
     </Content>
+    <Content Include="Models\monicaExtra\monicaextra.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>monicaextra.edmx</DependentUpon>
+      <LastGenOutput>monicaextra.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\monicaExtra\monicaextra.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>monicaextra.edmx</DependentUpon>
+      <LastGenOutput>monicaextra.cs</LastGenOutput>
+    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -205,6 +256,13 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <EntityDeploy Include="Models\monicaExtra\monicaextra.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>monicaextra.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="Models\monicaExtra\monicaextra.edmx.diagram">
+      <DependentUpon>monicaextra.edmx</DependentUpon>
+    </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
@@ -301,7 +359,6 @@
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\SAP\SeleccionarEmpresa.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
     <Content Include="Scripts\umd\popper.js.map" />
     <Content Include="Scripts\umd\popper.js.flow" />
@@ -312,6 +369,7 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\SAP\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="monica10ModelStoreContainer" CdmEntityContainer="monica10Entities">
+    <EntitySetMapping Name="usuarios">
+      <EntityTypeMapping TypeName="monica10Model.usuario">
+        <MappingFragment StoreEntitySet="usuarios">
+          <ScalarProperty Name="id_usuario" ColumnName="id_usuario" />
+          <ScalarProperty Name="usuario1" ColumnName="usuario" />
+          <ScalarProperty Name="clave" ColumnName="clave" />
+          <ScalarProperty Name="categoria" ColumnName="categoria" />
+          <ScalarProperty Name="activo" ColumnName="activo" />
+          <ScalarProperty Name="nombre_completo" ColumnName="nombre_completo" />
+          <ScalarProperty Name="animal" ColumnName="animal" />
+          <ScalarProperty Name="plato" ColumnName="plato" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="cierrecajas">
+      <EntityTypeMapping TypeName="monica10Model.cierrecaja">
+        <MappingFragment StoreEntitySet="cierrecaja">
+          <ScalarProperty Name="NumeroCierre" ColumnName="NumeroCierre" />
+          <ScalarProperty Name="FechaProceso" ColumnName="FechaProceso" />
+          <ScalarProperty Name="FechaInicial" ColumnName="FechaInicial" />
+          <ScalarProperty Name="FechaFinal" ColumnName="FechaFinal" />
+          <ScalarProperty Name="NumeroCaja" ColumnName="NumeroCaja" />
+          <ScalarProperty Name="SaldoFinal" ColumnName="SaldoFinal" />
+          <ScalarProperty Name="Comentario" ColumnName="Comentario" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="clasificacionfiscals">
+      <EntityTypeMapping TypeName="monica10Model.clasificacionfiscal">
+        <MappingFragment StoreEntitySet="clasificacionfiscal">
+          <ScalarProperty Name="NumeroTransacion" ColumnName="NumeroTransacion" />
+          <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+          <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="clasificacionmovicajas">
+      <EntityTypeMapping TypeName="monica10Model.clasificacionmovicaja">
+        <MappingFragment StoreEntitySet="clasificacionmovicaja">
+          <ScalarProperty Name="NumeroTransacion" ColumnName="NumeroTransacion" />
+          <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+          <ScalarProperty Name="Tipo" ColumnName="Tipo" />
+          <ScalarProperty Name="FijarTipo" ColumnName="FijarTipo" />
+          <ScalarProperty Name="Contable" ColumnName="Contable" />
+          <ScalarProperty Name="Visible" ColumnName="Visible" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="movimientocajas">
+      <EntityTypeMapping TypeName="monica10Model.movimientocaja">
+        <MappingFragment StoreEntitySet="movimientocaja">
+          <ScalarProperty Name="NumeroTransacion" ColumnName="NumeroTransacion" />
+          <ScalarProperty Name="Beneficiario" ColumnName="Beneficiario" />
+          <ScalarProperty Name="Concepto" ColumnName="Concepto" />
+          <ScalarProperty Name="Rnc" ColumnName="Rnc" />
+          <ScalarProperty Name="Ncf" ColumnName="Ncf" />
+          <ScalarProperty Name="TipoMovimiento" ColumnName="TipoMovimiento" />
+          <ScalarProperty Name="Monto" ColumnName="Monto" />
+          <ScalarProperty Name="Itebis" ColumnName="Itebis" />
+          <ScalarProperty Name="Neto" ColumnName="Neto" />
+          <ScalarProperty Name="Soporte" ColumnName="Soporte" />
+          <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+          <ScalarProperty Name="Saldo" ColumnName="Saldo" />
+          <ScalarProperty Name="EntradaSalida" ColumnName="EntradaSalida" />
+          <ScalarProperty Name="CodigoCajero" ColumnName="CodigoCajero" />
+          <ScalarProperty Name="NumeroCaja" ColumnName="NumeroCaja" />
+          <ScalarProperty Name="TipoMoneda" ColumnName="TipoMoneda" />
+          <ScalarProperty Name="TasaCambio" ColumnName="TasaCambio" />
+          <ScalarProperty Name="Estatus" ColumnName="Estatus" />
+          <ScalarProperty Name="Clasificancf" ColumnName="Clasificancf" />
+          <ScalarProperty Name="NumeroCierre" ColumnName="NumeroCierre" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping>
