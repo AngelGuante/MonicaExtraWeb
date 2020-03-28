@@ -47,6 +47,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Dapper, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.2.0.30\lib\net461\Dapper.dll</HintPath>
+    </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
@@ -146,54 +149,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\monica10_global\empresa.cs">
-      <DependentUpon>monica10_global.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monica10_global\monica10_global.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monica10_global.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monica10_global\monica10_global.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monica10_global.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monica10_global\monica10_global.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monica10_global.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\cierrecaja.cs">
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\clasificacionfiscal.cs">
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\clasificacionmovicaja.cs">
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\monicaextra.Context.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monicaextra.Context.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\monicaextra.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\monicaextra.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>monicaextra.edmx</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\movimientocaja.cs">
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Models\monicaExtra\usuario.cs">
-      <DependentUpon>monicaextra.tt</DependentUpon>
-    </Compile>
+    <Compile Include="Models\monica10\MovimientosCajas.cs" />
+    <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -206,33 +163,6 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <Content Include="Models\monica10_global\monica10_global.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>monica10_global.Context.cs</LastGenOutput>
-      <DependentUpon>monica10_global.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\monica10_global\monica10_global.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>monica10_global.edmx</DependentUpon>
-      <LastGenOutput>monica10_global.cs</LastGenOutput>
-    </Content>
-    <EntityDeploy Include="Models\monica10_global\monica10_global.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>monica10_global.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\monica10_global\monica10_global.edmx.diagram">
-      <DependentUpon>monica10_global.edmx</DependentUpon>
-    </Content>
-    <Content Include="Models\monicaExtra\monicaextra.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>monicaextra.edmx</DependentUpon>
-      <LastGenOutput>monicaextra.Context.cs</LastGenOutput>
-    </Content>
-    <Content Include="Models\monicaExtra\monicaextra.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>monicaextra.edmx</DependentUpon>
-      <LastGenOutput>monicaextra.cs</LastGenOutput>
-    </Content>
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -256,13 +186,6 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
-    <EntityDeploy Include="Models\monicaExtra\monicaextra.edmx">
-      <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>monicaextra.Designer.cs</LastGenOutput>
-    </EntityDeploy>
-    <Content Include="Models\monicaExtra\monicaextra.edmx.diagram">
-      <DependentUpon>monicaextra.edmx</DependentUpon>
-    </Content>
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />

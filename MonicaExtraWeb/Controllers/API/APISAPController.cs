@@ -1,5 +1,8 @@
-﻿using MonicaExtraWeb.Models.monica10_global;
-using MonicaExtraWeb.Models.monicaExtra;
+﻿using Dapper;
+using MonicaExtraWeb.Models.monica10;
+using MonicaExtraWeb.Models.monica10_global;
+using System.Configuration;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web.Http;
@@ -9,7 +12,12 @@ namespace MonicaExtraWeb.Controllers.API
     [RoutePrefix("API/ASPISAP")]
     public class APISAPController : ApiController
     {
-        public empresa Empresa { get; set; } = null;
+        private string ConnectionString { get; } = ConfigurationManager.ConnectionStrings["monica10_global"].ConnectionString;
+        public SqlConnection Conn { get; set; } = null;
+        public Empresas Empresa { get; set; } = null;
+
+        public APISAPController() =>
+            Conn = Conn ?? new SqlConnection(ConnectionString);
 
         /// <summary>
         /// Retorna todas las empresas almacenadas en la base de datos.
@@ -17,11 +25,8 @@ namespace MonicaExtraWeb.Controllers.API
         /// <returns></returns>
         [HttpGet]
         [Route("GetEmpresas")]
-        public IHttpActionResult GetEmpresas()
-        {
-            using (var empresas = new monica10_globalEntities())
-                return Json(new { Empresas = empresas.empresas.Select(e => new { e.empresa_id, e.Nombre_empresa }).ToList() });
-        }
+        public IHttpActionResult GetEmpresas() =>
+             Json(new { Empresas = Conn.Query<Empresas>("SELECT empresa_id, Nombre_empresa FROM monica10_global.dbo.empresas").ToList() });
 
         /// <summary>
         /// Guardar los datos del id de la empresa seleccionada.
@@ -32,9 +37,8 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("EmpresaSeleccionada")]
         public IHttpActionResult EmpresaSeleccionada(int idEmpresa)
         {
-            using (var empresaSeleccionada = new monica10_globalEntities())
-                Empresa = empresaSeleccionada.empresas.Where(e => e.empresa_id == idEmpresa)
-                                                      .FirstOrDefault();
+            Empresa = Conn.Query<Empresas>("SELECT * FROM monica10_global.dbo.empresas WHERE empresa_id = @idEmpresa", new { idEmpresa }).FirstOrDefault();
+
             if (Empresa == null)
                 return Content(HttpStatusCode.NoContent, "Empresa no encontrada.");
 
@@ -47,10 +51,16 @@ namespace MonicaExtraWeb.Controllers.API
         /// <returns></returns>
         [HttpGet]
         [Route("ObtenerListadoMovimientos")]
-        public IHttpActionResult ObtenerListadoMovimientos()
+        public IHttpActionResult ObtenerListadoMovimientos() =>
+            Json(new { movimientos = Conn.Query<MovimientosCajas>("SELECT NumeroTransacion, Beneficiario, Concepto, Monto, Fecha FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1 ORDER BY NumeroTransacion DESC") });
+
+        protected override void Dispose(bool disposing)
         {
-            using (var movimientos = new monica10Entities())
-                return Json(new { movimientos = movimientos.movimientocajas.ToList().OrderByDescending(m => m.NumeroTransacion) });
+            if (disposing)
+            {
+                base.Dispose(disposing);
+                Conn.Dispose();
+            }
         }
     }
 }
