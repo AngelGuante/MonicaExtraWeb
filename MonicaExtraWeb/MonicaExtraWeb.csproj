@@ -149,7 +149,12 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
+    <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
+    <Compile Include="Models\monica10\ClasificacionFiscal.cs" />
+    <Compile Include="Models\monica10\ClasificacionMovimientoCaja.cs" />
     <Compile Include="Models\monica10\MovimientosCajas.cs" />
+    <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -196,6 +201,7 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\js\SAP.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\popper-utils.js" />
     <Content Include="Scripts\popper-utils.min.js" />

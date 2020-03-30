@@ -85,3 +85,4 @@ D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaE
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csproj.CopyComplete
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.dll
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.pdb
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csprojAssemblyReference.cache

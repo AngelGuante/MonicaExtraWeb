@@ -68,104 +68,137 @@
         </table>
     </div>
 
+    @*  DIV QUE MUESTRA EL CRUD DE LOS MOVIMIENTOS*@
     <div id="MovimientosCRUD" hidden>
-        <div id="DatosBasicos">
+        <div>
             <div>
-                <label>Fecha Emicion</label>
-                <input type="date" />
-            </div>
+                <div id="DatosBasicos">
+                    <label>Datos Basicos</label>
+                    <div>
+                        <label>Fecha Emicion</label>
+                        <input type="date" v-model="Movimiento.FechaEmicion" />
+                    </div>
 
-            <div>
-                <label>Cargado a</label>
-                <select>
-                    <option>--</option>
-                </select>
-            </div>
+                    <div>
+                        <label>Cargado a</label>
+                        <select v-model="Movimiento.CargadoA">
+                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="Usuario in Usuarios" v-bind:value="Usuario.id_usuario">({{Usuario.usuario}}) - {{Usuario.nombre_completo}}</option>
+                        </select>
+                    </div>
 
-            <div>
-                <label>Monto</label>
-                <input type="number" />
-            </div>
+                    <div>
+                        <label>Monto</label>
+                        <input type="number" v-model="Movimiento.Monto" />
+                    </div>
 
+                    <div>
+                        <label>Tipo de Movimiento</label>
+                        <select v-model="Movimiento.TipoMovimiento">
+                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Concepto</label>
+                        <input type="text" v-model="Movimiento.Concepto" />
+                    </div>
+                </div>
+
+                <div id="DatoFiscales">
+                    <label>Dato Fiscales</label>
+                    <label for="llenarDatosFiscalesCheck">Llenar Datos Fiscales</label>
+                    <input id="llenarDatosFiscalesCheck" type="checkbox" />
+                    <div>
+                        <label>RNC</label>
+                        <input type="number" v-model="Movimiento.RNC" />
+                    </div>
+
+                    <div>
+                        <label>NCF</label>
+                        <input type="number" v-model="Movimiento.NCF" />
+                    </div>
+
+                    <div>
+                        <label>Clasificacion Fiscal</label>
+                        <select v-model="Movimiento.ClasificacionFiscal">
+                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Valor sin ITBIs</label>
+                        <input type="number" v-model="Movimiento.ValorSinITBIs" />
+                    </div>
+
+                    <div>
+                        <label>ITBIs facturado</label>
+                        <input type="number" v-model="Movimiento.ITBsFacturado" />
+                    </div>
+                </div>
+            </div>
             <div>
-                <label>Concepto</label>
-                <input type="text" />
+                <input type="button" value="Guardar Movimiento" v-on:click="GuardarMovimiento()" />
+                <input type="button" value="Limpiar Campos" v-on:click="LimpiarCamposMovimiento()" />
             </div>
         </div>
 
-        <div id="DatoFiscales">
-            <div>
-                <label>RNC</label>
-                <input type="number" />
-            </div>
+        <div>
+            <select id="selectBusquedaMovimiento" v-model="BusquedaMovimiento.Opcion" v-on:change="SelectBusquedaMovimientoChanged()">
+                <option value="todo">TODO</option>
+                <option value="tmovimiento">Tipo de Movimiento</option>
+                <option value="es">ENTRADA/SALIDA</option>
+                <option value="cfiscal">Clasificacion Fiscal</option>
+            </select>
 
-            <div>
-                <label>NCF</label>
-                <input type="number" />
-            </div>
+            <select id="movimientoOpcTmov" v-model="BusquedaMovimiento.Tmovimiento" hidden>
+                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                <option v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
+            </select>
 
-            <div>
-                <label>Clasificacion Fiscal</label>
-                <select>
-                    <option>--</option>
-                </select>
-            </div>
+            <select id="movimientoOpcES" v-model="BusquedaMovimiento.ES" hidden>
+                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                <option value="E">Entradas</option>
+                <option value="S">Salidas</option>
+            </select>
 
-            <div>
-                <label>Valor sin ITBIs</label>
-                <input type="number" />
-            </div>
+            <select id="movimientoOpcCfiscal" v-model="BusquedaMovimiento.Cfiscal" hidden>
+                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
+            </select>
 
-            <div>
-                <label>ITBIs facturado</label>
-                <input type="number" />
-            </div>
+            <input type="date" v-model="BusquedaMovimiento.fechaDesde"/>
+            <input type="date" v-model="BusquedaMovimiento.fechaHasta"/>
+
+            <input type="button" value="Buscar" v-on:click="BuscarMovimientos()"/>
+        </div>
+
+        <div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Numero transaccion</th>
+                        <th scope="col">Beneficiario</th>
+                        <th scope="col">Concepto</th>
+                        <th scope="col">Monto</th>
+                        <th scope="col">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="movimiento in Movimientos">
+                        <td><input type="button" v-bind:value="movimiento.NumeroTransacion" v-on:click="MovimientoSeleccionado(movimiento.NumeroTransacion)" /></td>
+                        <td>{{movimiento.Beneficiario}}</td>
+                        <td>{{movimiento.Concepto}}</td>
+                        <td>{{movimiento.Monto}}</td>
+                        <td>{{movimiento.Fecha}}</td>
+                    </tr>
+            </table>
         </div>
     </div>
 </div>
 
 @section scripts{
-    <script>
-        var app = new Vue({
-            el: '#app',
-            data: {
-                ApiRuta: '/API/ASPISAP/',
-                Empresas: [],
-                Movimientos: [],
-                Movimiento: {
-                }
-            },
-            created: function () {
-                $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
-                    this.Empresas = response.Empresas;
-                });
-            },
-            methods: {
-                EmpresaSeleccionada(idEmpresa) {
-                    $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
-                        if (xhr.status == 200) {
-                            document.getElementById('SeleccionarEmpresa').hidden = true;
-                            document.getElementById('menu').hidden = false;
-                        }
-                        else if (xhr.status == 204)
-                            alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
-                    });
-                },
-
-                ListadoMovimientosCaja() {
-                    document.getElementById('menu').hidden = true;
-                    document.getElementById('ListadoMovimientos').hidden = false;
-                    $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
-                        this.Movimientos = response.movimientos;
-                    });
-                },
-
-                MovimientosCRUD() {
-                    document.getElementById('ListadoMovimientos').hidden = true;
-                    document.getElementById('MovimientosCRUD').hidden = false;
-
-                }
-            }
-        });
-    </script>
+    <script src="~/Scripts/js/SAP.js"></script>
 }   
