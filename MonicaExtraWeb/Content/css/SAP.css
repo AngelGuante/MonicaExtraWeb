@@ -1,0 +1,39 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+}
+
+.CentrarDiv {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform:translate(-50%, -50%);
+}
+
+.CentrarImage {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    margin-top:4%;
+}
+
+.Sombra{
+    box-shadow:2px 2px 4px grey;
+}
+
+.Tables{
+    overflow-x:auto;
+}
+
+/*   REMOVER FLECHAS DE IMPUT TYPE NUMBER   */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}
