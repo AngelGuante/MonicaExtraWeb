@@ -16,6 +16,8 @@
             ValorSinITBIs: '',
             ITBsFacturado: ''
         },
+        PaginatorIndex: 1,
+        PaginatorLastPage: 0,
         Usuarios: [],
         TiposMovimientos: [],
         ClasificacionesFiscales: [],
@@ -50,6 +52,14 @@
             document.getElementById('ListadoMovimientos').hidden = false;
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
                 this.Movimientos = response.movimientos;
+                this.PaginatorLastPage = Math.ceil(response.total / 10);
+            });
+        },
+
+        PaginatorMovimientos(index) {
+            $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`, { index }).done(response => {
+                this.Movimientos = response.movimientos;
+                this.PaginatorIndex = index;
             });
         },
 
@@ -72,7 +82,6 @@
         GuardarMovimiento() {
             $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
                 if (xhr.status == 200) {
-                    console.log('Correcto');
                     this.LimpiarCamposMovimiento();
                 }
             });
@@ -150,7 +159,7 @@
             };
 
             this.Movimientos = [];
-            $.get(`..${this.ApiRuta}BuscarMovimientos?parametros=${JSON.stringify(parametros)}` ).done(response => {
+            $.get(`..${this.ApiRuta}BuscarMovimientos?parametros=${JSON.stringify(parametros)}`).done(response => {
                 this.Movimientos = response.movimientos;
             });
         }

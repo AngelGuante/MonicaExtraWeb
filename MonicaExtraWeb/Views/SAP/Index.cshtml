@@ -1,17 +1,18 @@
 ﻿
 @{
     ViewBag.Title = "SeleccionarEmpresa";
+    <link href="~/Content/css/SAP.css" rel="stylesheet" />
 }
 
 <div id="app">
     @*  DIV PARA SELECCIONAR UNA EMPRESA*@
     <div id="SeleccionarEmpresa">
-        <div class="card align-middle" style="width: 35rem;">
+        <div class="card CentrarDiv Sombra Tables" style="width: 30%;">
             <div class="card-header">
                 <h5>SELECCIONE LA EMPRESA A TRABAJAR</h5>
             </div>
-            <div class="card-body">
-                <table class="table">
+            <div class="card-body" style="padding:0;">
+                <table class="table table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -31,114 +32,150 @@
 
     @*  DIV DEL MENU*@
     <div id="menu" hidden>
-        <div class="card" style="width: 18rem;">
-            <img class="card-img-top" alt="Card image cap">
+        <div class="card CentrarDiv Sombra" style="width: 18rem;">
+            <img class="card-img-top CentrarImage" src="~/Content/assets/transaction.png" alt="CajaChica_Icon" style="width:40%">
             <div class="card-body">
                 <h5 class="card-title">CONTROL DE CAJA CHICA</h5>
                 <p class="card-text">Crear movimientos, hacer pagos, ver reportes concernientes a la caja.</p>
-                <input v-on:click="ListadoMovimientosCaja" type="button" class="btn btn-primary" value="Ver" />
+                <hr />
+                <input v-on:click="ListadoMovimientosCaja" type="button" class="btn btn-primary" style="width:100%" value="Ver" />
             </div>
         </div>
     </div>
 
     @*  DIV QUE MUESTRA UN LISTADO DE LOS MOVIEMIENTOS (BOTON DEL MENU 'CONTROL DE CAJA CHICA')*@
     <div id="ListadoMovimientos" hidden>
-        <div>
-            <button v-on:click="MovimientosCRUD" type="button" class="btn btn-secondary">Movimientos de caja</button>
-        </div>
+        <div style="margin-top:50px;">
+            <div>
+                <button v-on:click="MovimientosCRUD" type="button" class="btn btn-secondary Sombra"> <i class="material-icons" style="margin-right:10px;">account_balance_wallet</i>Movimientos de caja</button>
+            </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Numero transaccion</th>
-                    <th scope="col">Beneficiario</th>
-                    <th scope="col">Concepto</th>
-                    <th scope="col">Monto</th>
-                    <th scope="col">Fecha</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="movimiento in Movimientos">
-                    <td>{{movimiento.NumeroTransacion}}</td>
-                    <td>{{movimiento.Beneficiario}}</td>
-                    <td>{{movimiento.Concepto}}</td>
-                    <td>{{movimiento.Monto}}</td>
-                    <td>{{movimiento.Fecha}}</td>
-                </tr>
-        </table>
+            <hr />
+
+            <div class="card Tables">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Beneficiario</th>
+                            <th scope="col">Concepto</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="movimiento in Movimientos">
+                            <td>{{movimiento.NumeroTransacion}}</td>
+                            <td>{{movimiento.Beneficiario}}</td>
+                            <td>{{movimiento.Concepto}}</td>
+                            <td>{{movimiento.Monto}}</td>
+                            <td>{{movimiento.Fecha}}</td>
+                        </tr>
+                </table>
+
+                <hr />
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center">
+                        <li v-bind:class="{'page-item': true, disabled: PaginatorIndex == 1 ? true : false}">
+                            <a class="page-link" v-on:click="PaginatorMovimientos(1)"><<</a>
+                        </li>
+                        <li v-bind:class="{'page-item': true, disabled: PaginatorIndex == 1 ? true : false}">
+                            <a class="page-link" v-on:click="PaginatorMovimientos(PaginatorIndex - 1)"><</a>
+                        </li>
+                        <li class="page-item disabled">
+                            <a class="page-link">{{PaginatorIndex}}</a>
+                        </li>
+                        <li v-bind:class="{'page-item':true, disabled: PaginatorIndex == PaginatorLastPage ? true : false}">
+                            <a class="page-link" v-on:click="PaginatorMovimientos(PaginatorIndex + 1)">></a>
+                        </li>
+                        <li v-bind:class="{'page-item':true, disabled: PaginatorIndex == PaginatorLastPage ? true : false}">
+                            <a class="page-link" v-on:click="PaginatorMovimientos(PaginatorLastPage)">>></a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
     </div>
 
     @*  DIV QUE MUESTRA EL CRUD DE LOS MOVIMIENTOS*@
     <div id="MovimientosCRUD" hidden>
-        <div>
-            <div>
+        <div class="card">
+            <h5 class="card-header">Datos Basicos</h5>
+
+            <div class="card-body">
                 <div id="DatosBasicos">
-                    <label>Datos Basicos</label>
-                    <div>
-                        <label>Fecha Emicion</label>
-                        <input type="date" v-model="Movimiento.FechaEmicion" />
+                    <div class="form-group">
+                        <label for="fechaEmicion">Fecha Emicion</label>
+                        <input type="date" v-model="Movimiento.FechaEmicion" class="form-control" id="fechaEmicion">
                     </div>
 
-                    <div>
-                        <label>Cargado a</label>
-                        <select v-model="Movimiento.CargadoA">
+                    <div class="form-group">
+                        <label for="cargadoA">Cargado A:</label>
+                        <select class="form-control" id="cargadoA" v-model="Movimiento.CargadoA">
                             <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="Usuario in Usuarios" v-bind:value="Usuario.id_usuario">({{Usuario.usuario}}) - {{Usuario.nombre_completo}}</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label>Monto</label>
-                        <input type="number" v-model="Movimiento.Monto" />
+                    <div class="form-group">
+                        <label for="inputMonto">Monto</label>
+                        <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" placeholder="Monto" />
                     </div>
 
-                    <div>
-                        <label>Tipo de Movimiento</label>
-                        <select v-model="Movimiento.TipoMovimiento">
+                    <div class="form-group">
+                        <label for="selectTipoMovimiento">Tipo de Movimiento</label>
+                        <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento">
                             <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
-                            <option v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
+                            <option class="form-group" v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label>Concepto</label>
-                        <input type="text" v-model="Movimiento.Concepto" />
+                    <div class="form-group">
+                        <label for="inputCocepto">Concepto</label>
+                        <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" placeholder="Concepto" />
                     </div>
                 </div>
 
-                <div id="DatoFiscales">
-                    <label>Dato Fiscales</label>
-                    <label for="llenarDatosFiscalesCheck">Llenar Datos Fiscales</label>
-                    <input id="llenarDatosFiscalesCheck" type="checkbox" />
-                    <div>
-                        <label>RNC</label>
-                        <input type="number" v-model="Movimiento.RNC" />
-                    </div>
+                <div class="card bg-light">
+                    <div id="DatoFiscales">
+                        <h5 class="card-header">Dato Fiscales</h5>
+                        <label for="llenarDatosFiscalesCheck">Llenar Datos Fiscales</label>
+                        <input id="llenarDatosFiscalesCheck" type="checkbox" />
 
-                    <div>
-                        <label>NCF</label>
-                        <input type="number" v-model="Movimiento.NCF" />
-                    </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label for="inputRnc">RNC</label>
+                                <input class="form-control" id="inputRnc" type="number" v-model="Movimiento.RNC" placeholder="RNC" />
+                            </div>
 
-                    <div>
-                        <label>Clasificacion Fiscal</label>
-                        <select v-model="Movimiento.ClasificacionFiscal">
-                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
-                            <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
-                        </select>
-                    </div>
+                            <div class="form-group">
+                                <label for="inputNcf">NCF</label>
+                                <input class="form-control" id="inputNcf" type="number" v-model="Movimiento.NCF" placeholder="NCF" />
+                            </div>
 
-                    <div>
-                        <label>Valor sin ITBIs</label>
-                        <input type="number" v-model="Movimiento.ValorSinITBIs" />
-                    </div>
+                            <div class="form-group">
+                                <label for="selectClsFiscal">Clasificacion Fiscal</label>
+                                <select class="form-control" id="selectClsFiscal" v-model="Movimiento.ClasificacionFiscal">
+                                    <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
+                                </select>
+                            </div>
 
-                    <div>
-                        <label>ITBIs facturado</label>
-                        <input type="number" v-model="Movimiento.ITBsFacturado" />
+                            <div class="form-group">
+                                <label for="inputItbis">Valor sin ITBIs</label>
+                                <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.ValorSinITBIs" placeholder="ITBIs" />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="inputItbiFacturado">ITBIs facturado</label>
+                                <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.ITBsFacturado" placeholder="ITBIs" />
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div>
                 <input type="button" value="Guardar Movimiento" v-on:click="GuardarMovimiento()" />
                 <input type="button" value="Limpiar Campos" v-on:click="LimpiarCamposMovimiento()" />
@@ -169,17 +206,17 @@
                 <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
             </select>
 
-            <input type="date" v-model="BusquedaMovimiento.fechaDesde"/>
-            <input type="date" v-model="BusquedaMovimiento.fechaHasta"/>
+            <input type="date" v-model="BusquedaMovimiento.fechaDesde" />
+            <input type="date" v-model="BusquedaMovimiento.fechaHasta" />
 
-            <input type="button" value="Buscar" v-on:click="BuscarMovimientos()"/>
+            <input type="button" value="Buscar" v-on:click="BuscarMovimientos()" />
         </div>
 
         <div>
             <table class="table">
                 <thead>
                     <tr>
-                        <th scope="col">Numero transaccion</th>
+                        <th scope="col">#</th>
                         <th scope="col">Beneficiario</th>
                         <th scope="col">Concepto</th>
                         <th scope="col">Monto</th>

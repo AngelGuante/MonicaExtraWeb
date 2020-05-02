@@ -54,8 +54,12 @@ namespace MonicaExtraWeb.Controllers.API
         /// <returns></returns>
         [HttpGet]
         [Route("ObtenerListadoMovimientos")]
-        public IHttpActionResult ObtenerListadoMovimientos() =>
-            Json(new { movimientos = Conn.Query<MovimientosCajas>("SELECT NumeroTransacion, Beneficiario, Concepto, Monto, Fecha FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1 ORDER BY NumeroTransacion DESC") });
+        public IHttpActionResult ObtenerListadoMovimientos(int index = 1, int take = 10) =>
+            Json(new
+            {
+                movimientos = Conn.Query<MovimientosCajas>($"SELECT NumeroTransacion, Beneficiario, Concepto, Monto, Fecha FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1 ORDER BY NumeroTransacion DESC OFFSET {(index - 1) * take} ROWS FETCH NEXT {take} ROWS ONLY"),
+                total = Conn.ExecuteScalar<int>($"SELECT COUNT(*) FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1")
+            });
 
         /// <summary>
         /// Para la ventana que contiene el CRUD de los movimientos.
