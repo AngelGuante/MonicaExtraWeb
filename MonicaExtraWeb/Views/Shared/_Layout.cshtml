@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
 
-    @*  FUENTES  *@
+    @*  ICONOS  *@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    @*  FUENTES *@
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300&display=swap" rel="stylesheet">
 
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
 </head>
 <body>
-    <div class="container body-content">
-        @RenderBody()
+    <div>
+        <nav class="navbar navbar-dark bg-dark">
+            <a class="navbar-brand">MONICA - SISTEMA DE CAJA WEB</a>
+        </nav>
+
+        <div class="container body-content">
+            @RenderBody()
+        </div>
     </div>
 
     @* VUE *@

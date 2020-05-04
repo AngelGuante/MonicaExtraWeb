@@ -1,6 +1,8 @@
 ﻿body {
     margin: 0;
     padding: 0;
+    font-family: 'Prompt', sans-serif;
+    background-image: linear-gradient(to right, #9c9c9c, white);
 }
 
 .CentrarDiv {
@@ -23,6 +25,10 @@
 
 .Tables{
     overflow-x:auto;
+}
+
+.TextColor{
+    color:white;
 }
 
 /*   REMOVER FLECHAS DE IMPUT TYPE NUMBER   */
