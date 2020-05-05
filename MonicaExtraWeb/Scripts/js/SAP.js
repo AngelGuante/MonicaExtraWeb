@@ -29,6 +29,10 @@
             fechaDesde: '',
             fechaHasta: ''
         },
+        SeccionMovimientos: {
+            btnGuardarState: false,
+            chckLlenarDatosFiscales: false
+        }
     },
     created: function () {
         $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
@@ -80,14 +84,58 @@
         },
 
         GuardarMovimiento() {
-            $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                if (xhr.status == 200) {
-                    this.LimpiarCamposMovimiento();
+            if (this.Movimiento.CargadoA
+                && this.Movimiento.Monto
+                && this.Movimiento.TipoMovimiento
+                && this.Movimiento.Concepto) {
+
+                if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
+                                //RNC: '',
+            //    NCF: '',
+            //        ClasificacionFiscal: '',
+            //            ValorSinITBIs: '',
+            //                ITBsFacturado: ''
                 }
-            });
+
+                $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                    if (xhr.status == 200) {
+                        this.LimpiarCamposMovimiento();
+                    }
+                });
+
+                
+                this.ReestablecerCamposFormularios_Movimientos();
+            } else {
+                this.ReestablecerCamposFormularios_Movimientos();
+
+                if (!this.Movimiento.Monto)
+                    document.getElementById('inputMonto').style.backgroundColor = '#f5aba6';
+                if (!this.Movimiento.CargadoA)
+                    document.getElementById('cargadoA').style.backgroundColor = '#f5aba6';
+                if (!this.Movimiento.TipoMovimiento)
+                    document.getElementById('selectTipoMovimiento').style.backgroundColor = '#f5aba6';
+                if (!this.Movimiento.Concepto)
+                    document.getElementById('inputCocepto').style.backgroundColor = '#f5aba6';
+            }
+        },
+
+        ReestablecerCamposFormularios_Movimientos(flag) {
+            let colorDefault = 'white';
+
+            if (this.Movimiento.Monto || flag)
+                document.getElementById('inputMonto').style.backgroundColor = colorDefault;
+            if (this.Movimiento.CargadoA || flag)
+                document.getElementById('cargadoA').style.backgroundColor = colorDefault;
+            if (this.Movimiento.TipoMovimiento || flag)
+                document.getElementById('selectTipoMovimiento').style.backgroundColor = colorDefault;
+            if (this.Movimiento.Concepto || flag)
+                document.getElementById('inputCocepto').style.backgroundColor = colorDefault;
         },
 
         LimpiarCamposMovimiento() {
+            this.ReestablecerCamposFormularios_Movimientos(true);
+            this.SeccionMovimientos.btnGuardarState = false;
+
             this.Movimiento.FechaEmicion = new Date().toISOString().slice(0, 10);
             this.Movimiento.CargadoA = '';
             this.Movimiento.Monto = '';
@@ -103,6 +151,11 @@
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
                 this.Movimientos = response.movimientos;
             });
+
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
+            this.SeccionMovimientos.chckLlenarDatosFiscales = false;
         },
 
         MovimientoSeleccionado(id) {
