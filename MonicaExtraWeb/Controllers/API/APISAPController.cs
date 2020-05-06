@@ -86,13 +86,21 @@ namespace MonicaExtraWeb.Controllers.API
             var obj = JsonConvert.DeserializeObject<GuardarMovimientoDTO>(movimiento);
 
             StringBuilder query = new StringBuilder();
-            query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
+            //query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
+            //query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
+            //query.Append("(SELECT MAX(NumeroTransacion) +1 FROM monica10.monicaextra.movimientocaja), ");
+            //query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
+            //query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja), ");
+            //query.Append("@RNC, @NCF, @Itebis, @Neto, ");
+            //query.Append("(SELECT EntradaSalida FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf) ");
+
+            query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre) ");
             query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
             query.Append("(SELECT MAX(NumeroTransacion) +1 FROM monica10.monicaextra.movimientocaja), ");
             query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
-            query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja), ");
-            query.Append("@RNC, @NCF, @Itebis, @Neto, ");
-            query.Append("(SELECT EntradaSalida FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf) ");
+            query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja) )");
+            //query.Append("@RNC, @NCF, @Itebis, @Neto, ");
+            //query.Append("(SELECT EntradaSalida FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf) ");
 
             var RegistroGuardadoCant = Conn.Execute(query.ToString(), new
             {
@@ -101,11 +109,11 @@ namespace MonicaExtraWeb.Controllers.API
                 obj.TipoMovimiento,
                 obj.Monto,
                 Fecha = obj.FechaEmicion,
-                obj.RNC,
-                obj.NCF,
-                Clasificancf = obj.ClasificacionFiscal,
-                Itebis = obj.ITBsFacturado,
-                Neto = obj.ValorSinITBIs
+                //obj.RNC,
+                //obj.NCF,
+                //Clasificancf = obj.ClasificacionFiscal,
+                //Itebis = obj.ITBsFacturado,
+                //Neto = obj.ValorSinITBIs
             });
 
             if (RegistroGuardadoCant != 1) return Content(HttpStatusCode.BadRequest, "");

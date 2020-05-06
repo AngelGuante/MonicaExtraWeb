@@ -2,7 +2,8 @@
     margin: 0;
     padding: 0;
     font-family: 'Prompt', sans-serif;
-    background-image: linear-gradient(to right, #9c9c9c, white);
+    background: rgb(215,210,210);
+    background: radial-gradient(circle, rgba(215,210,210,1) 0%, rgba(205,202,202,1) 0%, rgba(255,255,255,1) 47%);
 }
 
 .CentrarDiv {

@@ -4,8 +4,8 @@
     {
             public string FechaEmicion{ set; get; }
             public string CargadoA{ set; get; }
-            public string Monto{ set; get; }
-            public string TipoMovimiento{ set; get; }
+            public decimal Monto{ set; get; }
+            public int TipoMovimiento{ set; get; }
             public string Concepto{ set; get; }
             public string RNC{ set; get; }
             public string NCF{ set; get; }

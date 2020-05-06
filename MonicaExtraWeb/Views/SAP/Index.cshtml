@@ -122,7 +122,7 @@
 
                                         <div class="form-group">
                                             <label for="cargadoA">Cargado A:</label>
-                                            <select class="form-control" id="cargadoA" v-model="Movimiento.CargadoA">
+                                            <select class="form-control" id="cargadoA" v-model="Movimiento.CargadoA" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()" >
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option v-for="Usuario in Usuarios" v-bind:value="Usuario.id_usuario">({{Usuario.usuario}}) - {{Usuario.nombre_completo}}</option>
                                             </select>
@@ -132,12 +132,12 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <label for="inputMonto">Monto</label>
-                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" placeholder="Monto" />
+                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Monto" />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="selectTipoMovimiento">Tipo de Movimiento</label>
-                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento">
+                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()" >
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option class="form-group" v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
                                             </select>
@@ -147,7 +147,7 @@
 
                                 <div class="form-group">
                                     <label for="inputCocepto">Concepto</label>
-                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" placeholder="Concepto" />
+                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Concepto" />
                                 </div>
                             </div>
                         </div>
@@ -196,8 +196,10 @@
             </div>
 
             <div style="text-align:right; margin-bottom:10px; margin-right:5px;">
-                <button type="button" class="btn btn-success TextColor Sombra" v-bind:disabled="!SeccionMovimientos.btnGuardarState" v-on:click="GuardarMovimiento()"><i class="material-icons" style="vertical-align:bottom">save_alt</i> Guardar</button>
-                <button type="button" class="btn btn-secondary TextColor Sombra" v-on:click="LimpiarCamposMovimiento()"><i class="material-icons" style="vertical-align:bottom">remove</i>Limpiar Campos</button>
+                <button id="btnModificarForm" type="button" class="btn btn-info TextColor Sombra" v-on:click="ModificarMovimiento()" hidden><i class="material-icons" style="vertical-align:bottom">update</i> Modificar</button>
+                <button id="btnCancelModifyForm" type="button" class="btn btn-danger TextColor Sombra" v-on:click="LimpiarCamposMovimiento(1)" hidden><i class="material-icons" style="vertical-align:bottom">cancel</i> Cancelar</button>
+                <button id="btnSaveForm" type="button" class="btn btn-success TextColor Sombra" v-bind:disabled="!SeccionMovimientos.btnGuardarState" v-on:click="GuardarMovimiento()"><i class="material-icons" style="vertical-align:bottom">save_alt</i> Guardar</button>
+                <button id="btnClean" type="button" class="btn btn-secondary TextColor Sombra" v-on:click="LimpiarCamposMovimiento()"><i class="material-icons" style="vertical-align:bottom">remove</i>Limpiar Campos</button>
             </div>
         </div>
 
@@ -216,21 +218,30 @@
                                 </select>
                             </div>
 
-                            <select class="form-control col-md" id="movimientoOpcTmov" v-model="BusquedaMovimiento.Tmovimiento" hidden>
-                                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
-                                <option v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
-                            </select>
+                            <div id="movimientoOpcTmov" class="form-group col-md" hidden>
+                                <label for="slctTipoMov">Tipo de movimiento</label>
+                                <select id="slctTipoMov" class="form-control col-md" v-model="BusquedaMovimiento.Tmovimiento">
+                                    <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
+                                </select>
+                            </div>
 
-                            <select class="form-control col-md" id="movimientoOpcES" v-model="BusquedaMovimiento.ES" hidden>
-                                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
-                                <option value="E">Entradas</option>
-                                <option value="S">Salidas</option>
-                            </select>
+                            <div id="movimientoOpcES" class="form-group col-md" hidden>
+                                <label for="slctES">Tipo de movimiento</label>
+                                <select class="form-control col-md" id="slctES" v-model="BusquedaMovimiento.ES">
+                                    <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                                    <option value="E">Entradas</option>
+                                    <option value="S">Salidas</option>
+                                </select>
+                            </div>
 
-                            <select class="form-control col-md" id="movimientoOpcCfiscal" v-model="BusquedaMovimiento.Cfiscal" hidden>
-                                <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
-                                <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
-                            </select>
+                            <div id="movimientoOpcCfiscal" class="form-group col-md" hidden>
+                                <label for="slctClfFisc">Tipo de movimiento</label>
+                                <select class="form-control col-md" id="slctClfFisc" v-model="BusquedaMovimiento.Cfiscal">
+                                    <option value="" disabled selected>--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
+                                </select>
+                            </div>
 
                             <div class="form-group col-md">
                                 <label for="fechaDesde">Desde</label>

@@ -30,6 +30,7 @@
             fechaHasta: ''
         },
         SeccionMovimientos: {
+            movimientoSeleccionado: 0,
             btnGuardarState: false,
             chckLlenarDatosFiscales: false
         }
@@ -84,26 +85,45 @@
         },
 
         GuardarMovimiento() {
+            let continuar = true;
+
+            //  COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS BASICOS, ESTEN LLENOS.
             if (this.Movimiento.CargadoA
                 && this.Movimiento.Monto
                 && this.Movimiento.TipoMovimiento
                 && this.Movimiento.Concepto) {
 
+                //  SI EL CHECKBOX DE 'Llenar Datos Fiscales' ESTA CHECADO, COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS FISCALES, ESTEN LLENOS.
                 if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
-                                //RNC: '',
-            //    NCF: '',
-            //        ClasificacionFiscal: '',
-            //            ValorSinITBIs: '',
-            //                ITBsFacturado: ''
+                    if (!this.Movimiento.RNC
+                        || !this.Movimiento.NCF
+                        || !this.Movimiento.ClasificacionFiscal
+                        || !this.Movimiento.ValorSinITBIs
+                        || !this.Movimiento.ITBsFacturado) {
+
+                        if (!this.Movimiento.RNC)
+                            document.getElementById('inputRnc').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.NCF)
+                            document.getElementById('inputNcf').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.ClasificacionFiscal)
+                            document.getElementById('selectClsFiscal').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.ValorSinITBIs)
+                            document.getElementById('inputItbis').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.ITBsFacturado)
+                            document.getElementById('inputItbiFacturado').style.backgroundColor = '#f5aba6';
+
+                        continuar = false;
+                    }
                 }
 
-                $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                    if (xhr.status == 200) {
-                        this.LimpiarCamposMovimiento();
-                    }
-                });
+                if (continuar) {
+                    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                        if (xhr.status == 200) {
+                            this.LimpiarCamposMovimiento();
+                        }
+                    });
+                }
 
-                
                 this.ReestablecerCamposFormularios_Movimientos();
             } else {
                 this.ReestablecerCamposFormularios_Movimientos();
@@ -130,9 +150,33 @@
                 document.getElementById('selectTipoMovimiento').style.backgroundColor = colorDefault;
             if (this.Movimiento.Concepto || flag)
                 document.getElementById('inputCocepto').style.backgroundColor = colorDefault;
+
+            if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
+                if (this.Movimiento.RNC || flag)
+                    document.getElementById('inputRnc').style.backgroundColor = colorDefault;
+                if (this.Movimiento.NCF || flag)
+                    document.getElementById('inputNcf').style.backgroundColor = colorDefault;
+                if (this.Movimiento.ClasificacionFiscal || flag)
+                    document.getElementById('selectClsFiscal').style.backgroundColor = colorDefault;
+                if (this.Movimiento.ValorSinITBIs || flag)
+                    document.getElementById('inputItbis').style.backgroundColor = colorDefault;
+                if (this.Movimiento.ITBsFacturado || flag)
+                    document.getElementById('inputItbiFacturado').style.backgroundColor = colorDefault;
+            }
         },
 
-        LimpiarCamposMovimiento() {
+        ActivarBotonGuardarFormulariosMovimiento_keyPress() {
+            if (this.Movimiento.CargadoA
+                && this.Movimiento.Monto
+                && this.Movimiento.TipoMovimiento
+                && this.Movimiento.Concepto)
+                this.SeccionMovimientos.btnGuardarState = true;
+            else
+                this.SeccionMovimientos.btnGuardarState = false;
+        },
+
+        LimpiarCamposMovimiento(flag) {
+            this.SeccionMovimientos.MovimientoSeleccionado = 0;
             this.ReestablecerCamposFormularios_Movimientos(true);
             this.SeccionMovimientos.btnGuardarState = false;
 
@@ -152,24 +196,45 @@
                 this.Movimientos = response.movimientos;
             });
 
-            document.body.scrollTop = 0;
-            document.documentElement.scrollTop = 0;
-
             this.SeccionMovimientos.chckLlenarDatosFiscales = false;
+
+            if (flag) {
+                document.getElementById('btnModificarForm').setAttribute('hidden', true);
+                document.getElementById('btnCancelModifyForm').setAttribute('hidden', true);
+
+                document.getElementById('btnSaveForm').removeAttribute('hidden');
+                document.getElementById('btnClean').removeAttribute('hidden');
+            }
         },
 
         MovimientoSeleccionado(id) {
+            document.body.scrollTop = 0;
+            document.documentElement.scrollTop = 0;
+
+            this.SeccionMovimientos.MovimientoSeleccionado = id;
+            document.getElementById('btnSaveForm').setAttribute('hidden', true);
+            document.getElementById('btnClean').setAttribute('hidden', true);
+
+            document.getElementById('btnModificarForm').removeAttribute('hidden');
+            document.getElementById('btnCancelModifyForm').removeAttribute('hidden');
+
             $.get(`..${this.ApiRuta}ObtenerMovimiento`, { id }).done(response => {
                 this.Movimiento.FechaEmicion = response.movimiento.Fecha;
                 this.Movimiento.CargadoA = response.movimiento.Beneficiario;
                 this.Movimiento.Monto = response.movimiento.Monto;
                 this.Movimiento.TipoMovimiento = response.movimiento.TipoMovimiento;
                 this.Movimiento.Concepto = response.movimiento.Concepto;
-                this.Movimiento.RNC = response.movimiento.Rnc;
-                this.Movimiento.NCF = response.movimiento.Ncf;
-                this.Movimiento.ClasificacionFiscal = response.movimiento.Clasificancf;
-                this.Movimiento.ValorSinITBIs = response.movimiento.Neto;
-                this.Movimiento.ITBsFacturado = response.movimiento.Itebis;
+
+                if (this.Movimiento.RNC = response.movimiento.Rnc) {
+                    this.SeccionMovimientos.chckLlenarDatosFiscales = true;
+                    this.Movimiento.RNC = response.movimiento.Rnc;
+                    this.Movimiento.NCF = response.movimiento.Ncf;
+                    this.Movimiento.ClasificacionFiscal = response.movimiento.Clasificancf;
+                    this.Movimiento.ValorSinITBIs = response.movimiento.Neto;
+                    this.Movimiento.ITBsFacturado = response.movimiento.Itebis;
+                }
+                else
+                    this.SeccionMovimientos.chckLlenarDatosFiscales = false;
             });
         },
 
@@ -188,6 +253,18 @@
                     document.getElementById('movimientoOpcCfiscal').hidden = false;
                     break;
             }
+        },
+
+        ModificarMovimiento() {
+            $.get(`..${this.ApiRuta}ModificarMovimiento?id=${this.SeccionMovimientos.MovimientoSeleccionado}&movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                if (xhr.status == 200) {
+                    this.LimpiarCamposMovimiento();
+                } else {
+                    alert('Algo salio mal.');
+                }
+            }).fail(() => {
+                alert('Algo salio mal.');
+            });
         },
 
         BuscarMovimientos() {
