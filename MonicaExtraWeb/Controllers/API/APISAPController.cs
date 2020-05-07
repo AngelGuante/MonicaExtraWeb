@@ -86,21 +86,14 @@ namespace MonicaExtraWeb.Controllers.API
             var obj = JsonConvert.DeserializeObject<GuardarMovimientoDTO>(movimiento);
 
             StringBuilder query = new StringBuilder();
-            //query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
-            //query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
-            //query.Append("(SELECT MAX(NumeroTransacion) +1 FROM monica10.monicaextra.movimientocaja), ");
-            //query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
-            //query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja), ");
-            //query.Append("@RNC, @NCF, @Itebis, @Neto, ");
-            //query.Append("(SELECT EntradaSalida FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf) ");
 
-            query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre) ");
+            query.Append("INSERT INTO monica10.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
             query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
             query.Append("(SELECT MAX(NumeroTransacion) +1 FROM monica10.monicaextra.movimientocaja), ");
             query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
-            query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja) )");
-            //query.Append("@RNC, @NCF, @Itebis, @Neto, ");
-            //query.Append("(SELECT EntradaSalida FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf) ");
+            query.Append("(SELECT MAX(NumeroCierre) +1 FROM monica10.monicaextra.cierrecaja), ");
+            query.Append("@RNC, @NCF, @Itebis, @Neto, ");
+            query.Append("(SELECT Tipo FROM monica10.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf ) ");
 
             var RegistroGuardadoCant = Conn.Execute(query.ToString(), new
             {
@@ -109,11 +102,11 @@ namespace MonicaExtraWeb.Controllers.API
                 obj.TipoMovimiento,
                 obj.Monto,
                 Fecha = obj.FechaEmicion,
-                //obj.RNC,
-                //obj.NCF,
-                //Clasificancf = obj.ClasificacionFiscal,
-                //Itebis = obj.ITBsFacturado,
-                //Neto = obj.ValorSinITBIs
+                obj.RNC,
+                obj.NCF,
+                Itebis = obj.ITBsFacturado,
+                Neto = obj.ValorSinITBIs,
+                Clasificancf = obj.ClasificacionFiscal
             });
 
             if (RegistroGuardadoCant != 1) return Content(HttpStatusCode.BadRequest, "");
@@ -130,7 +123,7 @@ namespace MonicaExtraWeb.Controllers.API
             Json(new { movimiento = Conn.Query<MovimientosCajas>("SELECT * FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @id", new { id }).FirstOrDefault() });
 
         /// <summary>
-        /// Bucar un movimiento.
+        /// Bucar movimientos por parametros.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -158,6 +151,7 @@ namespace MonicaExtraWeb.Controllers.API
                 }
                 query.Append("= @valor ");
             }
+            query.Append(" ORDER BY NumeroTransacion DESC");
 
             var movimientos = Conn.Query<MovimientosCajas>(query.ToString(), new
             {
@@ -167,6 +161,59 @@ namespace MonicaExtraWeb.Controllers.API
             });
 
             return Json(new { movimientos });
+        }
+
+        /// <summary>
+        /// Modificar un movimiento.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ModificarMovimiento")]
+        public IHttpActionResult ModificarMovimiento(string id, string movimiento)
+        {
+            var obj = JsonConvert.DeserializeObject<MovimientosCajas>(movimiento);
+            var EntradaSalida = Conn.ExecuteScalar("SELECT Tipo FROM monica10.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento",
+                new { obj.TipoMovimiento });
+
+            if (EntradaSalida == default)
+                return StatusCode(HttpStatusCode.NotFound);
+
+            var query = new StringBuilder();
+            query.Append("UPDATE monica10.monicaextra.movimientocaja ");
+            query.Append("SET ");
+            query.Append("Fecha = @Fecha, ");
+            query.Append("Monto = @Monto, ");
+            query.Append("Beneficiario = @Beneficiario, ");
+            query.Append("TipoMovimiento = @TipoMovimiento, ");
+            query.Append("EntradaSalida = @EntradaSalida, ");
+            query.Append("Concepto = @Concepto, ");
+            query.Append("Rnc = @Rnc, ");
+            query.Append("Ncf = @Ncf, ");
+            query.Append("Clasificancf = @Clasificancf, ");
+            query.Append("Neto = @Neto, ");
+            query.Append("Itebis = @Itebis ");
+            query.Append("WHERE NumeroTransacion = @id ");
+
+            var completed = Conn.Execute(query.ToString(),
+                new { obj.Fecha,
+                      obj.Monto,
+                      obj.Beneficiario,
+                      obj.TipoMovimiento,
+                      EntradaSalida,
+                      obj.Concepto,
+                      obj.Rnc,
+                      obj.Ncf,
+                      obj.Clasificancf,
+                      obj.Neto,
+                      obj.Itebis,
+                      id });
+
+            if (completed == 1)
+                return StatusCode(HttpStatusCode.OK);
+            else if (completed == 0)
+                return StatusCode(HttpStatusCode.NotModified);
+            else
+                return StatusCode(HttpStatusCode.InternalServerError);
         }
 
         protected override void Dispose(bool disposing)

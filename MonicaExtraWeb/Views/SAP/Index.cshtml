@@ -5,6 +5,12 @@
 }
 
 <div id="app">
+    @* BOTONES DE NAVEGACION *@
+    <div class="mt-4">
+        <button id="btnBack" class="btn btn-secondary" v-on:click="NavigationBtns(-1)" hidden><i class="material-icons">arrow_back</i></button>
+        <button id="btnHome" class="btn btn-secondary" v-on:click="NavigationBtns(0)" hidden><i class="material-icons">home</i></button>
+    </div>
+
     @*  DIV PARA SELECCIONAR UNA EMPRESA*@
     <div id="SeleccionarEmpresa">
         <div class="card border-secondary CentrarDiv Sombra Tables" style="width: 30%; background-color:white;">
@@ -45,7 +51,7 @@
 
     @*  DIV QUE MUESTRA UN LISTADO DE LOS MOVIEMIENTOS (BOTON DEL MENU 'CONTROL DE CAJA CHICA')*@
     <div id="ListadoMovimientos" hidden>
-        <div style="margin-top:50px;">
+        <div style="margin-top:8px;">
             <button v-on:click="MovimientosCRUD" type="button" class="btn btn-secondary Sombra"> <i class="material-icons" style="margin-right:10px; vertical-align:bottom">account_balance_wallet</i>Movimientos de caja</button>
 
             <hr />
@@ -97,7 +103,7 @@
     </div>
 
     @*  DIV QUE MUESTRA EL CRUD DE LOS MOVIMIENTOS*@
-    <div id="MovimientosCRUD" style="margin-top:20px;" hidden>
+    <div id="MovimientosCRUD" style="margin-top:8px;" hidden>
         <div class="card border-secondary Sombra">
             <h5 class="card-header">Movimientos</h5>
 
@@ -117,12 +123,12 @@
                                     <div class="col-md">
                                         <div class="form-group" style="width:100%">
                                             <label for="fechaEmicion">Fecha Emicion</label>
-                                            <input type="date" style="width:100%" v-model="Movimiento.FechaEmicion" class="form-control" id="fechaEmicion">
+                                            <input type="date" style="width:100%" v-model="Movimiento.Fecha" class="form-control" id="fechaEmicion">
                                         </div>
 
                                         <div class="form-group">
-                                            <label for="cargadoA">Cargado A:</label>
-                                            <select class="form-control" id="cargadoA" v-model="Movimiento.CargadoA" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()" >
+                                            <label for="Beneficiario">Cargado A:</label>
+                                            <select class="form-control" id="Beneficiario" v-model="Movimiento.Beneficiario" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()">
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option v-for="Usuario in Usuarios" v-bind:value="Usuario.id_usuario">({{Usuario.usuario}}) - {{Usuario.nombre_completo}}</option>
                                             </select>
@@ -137,7 +143,7 @@
 
                                         <div class="form-group">
                                             <label for="selectTipoMovimiento">Tipo de Movimiento</label>
-                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()" >
+                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()">
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option class="form-group" v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
                                             </select>
@@ -172,7 +178,7 @@
 
                                 <div class="form-group">
                                     <label for="selectClsFiscal">Clasificacion Fiscal</label>
-                                    <select class="form-control" id="selectClsFiscal" v-model="Movimiento.ClasificacionFiscal"v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" >
+                                    <select class="form-control" id="selectClsFiscal" v-model="Movimiento.Clasificancf" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales">
                                         <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                         <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
                                     </select>
@@ -181,12 +187,12 @@
                                 <div class="row">
                                     <div class="form-group col-sm">
                                         <label for="inputItbis">Valor sin ITBIs</label>
-                                        <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.ValorSinITBIs" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
+                                        <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.Neto" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                     </div>
 
                                     <div class="form-group col-sm">
                                         <label for="inputItbiFacturado">ITBIs facturado</label>
-                                        <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.ITBsFacturado" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
+                                        <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.Itebis" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                     </div>
                                 </div>
                             </div>
@@ -290,4 +296,4 @@
 
 @section scripts{
     <script src="~/Scripts/js/SAP.js"></script>
-}   
+}
