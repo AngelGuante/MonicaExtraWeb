@@ -45,7 +45,7 @@ namespace MonicaExtraWeb.Controllers.API
             if (Empresa == null)
                 return Content(HttpStatusCode.NoContent, "");
 
-            return Ok();
+            return Json(new { Empresa });
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult ObtenerListadoMovimientos(int index = 1, int take = 10) =>
             Json(new
             {
-                movimientos = Conn.Query<MovimientosCajas>($"SELECT NumeroTransacion, Beneficiario, Concepto, Monto, Fecha FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1 ORDER BY NumeroTransacion DESC OFFSET {(index - 1) * take} ROWS FETCH NEXT {take} ROWS ONLY"),
+                movimientos = Conn.Query<MovimientosCajas>($"SELECT M.NumeroTransacion, M.Beneficiario, U.nombre_completo, M.Concepto, M.Monto, M.Fecha FROM monica10.monicaextra.movimientocaja M LEFT JOIN monica10.dbo.usuarios U ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) WHERE Estatus = 1 ORDER BY NumeroTransacion DESC OFFSET {(index - 1) * take} ROWS FETCH NEXT {take} ROWS ONLY"),
                 total = Conn.ExecuteScalar<int>($"SELECT COUNT(*) FROM monica10.monicaextra.movimientocaja WHERE Estatus = 1")
             });
 
@@ -97,16 +97,16 @@ namespace MonicaExtraWeb.Controllers.API
 
             var RegistroGuardadoCant = Conn.Execute(query.ToString(), new
             {
-                Beneficiario = obj.CargadoA,
+                obj.Beneficiario,
                 obj.Concepto,
                 obj.TipoMovimiento,
                 obj.Monto,
-                Fecha = obj.FechaEmicion,
+                obj.Fecha,
                 obj.RNC,
                 obj.NCF,
-                Itebis = obj.ITBsFacturado,
-                Neto = obj.ValorSinITBIs,
-                Clasificancf = obj.ClasificacionFiscal
+                obj.Itebis,
+                obj.Neto,
+                obj.Clasificancf
             });
 
             if (RegistroGuardadoCant != 1) return Content(HttpStatusCode.BadRequest, "");
@@ -120,7 +120,19 @@ namespace MonicaExtraWeb.Controllers.API
         [HttpGet]
         [Route("ObtenerMovimiento")]
         public IHttpActionResult ObtenerMovimiento(int id) =>
-            Json(new { movimiento = Conn.Query<MovimientosCajas>("SELECT * FROM monica10.monicaextra.movimientocaja WHERE NumeroTransacion = @id", new { id }).FirstOrDefault() });
+            Json(new
+            {
+                movimiento = Conn.Query<MovimientosCajas>(
+                "SELECT CF.Descripcion DescripcionClasfFiscal, TM.Descripcion DescripcionMovimiento, U.nombre_completo, * " +
+                "FROM monica10.monicaextra.movimientocaja M " +
+                "LEFT JOIN monica10.dbo.usuarios U " +
+                    "ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) " +
+                "LEFT JOIN monica10.monicaextra.clasificacionmovicaja TM " +
+                    "ON M.TipoMovimiento = TM.NumeroTransacion " +
+                "LEFT JOIN monica10.monicaextra.clasificacionfiscal CF " +
+                    "ON M.Clasificancf = CF.NumeroTransacion " +
+                "WHERE M.NumeroTransacion = @id", new { id }).FirstOrDefault()
+            });
 
         /// <summary>
         /// Bucar movimientos por parametros.
@@ -195,18 +207,21 @@ namespace MonicaExtraWeb.Controllers.API
             query.Append("WHERE NumeroTransacion = @id ");
 
             var completed = Conn.Execute(query.ToString(),
-                new { obj.Fecha,
-                      obj.Monto,
-                      obj.Beneficiario,
-                      obj.TipoMovimiento,
-                      EntradaSalida,
-                      obj.Concepto,
-                      obj.Rnc,
-                      obj.Ncf,
-                      obj.Clasificancf,
-                      obj.Neto,
-                      obj.Itebis,
-                      id });
+                new
+                {
+                    obj.Fecha,
+                    obj.Monto,
+                    obj.Beneficiario,
+                    obj.TipoMovimiento,
+                    EntradaSalida,
+                    obj.Concepto,
+                    obj.Rnc,
+                    obj.Ncf,
+                    obj.Clasificancf,
+                    obj.Neto,
+                    obj.Itebis,
+                    id
+                });
 
             if (completed == 1)
                 return StatusCode(HttpStatusCode.OK);
@@ -214,6 +229,20 @@ namespace MonicaExtraWeb.Controllers.API
                 return StatusCode(HttpStatusCode.NotModified);
             else
                 return StatusCode(HttpStatusCode.InternalServerError);
+        }
+
+        /// <summary>
+        /// ---------------------
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("ObtenerCierresCaja")]
+        public IHttpActionResult ObtenerCierresCaja(string fechaInicial, string fechaFinal)
+        {
+            var Cierres = Conn.Query<CierresCaja>("SELECT * " +
+                                                  "FROM monica10.monicaextra.cierrecaja " +
+                                                  "ORDER BY NumeroCierre Desc", new { });
+            return Json(new { Cierres });
         }
 
         protected override void Dispose(bool disposing)

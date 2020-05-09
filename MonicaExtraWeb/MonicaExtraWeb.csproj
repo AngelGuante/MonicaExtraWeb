@@ -151,6 +151,7 @@
     </Compile>
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
+    <Compile Include="Models\monica10\CierresCaja.cs" />
     <Compile Include="Models\monica10\ClasificacionFiscal.cs" />
     <Compile Include="Models\monica10\ClasificacionMovimientoCaja.cs" />
     <Compile Include="Models\monica10\MovimientosCajas.cs" />
@@ -159,6 +160,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\assets\loading.gif" />
     <Content Include="Content\assets\transaction.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />

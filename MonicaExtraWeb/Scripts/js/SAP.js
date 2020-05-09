@@ -10,16 +10,20 @@
         ],
         ApiRuta: '/API/ASPISAP/',
         Empresas: [],
+        EmpresaSeleccionadaInstancia: {},
         Movimientos: [],
         Movimiento: {
             Fecha: '',
             Beneficiario: '',
+            Nombre_completo: '',
             Monto: '',
             TipoMovimiento: '',
+            DescripcionMovimiento: '',
             Concepto: '',
             RNC: '',
             NCF: '',
             Clasificancf: '',
+            DescripcionClasfFiscal: '',
             Neto: '',
             Itebis: ''
         },
@@ -40,47 +44,59 @@
             movimientoSeleccionado: 0,
             btnGuardarState: false,
             chckLlenarDatosFiscales: false
+        },
+        VentanaCierres: {
+            Cierres: []
         }
     },
     created: function () {
         $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
             this.Empresas = response.Empresas;
+            document.getElementById('cargando').setAttribute('hidden', true);
         });
     },
     methods: {
         EmpresaSeleccionada(idEmpresa) {
+            document.getElementById('cargando').removeAttribute('hidden');
             $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
                 if (xhr.status == 200) {
+                    this.EmpresaSeleccionadaInstancia = respWonse.Empresa;
+
                     document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
                     document.getElementById('menu').removeAttribute('hidden');
                     this.Navegacion[0] = this.Navegacion[0] + 1;
                 }
                 else if (xhr.status == 204)
                     alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
+                document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
 
         ListadoMovimientosCaja() {
+            document.getElementById('cargando').removeAttribute('hidden');
             document.getElementById('menu').setAttribute('hidden', true);
             document.getElementById('ListadoMovimientos').removeAttribute('hidden');
             document.getElementById('btnBack').removeAttribute('hidden');
 
             this.Navegacion[0] = this.Navegacion[0] + 1;
-
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
                 this.Movimientos = response.movimientos;
                 this.PaginatorLastPage = Math.ceil(response.total / 10);
+                document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
 
         PaginatorMovimientos(index) {
+            document.getElementById('cargando').removeAttribute('hidden');
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`, { index }).done(response => {
                 this.Movimientos = response.movimientos;
                 this.PaginatorIndex = index;
+                document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
 
         MovimientosCRUD() {
+            document.getElementById('cargando').removeAttribute('hidden');
             document.getElementById('ListadoMovimientos').setAttribute('hidden', true);
             document.getElementById('MovimientosCRUD').removeAttribute('hidden');
             document.getElementById('btnHome').removeAttribute('hidden');
@@ -92,6 +108,7 @@
                 this.Usuarios = response.usuarios;
                 this.TiposMovimientos = response.tiposMovimientos;
                 this.ClasificacionesFiscales = response.clasificacionFiscal;
+                document.getElementById('cargando').setAttribute('hidden', true);
             });
 
             this.BusquedaMovimiento.fechaDesde = (new Date()).toISOString().slice(0, 10);
@@ -131,11 +148,25 @@
                 }
 
                 if (continuar) {
-                    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                        if (xhr.status == 200) {
-                            this.LimpiarCamposMovimiento();
-                            this.MostrarAlerta(true);
-                        }
+                    Swal.fire({
+                        title: 'Desea hacer una impresion del movimiento?',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si'
+                    }).then((result) => {
+                        if (result.value)
+                            this.Print();
+
+                        document.getElementById('cargando').removeAttribute('hidden');
+                        $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                            if (xhr.status == 200) {
+                                this.LimpiarCamposMovimiento();
+                                this.MostrarAlerta(true);
+                            }
+                            document.getElementById('cargando').setAttribute('hidden', true);
+                        });
                     });
                 }
 
@@ -151,6 +182,7 @@
                     document.getElementById('selectTipoMovimiento').style.backgroundColor = '#f5aba6';
                 if (!this.Movimiento.Concepto)
                     document.getElementById('inputCocepto').style.backgroundColor = '#f5aba6';
+                document.getElementById('cargando').setAttribute('hidden', true);
             }
         },
 
@@ -214,30 +246,27 @@
             this.SeccionMovimientos.chckLlenarDatosFiscales = false;
 
             if (flag) {
-                document.getElementById('btnModificarForm').setAttribute('hidden', true);
-                document.getElementById('btnCancelModifyForm').setAttribute('hidden', true);
-
-                document.getElementById('btnSaveForm').removeAttribute('hidden');
-                document.getElementById('btnClean').removeAttribute('hidden');
+                document.getElementById('btnsMovimientoSeleccionado').setAttribute('hidden', true);
+                document.getElementById('btnsNuevoMovimiento').removeAttribute('hidden');
             }
         },
 
         MovimientoSeleccionado(id) {
+            document.getElementById('cargando').removeAttribute('hidden');
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
 
             this.SeccionMovimientos.MovimientoSeleccionado = id;
-            document.getElementById('btnSaveForm').setAttribute('hidden', true);
-            document.getElementById('btnClean').setAttribute('hidden', true);
-
-            document.getElementById('btnModificarForm').removeAttribute('hidden');
-            document.getElementById('btnCancelModifyForm').removeAttribute('hidden');
+            document.getElementById('btnsNuevoMovimiento').setAttribute('hidden', true);
+            document.getElementById('btnsMovimientoSeleccionado').removeAttribute('hidden');
 
             $.get(`..${this.ApiRuta}ObtenerMovimiento`, { id }).done(response => {
                 this.Movimiento.Fecha = response.movimiento.Fecha;
                 this.Movimiento.Beneficiario = response.movimiento.Beneficiario;
+                this.Movimiento.Nombre_completo = response.movimiento.nombre_completo;
                 this.Movimiento.Monto = response.movimiento.Monto;
                 this.Movimiento.TipoMovimiento = response.movimiento.TipoMovimiento;
+                this.Movimiento.DescripcionMovimiento = response.movimiento.DescripcionMovimiento;
                 this.Movimiento.Concepto = response.movimiento.Concepto;
 
                 if (this.Movimiento.RNC = response.movimiento.Rnc) {
@@ -245,6 +274,7 @@
                     this.Movimiento.RNC = response.movimiento.Rnc;
                     this.Movimiento.NCF = response.movimiento.Ncf;
                     this.Movimiento.Clasificancf = response.movimiento.Clasificancf;
+                    this.Movimiento.DescripcionClasfFiscal = response.movimiento.DescripcionClasfFiscal;
                     this.Movimiento.Neto = response.movimiento.Neto;
                     this.Movimiento.Itebis = response.movimiento.Itebis;
                 }
@@ -257,6 +287,7 @@
 
                     this.SeccionMovimientos.chckLlenarDatosFiscales = false;
                 }
+                document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
 
@@ -278,25 +309,26 @@
         },
 
         ModificarMovimiento() {
+            document.getElementById('cargando').removeAttribute('hidden');
             $.get(`..${this.ApiRuta}ModificarMovimiento?id=${this.SeccionMovimientos.MovimientoSeleccionado}&movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
                 if (xhr.status == 200) {
                     this.LimpiarCamposMovimiento();
 
-                    document.getElementById('btnModificarForm').setAttribute('hidden', true);
-                    document.getElementById('btnCancelModifyForm').setAttribute('hidden', true);
-
-                    document.getElementById('btnSaveForm').removeAttribute('hidden');
-                    document.getElementById('btnClean').removeAttribute('hidden');
+                    document.getElementById('btnsMovimientoSeleccionado').setAttribute('hidden', true);
+                    document.getElementById('btnsNuevoMovimiento').removeAttribute('hidden');
 
                     this.MostrarAlerta(true);
                 } else
                     this.MostrarAlerta(false);
+                document.getElementById('cargando').setAttribute('hidden', true);
             }).fail(() => {
+                document.getElementById('cargando').setAttribute('hidden', true);
                 this.MostrarAlerta(false);
             });
         },
 
         BuscarMovimientos() {
+            document.getElementById('cargando').removeAttribute('hidden');
             let fechaDesde = this.BusquedaMovimiento.fechaDesde;
             let fechaHasta = this.BusquedaMovimiento.fechaHasta;
             let opcion = this.BusquedaMovimiento.Opcion;
@@ -320,6 +352,18 @@
             this.Movimientos = [];
             $.get(`..${this.ApiRuta}BuscarMovimientos?parametros=${JSON.stringify(parametros)}`).done(response => {
                 this.Movimientos = response.movimientos;
+                document.getElementById('cargando').setAttribute('hidden', true);
+            });
+        },
+
+        CuadresCaja() {
+            document.getElementById('cargando').removeAttribute('hidden');
+            document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
+            document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
+            document.getElementById('cargando').setAttribute('hidden', true);
+
+            $.get(`..${this.ApiRuta}ObtenerCierresCaja?fechaInicial=fechaInicial&fechaFinal=fechaFinal`).done(response => {
+                this.VentanaCierres.Cierres = response.Cierres;
             });
         },
 
@@ -361,13 +405,17 @@
                         document.getElementById('btnHome').setAttribute('hidden', true);
                     if (index == 2)
                         document.getElementById('btnBack').setAttribute('hidden', true);
-
                     break;
             }
         },
 
         Print() {
             printJS('toPrint', 'html');
+        }
+    },
+    filters: {
+        FilterUppercase: value => {
+            return value ? value.toString().toUpperCase() : value;
         }
     }
 });
