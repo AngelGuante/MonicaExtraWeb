@@ -160,7 +160,7 @@
                         confirmButtonText: 'Si'
                     }).then((result) => {
                         if (result.value)
-                            this.Print();
+                            printJS('toPrint', 'html');
 
                         document.getElementById('cargando').removeAttribute('hidden');
                         $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
