@@ -6,7 +6,8 @@
             'SeleccionarEmpresa',
             'menu',
             'ListadoMovimientos',
-            'MovimientosCRUD'
+            'MovimientosCRUD',
+            'CuadresDeCajaCRUD'
         ],
         ApiRuta: '/API/ASPISAP/',
         Empresas: [],
@@ -366,6 +367,7 @@
                 document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
                 document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
                 document.getElementById('cargando').setAttribute('hidden', true);
+                this.Navegacion[0] = this.Navegacion[0] + 1;
             }
 
             let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
@@ -415,10 +417,6 @@
                         document.getElementById('btnBack').setAttribute('hidden', true);
                     break;
             }
-        },
-
-        Print() {
-            printJS({ printable: this.VentanaCierres.Cierres, properties: ['NumeroCierre', 'FechaInicial', 'FechaFinal', 'SaldoFinal'], type: 'json' });
         }
     },
     filters: {
