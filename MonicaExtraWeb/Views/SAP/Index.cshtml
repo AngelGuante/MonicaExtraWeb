@@ -114,7 +114,7 @@
 
     @*  DIV QUE MUESTRA EL CRUD DE LOS MOVIMIENTOS *@
     <div id="MovimientosCRUD" style="margin-top:8px;" hidden>
-        <button v-on:click="CuadresCaja" type="button" class="btn btn-secondary Sombra"> <i class="material-icons" style="margin-right:10px; vertical-align:bottom">attach_money</i>Cuadres de caja</button>
+        <button v-on:click="CuadresCaja(1)" type="button" class="btn btn-secondary Sombra"> <i class="material-icons" style="margin-right:10px; vertical-align:bottom">attach_money</i>Cuadres de caja</button>
 
         <hr />
 
@@ -331,11 +331,48 @@
     </div>
 
     @*  DIV QUE MUESTRA LOS CUADRES DE CAJA *@
-    <div id="CuadresDeCajaCRUD" hidden>
-        <table>
-            <tr v-for="v in VentanaCierres.Cierres">
-                <td>{{v.NumeroCierre}}</td>
-            </tr>
+<div id="CuadresDeCajaCRUD" hidden>
+    <div class="card border-info mb-3 mt-2 Sombra">
+        <div class="card-body text-info">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label for="fechaEmicion">Fecha Inicial</label>
+                        <input type="date" style="width:100%" v-model="VentanaCierres.FechaInicial" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label for="fechaEmicion">Fecha Final</label>
+                        <input type="date" style="width:100%" v-model="VentanaCierres.FechaFinal" class="form-control">
+                    </div>
+                </div>
+
+                <a class="btn btn-light" style="text-align:center; vertical-align:central" v-on:click="CuadresCaja(0)"><i class="material-icons" style="margin-top:80%;">search</i></a>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-outline-info Sombra" style="width:100%;" type="button" v-on:click="Print();"><i class="material-icons" style="vertical-align:bottom">print</i></button>
+
+    <div class="Tables">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th style="text-align:center;" scope="col">#</th>
+                    <th scope="col">Fehca Inicial</th>
+                    <th scope="col">Fecha Final</th>
+                    <th style="text-align:center;" scope="col">Saldo Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="element in VentanaCierres.Cierres">
+                    <td style="text-align:center;">{{element.NumeroCierre}}</td>
+                    <td>{{element.FechaInicial}}</td>
+                    <td>{{element.FechaFinal}}</td>
+                    <td style="text-align:center;">{{element.SaldoFinal}}</td>
+                </tr>
         </table>
     </div>
 
@@ -398,7 +435,7 @@
         </div>
     </div>
 </div>
-
+</div>
 @section scripts{
     <script src="~/Scripts/js/SAP.js"></script>
 }

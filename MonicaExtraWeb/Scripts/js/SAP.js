@@ -46,7 +46,9 @@
             chckLlenarDatosFiscales: false
         },
         VentanaCierres: {
-            Cierres: []
+            Cierres: [],
+            FechaInicial: '',
+            FechaFinal: ''
         }
     },
     created: function () {
@@ -356,13 +358,19 @@
             });
         },
 
-        CuadresCaja() {
-            document.getElementById('cargando').removeAttribute('hidden');
-            document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
-            document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
-            document.getElementById('cargando').setAttribute('hidden', true);
+        CuadresCaja(flag) {
+            if (flag) {
+                this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
+                this.VentanaCierres.FechaFinal = new Date().toISOString().slice(0, 10);
+                document.getElementById('cargando').removeAttribute('hidden');
+                document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
+                document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
+                document.getElementById('cargando').setAttribute('hidden', true);
+            }
 
-            $.get(`..${this.ApiRuta}ObtenerCierresCaja?fechaInicial=fechaInicial&fechaFinal=fechaFinal`).done(response => {
+            let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
+            let paramFechaFinal = this.VentanaCierres.FechaFinal == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaFinal;
+            $.get(`..${this.ApiRuta}ObtenerCierresCaja?fechaInicial=${paramFechaInicial}&fechaFinal=${paramFechaFinal}`).done(response => {
                 this.VentanaCierres.Cierres = response.Cierres;
             });
         },
@@ -410,7 +418,7 @@
         },
 
         Print() {
-            printJS('toPrint', 'html');
+            printJS({ printable: this.VentanaCierres.Cierres, properties: ['NumeroCierre', 'FechaInicial', 'FechaFinal', 'SaldoFinal'], type: 'json' });
         }
     },
     filters: {

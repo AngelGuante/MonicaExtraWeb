@@ -239,9 +239,25 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("ObtenerCierresCaja")]
         public IHttpActionResult ObtenerCierresCaja(string fechaInicial, string fechaFinal)
         {
-            var Cierres = Conn.Query<CierresCaja>("SELECT * " +
-                                                  "FROM monica10.monicaextra.cierrecaja " +
-                                                  "ORDER BY NumeroCierre Desc", new { });
+            var query = new StringBuilder();
+            query.Append("SELECT * ");
+            query.Append("FROM monica10.monicaextra.cierrecaja ");
+
+            if ((fechaInicial != fechaFinal) && (fechaInicial != default || fechaFinal != default))
+            {
+                query.Append("WHERE ");
+
+                if (fechaInicial != default)
+                    query.Append($"FechaInicial >= '{fechaInicial}' ");
+
+                query.Append(fechaInicial != default ? "AND " : "");
+
+                if (fechaFinal != default)
+                    query.Append($"FechaFinal <= '{fechaFinal}' ");
+
+                query.Append("ORDER BY NumeroCierre Desc ");
+            }
+            var Cierres = Conn.Query<CierresCaja>(query.ToString());
             return Json(new { Cierres });
         }
 
