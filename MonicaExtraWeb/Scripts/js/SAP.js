@@ -1,6 +1,8 @@
 ﻿var app = new Vue({
     el: '#app',
     data: {
+        ApiRuta: '/API/ASPISAP/',
+
         Navegacion: [
             1,
             'SeleccionarEmpresa',
@@ -9,9 +11,12 @@
             'MovimientosCRUD',
             'CuadresDeCajaCRUD'
         ],
-        ApiRuta: '/API/ASPISAP/',
+        PaginatorIndex: 1,
+        PaginatorLastPage: 0,
+
         Empresas: [],
         EmpresaSeleccionadaInstancia: {},
+
         Movimientos: [],
         Movimiento: {
             Fecha: '',
@@ -28,8 +33,6 @@
             Neto: '',
             Itebis: ''
         },
-        PaginatorIndex: 1,
-        PaginatorLastPage: 0,
         Usuarios: [],
         TiposMovimientos: [],
         ClasificacionesFiscales: [],
@@ -46,6 +49,7 @@
             btnGuardarState: false,
             chckLlenarDatosFiscales: false
         },
+
         VentanaCierres: {
             Cierres: [],
             FechaInicial: '',
@@ -59,6 +63,8 @@
         });
     },
     methods: {
+        //  DIV DONDE SE SELECCIONAN LAS EMPRESAS
+        //----------------------------------------------------------
         EmpresaSeleccionada(idEmpresa) {
             document.getElementById('cargando').removeAttribute('hidden');
             $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
@@ -75,6 +81,8 @@
             });
         },
 
+        //  DIV DONDE SE MUESTRAN LOS LISTADOS DE MOVIMIENTOS
+        //----------------------------------------------------------
         ListadoMovimientosCaja() {
             document.getElementById('cargando').removeAttribute('hidden');
             document.getElementById('menu').setAttribute('hidden', true);
@@ -98,6 +106,8 @@
             });
         },
 
+        //  DIV CRUD MOVIMIENTOS
+        //----------------------------------------------------------
         MovimientosCRUD() {
             document.getElementById('cargando').removeAttribute('hidden');
             document.getElementById('ListadoMovimientos').setAttribute('hidden', true);
@@ -151,25 +161,34 @@
                 }
 
                 if (continuar) {
-                    Swal.fire({
-                        title: 'Desea hacer una impresion del movimiento?',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonColor: '#3085d6',
-                        cancelButtonColor: '#d33',
-                        confirmButtonText: 'Si'
-                    }).then((result) => {
-                        if (result.value)
-                            printJS('toPrint', 'html');
+                    //Swal.fire({
+                    //    title: 'Desea hacer una impresion del movimiento?',
+                    //    icon: 'question',
+                    //    showCancelButton: true,
+                    //    confirmButtonColor: '#3085d6',
+                    //    cancelButtonColor: '#d33',
+                    //    confirmButtonText: 'Si'
+                    //}).then((result) => {
+                    //    if (result.value)
+                    //        this.PrintMovimiento();
 
-                        document.getElementById('cargando').removeAttribute('hidden');
-                        $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                            if (xhr.status == 200) {
-                                this.LimpiarCamposMovimiento();
-                                this.MostrarAlerta(true);
-                            }
-                            document.getElementById('cargando').setAttribute('hidden', true);
-                        });
+                    //    document.getElementById('cargando').removeAttribute('hidden');
+                    //    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                    //        if (xhr.status == 200) {
+                    //            this.LimpiarCamposMovimiento();
+                    //            this.MostrarAlerta(true);
+                    //        }
+                    //        document.getElementById('cargando').setAttribute('hidden', true);
+                    //    });
+                    //});
+
+                    document.getElementById('cargando').removeAttribute('hidden');
+                    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                        if (xhr.status == 200) {
+                            this.LimpiarCamposMovimiento();
+                            this.MostrarAlerta(true);
+                        }
+                        document.getElementById('cargando').setAttribute('hidden', true);
                     });
                 }
 
@@ -190,7 +209,7 @@
         },
 
         ReestablecerCamposFormularios_Movimientos(flag) {
-            let colorDefault = 'white';
+            let colorDefault = '';
 
             if (this.Movimiento.Monto || flag)
                 document.getElementById('inputMonto').style.backgroundColor = colorDefault;
@@ -216,10 +235,21 @@
         },
 
         ActivarBotonGuardarFormulariosMovimiento_keyPress() {
+            let continar = true;
             if (this.Movimiento.Beneficiario
                 && this.Movimiento.Monto
                 && this.Movimiento.TipoMovimiento
-                && this.Movimiento.Concepto)
+                && this.Movimiento.Concepto) {
+
+                if (this.SeccionMovimientos.chckLlenarDatosFiscales
+                    && !this.NCFValid()) {
+                    continar = false;
+                }
+            }
+            else
+                continar = false;
+
+            if (continar)
                 this.SeccionMovimientos.btnGuardarState = true;
             else
                 this.SeccionMovimientos.btnGuardarState = false;
@@ -241,6 +271,8 @@
             this.Movimiento.Neto = '';
             this.Movimiento.Itebis = '';
 
+            document.getElementById('invalidInputNcf').setAttribute('hidden', true);
+
             this.Movimientos = [];
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
                 this.Movimientos = response.movimientos;
@@ -252,6 +284,23 @@
                 document.getElementById('btnsMovimientoSeleccionado').setAttribute('hidden', true);
                 document.getElementById('btnsNuevoMovimiento').removeAttribute('hidden');
             }
+        },
+
+        NCFValid() {
+            document.getElementById('invalidInputNcf').setAttribute('hidden', true);
+            if (this.Movimiento.NCF.length >= 14)
+                this.Movimiento.NCF = this.Movimiento.NCF.substring(0, 13);
+            if (this.Movimiento.NCF.length == 11 || this.Movimiento.NCF.length == 13) {
+                if (MatchRegex(0, this.Movimiento.NCF)) {
+                    document.getElementById('invalidInputNcf').setAttribute('hidden', true);
+                    return true
+                }
+                else {
+                    document.getElementById('invalidInputNcf').removeAttribute('hidden');
+                    return false
+                }
+            }
+            return false;
         },
 
         MovimientoSeleccionado(id) {
@@ -359,6 +408,8 @@
             });
         },
 
+        //  DIV QUE MUESTRA LOS CUADRES DE CAJA
+        //----------------------------------------------------------
         CuadresCaja(flag) {
             if (flag) {
                 this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
@@ -377,6 +428,8 @@
             });
         },
 
+        //  UTILS
+        //----------------------------------------------------------
         MostrarAlerta(flag) {
             let Toast = Swal.mixin({
                 toast: true,
@@ -418,6 +471,11 @@
                     break;
             }
         }
+
+        //PrintMovimiento() {
+        //    this.Movimiento.Nombre_completo = this.Movimiento.Nombre_completo ? this.Movimiento.Nombre_completo : document.getElementById('Beneficiario').options[document.getElementById('Beneficiario').selectedIndex].text;
+        //    printJS('toPrint', 'html');
+        //},
     },
     filters: {
         FilterUppercase: value => {

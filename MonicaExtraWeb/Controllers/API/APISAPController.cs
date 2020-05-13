@@ -3,6 +3,7 @@ using MonicaExtraWeb.Models.DTO;
 using MonicaExtraWeb.Models.monica10;
 using MonicaExtraWeb.Models.monica10_global;
 using Newtonsoft.Json;
+using System;
 using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
@@ -105,7 +106,7 @@ namespace MonicaExtraWeb.Controllers.API
                 obj.RNC,
                 obj.NCF,
                 obj.Itebis,
-                obj.Neto,
+                Neto = obj.Neto == "" ? 0 : Convert.ToInt32(obj.Neto),
                 obj.Clasificancf
             });
 

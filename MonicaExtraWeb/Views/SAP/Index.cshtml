@@ -123,7 +123,7 @@
 
             <div class="card-body">
                 <div style="text-align: end;">
-                    <input id="llenarDatosFiscalesCheck" type="checkbox" v-model="SeccionMovimientos.chckLlenarDatosFiscales" />
+                    <input id="llenarDatosFiscalesCheck" type="checkbox" v-model="SeccionMovimientos.chckLlenarDatosFiscales" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress" />
                     <label for="llenarDatosFiscalesCheck">Llenar Datos Fiscales</label>
                 </div>
 
@@ -152,7 +152,7 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <label for="inputMonto">Monto</label>
-                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Monto" maxlength="8" />
+                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Monto"/>
                                         </div>
 
                                         <div class="form-group">
@@ -167,7 +167,7 @@
 
                                 <div class="form-group">
                                     <label for="inputCocepto">Concepto</label>
-                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Concepto" maxlength="30" />
+                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Concepto" />
                                 </div>
                             </div>
                         </div>
@@ -181,12 +181,18 @@
                                 <div class="row">
                                     <div class="form-group col-sm">
                                         <label for="inputRnc">RNC</label>
-                                        <input class="form-control" id="inputRnc" type="number" v-model="Movimiento.RNC" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="RNC" maxlength="10" />
+                                        <input class="form-control" id="inputRnc" type="number" v-model="Movimiento.RNC" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="RNC" />
+                                        <div id="invalidInputRnc" style="color:red;" hidden>
+                                            El RNC débe tener máximo 11 caracteres.
+                                        </div>
                                     </div>
 
                                     <div class="form-group col-sm">
                                         <label for="inputNcf">NCF</label>
-                                        <input class="form-control" id="inputNcf" type="number" v-model="Movimiento.NCF" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="NCF" maxlength="10" />
+                                        <input class="form-control" id="inputNcf" type="text" v-model="Movimiento.NCF" v-on:keyup="NCFValid(); ActivarBotonGuardarFormulariosMovimiento_keyPress();" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="NCF" />
+                                        <div id="invalidInputNcf" style="color:red;" hidden>
+                                            NFC no válido.
+                                        </div>
                                     </div>
                                 </div>
 
@@ -201,12 +207,12 @@
                                 <div class="row">
                                     <div class="form-group col-sm">
                                         <label for="inputItbis">Valor sin ITBIs</label>
-                                        <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.Neto" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" maxlength="8" />
+                                        <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.Neto" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                     </div>
 
                                     <div class="form-group col-sm">
                                         <label for="inputItbiFacturado">ITBIs facturado</label>
-                                        <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.Itebis" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" maxlength="8" />
+                                        <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.Itebis" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                     </div>
                                 </div>
                             </div>
