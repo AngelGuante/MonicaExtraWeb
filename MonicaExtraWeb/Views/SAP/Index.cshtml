@@ -123,7 +123,7 @@
 
             <div class="card-body">
                 <div style="text-align: end;">
-                    <input id="llenarDatosFiscalesCheck" type="checkbox" v-model="SeccionMovimientos.chckLlenarDatosFiscales" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress" />
+                    <input id="llenarDatosFiscalesCheck" type="checkbox" v-model="SeccionMovimientos.chckLlenarDatosFiscales" v-on:change="ActivarBotonGuardarFormulariosMovimiento()" />
                     <label for="llenarDatosFiscalesCheck">Llenar Datos Fiscales</label>
                 </div>
 
@@ -142,7 +142,7 @@
 
                                         <div class="form-group">
                                             <label for="Beneficiario">Cargado A:</label>
-                                            <select class="form-control" id="Beneficiario" v-model="Movimiento.Beneficiario" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()">
+                                            <select class="form-control" id="Beneficiario" v-model="Movimiento.Beneficiario" v-on:change="ActivarBotonGuardarFormulariosMovimiento(); CambiarValoresParaImpresionMovimieto('Beneficiario');">
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option v-for="Usuario in Usuarios" v-bind:value="Usuario.id_usuario">({{Usuario.usuario}}) - {{Usuario.nombre_completo}}</option>
                                             </select>
@@ -152,12 +152,12 @@
                                     <div class="col-md">
                                         <div class="form-group">
                                             <label for="inputMonto">Monto</label>
-                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Monto"/>
+                                            <input type="number" class="form-control" id="inputMonto" v-model="Movimiento.Monto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento()" placeholder="Monto" />
                                         </div>
 
                                         <div class="form-group">
                                             <label for="selectTipoMovimiento">Tipo de Movimiento</label>
-                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento" v-on:change="ActivarBotonGuardarFormulariosMovimiento_keyPress()">
+                                            <select id="selectTipoMovimiento" class="form-control" v-model="Movimiento.TipoMovimiento" v-on:change="ActivarBotonGuardarFormulariosMovimiento(); CambiarValoresParaImpresionMovimieto('selectTipoMovimiento');">
                                                 <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                                 <option class="form-group" v-for="movimiento in TiposMovimientos" v-bind:value="movimiento.NumeroTransacion">({{movimiento.Tipo}}) {{movimiento.Descripcion}}</option>
                                             </select>
@@ -167,7 +167,7 @@
 
                                 <div class="form-group">
                                     <label for="inputCocepto">Concepto</label>
-                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento_keyPress()" placeholder="Concepto" />
+                                    <input class="form-control" id="inputCocepto" type="text" v-model="Movimiento.Concepto" v-on:keyup="ActivarBotonGuardarFormulariosMovimiento()" placeholder="Concepto" />
                                 </div>
                             </div>
                         </div>
@@ -181,15 +181,15 @@
                                 <div class="row">
                                     <div class="form-group col-sm">
                                         <label for="inputRnc">RNC</label>
-                                        <input class="form-control" id="inputRnc" type="number" v-model="Movimiento.RNC" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="RNC" />
+                                        <input class="form-control" id="inputRnc" type="number" v-model="Movimiento.RNC" v-on:keyup="RNCValid(); ActivarBotonGuardarFormulariosMovimiento();" v-on:focusout="RNCValid();" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="RNC" />
                                         <div id="invalidInputRnc" style="color:red;" hidden>
-                                            El RNC débe tener máximo 11 caracteres.
+                                            RNC no válido.
                                         </div>
                                     </div>
 
                                     <div class="form-group col-sm">
                                         <label for="inputNcf">NCF</label>
-                                        <input class="form-control" id="inputNcf" type="text" v-model="Movimiento.NCF" v-on:keyup="NCFValid(); ActivarBotonGuardarFormulariosMovimiento_keyPress();" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="NCF" />
+                                        <input class="form-control" id="inputNcf" type="text" v-model="Movimiento.NCF" v-on:keyup="NCFValid(); ActivarBotonGuardarFormulariosMovimiento();" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="NCF" />
                                         <div id="invalidInputNcf" style="color:red;" hidden>
                                             NFC no válido.
                                         </div>
@@ -198,7 +198,7 @@
 
                                 <div class="form-group">
                                     <label for="selectClsFiscal">Clasificacion Fiscal</label>
-                                    <select class="form-control" id="selectClsFiscal" v-model="Movimiento.Clasificancf" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales">
+                                    <select class="form-control" id="selectClsFiscal" v-model="Movimiento.Clasificancf" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" v-on:change="ActivarBotonGuardarFormulariosMovimiento(); CambiarValoresParaImpresionMovimieto('selectClsFiscal');">
                                         <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
                                         <option v-for="clasificacion in ClasificacionesFiscales" v-bind:value="clasificacion.NumeroTransacion">{{clasificacion.Descripcion}}</option>
                                     </select>
@@ -228,7 +228,7 @@
                 </div>
                 <div id="btnsMovimientoSeleccionado" hidden>
                     <button class="btn btn-outline-info Sombra" type="button" onclick="printJS('toPrint', 'html');"><i class="material-icons" style="vertical-align:bottom">print</i></button>
-                    <button id="btnModificarForm" type="button" class="btn btn-info TextColor Sombra" v-on:click="ModificarMovimiento()"><i class="material-icons" style="vertical-align:bottom">update</i> Modificar</button>
+                    <button id="btnModificarForm" type="button" class="btn btn-info TextColor Sombra" v-bind:disabled="!SeccionMovimientos.btnGuardarState" v-on:click="ModificarMovimiento()"><i class="material-icons" style="vertical-align:bottom">update</i> Modificar</button>
                     <button id="btnCancelModifyForm" type="button" class="btn btn-danger TextColor Sombra" v-on:click="LimpiarCamposMovimiento(1)"><i class="material-icons" style="vertical-align:bottom">cancel</i> Cancelar</button>
                 </div>
             </div>
@@ -419,17 +419,17 @@
                         <hr />
 
                         <div style="margin:0px 30px;" v-if="Movimiento.RNC">
-                            <div>
+                            <div style="margin-bottom:0">
                                 <p style="display:inline-block; width:300px;">RNC: {{Movimiento.RNC | FilterUppercase }}</p>
                                 <p style="display:inline-block">NCF:{{Movimiento.NCF | FilterUppercase }}</p>
                             </div>
 
-                            <p>CLASIFICACION FISCAL: {{Movimiento.DescripcionClasfFiscal | FilterUppercase }}</p>
-
-                            <div>
+                            <div style="margin-bottom:0">
                                 <p style="display:inline-block; width:300px;">Valor sin ITbs: {{Movimiento.Neto | FilterUppercase }}</p>
                                 <p style="display:inline-block;">ITBIs facturado: {{Movimiento.Itebis | FilterUppercase }}</p>
                             </div>
+                            
+                            <p>CLASIFICACION FISCAL: {{Movimiento.DescripcionClasfFiscal | FilterUppercase }}</p>
                         </div>
 
                         <div v-else style="text-align:center;">

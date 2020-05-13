@@ -131,7 +131,39 @@
         GuardarMovimiento() {
             let continuar = true;
 
-            //  COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS BASICOS, ESTEN LLENOS.
+            if (!this.ValidarFormularioMovimiento())
+                continuar = false;
+
+            if (continuar) {
+                Swal.fire({
+                    title: 'Desea hacer una impresion del movimiento?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Si',
+                    cancelButtonText: 'No'
+                }).then((result) => {
+                    if (result.value)
+                        this.PrintMovimiento();
+
+                    document.getElementById('cargando').removeAttribute('hidden');
+                    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                        if (xhr.status == 200) {
+                            this.LimpiarCamposMovimiento();
+                            this.MostrarAlerta(true);
+                        }
+                        document.getElementById('cargando').setAttribute('hidden', true);
+                    });
+                });
+            }
+
+            this.ReestablecerCamposFormularios_Movimientos();
+        },
+
+        //  COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS BASICOS, ESTEN LLENOS.
+        ValidarFormularioMovimiento() {
+            let returnValue = true;
             if (this.Movimiento.Beneficiario
                 && this.Movimiento.Monto
                 && this.Movimiento.TipoMovimiento
@@ -145,6 +177,9 @@
                         || !this.Movimiento.Neto
                         || !this.Movimiento.Itebis) {
 
+                        this.ReestablecerCamposFormularios_Movimientos();
+
+                        returnValue = false;
                         if (!this.Movimiento.RNC)
                             document.getElementById('inputRnc').style.backgroundColor = '#f5aba6';
                         if (!this.Movimiento.NCF)
@@ -155,46 +190,11 @@
                             document.getElementById('inputItbis').style.backgroundColor = '#f5aba6';
                         if (!this.Movimiento.Itebis)
                             document.getElementById('inputItbiFacturado').style.backgroundColor = '#f5aba6';
-
-                        continuar = false;
                     }
                 }
-
-                if (continuar) {
-                    //Swal.fire({
-                    //    title: 'Desea hacer una impresion del movimiento?',
-                    //    icon: 'question',
-                    //    showCancelButton: true,
-                    //    confirmButtonColor: '#3085d6',
-                    //    cancelButtonColor: '#d33',
-                    //    confirmButtonText: 'Si'
-                    //}).then((result) => {
-                    //    if (result.value)
-                    //        this.PrintMovimiento();
-
-                    //    document.getElementById('cargando').removeAttribute('hidden');
-                    //    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                    //        if (xhr.status == 200) {
-                    //            this.LimpiarCamposMovimiento();
-                    //            this.MostrarAlerta(true);
-                    //        }
-                    //        document.getElementById('cargando').setAttribute('hidden', true);
-                    //    });
-                    //});
-
-                    document.getElementById('cargando').removeAttribute('hidden');
-                    $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                        if (xhr.status == 200) {
-                            this.LimpiarCamposMovimiento();
-                            this.MostrarAlerta(true);
-                        }
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                    });
-                }
-
-                this.ReestablecerCamposFormularios_Movimientos();
-            } else {
-                this.ReestablecerCamposFormularios_Movimientos();
+            }
+            else {
+                returnValue = false;
 
                 if (!this.Movimiento.Monto)
                     document.getElementById('inputMonto').style.backgroundColor = '#f5aba6';
@@ -206,6 +206,7 @@
                     document.getElementById('inputCocepto').style.backgroundColor = '#f5aba6';
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
+            return returnValue;
         },
 
         ReestablecerCamposFormularios_Movimientos(flag) {
@@ -234,25 +235,40 @@
             }
         },
 
-        ActivarBotonGuardarFormulariosMovimiento_keyPress() {
+        ActivarBotonGuardarFormulariosMovimiento() {
             let continar = true;
+
             if (this.Movimiento.Beneficiario
                 && this.Movimiento.Monto
                 && this.Movimiento.TipoMovimiento
                 && this.Movimiento.Concepto) {
 
                 if (this.SeccionMovimientos.chckLlenarDatosFiscales
-                    && !this.NCFValid()) {
+                    && (!this.NCFValid() || !this.RNCValid())) {
                     continar = false;
                 }
             }
             else
                 continar = false;
 
-            if (continar)
+            if (continar) 
                 this.SeccionMovimientos.btnGuardarState = true;
-            else
+            else 
                 this.SeccionMovimientos.btnGuardarState = false;
+        },
+
+        CambiarValoresParaImpresionMovimieto(select) {
+            switch (select) {
+                case 'Beneficiario':
+                    this.Movimiento.Nombre_completo = this.Movimiento.Nombre_completo ? this.Movimiento.Nombre_completo : document.getElementById('Beneficiario').options[document.getElementById('Beneficiario').selectedIndex].text;
+                    break;
+                case 'selectTipoMovimiento':
+                    this.Movimiento.DescripcionMovimiento = this.Movimiento.DescripcionMovimiento ? this.Movimiento.DescripcionMovimiento : document.getElementById('selectTipoMovimiento')[document.getElementById('selectTipoMovimiento').selectedIndex].text;
+                    break;
+                case 'selectClsFiscal':
+                    this.Movimiento.DescripcionClasfFiscal = this.Movimiento.DescripcionClasfFiscal ? this.Movimiento.DescripcionClasfFiscal : document.getElementById('selectClsFiscal')[document.getElementById('selectClsFiscal').selectedIndex].text;
+                    break;
+            }
         },
 
         LimpiarCamposMovimiento(flag) {
@@ -271,6 +287,7 @@
             this.Movimiento.Neto = '';
             this.Movimiento.Itebis = '';
 
+            document.getElementById('invalidInputRnc').setAttribute('hidden', true);
             document.getElementById('invalidInputNcf').setAttribute('hidden', true);
 
             this.Movimientos = [];
@@ -287,6 +304,7 @@
         },
 
         NCFValid() {
+            this.Movimiento.NCF = this.Movimiento.NCF.toUpperCase();
             document.getElementById('invalidInputNcf').setAttribute('hidden', true);
             if (this.Movimiento.NCF.length >= 14)
                 this.Movimiento.NCF = this.Movimiento.NCF.substring(0, 13);
@@ -295,15 +313,27 @@
                     document.getElementById('invalidInputNcf').setAttribute('hidden', true);
                     return true
                 }
-                else {
-                    document.getElementById('invalidInputNcf').removeAttribute('hidden');
-                    return false
+            }
+            document.getElementById('invalidInputNcf').removeAttribute('hidden');
+            return false;
+        },
+
+        RNCValid() {
+            document.getElementById('invalidInputRnc').setAttribute('hidden', true);
+            if (this.Movimiento.RNC.length >= 12)
+                this.Movimiento.RNC = this.Movimiento.RNC.substring(0, 11);
+            if (this.Movimiento.RNC.length == 9 || this.Movimiento.RNC.length == 11) {
+                if (MatchRegex(1, this.Movimiento.RNC)) {
+                    document.getElementById('invalidInputRnc').setAttribute('hidden', true);
+                    return true
                 }
             }
+            document.getElementById('invalidInputRnc').removeAttribute('hidden');
             return false;
         },
 
         MovimientoSeleccionado(id) {
+            this.LimpiarCamposMovimiento();
             document.getElementById('cargando').removeAttribute('hidden');
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
@@ -340,6 +370,7 @@
                     this.SeccionMovimientos.chckLlenarDatosFiscales = false;
                 }
                 document.getElementById('cargando').setAttribute('hidden', true);
+                this.ActivarBotonGuardarFormulariosMovimiento();
             });
         },
 
@@ -361,22 +392,29 @@
         },
 
         ModificarMovimiento() {
-            document.getElementById('cargando').removeAttribute('hidden');
-            $.get(`..${this.ApiRuta}ModificarMovimiento?id=${this.SeccionMovimientos.MovimientoSeleccionado}&movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
-                if (xhr.status == 200) {
-                    this.LimpiarCamposMovimiento();
+            let continuar = true;
 
-                    document.getElementById('btnsMovimientoSeleccionado').setAttribute('hidden', true);
-                    document.getElementById('btnsNuevoMovimiento').removeAttribute('hidden');
+            if (!this.ValidarFormularioMovimiento())
+                continuar = false;
 
-                    this.MostrarAlerta(true);
-                } else
+            if (continuar) {
+                document.getElementById('cargando').removeAttribute('hidden');
+                $.get(`..${this.ApiRuta}ModificarMovimiento?id=${this.SeccionMovimientos.MovimientoSeleccionado}&movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
+                    if (xhr.status == 200) {
+                        this.LimpiarCamposMovimiento();
+
+                        document.getElementById('btnsMovimientoSeleccionado').setAttribute('hidden', true);
+                        document.getElementById('btnsNuevoMovimiento').removeAttribute('hidden');
+
+                        this.MostrarAlerta(true);
+                    } else
+                        this.MostrarAlerta(false);
+                    document.getElementById('cargando').setAttribute('hidden', true);
+                }).fail(() => {
+                    document.getElementById('cargando').setAttribute('hidden', true);
                     this.MostrarAlerta(false);
-                document.getElementById('cargando').setAttribute('hidden', true);
-            }).fail(() => {
-                document.getElementById('cargando').setAttribute('hidden', true);
-                this.MostrarAlerta(false);
-            });
+                });
+            }
         },
 
         BuscarMovimientos() {
@@ -470,12 +508,11 @@
                         document.getElementById('btnBack').setAttribute('hidden', true);
                     break;
             }
-        }
+        },
 
-        //PrintMovimiento() {
-        //    this.Movimiento.Nombre_completo = this.Movimiento.Nombre_completo ? this.Movimiento.Nombre_completo : document.getElementById('Beneficiario').options[document.getElementById('Beneficiario').selectedIndex].text;
-        //    printJS('toPrint', 'html');
-        //},
+        PrintMovimiento() {
+            printJS('toPrint', 'html');
+        },
     },
     filters: {
         FilterUppercase: value => {
