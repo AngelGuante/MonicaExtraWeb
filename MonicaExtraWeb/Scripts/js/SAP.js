@@ -41,6 +41,7 @@
             Tmovimiento: '',
             ES: '',
             Cfiscal: '',
+            abiertas: '',
             fechaDesde: '',
             fechaHasta: ''
         },
@@ -53,7 +54,18 @@
         VentanaCierres: {
             Cierres: [],
             FechaInicial: '',
-            FechaFinal: ''
+            FechaFinal: '',
+
+            PaginatorIndex: 1,
+            PaginatorLastPage: 0,
+
+            VentanaCrearCierreDiario: {
+                FechaInicial: '',
+                FechaFinal: '',
+                SaldoFinal: '',
+                NumeroDeMovimientos: '',
+                MovimientosParaCierre: []
+            }
         }
     },
     created: function () {
@@ -161,6 +173,33 @@
             this.ReestablecerCamposFormularios_Movimientos();
         },
 
+
+        //  VALIDAR QUE LA FECHA NO SEA MAYOR A HOY NI MENOR O IGUAL A UNA FECHA DE UN CUADRE YA CERRADO.
+        FechaValida() {
+            if (new Date(this.Movimiento.Fecha).getTime() > new Date()) {
+                this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'LA FECHA NO PUEDE SER SUPERIOR A LA FECHA ACTUAL.',
+                });
+                return;
+            }
+
+            $.get(`..${this.ApiRuta}FechaUltimoCierre`).done((response, statusText, xhr) => {
+                if (xhr.status == 200) {
+                    if (new Date(this.Movimiento.Fecha).getTime() <= new Date(response.FechaUltimoCierre).getTime()) {
+                        this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'ESTA FECHA YA ESTA CERRADA.',
+                        });
+                    }
+                }
+            });
+
+        },
         //  COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS BASICOS, ESTEN LLENOS.
         ValidarFormularioMovimiento() {
             let returnValue = true;
@@ -251,9 +290,9 @@
             else
                 continar = false;
 
-            if (continar) 
+            if (continar)
                 this.SeccionMovimientos.btnGuardarState = true;
-            else 
+            else
                 this.SeccionMovimientos.btnGuardarState = false;
         },
 
@@ -350,6 +389,7 @@
                 this.Movimiento.TipoMovimiento = response.movimiento.TipoMovimiento;
                 this.Movimiento.DescripcionMovimiento = response.movimiento.DescripcionMovimiento;
                 this.Movimiento.Concepto = response.movimiento.Concepto;
+                this.Movimiento.NumeroCierre = response.movimiento.NumeroCierre;
 
                 if (this.Movimiento.RNC = response.movimiento.Rnc) {
                     this.SeccionMovimientos.chckLlenarDatosFiscales = true;
@@ -369,8 +409,16 @@
 
                     this.SeccionMovimientos.chckLlenarDatosFiscales = false;
                 }
-                document.getElementById('cargando').setAttribute('hidden', true);
-                this.ActivarBotonGuardarFormulariosMovimiento();
+
+                $.get(`..${this.ApiRuta}UltimoCierre`).done(response => {
+                    document.getElementById('cargando').setAttribute('hidden', true);
+                    this.ActivarBotonGuardarFormulariosMovimiento();
+
+                    if (this.Movimiento.NumeroCierre == response.UltimoCierre)
+                        this.SeccionMovimientos.btnGuardarState = false;
+                    else
+                        this.SeccionMovimientos.btnGuardarState = true;
+                });
             });
         },
 
@@ -378,6 +426,8 @@
             document.getElementById('movimientoOpcTmov').setAttribute('hidden', true);
             document.getElementById('movimientoOpcES').setAttribute('hidden', true);
             document.getElementById('movimientoOpcCfiscal').setAttribute('hidden', true);
+            document.getElementById('divFechaDesde').removeAttribute('hidden');
+            document.getElementById('divFechaHasta').removeAttribute('hidden');
             switch (document.getElementById('selectBusquedaMovimiento').value) {
                 case 'tmovimiento':
                     document.getElementById('movimientoOpcTmov').removeAttribute('hidden');
@@ -387,6 +437,10 @@
                     break;
                 case 'cfiscal':
                     document.getElementById('movimientoOpcCfiscal').removeAttribute('hidden');
+                    break;
+                case 'abiertas':
+                    document.getElementById('divFechaDesde').setAttribute('hidden', true);
+                    document.getElementById('divFechaHasta').setAttribute('hidden', true);
                     break;
             }
         },
@@ -433,6 +487,9 @@
                 case 'cfiscal':
                     valor = this.BusquedaMovimiento.Cfiscal;
                     break;
+                case 'abiertas':
+                    valor = this.BusquedaMovimiento.abiertas;
+                    break;
             };
 
             let parametros = {
@@ -449,6 +506,7 @@
         //  DIV QUE MUESTRA LOS CUADRES DE CAJA
         //----------------------------------------------------------
         CuadresCaja(flag) {
+            document.getElementById('cargando').removeAttribute('hidden');
             if (flag) {
                 this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
                 this.VentanaCierres.FechaFinal = new Date().toISOString().slice(0, 10);
@@ -463,9 +521,85 @@
             let paramFechaFinal = this.VentanaCierres.FechaFinal == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaFinal;
             $.get(`..${this.ApiRuta}ObtenerCierresCaja?fechaInicial=${paramFechaInicial}&fechaFinal=${paramFechaFinal}`).done(response => {
                 this.VentanaCierres.Cierres = response.Cierres;
+                document.getElementById('cargando').setAttribute('hidden', true);
+                this.VentanaCierres.PaginatorLastPage = Math.ceil(response.Total / 10);
             });
         },
 
+        CierresCajaPaginatorMovimientos(index) {
+            document.getElementById('cargando').removeAttribute('hidden');
+            $.get(`..${this.ApiRuta}ObtenerCierresCaja`, {
+                fechaInicial: this.VentanaCierres.FechaInicial,
+                fechaFinal: this.VentanaCierres.FechaFinal,
+                index
+            }).done(response => {
+                this.VentanaCierres.PaginatorIndex = index;
+                this.VentanaCierres.Cierres = response.Cierres;
+                this.VentanaCierres.PaginatorLastPage = Math.ceil(response.Total / 10);
+                document.getElementById('cargando').setAttribute('hidden', true);
+            });
+        },
+
+        DetallesMovimientosParaCierreCaja() {
+            document.getElementById('cargando').removeAttribute('hidden');
+            document.getElementById('btnVerMovimientosParaCierre').removeAttribute('hidden');
+            this.VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre = [];
+
+            $.get(`..${this.ApiRuta}ObtnerDatosMovimientosParaCierres`).done(response => {
+                this.VentanaCierres.VentanaCrearCierreDiario.FechaInicial = response.FechaUltimoCierre.substring(0, 10);
+                this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = response.FechaUltimoMovimiento ? response.FechaUltimoMovimiento.substring(0, 10) : new Date().toISOString().substring(0, 10);
+                this.VentanaCierres.VentanaCrearCierreDiario.SaldoFinal = response.Monto ? response.Monto : "0";
+                this.VentanaCierres.VentanaCrearCierreDiario.NumeroDeMovimientos = response.Total;
+
+                document.getElementById('cargando').setAttribute('hidden', true);
+            });
+
+        },
+
+        MovimientosEnCierreActual() {
+            document.getElementById('cargando').removeAttribute('hidden');
+
+            $.get(`..${this.ApiRuta}MovimientosParaCierre`).done(response => {
+                this.VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre = response.Movimientos;
+                document.getElementById('cargando').setAttribute('hidden', true);
+            });
+
+        },
+
+        CerrarCaja() {
+            document.getElementById('cargando').removeAttribute('hidden');
+            Swal.fire({
+                title: 'Desea hacer esta accion? No podra deshacerla despues.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Si',
+                cancelButtonText: 'No'
+            }).then((result) => {
+                if (result.value) {
+                    let cierres = {
+                        "FechaInicial": this.VentanaCierres.VentanaCrearCierreDiario.FechaInicial,
+                        "FechaFinal": this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal,
+                        "SaldoFinal": parseInt(this.VentanaCierres.VentanaCrearCierreDiario.SaldoFinal)
+                    };
+
+                    let cierre = JSON.stringify(cierres);
+
+                    $.get(`..${this.ApiRuta}CerrarCaja`, { cierre }).done(response => {
+
+                        let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
+                        let paramFechaFinal = this.VentanaCierres.FechaFinal == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaFinal;
+                        $.get(`..${this.ApiRuta}ObtenerCierresCaja?fechaInicial=${paramFechaInicial}&fechaFinal=${paramFechaFinal}`).done(response => {
+                            this.VentanaCierres.Cierres = response.Cierres;
+                            document.getElementById('cargando').setAttribute('hidden', true);
+                        });
+                    });
+                }
+                else
+                    document.getElementById('cargando').setAttribute('hidden', true);
+            });
+        },
         //  UTILS
         //----------------------------------------------------------
         MostrarAlerta(flag) {
