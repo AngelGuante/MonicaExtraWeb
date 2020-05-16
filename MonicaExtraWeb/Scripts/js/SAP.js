@@ -14,9 +14,11 @@
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
 
+        // DIV EMPRESA
         Empresas: [],
         EmpresaSeleccionadaInstancia: {},
 
+        //  DIV LISTADO DE MOVIMIENTOS
         Movimientos: [],
         Movimiento: {
             Fecha: '',
@@ -33,11 +35,14 @@
             Neto: '',
             Itebis: ''
         },
+
+        //  DIV CRUD MOVIMIENTOS
+        MovimientosCrud: [],
         Usuarios: [],
         TiposMovimientos: [],
         ClasificacionesFiscales: [],
         BusquedaMovimiento: {
-            Opcion: 'todo',
+            Opcion: 'abiertas',
             Tmovimiento: '',
             ES: '',
             Cfiscal: '',
@@ -48,9 +53,11 @@
         SeccionMovimientos: {
             movimientoSeleccionado: 0,
             btnGuardarState: false,
-            chckLlenarDatosFiscales: false
+            chckLlenarDatosFiscales: false,
+            NumeroCierre: 0
         },
 
+        //  DIV CIERRES DE CAJA
         VentanaCierres: {
             Cierres: [],
             FechaInicial: '',
@@ -58,6 +65,11 @@
 
             PaginatorIndex: 1,
             PaginatorLastPage: 0,
+
+            CierreSeleccionado: {
+
+            },
+            MovimientosDeCierre: [],
 
             VentanaCrearCierreDiario: {
                 FechaInicial: '',
@@ -103,6 +115,7 @@
 
             this.Navegacion[0] = this.Navegacion[0] + 1;
             $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
+                console.log(response);
                 this.Movimientos = response.movimientos;
                 this.PaginatorLastPage = Math.ceil(response.total / 10);
                 document.getElementById('cargando').setAttribute('hidden', true);
@@ -127,12 +140,13 @@
             document.getElementById('btnHome').removeAttribute('hidden');
             this.Navegacion[0] = this.Navegacion[0] + 1;
 
-            //  LLENAR LOS CAMPOS DE ESTA VENTANA:
+            //  LLENAR LOS CAMPOS DE ESTA VENTANA: 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
-            $.get(`..${this.ApiRuta}ModuleMovimientosCajaCRUD`).done(response => {
+            $.get(`..${this.ApiRuta}DatosMovimientosCrud`, { flag: 'todo' }).done(response => {
                 this.Usuarios = response.usuarios;
                 this.TiposMovimientos = response.tiposMovimientos;
                 this.ClasificacionesFiscales = response.clasificacionFiscal;
+                this.MovimientosCrud = response.movimientos;
                 document.getElementById('cargando').setAttribute('hidden', true);
             });
 
@@ -173,7 +187,6 @@
             this.ReestablecerCamposFormularios_Movimientos();
         },
 
-
         //  VALIDAR QUE LA FECHA NO SEA MAYOR A HOY NI MENOR O IGUAL A UNA FECHA DE UN CUADRE YA CERRADO.
         FechaValida() {
             if (new Date(this.Movimiento.Fecha).getTime() > new Date()) {
@@ -200,6 +213,7 @@
             });
 
         },
+
         //  COMPROBAR QUE TODOS LOS CAMPOS DE EL CARD DE LOS DATOS BASICOS, ESTEN LLENOS.
         ValidarFormularioMovimiento() {
             let returnValue = true;
@@ -290,8 +304,12 @@
             else
                 continar = false;
 
-            if (continar)
-                this.SeccionMovimientos.btnGuardarState = true;
+            if (continar) {
+                if (this.Movimiento.NumeroCierre == this.SeccionMovimientos.NumeroCierre)
+                    this.SeccionMovimientos.btnGuardarState = true;
+                else
+                    this.SeccionMovimientos.btnGuardarState = false;
+            }
             else
                 this.SeccionMovimientos.btnGuardarState = false;
         },
@@ -310,10 +328,11 @@
             }
         },
 
-        LimpiarCamposMovimiento(flag) {
+        LimpiarCamposMovimiento(flag, recargarLista) {
             this.SeccionMovimientos.MovimientoSeleccionado = 0;
             this.ReestablecerCamposFormularios_Movimientos(true);
             this.SeccionMovimientos.btnGuardarState = false;
+            this.SeccionMovimientos.NumeroCierre = 0;
 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
             this.Movimiento.Beneficiario = '';
@@ -329,10 +348,12 @@
             document.getElementById('invalidInputRnc').setAttribute('hidden', true);
             document.getElementById('invalidInputNcf').setAttribute('hidden', true);
 
-            this.Movimientos = [];
-            $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
-                this.Movimientos = response.movimientos;
-            });
+            if (recargarLista) {
+                this.MovimientosCrud = [];
+                $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
+                    this.MovimientosCrud = response.movimientos;
+                });
+            }
 
             this.SeccionMovimientos.chckLlenarDatosFiscales = false;
 
@@ -372,7 +393,7 @@
         },
 
         MovimientoSeleccionado(id) {
-            this.LimpiarCamposMovimiento();
+            this.LimpiarCamposMovimiento(recargarLista = true);
             document.getElementById('cargando').removeAttribute('hidden');
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
@@ -414,10 +435,12 @@
                     document.getElementById('cargando').setAttribute('hidden', true);
                     this.ActivarBotonGuardarFormulariosMovimiento();
 
-                    if (this.Movimiento.NumeroCierre == response.UltimoCierre)
-                        this.SeccionMovimientos.btnGuardarState = false;
-                    else
+                    this.SeccionMovimientos.NumeroCierre = (parseInt(response.UltimoCierre) + 1);
+
+                    if (this.Movimiento.NumeroCierre == this.SeccionMovimientos.NumeroCierre)
                         this.SeccionMovimientos.btnGuardarState = true;
+                    else
+                        this.SeccionMovimientos.btnGuardarState = false;
                 });
             });
         },
@@ -496,9 +519,9 @@
                 opcion, valor, fechaDesde, fechaHasta
             };
 
-            this.Movimientos = [];
-            $.get(`..${this.ApiRuta}BuscarMovimientos?parametros=${JSON.stringify(parametros)}`).done(response => {
-                this.Movimientos = response.movimientos;
+            this.MovimientosCrud = [];
+            $.get(`..${this.ApiRuta}DatosMovimientosCrud?parametros=${JSON.stringify(parametros)}`).done(response => {
+                this.MovimientosCrud = response.movimientos;
                 document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
@@ -556,12 +579,29 @@
 
         },
 
-        MovimientosEnCierreActual() {
+        MovimientosEnCierre(idCierre) {
             document.getElementById('cargando').removeAttribute('hidden');
 
-            $.get(`..${this.ApiRuta}MovimientosParaCierre`).done(response => {
-                this.VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre = response.Movimientos;
-                document.getElementById('cargando').setAttribute('hidden', true);
+            $.get(`..${this.ApiRuta}MovimientosParaCierre`, { idCierre }).done(response => {
+                if (idCierre) {
+                    let cierreSeleccionado = this.VentanaCierres.Cierres.find(e => { return e.NumeroCierre == idCierre });
+                    this.VentanaCierres.MovimientosDeCierre = response.Movimientos;
+                    this.VentanaCierres.CierreSeleccionado = {
+                        FechaFinal: cierreSeleccionado.FechaFinal,
+                        FechaInicial: cierreSeleccionado.FechaInicial,
+                        NumeroCierre: cierreSeleccionado.NumeroCierre,
+                        SaldoFinal: cierreSeleccionado.SaldoFinal
+                    };
+
+                    setTimeout(() => {
+                        printJS('toPrintCierre', 'html');
+                        document.getElementById('cargando').setAttribute('hidden', true);
+                    }, 2000);
+                }
+                else {
+                    this.VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre = response.Movimientos;
+                    document.getElementById('cargando').setAttribute('hidden', true);
+                }
             });
 
         },
