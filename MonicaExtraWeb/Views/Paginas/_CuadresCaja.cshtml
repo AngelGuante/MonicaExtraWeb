@@ -1,0 +1,302 @@
+﻿<div id="CuadresDeCajaCRUD" style="margin-top:8px;" hidden>
+    <button type="button" v-on:click="DetallesMovimientosParaCierreCaja()" class="btn btn-info Sombra" data-toggle="modal" data-target=".bd-example-modal-lg"> <i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i>Crear cierre </button>
+
+    @*  MODAL PARA HACER CUADRES DIARIOS*@
+    <div class="modal fade bd-example-modal-lg" id="modalCierreCaja" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="p-5">
+
+                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalCierreCaja').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+
+                    <h1>CREAR CIERRE DE CAJA</h1>
+
+                    <hr />
+
+                    <div class="row">
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label for="fechaUltimoCierre">Fecha Inicial</label>
+                                <input id="fechaUltimoCierre" type="date" style="width:100%" v-model="VentanaCierres.VentanaCrearCierreDiario.FechaInicial" class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-sm">
+                            <div class="form-group">
+                                <label for="fechaEmicion">Fecha Final</label>
+                                <input type="date" style="width:100%" v-model="VentanaCierres.VentanaCrearCierreDiario.FechaFinal" class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        @*<a class="btn btn-light" style="text-align:center; vertical-align:central" v-on:click="CuadresCaja(0)"><i class="material-icons" style="margin-top:80%;">search</i></a>*@
+                    </div>
+
+                    <div class="card" style="margin-top:10px;">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <h5 class="card-title">Saldo Final:</h5>
+                                    <p class="card-text"><strong>{{VentanaCierres.VentanaCrearCierreDiario.SaldoFinal}}</strong></p>
+                                </div>
+                                <div class="col-sm">
+                                    <h5 class="card-title">Numero de Movimientos:</h5>
+                                    <p class="card-text"><strong>{{VentanaCierres.VentanaCrearCierreDiario.NumeroDeMovimientos}}</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="button" class="btn btn-danger" style="width:100%;" v-on:click="CerrarCaja()"> <i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i> Cerrar Caja</button>
+                    </div>
+
+                    <hr />
+
+                    <button id="btnVerMovimientosParaCierre" v-on:click="MovimientosEnCierre()" onclick="this.setAttribute('hidden', true);" type="button" class="btn btn-info" style="width:100%;">
+                        Ver Todos Los Movimientos De Esta Fecha <br />
+                        <i class="material-icons">arrow_downward</i>
+                    </button>
+
+                    <hr />
+
+                    <div id="todosMovimientosParaCierre" class="Tables" v-if="VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Beneficiario</th>
+                                    <th scope="col">Concepto</th>
+                                    <th scope="col">Monto</th>
+                                    <th scope="col">Fecha</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="movimiento in VentanaCierres.VentanaCrearCierreDiario.MovimientosParaCierre">
+                                    <td>{{movimiento.nombre_completo}}</td>
+                                    <td>{{movimiento.Concepto}}</td>
+                                    <td>{{movimiento.Monto}}</td>
+                                    <td>{{movimiento.Fecha}}</td>
+                                </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr />
+
+    <div class="card border-info mb-3 mt-2 Sombra">
+        <div class="card-body text-info">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label for="fechaEmicion">Fecha Inicial</label>
+                        <input type="date" style="width:100%" v-model="VentanaCierres.FechaInicial" class="form-control">
+                    </div>
+                </div>
+
+                <div class="col-sm">
+                    <div class="form-group">
+                        <label for="fechaEmicion">Fecha Final</label>
+                        <input type="date" style="width:100%" v-model="VentanaCierres.FechaFinal" class="form-control">
+                    </div>
+                </div>
+
+                <a class="btn btn-light" style="text-align:center; vertical-align:central" v-on:click="CuadresCaja(0)"><i class="material-icons" style="margin-top:80%;">search</i></a>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-outline-info Sombra" style="width:100%;" type="button" onclick="printJS('toPrintCierres', 'html');"><i class="material-icons" style="vertical-align:bottom">print</i></button>
+
+    <div class="Tables">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th style="text-align:center;" scope="col">#</th>
+                    <th scope="col">Fehca Inicial</th>
+                    <th scope="col">Fecha Final</th>
+                    <th style="text-align:center;" scope="col">Saldo Final</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="element in VentanaCierres.Cierres">
+                    <td style="text-align:center;"><button class="btn btn-outline-info Sombra" type="button" v-on:click="MovimientosEnCierre(element.NumeroCierre)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
+                    <td style="text-align:center;">{{element.NumeroCierre}}</td>
+                    <td>{{element.FechaInicial}}</td>
+                    <td>{{element.FechaFinal}}</td>
+                    <td style="text-align:center;">{{element.SaldoFinal}}</td>
+                </tr>
+        </table>
+
+        <hr />
+
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+                <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
+                    <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(1)"><<</a>
+                </li>
+                <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
+                    <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex - 1)"><</a>
+                </li>
+                <li class="page-item disabled">
+                    <a class="page-link">{{VentanaCierres.PaginatorIndex}}</a>
+                </li>
+                <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
+                    <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex + 1)">></a>
+                </li>
+                <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
+                    <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorLastPage)">>></a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    @* -- *@
+
+    <div id="divPrint" hidden>
+        <div id="toPrint">
+            <div>
+                <hr />
+                <p style="margin:0; font-weight:600; font-size:x-large;">{{EmpresaSeleccionadaInstancia.Nombre_empresa | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion1 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion2 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion3 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:x-small;">CONTACTO: {{EmpresaSeleccionadaInstancia.Telefono1 | FilterUppercase }}</p>
+                <hr />
+            </div>
+            <p style="text-align:center; font-weight:600; font-size:large; text-decoration: underline;">MOVIMIENTO</p>
+
+            <div style="border-style: solid; border-width: 1px 1px; border-radius: 5px; padding:5px 10px; width: 600px; margin: auto;">
+                <div>
+                    <hr />
+                    <label>DATOS BASICOS</label>
+                    <hr />
+                    <p>Emision: {{Movimiento.Fecha | FilterUppercase }}</p>
+                    <div style="margin:0px 30px;">
+                        <p>Beneficiario: {{Movimiento.Nombre_completo | FilterUppercase }}</p>
+                        <p>Tipo de Movimiento: {{Movimiento.DescripcionMovimiento | FilterUppercase }}</p>
+                        <p style="padding-bottom:0;">Concepto:</p>
+                        <p style="padding-top:0;">{{Movimiento.Concepto | FilterUppercase }}</p>
+                    </div>
+                </div>
+
+                <hr />
+
+                <div>
+                    <label>DATOS FISCALES</label>
+
+                    <hr />
+
+                    <div style="margin:0px 30px;" v-if="Movimiento.RNC">
+                        <div style="margin-bottom:0">
+                            <p style="display:inline-block; width:300px;">RNC: {{Movimiento.RNC | FilterUppercase }}</p>
+                            <p style="display:inline-block">NCF:{{Movimiento.NCF | FilterUppercase }}</p>
+                        </div>
+
+                        <div style="margin-bottom:0">
+                            <p style="display:inline-block; width:300px;">Valor sin ITbs: {{Movimiento.Neto | FilterUppercase }}</p>
+                            <p style="display:inline-block;">ITBIs facturado: {{Movimiento.Itebis | FilterUppercase }}</p>
+                        </div>
+
+                        <p>CLASIFICACION FISCAL: {{Movimiento.DescripcionClasfFiscal | FilterUppercase }}</p>
+                    </div>
+
+                    <div v-else style="text-align:center;">
+                        <label>- ESTE MOVIMIENTO NO TIENE DATOS FISCALES -</label>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="toPrintCierres">
+            <div>
+                <hr />
+                <p style="margin:0; font-weight:600; font-size:x-large;">{{EmpresaSeleccionadaInstancia.Nombre_empresa | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion1 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion2 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion3 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:x-small;">CONTACTO: {{EmpresaSeleccionadaInstancia.Telefono1 | FilterUppercase }}</p>
+                <hr />
+            </div>
+
+            <div>
+                <table style="border: 1px solid black; margin: auto;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid;">
+                            <th style="text-align:center; width:200px" scope="col">#</th>
+                            <th style="width:200px" scope="col">Fehca Inicial</th>
+                            <th style="width:200px" scope="col">Fecha Final</th>
+                            <th style="width:200px; text-align:center;" scope="col">Saldo Final</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="element in VentanaCierres.Cierres" style="height:50px; border-bottom: 1px solid;">
+                            <td style="border-right: 1px solid; text-align:center;">{{element.NumeroCierre}}</td>
+                            <td style="border-right: 1px solid;">{{element.FechaInicial}}</td>
+                            <td style="border-right: 1px solid;">{{element.FechaFinal}}</td>
+                            <td style="text-align:center; border-right: 1px solid;">{{element.SaldoFinal}}</td>
+                        </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="toPrintCierre">
+            <div>
+                <hr />
+                <p style="margin:0; font-weight:600; font-size:x-large;">{{EmpresaSeleccionadaInstancia.Nombre_empresa | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion1 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion2 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:small;">{{EmpresaSeleccionadaInstancia.direccion3 | FilterUppercase }}</p>
+                <p style="margin:0; font-weight:600; font-size:x-small;">CONTACTO: {{EmpresaSeleccionadaInstancia.Telefono1 | FilterUppercase }}</p>
+                <hr />
+            </div>
+
+            <div style="text-align:center;">
+                <hr />
+
+                <div>
+                    <table style="border: 1px solid black; margin: auto;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid;">
+                                <th style="border-bottom: 1px solid; text-align:center; width:200px" scope="col">#</th>
+                                <th style="border-bottom: 1px solid; width:200px" scope="col">Fehca Inicial</th>
+                                <th style="border-bottom: 1px solid; width:200px" scope="col">Fecha Final</th>
+                                <th style="border-bottom: 1px solid; width:200px; text-align:center;" scope="col">Saldo Final</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="height:50px; border-bottom: 1px solid;">
+                                <td style="border-right: 1px solid; text-align:center;">{{VentanaCierres.CierreSeleccionado.NumeroCierre}}</td>
+                                <td style="border-right: 1px solid;">{{VentanaCierres.CierreSeleccionado.FechaInicial}}</td>
+                                <td style="border-right: 1px solid;">{{VentanaCierres.CierreSeleccionado.FechaFinal}}</td>
+                                <td style="text-align:center;">{{VentanaCierres.CierreSeleccionado.SaldoFinal}}</td>
+                            </tr>
+                    </table>
+                </div>
+
+                <hr />
+
+                <div id="todosMovimientosParaCierre" class="Tables" v-if="VentanaCierres.MovimientosDeCierre">
+                    <table style="margin: auto;">
+                        <thead>
+                            <tr>
+                                <th style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">Beneficiario</th>
+                                <th style="border-right: 1px solid; border-bottom: 1px solid;">Concepto</th>
+                                <th style="border-right: 1px solid; border-bottom: 1px solid;">Monto</th>
+                                <th style="border-right: 1px solid; border-bottom: 1px solid;">Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="movimiento in VentanaCierres.MovimientosDeCierre">
+                                <td style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">{{movimiento.nombre_completo}}</td>
+                                <td style="border-right: 1px solid; border-bottom: 1px solid;">{{movimiento.Concepto}}</td>
+                                <td style="border-right: 1px solid; border-bottom: 1px solid;">{{movimiento.Monto}}</td>
+                                <td style="border-right: 1px solid; border-bottom: 1px solid;">{{movimiento.Fecha}}</td>
+                            </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

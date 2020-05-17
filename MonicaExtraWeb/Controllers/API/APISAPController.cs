@@ -57,30 +57,6 @@ namespace MonicaExtraWeb.Controllers.API
 
         #region MOVIMIENTOS
         /// <summary>
-        /// Obtener un listado de todos los movimientos hechos de manera decendente.
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("ObtenerListadoMovimientos")]
-        public IHttpActionResult ObtenerListadoMovimientos(int index = 1, int take = 10)
-        {
-            IEnumerable<MovimientosCajas> Movimientos;
-            var query = new StringBuilder();
-
-            query.Append(Singuelton_QueryBasicoMovimientos().ToString());
-            query.Append("ORDER BY NumeroTransacion DESC ");
-            query.Append($"OFFSET {(index - 1) * take} ROWS FETCH NEXT {take} ROWS ONLY");
-
-            Movimientos = Conn.Query<MovimientosCajas>(query.ToString());
-
-            return Json(new
-            {
-                movimientos = Movimientos,
-                total = Conn.ExecuteScalar<int>($"SELECT COUNT(*) FROM DB_A5E94C_monica10global.monicaextra.movimientocaja WHERE Estatus = 1")
-            });
-        }
-
-        /// <summary>
         /// Guarda un movimiento.
         /// </summary>
         /// <returns></returns>
@@ -140,19 +116,21 @@ namespace MonicaExtraWeb.Controllers.API
             });
 
         /// <summary>
-        /// 
+        /// Buscar movimientos por un parametros
         /// </summary>
         /// <param name="parametros"></param>
         /// <param name="flag"></param>
         /// <returns></returns>
         [HttpGet]
         [Route("DatosMovimientosCrud")]
-        public IHttpActionResult DatosMovimientosCrud(string parametros = "{\"opcion\":\"abiertas\"}", string flag = "")
+        public IHttpActionResult DatosMovimientosCrud(string parametros = "", string flag = "", bool conFecha = false)
         {
             //  VARIABLES PARA BUSCAR MOVIMIENTOS
             var query = new StringBuilder();
+            var obj = parametros == string.Empty ?
+                new BuscarMovimientosDTO { opcion = "abiertas" } :
+                JsonConvert.DeserializeObject<BuscarMovimientosDTO>(parametros);
             IEnumerable<MovimientosCajas> movimientos;
-            var obj = JsonConvert.DeserializeObject<BuscarMovimientosDTO>(parametros);
 
             //  VARIABLES PARA BUSCAR DATOS GENERALES PARA LA VENTANA
             IEnumerable<Usuarios> usuarios = null;
@@ -170,12 +148,31 @@ namespace MonicaExtraWeb.Controllers.API
 
             #region BUSCAR LOS MOVIMIENTOS.
             query.Append(Singuelton_QueryBasicoMovimientos().ToString());
-            query.Append("  AND Fecha >= @FechaDesde ");
-            query.Append("  AND Fecha <= @FechaHasta AND Estatus = 1 ");
 
-            if (obj.opcion != "todo")
+            if (conFecha)
+            {
+                query.Append("  AND Fecha >= @FechaDesde ");
+                query.Append("  AND Fecha <= @FechaHasta AND Estatus = 1 ");
+            }
+
+            if (obj.opcion == "abiertas")
             {
                 query.Append("AND ");
+                query.Append(" NumeroCierre = ");
+                query.Append("      (SELECT MAX(NumeroCierre) + 1 FROM DB_A5E94C_monica10global.monicaextra.cierrecaja) ");
+            }
+
+            else if (obj.opcion == "busquedaEsp")
+            {
+                query.Append("AND ");
+                query.Append("Concepto LIKE ");
+                query.Append($" '%{obj.valor}%' ");
+            }
+
+            else if (obj.opcion != "todo")
+            {
+                query.Append("AND ");
+
                 switch (obj.opcion)
                 {
                     case "tmovimiento":
@@ -187,17 +184,25 @@ namespace MonicaExtraWeb.Controllers.API
                     case "cfiscal":
                         query.Append("Clasificancf ");
                         break;
-                    case "abiertas":
-                        query.Clear();
-                        query.Append(Singuelton_QueryBasicoMovimientos().ToString());
-                        query.Append("  AND NumeroCierre = ");
-                        query.Append("      (SELECT MAX(NumeroCierre) + 1 FROM DB_A5E94C_monica10global.monicaextra.cierrecaja) ");
+                    case "nroMov":
+                        query.Append("NumeroTransacion ");
+                        break;
+                    case "CargadoA":
+                        query.Append("Beneficiario ");
+                        break;
+                    case "rnc":
+                        query.Append("Rnc ");
+                        break;
+                    case "ncf":
+                        query.Append("Ncf ");
+                        break;
+                    case "NroCierre":
+                        query.Append("NumeroCierre ");
                         break;
                 }
-                if (obj.opcion != string.Empty && obj.opcion != "abiertas")
-                    query.Append(" = @valor ");
-
+                query.Append(" = @valor ");
             }
+
             query.Append(" ORDER BY NumeroTransacion DESC");
 
             movimientos = Conn.Query<MovimientosCajas>(query.ToString(), new

@@ -309,6 +309,12 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\SAP\Index.cshtml" />
+    <Content Include="Views\Componentes\_BotonesNavegacion.cshtml" />
+    <Content Include="Views\Componentes\_LoadingPage.cshtml" />
+    <Content Include="Views\Paginas\_Empresas.cshtml" />
+    <Content Include="Views\Paginas\_Menu.cshtml" />
+    <Content Include="Views\Paginas\_CrudMovimientos.cshtml" />
+    <Content Include="Views\Paginas\_CuadresCaja.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

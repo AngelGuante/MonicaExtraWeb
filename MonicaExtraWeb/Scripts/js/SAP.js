@@ -7,7 +7,6 @@
             1,
             'SeleccionarEmpresa',
             'menu',
-            'ListadoMovimientos',
             'MovimientosCRUD',
             'CuadresDeCajaCRUD'
         ],
@@ -18,8 +17,15 @@
         Empresas: [],
         EmpresaSeleccionadaInstancia: {},
 
-        //  DIV LISTADO DE MOVIMIENTOS
-        Movimientos: [],
+        //  DIV CRUD MOVIMIENTOS
+        VentanaCrudMovimientos: {
+            FormularioTitle: 'Crear Movimiento de Caja',
+
+            divBuscarMovimientos: {
+                checkedBuscarPorFechas: false
+            }
+        },
+
         Movimiento: {
             Fecha: '',
             Beneficiario: '',
@@ -33,17 +39,21 @@
             Clasificancf: '',
             DescripcionClasfFiscal: '',
             Neto: '',
-            Itebis: ''
+            Itebis: '',
+            NumeroCierre: 0
         },
-
-        //  DIV CRUD MOVIMIENTOS
         MovimientosCrud: [],
         Usuarios: [],
         TiposMovimientos: [],
         ClasificacionesFiscales: [],
         BusquedaMovimiento: {
             Opcion: 'abiertas',
-            Tmovimiento: '',
+            inptConcepto: '',
+            inptNroMovimiento: '',
+            cargadoA: '',
+            inptRNC: '',
+            inptNCF: '',
+            inptNroCierre: '',
             ES: '',
             Cfiscal: '',
             abiertas: '',
@@ -105,39 +115,13 @@
             });
         },
 
-        //  DIV DONDE SE MUESTRAN LOS LISTADOS DE MOVIMIENTOS
-        //----------------------------------------------------------
-        ListadoMovimientosCaja() {
-            document.getElementById('cargando').removeAttribute('hidden');
-            document.getElementById('menu').setAttribute('hidden', true);
-            document.getElementById('ListadoMovimientos').removeAttribute('hidden');
-            document.getElementById('btnBack').removeAttribute('hidden');
-
-            this.Navegacion[0] = this.Navegacion[0] + 1;
-            $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
-                console.log(response);
-                this.Movimientos = response.movimientos;
-                this.PaginatorLastPage = Math.ceil(response.total / 10);
-                document.getElementById('cargando').setAttribute('hidden', true);
-            });
-        },
-
-        PaginatorMovimientos(index) {
-            document.getElementById('cargando').removeAttribute('hidden');
-            $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`, { index }).done(response => {
-                this.Movimientos = response.movimientos;
-                this.PaginatorIndex = index;
-                document.getElementById('cargando').setAttribute('hidden', true);
-            });
-        },
-
         //  DIV CRUD MOVIMIENTOS
         //----------------------------------------------------------
         MovimientosCRUD() {
             document.getElementById('cargando').removeAttribute('hidden');
-            document.getElementById('ListadoMovimientos').setAttribute('hidden', true);
+            document.getElementById('menu').setAttribute('hidden', true);
             document.getElementById('MovimientosCRUD').removeAttribute('hidden');
-            document.getElementById('btnHome').removeAttribute('hidden');
+            document.getElementById('btnBack').removeAttribute('hidden');
             this.Navegacion[0] = this.Navegacion[0] + 1;
 
             //  LLENAR LOS CAMPOS DE ESTA VENTANA: 
@@ -147,6 +131,7 @@
                 this.TiposMovimientos = response.tiposMovimientos;
                 this.ClasificacionesFiscales = response.clasificacionFiscal;
                 this.MovimientosCrud = response.movimientos;
+                this.BusquedaMovimiento.cargadoA = response.usuarios;
                 document.getElementById('cargando').setAttribute('hidden', true);
             });
 
@@ -185,6 +170,21 @@
             }
 
             this.ReestablecerCamposFormularios_Movimientos();
+        },
+
+        AgregarValorITBIsCampos() {
+            if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
+                this.Movimiento.Neto = Math.floor(this.Movimiento.Monto - (this.Movimiento.Monto * 0.18));
+                this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto * 0.18);
+                sumaFiscales = this.Movimiento.Neto + this.Movimiento.Itebis;
+
+                if (this.Movimiento.Monto > sumaFiscales)
+                    this.Movimiento.Neto += this.Movimiento.Monto - (this.Movimiento.Neto + this.Movimiento.Itebis);
+            }
+            else {
+                this.Movimiento.Neto = '';
+                this.Movimiento.Itebis = '';
+            }
         },
 
         //  VALIDAR QUE LA FECHA NO SEA MAYOR A HOY NI MENOR O IGUAL A UNA FECHA DE UN CUADRE YA CERRADO.
@@ -239,10 +239,6 @@
                             document.getElementById('inputNcf').style.backgroundColor = '#f5aba6';
                         if (!this.Movimiento.Clasificancf)
                             document.getElementById('selectClsFiscal').style.backgroundColor = '#f5aba6';
-                        if (!this.Movimiento.Neto)
-                            document.getElementById('inputItbis').style.backgroundColor = '#f5aba6';
-                        if (!this.Movimiento.Itebis)
-                            document.getElementById('inputItbiFacturado').style.backgroundColor = '#f5aba6';
                     }
                 }
             }
@@ -281,10 +277,6 @@
                     document.getElementById('inputNcf').style.backgroundColor = colorDefault;
                 if (this.Movimiento.Clasificancf || flag)
                     document.getElementById('selectClsFiscal').style.backgroundColor = colorDefault;
-                if (this.Movimiento.Neto || flag)
-                    document.getElementById('inputItbis').style.backgroundColor = colorDefault;
-                if (this.Movimiento.Itebis || flag)
-                    document.getElementById('inputItbiFacturado').style.backgroundColor = colorDefault;
             }
         },
 
@@ -309,6 +301,7 @@
                     this.SeccionMovimientos.btnGuardarState = true;
                 else
                     this.SeccionMovimientos.btnGuardarState = false;
+                return;
             }
             else
                 this.SeccionMovimientos.btnGuardarState = false;
@@ -332,7 +325,6 @@
             this.SeccionMovimientos.MovimientoSeleccionado = 0;
             this.ReestablecerCamposFormularios_Movimientos(true);
             this.SeccionMovimientos.btnGuardarState = false;
-            this.SeccionMovimientos.NumeroCierre = 0;
 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
             this.Movimiento.Beneficiario = '';
@@ -344,13 +336,14 @@
             this.Movimiento.Clasificancf = '';
             this.Movimiento.Neto = '';
             this.Movimiento.Itebis = '';
+            this.VentanaCrudMovimientos.FormularioTitle = 'Crear Movimiento de Caja';
 
             document.getElementById('invalidInputRnc').setAttribute('hidden', true);
             document.getElementById('invalidInputNcf').setAttribute('hidden', true);
 
             if (recargarLista) {
                 this.MovimientosCrud = [];
-                $.get(`..${this.ApiRuta}ObtenerListadoMovimientos`).done(response => {
+                $.get(`..${this.ApiRuta}DatosMovimientosCrud`).done(response => {
                     this.MovimientosCrud = response.movimientos;
                 });
             }
@@ -395,6 +388,7 @@
         MovimientoSeleccionado(id) {
             this.LimpiarCamposMovimiento(recargarLista = true);
             document.getElementById('cargando').removeAttribute('hidden');
+            this.VentanaCrudMovimientos.FormularioTitle = 'Modificando Movimiento de Caja';
             document.body.scrollTop = 0;
             document.documentElement.scrollTop = 0;
 
@@ -424,7 +418,7 @@
                 else {
                     this.Movimiento.RNC = null;
                     this.Movimiento.NCF = null;
-                    this.Movimiento.Clasificancf = null;
+                    this.Movimiento.Clasificancf = '';
                     this.Movimiento.Neto = null;
                     this.Movimiento.Itebis = null;
 
@@ -446,12 +440,36 @@
         },
 
         SelectBusquedaMovimientoChanged() {
+            this.VentanaCrudMovimientos.divBuscarMovimientos.checkedBuscarPorFechas = true;
             document.getElementById('movimientoOpcTmov').setAttribute('hidden', true);
             document.getElementById('movimientoOpcES').setAttribute('hidden', true);
             document.getElementById('movimientoOpcCfiscal').setAttribute('hidden', true);
-            document.getElementById('divFechaDesde').removeAttribute('hidden');
-            document.getElementById('divFechaHasta').removeAttribute('hidden');
+            document.getElementById('conceptoOpcTmov').setAttribute('hidden', true);
+            document.getElementById('nroMovimientoOpcTmov').setAttribute('hidden', true);
+            document.getElementById('beneficiarioOpcTmov').setAttribute('hidden', true);
+            document.getElementById('rncOpcTmov').setAttribute('hidden', true);
+            document.getElementById('ncfOpcTmov').setAttribute('hidden', true);
+            document.getElementById('nroCierreOpcTmov').setAttribute('hidden', true);
+            this.VentanaCrudMovimientos.divBuscarMovimientos.checkedBuscarPorFechas = true;
             switch (document.getElementById('selectBusquedaMovimiento').value) {
+                case 'CargadoA':
+                    document.getElementById('beneficiarioOpcTmov').removeAttribute('hidden');
+                    break;
+                case 'busquedaEsp':
+                    document.getElementById('conceptoOpcTmov').removeAttribute('hidden');
+                    break;
+                case 'nroMov':
+                    document.getElementById('nroMovimientoOpcTmov').removeAttribute('hidden');
+                    break;
+                case 'rnc':
+                    document.getElementById('rncOpcTmov').removeAttribute('hidden');
+                    break;
+                case 'ncf':
+                    document.getElementById('ncfOpcTmov').removeAttribute('hidden');
+                    break;
+                case 'NroCierre':
+                    document.getElementById('nroCierreOpcTmov').removeAttribute('hidden');
+                    break;
                 case 'tmovimiento':
                     document.getElementById('movimientoOpcTmov').removeAttribute('hidden');
                     break;
@@ -462,8 +480,7 @@
                     document.getElementById('movimientoOpcCfiscal').removeAttribute('hidden');
                     break;
                 case 'abiertas':
-                    document.getElementById('divFechaDesde').setAttribute('hidden', true);
-                    document.getElementById('divFechaHasta').setAttribute('hidden', true);
+                    this.VentanaCrudMovimientos.divBuscarMovimientos.checkedBuscarPorFechas = false;
                     break;
             }
         },
@@ -500,7 +517,31 @@
             let fechaHasta = this.BusquedaMovimiento.fechaHasta;
             let opcion = this.BusquedaMovimiento.Opcion;
             let valor = '';
+            let parametros = {};
+            let conFecha = false;
+
             switch (opcion) {
+                case 'CargadoA':
+                    valor = this.BusquedaMovimiento.cargadoA;
+                    break;
+                case 'busquedaEsp':
+                    valor = this.BusquedaMovimiento.inptConcepto;
+                    break;
+                case 'nroMov':
+                    valor = this.BusquedaMovimiento.inptNroMovimiento;
+                    break;
+                case 'rnc':
+                    valor = this.BusquedaMovimiento.inptRNC;
+                    break;
+                case 'ncf':
+                    valor = this.BusquedaMovimiento.inptNCF;
+                    break;
+                case 'NroCierre':
+                    valor = this.BusquedaMovimiento.inptNroCierre;
+                    break;
+                case 'abiertas':
+                    valor = this.BusquedaMovimiento.Tmovimiento;
+                    break;
                 case 'tmovimiento':
                     valor = this.BusquedaMovimiento.Tmovimiento;
                     break;
@@ -515,12 +556,15 @@
                     break;
             };
 
-            let parametros = {
+            parametros = {
                 opcion, valor, fechaDesde, fechaHasta
             };
 
+            if (this.VentanaCrudMovimientos.divBuscarMovimientos.checkedBuscarPorFechas)
+                conFecha = true;
+
             this.MovimientosCrud = [];
-            $.get(`..${this.ApiRuta}DatosMovimientosCrud?parametros=${JSON.stringify(parametros)}`).done(response => {
+            $.get(`..${this.ApiRuta}DatosMovimientosCrud?parametros=${JSON.stringify(parametros)}&conFecha=${conFecha}`).done(response => {
                 this.MovimientosCrud = response.movimientos;
                 document.getElementById('cargando').setAttribute('hidden', true);
             });
@@ -536,6 +580,7 @@
                 document.getElementById('cargando').removeAttribute('hidden');
                 document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
                 document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
+                document.getElementById('btnHome').removeAttribute('hidden');
                 document.getElementById('cargando').setAttribute('hidden', true);
                 this.Navegacion[0] = this.Navegacion[0] + 1;
             }
@@ -570,7 +615,8 @@
 
             $.get(`..${this.ApiRuta}ObtnerDatosMovimientosParaCierres`).done(response => {
                 this.VentanaCierres.VentanaCrearCierreDiario.FechaInicial = response.FechaUltimoCierre.substring(0, 10);
-                this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = response.FechaUltimoMovimiento ? response.FechaUltimoMovimiento.substring(0, 10) : new Date().toISOString().substring(0, 10);
+                this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = new Date().toISOString().substring(0, 10);
+                //this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = response.FechaUltimoMovimiento ? response.FechaUltimoMovimiento.substring(0, 10) : new Date().toISOString().substring(0, 10);
                 this.VentanaCierres.VentanaCrearCierreDiario.SaldoFinal = response.Monto ? response.Monto : "0";
                 this.VentanaCierres.VentanaCrearCierreDiario.NumeroDeMovimientos = response.Total;
 
@@ -640,6 +686,7 @@
                     document.getElementById('cargando').setAttribute('hidden', true);
             });
         },
+
         //  UTILS
         //----------------------------------------------------------
         MostrarAlerta(flag) {
