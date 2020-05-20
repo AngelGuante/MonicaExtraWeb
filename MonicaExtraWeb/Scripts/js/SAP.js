@@ -174,8 +174,11 @@
 
         AgregarValorITBIsCampos() {
             if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
-                this.Movimiento.Neto = Math.floor(this.Movimiento.Monto - (this.Movimiento.Monto * 0.18));
-                this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto * 0.18);
+                //this.Movimiento.Neto = Math.floor(this.Movimiento.Monto - (this.Movimiento.Monto * 0.18));
+                this.Movimiento.Neto = Math.floor(this.Movimiento.Monto / 1.18);
+                //this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto * 0.18);
+                this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto - this.Movimiento.Neto);
+
                 sumaFiscales = this.Movimiento.Neto + this.Movimiento.Itebis;
 
                 if (this.Movimiento.Monto > sumaFiscales)
@@ -239,6 +242,10 @@
                             document.getElementById('inputNcf').style.backgroundColor = '#f5aba6';
                         if (!this.Movimiento.Clasificancf)
                             document.getElementById('selectClsFiscal').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.Neto)
+                            document.getElementById('inputItbis').style.backgroundColor = '#f5aba6';
+                        if (!this.Movimiento.Itebis)
+                            document.getElementById('inputItbiFacturado').style.backgroundColor = '#f5aba6';
                     }
                 }
             }
@@ -277,6 +284,10 @@
                     document.getElementById('inputNcf').style.backgroundColor = colorDefault;
                 if (this.Movimiento.Clasificancf || flag)
                     document.getElementById('selectClsFiscal').style.backgroundColor = colorDefault;
+                if (this.Movimiento.Neto || flag)
+                    document.getElementById('inputItbis').style.backgroundColor = colorDefault;
+                if (this.Movimiento.Itebis || flag)
+                    document.getElementById('inputItbiFacturado').style.backgroundColor = colorDefault;
             }
         },
 
@@ -385,7 +396,7 @@
             return false;
         },
 
-        MovimientoSeleccionado(id) {
+        MovimientoSeleccionado(id, print) {
             this.LimpiarCamposMovimiento(recargarLista = true);
             document.getElementById('cargando').removeAttribute('hidden');
             this.VentanaCrudMovimientos.FormularioTitle = 'Modificando Movimiento de Caja';
@@ -423,6 +434,13 @@
                     this.Movimiento.Itebis = null;
 
                     this.SeccionMovimientos.chckLlenarDatosFiscales = false;
+                }
+
+                if (print) {
+                    setTimeout(() => {
+                        printJS('toPrint', 'html');
+                    },
+                    1000);
                 }
 
                 $.get(`..${this.ApiRuta}UltimoCierre`).done(response => {
@@ -731,7 +749,11 @@
             }
         },
 
-        PrintMovimiento() {
+        PrintMovimiento(idMovimiento) {
+            if (idMovimiento) {
+                this.MovimientoSeleccionado(idMovimiento, true);
+                return;
+            }
             printJS('toPrint', 'html');
         },
     },

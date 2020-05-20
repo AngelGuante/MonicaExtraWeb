@@ -300,7 +300,6 @@ namespace MonicaExtraWeb.Controllers.API
 
                 if (fechaFinal != default)
                     query.Append($"FechaFinal <= '{fechaFinal}' ");
-
             }
 
             //  OBTENER EL TOTAL DE REGISTROS.

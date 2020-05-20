@@ -111,20 +111,20 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col"></th>
                     <th style="text-align:center;" scope="col">#</th>
                     <th scope="col">Fehca Inicial</th>
                     <th scope="col">Fecha Final</th>
                     <th style="text-align:center;" scope="col">Saldo Final</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="element in VentanaCierres.Cierres">
-                    <td style="text-align:center;"><button class="btn btn-outline-info Sombra" type="button" v-on:click="MovimientosEnCierre(element.NumeroCierre)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
                     <td style="text-align:center;">{{element.NumeroCierre}}</td>
                     <td>{{element.FechaInicial}}</td>
                     <td>{{element.FechaFinal}}</td>
                     <td style="text-align:center;">{{element.SaldoFinal}}</td>
+                    <td style="text-align:center;"><button class="btn btn-outline-info Sombra" type="button" v-on:click="MovimientosEnCierre(element.NumeroCierre)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
                 </tr>
         </table>
 

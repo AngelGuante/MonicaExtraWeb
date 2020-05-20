@@ -15,7 +15,7 @@
             <div class="row">
                 <div class="col-lg">
                     <div id="DatosBasicos" class="card bg-light">
-                        <h5 class="card-header"> <strong>Dato Básicos</strong> </h5>
+                        <h5 class="card-header"> <strong>Datos Básicos</strong> </h5>
 
                         <div class="card-body">
                             <div class="row">
@@ -60,7 +60,7 @@
 
                 <div class="col-lg">
                     <div id="DatoFiscales" class="card bg-light">
-                        <h5 class="card-header"> <strong>Dato Físcales</strong> </h5>
+                        <h5 class="card-header"> <strong>Datos Físcales</strong> </h5>
 
                         <div class="card-body">
                             <div class="row">
@@ -92,12 +92,12 @@
                             <div class="row">
                                 <div class="form-group col-sm">
                                     <label for="inputItbis">Valor sin ITBIS</label>
-                                    <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.Neto" disabled placeholder="ITBIs" />
+                                    <input class="form-control" id="inputItbis" type="number" v-model="Movimiento.Neto" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                 </div>
 
                                 <div class="form-group col-sm">
                                     <label for="inputItbiFacturado">ITBIS facturado</label>
-                                    <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.Itebis" disabled placeholder="ITBIs" />
+                                    <input class="form-control" id="inputItbiFacturado" type="number" v-model="Movimiento.Itebis" v-bind:disabled="!SeccionMovimientos.chckLlenarDatosFiscales" placeholder="ITBIs" />
                                 </div>
                             </div>
                         </div>
@@ -112,7 +112,7 @@
                 <button id="btnClean" type="button" class="btn btn-secondary TextColor Sombra" v-on:click="LimpiarCamposMovimiento()"><i class="material-icons" style="vertical-align:bottom">remove</i>Limpiar Campos</button>
             </div>
             <div id="btnsMovimientoSeleccionado" hidden>
-                <button class="btn btn-outline-info Sombra" type="button" onclick="printJS('toPrint', 'html');"><i class="material-icons" style="vertical-align:bottom">print</i></button>
+                @*<button class="btn btn-outline-info Sombra" type="button" onclick="printJS('toPrint', 'html');"><i class="material-icons" style="vertical-align:bottom">print</i></button>*@
                 <button id="btnModificarForm" type="button" class="btn btn-info TextColor Sombra" v-bind:disabled="!SeccionMovimientos.btnGuardarState" v-on:click="ModificarMovimiento()"><i class="material-icons" style="vertical-align:bottom">update</i> Modificar</button>
                 <button id="btnCancelModifyForm" type="button" class="btn btn-danger TextColor Sombra" v-on:click="LimpiarCamposMovimiento(1)"><i class="material-icons" style="vertical-align:bottom">cancel</i> Cancelar</button>
             </div>
@@ -135,9 +135,9 @@
                                 <option value="NroCierre">Número de Cierre</option>
                                 <option value="abiertas">Transacciones Abiertas</option>
                                 <option value="tmovimiento">Tipo de Movimiento</option>
-                                <option value="es">ENTRADA/SALIDA</option>
+                                <option value="es">ENTRADAS/SALIDAS</option>
                                 <option value="cfiscal">Clasificacion Fiscal</option>
-                                <option value="todo">TODO</option>
+                                <option value="todo">TODOS</option>
                             </select>
                             <div>
                                 <input id="buscarPorFechasMovimientosCheck" type="checkbox" v-model="VentanaCrudMovimientos.divBuscarMovimientos.checkedBuscarPorFechas" />
@@ -227,6 +227,7 @@
                             <th scope="col">Concepto</th>
                             <th scope="col">Monto</th>
                             <th scope="col">Fecha</th>
+                            <th scope="col"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -236,6 +237,7 @@
                             <td>{{movimiento.Concepto}}</td>
                             <td>{{movimiento.Monto}}</td>
                             <td>{{movimiento.Fecha}}</td>
+                            <td><button class="btn btn-outline-info Sombra" type="button" v-on:click="PrintMovimiento(movimiento.NumeroTransacion)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
                         </tr>
                 </table>
             </div>
