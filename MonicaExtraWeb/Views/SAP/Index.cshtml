@@ -9,6 +9,10 @@
 
     @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
 
+    @*-------------------------------------------------------------------*@
+    @*  MOVIMIENTOS DE CAJA*@
+    @*-------------------------------------------------------------------*@
+
     @*  DIV PARA SELECCIONAR UNA EMPRESA *@
     @Html.Partial("~/Views/Paginas/_Empresas.cshtml")
 
@@ -20,7 +24,16 @@
 
     @*  DIV QUE MUESTRA LOS CUADRES DE CAJA *@
     @Html.Partial("~/Views/Paginas/_CuadresCaja.cshtml")
-    
+
+    @*-------------------------------------------------------------------*@
+    @*  REPORTES*@
+    @*-------------------------------------------------------------------*@
+
+    @*  DIV QUE MUESTRA LA SELECCION DE EL SOURCE PARA HACER LOS REPORTES *@
+    @Html.Partial("~/Views/Paginas/_menuSeleccionSourceReportes.cshtml")
+
+    @*  DIV QUE MUESTRA LA SELECCION DE EL LOS REPORTES *@
+    @Html.Partial("~/Views/Paginas/_menuSeleccionReporte.cshtml")
 </div>
 
 @section scripts{

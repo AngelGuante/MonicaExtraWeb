@@ -2,13 +2,10 @@
     el: '#app',
     data: {
         ApiRuta: '/API/ASPISAP/',
+        ApiRuta_ws: '/API/Server_wsActions/',
 
         Navegacion: [
-            1,
-            'SeleccionarEmpresa',
-            'menu',
-            'MovimientosCRUD',
-            'CuadresDeCajaCRUD'
+            { anterior: '', actual: 'SeleccionarEmpresa' }
         ],
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
@@ -105,9 +102,7 @@
                 if (xhr.status == 200) {
                     this.EmpresaSeleccionadaInstancia = respWonse.Empresa;
 
-                    document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
-                    document.getElementById('menu').removeAttribute('hidden');
-                    this.Navegacion[0] = this.Navegacion[0] + 1;
+                    this.NavigationBehaviour(actual = 'menu');
                 }
                 else if (xhr.status == 204)
                     alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
@@ -118,11 +113,7 @@
         //  DIV CRUD MOVIMIENTOS
         //----------------------------------------------------------
         MovimientosCRUD() {
-            document.getElementById('cargando').removeAttribute('hidden');
-            document.getElementById('menu').setAttribute('hidden', true);
-            document.getElementById('MovimientosCRUD').removeAttribute('hidden');
-            document.getElementById('btnBack').removeAttribute('hidden');
-            this.Navegacion[0] = this.Navegacion[0] + 1;
+            this.NavigationBehaviour(actual = 'MovimientosCRUD');
 
             //  LLENAR LOS CAMPOS DE ESTA VENTANA: 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
@@ -174,9 +165,7 @@
 
         AgregarValorITBIsCampos() {
             if (this.SeccionMovimientos.chckLlenarDatosFiscales) {
-                //this.Movimiento.Neto = Math.floor(this.Movimiento.Monto - (this.Movimiento.Monto * 0.18));
                 this.Movimiento.Neto = Math.floor(this.Movimiento.Monto / 1.18);
-                //this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto * 0.18);
                 this.Movimiento.Itebis = Math.floor(this.Movimiento.Monto - this.Movimiento.Neto);
 
                 sumaFiscales = this.Movimiento.Neto + this.Movimiento.Itebis;
@@ -440,7 +429,7 @@
                     setTimeout(() => {
                         printJS('toPrint', 'html');
                     },
-                    1000);
+                        1000);
                 }
 
                 $.get(`..${this.ApiRuta}UltimoCierre`).done(response => {
@@ -595,12 +584,7 @@
             if (flag) {
                 this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
                 this.VentanaCierres.FechaFinal = new Date().toISOString().slice(0, 10);
-                document.getElementById('cargando').removeAttribute('hidden');
-                document.getElementById('MovimientosCRUD').setAttribute('hidden', true);
-                document.getElementById('CuadresDeCajaCRUD').removeAttribute('hidden');
-                document.getElementById('btnHome').removeAttribute('hidden');
-                document.getElementById('cargando').setAttribute('hidden', true);
-                this.Navegacion[0] = this.Navegacion[0] + 1;
+                this.NavigationBehaviour(actual = 'CuadresDeCajaCRUD');
             }
 
             let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
@@ -634,7 +618,6 @@
             $.get(`..${this.ApiRuta}ObtnerDatosMovimientosParaCierres`).done(response => {
                 this.VentanaCierres.VentanaCrearCierreDiario.FechaInicial = response.FechaUltimoCierre.substring(0, 10);
                 this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = new Date().toISOString().substring(0, 10);
-                //this.VentanaCierres.VentanaCrearCierreDiario.FechaFinal = response.FechaUltimoMovimiento ? response.FechaUltimoMovimiento.substring(0, 10) : new Date().toISOString().substring(0, 10);
                 this.VentanaCierres.VentanaCrearCierreDiario.SaldoFinal = response.Monto ? response.Monto : "0";
                 this.VentanaCierres.VentanaCrearCierreDiario.NumeroDeMovimientos = response.Total;
 
@@ -726,27 +709,41 @@
             })
         },
 
-        NavigationBtns(flag) {
-            switch (flag) {
-                case 0:
-                    document.getElementById(this.Navegacion[this.Navegacion[0]]).setAttribute('hidden', true);
-                    document.getElementById(this.Navegacion[2]).removeAttribute('hidden');
-                    document.getElementById('btnBack').setAttribute('hidden', true);
-                    document.getElementById('btnHome').setAttribute('hidden', true);
-                    this.Navegacion[0] = 2;
-                    break;
-                case -1:
-                    let index = this.Navegacion[0] - 1;
-                    document.getElementById(this.Navegacion[this.Navegacion[0]]).setAttribute('hidden', true);
-                    document.getElementById(this.Navegacion[index]).removeAttribute('hidden');
-                    this.Navegacion[0] = index;
+        //  NAVEGACION DE LA PAGINA
+        NavigationBehaviour(actual) {
+            let divActualVisible = this.Navegacion[this.Navegacion.length - 1].actual;
 
-                    if (index == 3)
-                        document.getElementById('btnHome').setAttribute('hidden', true);
-                    if (index == 2)
-                        document.getElementById('btnBack').setAttribute('hidden', true);
-                    break;
+            if (actual === 0) {
+                document.getElementById(divActualVisible).setAttribute('hidden', true);
+                document.getElementById('menu').removeAttribute('hidden');
+                this.Navegacion = this.Navegacion.slice(0, 2);
             }
+            else if (actual) {
+                document.getElementById('cargando').removeAttribute('hidden');
+
+                document.getElementById(divActualVisible).setAttribute('hidden', true);
+                document.getElementById(actual).removeAttribute('hidden');
+
+                this.Navegacion.push({ anterior: divActualVisible, actual: actual });
+            }
+
+            else {
+                document.getElementById(divActualVisible).setAttribute('hidden', true);
+                document.getElementById(this.Navegacion[this.Navegacion.length - 2].actual).removeAttribute('hidden');
+                this.Navegacion.pop();
+            }
+
+            //  MOSTRAR EL BOTON DE ATRAS SOLO CUANDO SE HAYA PASADO POR MENU
+            if (this.Navegacion.length > 2)
+                document.getElementById('btnBack').removeAttribute('hidden');
+            else
+                document.getElementById('btnBack').setAttribute('hidden', true);
+
+            //  MOSTRAR EL BOTON DE HOME
+            if (this.Navegacion.length >= 3)
+                document.getElementById('btnHome').removeAttribute('hidden');
+            else
+                document.getElementById('btnHome').setAttribute('hidden', true);
         },
 
         PrintMovimiento(idMovimiento) {
@@ -756,6 +753,35 @@
             }
             printJS('toPrint', 'html');
         },
+
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+        //                              MODULO DE REPORTES
+        //---------------------------------------------------------------------------------------------------------------------------------------------------
+
+        //  MENU DE SOURCE DE REPORTES
+        //----------------------------------------------------------
+        DivSeleccionarSourceParaReporte() {
+            this.NavigationBehaviour('SeleccionarSourceParaReporte');
+            document.getElementById('cargando').setAttribute('hidden', true);
+        },
+
+        ObtenerDatos() {
+            $.get(`..${this.ApiRuta_ws}GetMoviments`).done((response) => {
+                //$.get(`..${this.ApiRuta_ws}GetMoviments?sessionId=a1ddb8c4-e576-426f-91e3-49816b3a70dc`).done(response => {
+                //this.paraDemo = JSON.parse('[{"NumeroTransacion":225,"Beneficiario":"49","Concepto":"B","Rnc":"1","Ncf":"2","TipoMovimiento":3,"Monto":0.00,"Itebis":"4","Neto":3.00,"Soporte":"C","Fecha":"2020-05-08","Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":10,"NumeroCierre":53},{"NumeroTransacion":224,"Beneficiario":"49","Concepto":"A","Rnc":"2","Ncf":"3","TipoMovimiento":3,"Monto":1.00,"Itebis":"5","Neto":4.00,"Soporte":"C","Fecha":"2020-05-08","Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":10,"NumeroCierre":53},{"NumeroTransacion":223,"Beneficiario":null,"Concepto":"tewteet","Rnc":"32424","Ncf":"3","TipoMovimiento":3,"Monto":345243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":222,"Beneficiario":null,"Concepto":"ULTIMA PRUEBA","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":141123.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":221,"Beneficiario":null,"Concepto":"erwe","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":341243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":220,"Beneficiario":null,"Concepto":"ewr","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":1234.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":219,"Beneficiario":null,"Concepto":"werqwr","Rnc":"","Ncf":"","TipoMovimiento":994,"Monto":3243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":218,"Beneficiario":null,"Concepto":"rete","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":4523.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":217,"Beneficiario":null,"Concepto":"2433214124","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":32423.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":216,"Beneficiario":null,"Concepto":"ytyt","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":55.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53}]');
+                //document.getElementById('paraDemo').removeAttribute('hidden');
+                //document.getElementById('dondeBuscar').setAttribute('hidden', true);
+                console.log(response);
+            });
+        },
+
+        // MENU DE REPORTES  
+        //----------------------------------------------------------
+        DivSeleccionarReporte() {
+            this.NavigationBehaviour('SeleccionarReporte');
+            document.getElementById('cargando').setAttribute('hidden', true);
+        },
+
     },
     filters: {
         FilterUppercase: value => {

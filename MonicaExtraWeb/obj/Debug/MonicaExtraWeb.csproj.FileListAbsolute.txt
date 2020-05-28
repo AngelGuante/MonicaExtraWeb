@@ -86,3 +86,10 @@ D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaE
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.dll
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.pdb
 D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csprojAssemblyReference.cache
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\log4net.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\SuperSocket.Common.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\SuperSocket.Facility.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\SuperSocket.SocketBase.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\SuperSocket.SocketEngine.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\SuperWebSocket.dll
+D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\bin\log4net.xml
