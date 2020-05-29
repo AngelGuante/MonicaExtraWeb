@@ -1,0 +1,56 @@
+﻿body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Prompt', sans-serif;
+    background: rgb(215,210,210);
+    background: radial-gradient(circle, rgba(215,210,210,1) 0%, rgba(205,202,202,1) 0%, rgba(255,255,255,1) 47%);
+}
+
+.CentrarDiv {
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform:translate(-50%, -50%);
+}
+
+.CentrarImage {
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+    margin-top:4%;
+}
+
+.Sombra{
+    box-shadow:2px 2px 4px grey;
+}
+
+.Tables{
+    overflow-x:auto;
+}
+
+.TextColor{
+    color:white;
+}
+
+#divPrint {
+    background-color: aliceblue;
+    z-index: 9999;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+}
+
+/*   REMOVER FLECHAS DE IMPUT TYPE NUMBER   */
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+    -moz-appearance: textfield;
+}

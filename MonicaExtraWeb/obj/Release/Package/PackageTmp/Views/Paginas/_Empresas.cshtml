@@ -1,0 +1,23 @@
+﻿<div id="SeleccionarEmpresa">
+    <div class="col-md-4 card border-secondary CentrarDiv Sombra Tables" style="background-color:white; padding:0">
+        <div class="card-header">
+            <h5>EMPRESA</h5>
+        </div>
+        <div class="card-body" style="padding:0;">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Nombre</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tr v-for="empresa in Empresas">
+                    <td>{{empresa.empresa_id}}</td>
+                    <td>{{empresa.Nombre_empresa}}</td>
+                    <td class="text-right"><button typeof="button" v-on:click="EmpresaSeleccionada(empresa.empresa_id)" type="button" class="btn btn-info"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">business</i> Seleccionar</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>

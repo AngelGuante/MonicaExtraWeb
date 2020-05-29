@@ -1,0 +1,41 @@
+﻿
+@{
+    ViewBag.Title = "Monica - Sistema Web";
+    <link href="~/Content/css/SAP.css" rel="stylesheet" />
+}
+
+<div id="app">
+    @Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
+
+    @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+    @*-------------------------------------------------------------------*@
+    @*  MOVIMIENTOS DE CAJA*@
+    @*-------------------------------------------------------------------*@
+
+    @*  DIV PARA SELECCIONAR UNA EMPRESA *@
+    @Html.Partial("~/Views/Paginas/_Empresas.cshtml")
+
+    @*  DIV DEL MENU *@
+    @Html.Partial("~/Views/Paginas/_Menu.cshtml")
+
+    @*  DIV QUE MUESTRA EL CRUD DE LOS MOVIMIENTOS *@
+    @Html.Partial("~/Views/Paginas/_CrudMovimientos.cshtml")
+
+    @*  DIV QUE MUESTRA LOS CUADRES DE CAJA *@
+    @Html.Partial("~/Views/Paginas/_CuadresCaja.cshtml")
+
+    @*-------------------------------------------------------------------*@
+    @*  REPORTES*@
+    @*-------------------------------------------------------------------*@
+
+    @*  DIV QUE MUESTRA LA SELECCION DE EL SOURCE PARA HACER LOS REPORTES *@
+    @Html.Partial("~/Views/Paginas/_menuSeleccionSourceReportes.cshtml")
+
+    @*  DIV QUE MUESTRA LA SELECCION DE EL LOS REPORTES *@
+    @Html.Partial("~/Views/Paginas/_menuSeleccionReporte.cshtml")
+</div>
+
+@section scripts{
+    <script src="~/Scripts/js/SAP.js"></script>
+}

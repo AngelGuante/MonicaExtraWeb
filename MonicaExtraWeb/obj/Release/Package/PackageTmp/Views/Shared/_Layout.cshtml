@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+
+    @*  ICONOS  *@
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    @*  FUENTES *@
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300&display=swap" rel="stylesheet">
+
+    @*  BOOTSTRAP *@
+    <link href="~/Content/css/Bootstrapt.css" rel="stylesheet">
+
+</head>
+<body>
+    <div>
+        <nav class="navbar navbar-dark bg-info">
+            <a class="navbar-brand"> <strong>MONICAEXTRA - SISTEMA DE CAJA WEB</strong> </a>
+        </nav>
+
+        <div class="container body-content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/Scripts/js/Utils.js"></script>
+
+    @* VUE *@
+    <script src="~/Scripts/js/Vue.js"></script>
+
+    @* SWAL *@
+    <script src="~/Scripts/js/Swal.js"></script>
+
+    @* PRINT *@
+    <script src="~/Scripts/js/Print.js"></script>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
