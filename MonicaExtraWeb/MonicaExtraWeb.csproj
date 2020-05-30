@@ -162,6 +162,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
+    <Compile Include="Controllers\API\ClientesController.cs" />
     <Compile Include="Controllers\API\Server_wsActionsController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
     <Compile Include="Global.asax.cs">
@@ -173,6 +174,7 @@
     <Compile Include="Models\monica10\CierresCaja.cs" />
     <Compile Include="Models\monica10\ClasificacionFiscal.cs" />
     <Compile Include="Models\monica10\ClasificacionMovimientoCaja.cs" />
+    <Compile Include="Models\monica10\Clientes.cs" />
     <Compile Include="Models\monica10\MovimientosCajas.cs" />
     <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />

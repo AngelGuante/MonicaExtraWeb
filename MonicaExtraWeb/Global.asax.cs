@@ -7,6 +7,8 @@ namespace MonicaExtraWeb
 {
     public class MvcApplication : System.Web.HttpApplication
     {
+        public static int demo { get; set; }
+
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);

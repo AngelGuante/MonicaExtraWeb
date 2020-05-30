@@ -10,7 +10,14 @@
     @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
 
     @*-------------------------------------------------------------------*@
-    @*  MOVIMIENTOS DE CAJA*@
+    @*  LOG*@
+    @*-------------------------------------------------------------------*@
+
+    @*  DIV PARA LOGUEARSE *@
+    @Html.Partial("~/Views/Paginas/_inicioSeccion.cshtml")
+
+    @*-------------------------------------------------------------------*@
+    @*  MOVIMIENTOS DE CAJA *@
     @*-------------------------------------------------------------------*@
 
     @*  DIV PARA SELECCIONAR UNA EMPRESA *@
@@ -37,5 +44,10 @@
 </div>
 
 @section scripts{
+    <script>
+        window.addEventListener('load',
+            () => document.getElementById('cargando').setAttribute('hidden', true));
+    </script>
+
     <script src="~/Scripts/js/SAP.js"></script>
 }

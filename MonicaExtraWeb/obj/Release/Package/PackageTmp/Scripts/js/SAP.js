@@ -5,10 +5,16 @@
         ApiRuta_ws: '/API/Server_wsActions/',
 
         Navegacion: [
-            { anterior: '', actual: 'SeleccionarEmpresa' }
+            { anterior: '', actual: 'menu' }
         ],
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
+
+        // DIV LOG
+        DivLog: {
+            remember: true,
+            pass: ''
+        },
 
         // DIV EMPRESA
         Empresas: [],
@@ -88,12 +94,55 @@
         }
     },
     created: function () {
-        $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
-            this.Empresas = response.Empresas;
-            document.getElementById('cargando').setAttribute('hidden', true);
-        });
+        let rememberPasswordCookie = document.cookie.split('; ')
+            .find(item => item.startsWith('rememberPass='));
+
+        if (!rememberPasswordCookie) {
+            document.cookie = 'password=;'
+            document.cookie = 'rememberPass=true;'
+            rememberPasswordCookie = 'rememberPass=true;'
+        }
+
+        this.DivLog.remember = rememberPasswordCookie.replace('rememberPass=', '').replace(';', '') == 'true' ? true : false;
+        if (this.DivLog.remember) {
+            this.DivLog.pass = rememberPasswordCookie = document.cookie.split('; ')
+                .find(item => item.startsWith('password='))
+                .replace('password=', '')
+                .replace(';', '');
+        }
     },
     methods: {
+        //  DIV PARA LOGEARSE
+        //----------------------------------------------------------
+        Log() {
+            if (this.DivLog.remember) {
+                document.cookie = `password=${this.DivLog.pass};`
+                document.cookie = `rememberPass=true;`
+            }
+            else {
+                document.cookie = `password=;`
+                document.cookie = `rememberPass=false;`
+            }
+
+            let fecha = new Date();
+
+            if (this.DivLog.pass == fecha.getFullYear() + fecha.getMonth() + 1) {
+                document.getElementById('cargando').removeAttribute('hidden');
+
+                document.getElementById('divLog').setAttribute('hidden', true);
+                document.getElementById('SeleccionarEmpresa').removeAttribute('hidden');
+
+                $.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
+                    this.Empresas = response.Empresas;
+                    document.getElementById('cargando').setAttribute('hidden', true);
+                });
+            }
+            else {
+                this.DivLog.pass = '';
+                document.getElementById('badPass').removeAttribute('hidden');
+            }
+        },
+
         //  DIV DONDE SE SELECCIONAN LAS EMPRESAS
         //----------------------------------------------------------
         EmpresaSeleccionada(idEmpresa) {
@@ -102,7 +151,8 @@
                 if (xhr.status == 200) {
                     this.EmpresaSeleccionadaInstancia = respWonse.Empresa;
 
-                    this.NavigationBehaviour(actual = 'menu');
+                    document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
+                    document.getElementById('menu').removeAttribute('hidden');
                 }
                 else if (xhr.status == 204)
                     alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
@@ -716,7 +766,12 @@
             if (actual === 0) {
                 document.getElementById(divActualVisible).setAttribute('hidden', true);
                 document.getElementById('menu').removeAttribute('hidden');
-                this.Navegacion = this.Navegacion.slice(0, 2);
+                this.Navegacion = this.Navegacion.slice(0, 1);
+            }
+            else if (actual === -1) {
+                document.getElementById(divActualVisible).setAttribute('hidden', true);
+                document.getElementById(this.Navegacion[this.Navegacion.length - 2].actual).removeAttribute('hidden');
+                this.Navegacion.pop();
             }
             else if (actual) {
                 document.getElementById('cargando').removeAttribute('hidden');
@@ -724,17 +779,11 @@
                 document.getElementById(divActualVisible).setAttribute('hidden', true);
                 document.getElementById(actual).removeAttribute('hidden');
 
-                this.Navegacion.push({ anterior: divActualVisible, actual: actual });
-            }
-
-            else {
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById(this.Navegacion[this.Navegacion.length - 2].actual).removeAttribute('hidden');
-                this.Navegacion.pop();
+                this.Navegacion.push({ anterior: divActualVisible, actual })
             }
 
             //  MOSTRAR EL BOTON DE ATRAS SOLO CUANDO SE HAYA PASADO POR MENU
-            if (this.Navegacion.length > 2)
+            if (this.Navegacion.length >= 2)
                 document.getElementById('btnBack').removeAttribute('hidden');
             else
                 document.getElementById('btnBack').setAttribute('hidden', true);
