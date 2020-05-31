@@ -5,27 +5,21 @@ using MonicaExtraWeb.Models.monica10_global;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web.Http;
+using static MonicaExtraWeb.Utils.GlobalVariables;
 
 namespace MonicaExtraWeb.Controllers.API
 {
     [RoutePrefix("API/ASPISAP")]
     public class APISAPController : ApiController
     {
-        private string _connectionString { get; } = ConfigurationManager.ConnectionStrings["monica10_global"].ConnectionString;
-        public SqlConnection Conn { get; set; } = null;
         public Empresas Empresa { get; set; } = null;
 
         //  VARIABLES CARGADAS EN MEMORIA
         private static StringBuilder _queryBasicoMovimientosCaja = null;
-
-        public APISAPController() =>
-            Conn = Conn ?? new SqlConnection(_connectionString);
 
         #region EMPRESAS
         /// <summary>
@@ -35,7 +29,7 @@ namespace MonicaExtraWeb.Controllers.API
         [HttpGet]
         [Route("GetEmpresas")]
         public IHttpActionResult GetEmpresas() =>
-             Json(new { Empresas = Conn.Query<Empresas>("SELECT empresa_id, Nombre_empresa FROM DB_A5E94C_monica10global.dbo.empresas").ToList() });
+             Json(new { Empresas = Conn.Query<Empresas>($"SELECT empresa_id, Nombre_empresa FROM {DbName}.dbo.empresas").ToList() });
 
         /// <summary>
         /// Guardar los datos del id de la empresa seleccionada.
@@ -46,7 +40,7 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("EmpresaSeleccionada")]
         public IHttpActionResult EmpresaSeleccionada(int idEmpresa)
         {
-            Empresa = Conn.Query<Empresas>("SELECT * FROM DB_A5E94C_monica10global.dbo.empresas WHERE empresa_id = @idEmpresa", new { idEmpresa }).FirstOrDefault();
+            Empresa = Conn.Query<Empresas>($"SELECT * FROM {DbName}.dbo.empresas WHERE empresa_id = @idEmpresa", new { idEmpresa }).FirstOrDefault();
 
             if (Empresa == null)
                 return Content(HttpStatusCode.NoContent, "");
@@ -68,13 +62,13 @@ namespace MonicaExtraWeb.Controllers.API
 
             StringBuilder query = new StringBuilder();
 
-            query.Append("INSERT INTO DB_A5E94C_monica10global.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
+            query.Append("INSERT INTO {DbName}.monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
             query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
-            query.Append("(SELECT MAX(NumeroTransacion) +1 FROM DB_A5E94C_monica10global.monicaextra.movimientocaja), ");
+            query.Append($"(SELECT MAX(NumeroTransacion) +1 FROM {DbName}.monicaextra.movimientocaja), ");
             query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
-            query.Append("(SELECT MAX(NumeroCierre) +1 FROM DB_A5E94C_monica10global.monicaextra.cierrecaja), ");
+            query.Append($"(SELECT MAX(NumeroCierre) +1 FROM {DbName}.monicaextra.cierrecaja), ");
             query.Append("@RNC, @NCF, @Itebis, @Neto, ");
-            query.Append("(SELECT Tipo FROM DB_A5E94C_monica10global.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf ) ");
+            query.Append($"(SELECT Tipo FROM {DbName}.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento), @Clasificancf ) ");
 
             var RegistroGuardadoCant = Conn.Execute(query.ToString(), new
             {
@@ -105,12 +99,12 @@ namespace MonicaExtraWeb.Controllers.API
             {
                 movimiento = Conn.Query<MovimientosCajas>(
                 "SELECT CF.Descripcion DescripcionClasfFiscal, TM.Descripcion DescripcionMovimiento, U.nombre_completo, * " +
-                "FROM DB_A5E94C_monica10global.monicaextra.movimientocaja M " +
-                "LEFT JOIN DB_A5E94C_monica10global.dbo.usuarios U " +
+                $"FROM {DbName}.monicaextra.movimientocaja M " +
+                $"LEFT JOIN {DbName}.dbo.usuarios U " +
                     "ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) " +
-                "LEFT JOIN DB_A5E94C_monica10global.monicaextra.clasificacionmovicaja TM " +
+                $"LEFT JOIN {DbName}.monicaextra.clasificacionmovicaja TM " +
                     "ON M.TipoMovimiento = TM.NumeroTransacion " +
-                "LEFT JOIN DB_A5E94C_monica10global.monicaextra.clasificacionfiscal CF " +
+                $"LEFT JOIN {DbName}.monicaextra.clasificacionfiscal CF " +
                     "ON M.Clasificancf = CF.NumeroTransacion " +
                 "WHERE M.NumeroTransacion = @id", new { id }).FirstOrDefault()
             });
@@ -159,7 +153,7 @@ namespace MonicaExtraWeb.Controllers.API
             {
                 query.Append("AND ");
                 query.Append(" NumeroCierre = ");
-                query.Append("      (SELECT MAX(NumeroCierre) + 1 FROM DB_A5E94C_monica10global.monicaextra.cierrecaja) ");
+                query.Append($"      (SELECT MAX(NumeroCierre) + 1 FROM {DbName}.monicaextra.cierrecaja) ");
             }
 
             else if (obj.opcion == "busquedaEsp")
@@ -225,14 +219,14 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult ModificarMovimiento(string id, string movimiento)
         {
             var obj = JsonConvert.DeserializeObject<MovimientosCajas>(movimiento);
-            var EntradaSalida = Conn.ExecuteScalar("SELECT Tipo FROM DB_A5E94C_monica10global.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento",
+            var EntradaSalida = Conn.ExecuteScalar($"SELECT Tipo FROM {DbName}.monicaextra.clasificacionmovicaja WHERE NumeroTransacion = @TipoMovimiento",
                 new { obj.TipoMovimiento });
 
             if (EntradaSalida == default)
                 return StatusCode(HttpStatusCode.NotFound);
 
             var query = new StringBuilder();
-            query.Append("UPDATE DB_A5E94C_monica10global.monicaextra.movimientocaja ");
+            query.Append($"UPDATE {DbName}.monicaextra.movimientocaja ");
             query.Append("SET ");
             query.Append("Fecha = @Fecha, ");
             query.Append("Monto = @Monto, ");
@@ -286,8 +280,8 @@ namespace MonicaExtraWeb.Controllers.API
             IEnumerable<CierresCaja> Cierres;
             var query = new StringBuilder();
 
-            query.Append("SELECT * ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"SELECT * ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
 
             if ((fechaInicial != fechaFinal) && (fechaInicial != default || fechaFinal != default))
             {
@@ -325,18 +319,18 @@ namespace MonicaExtraWeb.Controllers.API
             var query = new StringBuilder();
 
             //  FECHA DEL ULTIMO CIERRE
-            query.Append("SELECT MAX(FechaFinal) ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"SELECT MAX(FechaFinal) ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
 
             FechaUltimoCierre = (string)Conn.ExecuteScalar($"{query.ToString()}");
 
             //  TOTAL DE MOVIMIENTOS Y SUMATORIA DE LOS MONTOS
             query.Clear();
-            query.Append("SELECT CAST(SUM(Monto) AS VARCHAR) Monto, CAST(COUNT(*) AS VARCHAR) Total, MAX(Fecha) FechaUltimoMovimiento ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.movimientocaja ");
+            query.Append($"SELECT CAST(SUM(Monto) AS VARCHAR) Monto, CAST(COUNT(*) AS VARCHAR) Total, MAX(Fecha) FechaUltimoMovimiento ");
+            query.Append($"FROM {DbName}.monicaextra.movimientocaja ");
             query.Append($"WHERE NumeroCierre = ( ");
             query.Append($"SELECT MAX(NumeroCierre) +1 Cierre ");
-            query.Append($"FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
             query.Append($") ");
 
             var result = Conn.Query<DetallesMovimientosParaCierreDTO>(query.ToString()).FirstOrDefault();
@@ -355,8 +349,8 @@ namespace MonicaExtraWeb.Controllers.API
             string FechaUltimoCierre;
             var query = new StringBuilder();
 
-            query.Append("SELECT MAX(FechaFinal) ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"SELECT MAX(FechaFinal) ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
 
             FechaUltimoCierre = (string)Conn.ExecuteScalar($"{query.ToString()}");
 
@@ -372,8 +366,8 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult UltimoCierre()
         {
             var query = new StringBuilder();
-            query.Append("SELECT MAX(NumeroCierre) ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"SELECT MAX(NumeroCierre) ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
 
             string UltimoCierre = Conn.ExecuteScalar(query.ToString()).ToString();
 
@@ -391,17 +385,17 @@ namespace MonicaExtraWeb.Controllers.API
             var query = new StringBuilder();
             IEnumerable<MovimientosCajas> Movimientos;
 
-            query.Append("SELECT M.NumeroTransacion, U.nombre_completo, Concepto, Monto, Fecha ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.movimientocaja M ");
-            query.Append("LEFT JOIN DB_A5E94C_monica10global.dbo.usuarios U ");
+            query.Append($"SELECT M.NumeroTransacion, U.nombre_completo, Concepto, Monto, Fecha ");
+            query.Append($"FROM {DbName}.monicaextra.movimientocaja M ");
+            query.Append($"LEFT JOIN {DbName}.dbo.usuarios U ");
             query.Append("	ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) ");
             query.Append("WHERE NumeroCierre = ");
 
             if (idCierre == string.Empty)
             {
                 query.Append("( ");
-                query.Append("SELECT MAX(NumeroCierre) +1 Cierre ");
-                query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+                query.Append($"SELECT MAX(NumeroCierre) +1 Cierre ");
+                query.Append($"FROM {DbName}.monicaextra.cierrecaja ");
                 query.Append(") ");
             }
             else
@@ -426,11 +420,11 @@ namespace MonicaExtraWeb.Controllers.API
             var cierreObj = JsonConvert.DeserializeObject<CierresCaja>(cierre);
             var query = new StringBuilder();
 
-            query.Append("INSERT INTO DB_A5E94C_monica10global.monicaextra.cierrecaja ");
+            query.Append($"INSERT INTO {DbName}.monicaextra.cierrecaja ");
             query.Append("(NumeroCierre, FechaProceso, FechaInicial, FechaFinal, NumeroCaja, SaldoFinal, Comentario) ");
             query.Append("VALUES ( ");
             query.Append("(SELECT MAX(NumeroCierre) +1  ");
-            query.Append("FROM DB_A5E94C_monica10global.monicaextra.cierrecaja), ");
+            query.Append($"FROM {DbName}.monicaextra.cierrecaja), ");
             query.Append("@FechaProceso, ");
             query.Append("@FechaInicial, ");
             query.Append("@FechaFinal, ");
@@ -455,22 +449,22 @@ namespace MonicaExtraWeb.Controllers.API
 
         #region METODOS DE - MOVIMIENTOS
         private IEnumerable<Usuarios> GetUsuarios() =>
-            Conn.Query<Usuarios>("SELECT * FROM DB_A5E94C_monica10global.dbo.usuarios WHERE activo = 1");
+            Conn.Query<Usuarios>($"SELECT * FROM {DbName}.dbo.usuarios WHERE activo = 1");
 
         private IEnumerable<ClasificacionMovimientoCaja> GetTiposMovimientos() =>
-            Conn.Query<ClasificacionMovimientoCaja>("SELECT * FROM DB_A5E94C_monica10global.monicaextra.clasificacionmovicaja WHERE visible = 1 ORDER BY Tipo, Descripcion");
+            Conn.Query<ClasificacionMovimientoCaja>($"SELECT * FROM {DbName}.monicaextra.clasificacionmovicaja WHERE visible = 1 ORDER BY Tipo, Descripcion");
 
         private IEnumerable<ClasificacionFiscal> GetClasificacionFiscals() =>
-            Conn.Query<ClasificacionFiscal>("SELECT * FROM DB_A5E94C_monica10global.monicaextra.clasificacionfiscal ORDER BY Descripcion");
+            Conn.Query<ClasificacionFiscal>($"SELECT * FROM {DbName}.monicaextra.clasificacionfiscal ORDER BY Descripcion");
 
         private StringBuilder Singuelton_QueryBasicoMovimientos()
         {
             if (_queryBasicoMovimientosCaja == null)
             {
                 _queryBasicoMovimientosCaja = new StringBuilder();
-                _queryBasicoMovimientosCaja.Append("SELECT M.NumeroTransacion, M.Beneficiario, U.nombre_completo, M.Concepto, M.Monto, M.Fecha, M.NumeroCierre ");
-                _queryBasicoMovimientosCaja.Append("FROM DB_A5E94C_monica10global.monicaextra.movimientocaja M ");
-                _queryBasicoMovimientosCaja.Append("LEFT JOIN DB_A5E94C_monica10global.dbo.usuarios U ");
+                _queryBasicoMovimientosCaja.Append($"SELECT M.NumeroTransacion, M.Beneficiario, U.nombre_completo, M.Concepto, M.Monto, M.Fecha, M.NumeroCierre ");
+                _queryBasicoMovimientosCaja.Append($"FROM {DbName}.monicaextra.movimientocaja M ");
+                _queryBasicoMovimientosCaja.Append($"LEFT JOIN {DbName}.dbo.usuarios U ");
                 _queryBasicoMovimientosCaja.Append("ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) ");
                 _queryBasicoMovimientosCaja.Append("WHERE Estatus = 1 ");
             }
@@ -479,13 +473,13 @@ namespace MonicaExtraWeb.Controllers.API
         }
         #endregion
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                base.Dispose(disposing);
-                Conn.Dispose();
-            }
-        }
+        //protected override void Dispose(bool disposing)
+        //{
+        //    if (disposing)
+        //    {
+        //        base.Dispose(disposing);
+        //        Conn.Dispose();
+        //    }
+        //}
     }
 }

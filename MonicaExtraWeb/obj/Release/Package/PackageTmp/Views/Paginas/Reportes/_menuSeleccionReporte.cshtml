@@ -1,0 +1,197 @@
+﻿<div id="SeleccionarReporte" hidden>
+
+    <button id="btnReporteMostrarMenu" class="btn btn-info mt-2 btnReporteMenu" v-on:click="BtnMostrarMenuReportes()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">menu</i>Abrir menú</button>
+
+    <hr />
+
+    @*  MENU*@
+    <div id="seleccionarReporte" style="position:absolute; left:0;" class="menuReportes">
+        <div id="accordion">
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseOne" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/sell.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">VENTAS</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">CUENTAS POR COBRAR</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                <div id="collapseTwo" class="collapse show" data-parent="#accordion">
+                    <div class="card-body">
+                        <p style="cursor:pointer; padding-bottom:10px; border-bottom: 2px solid" v-on:click="OptCuentasPorCobrarClte()">Cuentas por cobrar Cliente</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">CUENTAS POR PAGAR</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">INVENTARIO</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">COTIZACIONES</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">CONDUCES</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">BANCO</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-info p-0">
+                    <div class="btn btn-info m-0" data-toggle="collapse" data-target="#collapseTwo" style="width:100%; font-weight:bold;">
+                        <div style="display:flex; justify-content:space-between; align-items: flex-end;">
+                            <img src="~/Content/assets/cash.png" alt="Icono_Ventas" />
+                            <p style="margin-bottom:0; margin: 0 20px;">CONTABBILIDAD</p>
+                            <img src="~/Content/assets/down-arrow.png" width="20" alt="Icono_Ventas" />
+                        </div>
+                    </div>
+                </div>
+
+                @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
+                    <div class="card-body">
+                        <p>cs</p>
+                    </div>
+                </div>*@
+            </div>
+        </div>
+    </div>
+
+    @*  FILTROS*@
+    <div id="filtrosReportes" style="display:flex; justify-content:center">
+        <div class="card border-info mb-3 mt-2 Sombra filtros">
+            <div class="card-body text-info">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label>Codigo Cliente</label>
+                            <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete">
+                        </div>
+                    </div>
+
+                    <div style="font-weight:400">
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportMostrarRNC" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <label class="form-check-label" for="reportMostrarRNC">Mostrar RNC</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportDocsVencidos" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <label class="form-check-label" for="reportDocsVencidos">Solo DOCS. Vencidos</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportFirmas" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportMoras" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <label class="form-check-label" for="reportMoras">Incluir Moras</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="BuscarCliente()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -91,6 +91,11 @@
                 NumeroDeMovimientos: '',
                 MovimientosParaCierre: []
             }
+        },
+
+        //  ------------------------------------------------
+        Reportes: {
+            codCliente: ''
         }
     },
     created: function () {
@@ -110,6 +115,9 @@
                 .replace('password=', '')
                 .replace(';', '');
         }
+
+
+
     },
     methods: {
         //  DIV PARA LOGEARSE
@@ -803,6 +811,20 @@
             printJS('toPrint', 'html');
         },
 
+        BtnMostrarMenuReportes() {
+            document.getElementById('filtrosReportes').style.display = 'none';
+            document.getElementById('btnReporteMostrarMenu').style.display = 'none';
+            document.getElementById('seleccionarReporte').style.display = 'block';
+        },
+
+        OptCuentasPorCobrarClte() {
+            if (window.innerWidth < 990) {
+                document.getElementById('filtrosReportes').style.display = 'flex';
+                document.getElementById('btnReporteMostrarMenu').style.display = 'block';
+                document.getElementById('seleccionarReporte').style.display = 'none';
+            }
+        },
+
         //---------------------------------------------------------------------------------------------------------------------------------------------------
         //                              MODULO DE REPORTES
         //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -830,6 +852,16 @@
             this.NavigationBehaviour('SeleccionarReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
         },
+
+        // REPORTES
+        //----------------------------------------------------------
+        BuscarCliente() {
+            this.Reportes.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
+
+            $.get(`../API/Clientes/GetDetails`, { code: this.Reportes.codCliente }, response => {
+                console.log(response);
+            });
+        }
 
     },
     filters: {
