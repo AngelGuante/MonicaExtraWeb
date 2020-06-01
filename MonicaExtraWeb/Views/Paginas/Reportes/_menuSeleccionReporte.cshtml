@@ -49,10 +49,10 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
 
             <div class="card">
@@ -67,10 +67,10 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
 
             <div class="card">
@@ -85,10 +85,10 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
 
             <div class="card">
@@ -103,10 +103,10 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
 
             <div class="card">
@@ -121,10 +121,10 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
 
             <div class="card">
@@ -139,15 +139,15 @@
                 </div>
 
                 @*<div id="collapseTwo" class="collapse" data-parent="#accordion">
-                    <div class="card-body">
-                        <p>cs</p>
-                    </div>
-                </div>*@
+                        <div class="card-body">
+                            <p>cs</p>
+                        </div>
+                    </div>*@
             </div>
         </div>
     </div>
 
-    @*  FILTROS*@
+    @*  CONTENIDO*@
     <div id="filtrosReportes" style="display:flex; justify-content:center">
         <div class="card border-info mb-3 mt-2 Sombra filtros">
             <div class="card-body text-info">
@@ -156,6 +156,7 @@
                         <div class="form-group">
                             <label>Codigo Cliente</label>
                             <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete">
+                            <small id="validationReportesCodigoCliente" class="form-text" style="color:red;" hidden>Débe ingresar un código.</small>
                         </div>
                     </div>
 
@@ -189,9 +190,59 @@
                         </div>
                     </div>
 
-                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="BuscarCliente()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="ValidarCampoCodigoCliente()"><i class="material-icons" style="margin-top:80%;">search</i></a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div id="contenidosReportes" class="Tables" style="display:flex; justify-content:center">
+        <div>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Fecha-Doo</th>
+                        <th scope="col">Vencimiento</th>
+                        <th scope="col">NCF</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Días Transcurridos</th>
+                        <th scope="col">Monto</th>
+                        <th scope="col">Pagos Acum.</th>
+                        <th scope="col">Saldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @*<tr v-for="element in VentanaCierres.Cierres">
+                    <td style="text-align:center;">{{element.NumeroCierre}}</td>
+                    <td>{{element.FechaInicial}}</td>
+                    <td>{{element.FechaFinal}}</td>
+                    <td style="text-align:center;">{{element.SaldoFinal}}</td>
+                    <td style="text-align:center;"><button class="btn btn-outline-info Sombra" type="button" v-on:click="MovimientosEnCierre(element.NumeroCierre)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
+                </tr>*@
+                </tbody>
+            </table>
+
+            <hr />
+
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
+                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(1)"><<</a>
+                    </li>
+                    <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
+                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex - 1)"><</a>
+                    </li>
+                    <li class="page-item disabled">
+                        <a class="page-link">{{VentanaCierres.PaginatorIndex}}</a>
+                    </li>
+                    <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
+                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex + 1)">></a>
+                    </li>
+                    <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
+                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorLastPage)">>></a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

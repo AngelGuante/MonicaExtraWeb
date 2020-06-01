@@ -2,6 +2,7 @@
     el: '#app',
     data: {
         ApiRuta: '/API/ASPISAP/',
+        ApiClientes: '/API/Clientes//',
         ApiRuta_ws: '/API/Server_wsActions/',
 
         Navegacion: [
@@ -95,6 +96,7 @@
 
         //  ------------------------------------------------
         Reportes: {
+            codsClientes: [],
             codCliente: ''
         }
     },
@@ -767,6 +769,14 @@
             })
         },
 
+        MostrarMensage(config) {
+            Swal.fire(
+                config.title,
+                config.message,
+                config.icon,
+            )
+        },
+
         //  NAVEGACION DE LA PAGINA
         NavigationBehaviour(actual) {
             let divActualVisible = this.Navegacion[this.Navegacion.length - 1].actual;
@@ -851,14 +861,40 @@
         DivSeleccionarReporte() {
             this.NavigationBehaviour('SeleccionarReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
+
+            if (this.Reportes.codsClientes.length === 0) {
+                $.get(`..${this.ApiClientes}GetCodes`, {}, response => {
+                    this.Reportes.codsClientes = response.codes;
+                });
+            }
         },
 
         // REPORTES
         //----------------------------------------------------------
-        BuscarCliente() {
+        ValidarCampoCodigoCliente() {
             this.Reportes.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
 
-            $.get(`../API/Clientes/GetDetails`, { code: this.Reportes.codCliente }, response => {
+            if (!this.Reportes.codCliente) {
+                document.getElementById('validationReportesCodigoCliente').removeAttribute('hidden');
+                return;
+            }
+            else
+                document.getElementById('validationReportesCodigoCliente').setAttribute('hidden', true);
+
+            if (!this.Reportes.codsClientes.includes(this.Reportes.codCliente)) {
+                this.MostrarMensage({
+                    title: 'Código No Encontrado',
+                    message: `El código ${this.Reportes.codCliente}, no ha sido encontrado, favor ingrese un código válido.`,
+                    icon: 'info'
+                });
+                return;
+            }
+
+            this.BuscarCliente();
+        },
+
+        BuscarCliente() {
+            $.get(`..${this.ApiClientes}GetDetails`, { code: this.Reportes.codCliente }, response => {
                 console.log(response);
             });
         }
