@@ -6,9 +6,6 @@
         ApiReportes: '/API/Reportes/',
         ApiRuta_ws: '/API/Server_wsActions/',
 
-        Navegacion: [
-            { anterior: '', actual: 'menu' }
-        ],
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
 
@@ -98,7 +95,14 @@
         //  ------------------------------------------------
         Reportes: {
             codsClientes: [],
-            codCliente: ''
+            IndividualClientStatusDATA: [],
+            IndividualClientStatusFILTROS: {
+                codCliente: '',
+                mostrarNCF: false,
+                soloDocsVencidos: false,
+                incluirFirmas: false,
+                incluirMoras: false
+            }
         }
     },
     created: function () {
@@ -118,9 +122,6 @@
                 .replace('password=', '')
                 .replace(';', '');
         }
-
-
-
     },
     methods: {
         //  DIV PARA LOGEARSE
@@ -174,7 +175,7 @@
         //  DIV CRUD MOVIMIENTOS
         //----------------------------------------------------------
         MovimientosCRUD() {
-            this.NavigationBehaviour(actual = 'MovimientosCRUD');
+            NavigationBehaviour(actual = 'MovimientosCRUD');
 
             //  LLENAR LOS CAMPOS DE ESTA VENTANA: 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
@@ -645,7 +646,7 @@
             if (flag) {
                 this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
                 this.VentanaCierres.FechaFinal = new Date().toISOString().slice(0, 10);
-                this.NavigationBehaviour(actual = 'CuadresDeCajaCRUD');
+                NavigationBehaviour(actual = 'CuadresDeCajaCRUD');
             }
 
             let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
@@ -751,81 +752,12 @@
 
         //  UTILS
         //----------------------------------------------------------
-        MostrarAlerta(flag) {
-            let Toast = Swal.mixin({
-                toast: true,
-                position: 'bottom',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                onOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            })
-
-            Toast.fire({
-                icon: flag ? 'success' : 'error',
-                title: flag ? 'Proceso realizado con exito.' : 'Algo ha ocurrido.'
-            })
-        },
-
-        MostrarMensage(config) {
-            Swal.fire(
-                config.title,
-                config.message,
-                config.icon,
-            )
-        },
-
-        //  NAVEGACION DE LA PAGINA
-        NavigationBehaviour(actual) {
-            let divActualVisible = this.Navegacion[this.Navegacion.length - 1].actual;
-
-            if (actual === 0) {
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById('menu').removeAttribute('hidden');
-                this.Navegacion = this.Navegacion.slice(0, 1);
-            }
-            else if (actual === -1) {
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById(this.Navegacion[this.Navegacion.length - 2].actual).removeAttribute('hidden');
-                this.Navegacion.pop();
-            }
-            else if (actual) {
-                document.getElementById('cargando').removeAttribute('hidden');
-
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById(actual).removeAttribute('hidden');
-
-                this.Navegacion.push({ anterior: divActualVisible, actual })
-            }
-
-            //  MOSTRAR EL BOTON DE ATRAS SOLO CUANDO SE HAYA PASADO POR MENU
-            if (this.Navegacion.length >= 2)
-                document.getElementById('btnBack').removeAttribute('hidden');
-            else
-                document.getElementById('btnBack').setAttribute('hidden', true);
-
-            //  MOSTRAR EL BOTON DE HOME
-            if (this.Navegacion.length >= 3)
-                document.getElementById('btnHome').removeAttribute('hidden');
-            else
-                document.getElementById('btnHome').setAttribute('hidden', true);
-        },
-
         PrintMovimiento(idMovimiento) {
             if (idMovimiento) {
                 this.MovimientoSeleccionado(idMovimiento, true);
                 return;
             }
             printJS('toPrint', 'html');
-        },
-
-        BtnMostrarMenuReportes() {
-            document.getElementById('filtrosReportes').style.display = 'none';
-            document.getElementById('btnReporteMostrarMenu').style.display = 'none';
-            document.getElementById('seleccionarReporte').style.display = 'block';
         },
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -845,7 +777,7 @@
         //  MENU DE SOURCE DE REPORTES
         //----------------------------------------------------------
         DivSeleccionarSourceParaReporte() {
-            this.NavigationBehaviour('SeleccionarSourceParaReporte');
+            NavigationBehaviour('SeleccionarSourceParaReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
         },
 
@@ -862,7 +794,7 @@
         //  MENU DE REPORTES  
         //----------------------------------------------------------
         DivSeleccionarReporte() {
-            this.NavigationBehaviour('SeleccionarReporte');
+            NavigationBehaviour('SeleccionarReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
 
             if (this.Reportes.codsClientes.length === 0) {
@@ -875,19 +807,19 @@
         // REPORTES
         //----------------------------------------------------------
         ValidarCampoCodigoCliente() {
-            this.Reportes.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
+            this.Reportes.IndividualClientStatusFILTROS.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
 
-            if (!this.Reportes.codCliente) {
+            if (!this.Reportes.IndividualClientStatusFILTROS.codCliente) {
                 document.getElementById('validationReportesCodigoCliente').removeAttribute('hidden');
                 return;
             }
             else
                 document.getElementById('validationReportesCodigoCliente').setAttribute('hidden', true);
 
-            if (!this.Reportes.codsClientes.includes(this.Reportes.codCliente)) {
-                this.MostrarMensage({
+            if (!this.Reportes.codsClientes.includes(this.Reportes.IndividualClientStatusFILTROS.codCliente)) {
+                MostrarMensage({
                     title: 'Código No Encontrado',
-                    message: `El código ${this.Reportes.codCliente}, no ha sido encontrado, favor ingrese un código válido.`,
+                    message: `El código ${this.Reportes.IndividualClientStatusFILTROS.codCliente}, no ha sido encontrado, favor ingrese un código válido.`,
                     icon: 'info'
                 });
                 return;
@@ -897,8 +829,32 @@
         },
 
         BuscarCliente() {
-            $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { clientCode: this.Reportes.codCliente }, response => {
-                console.log(response);
+            const filtro = {
+                SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
+                //IncluirFirmas: this.Reportes.IndividualClientStatusFILTROS.incluirFirmas,
+                IncluirMoras: this.Reportes.IndividualClientStatusFILTROS.incluirMoras
+            }
+
+            $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente, filtro }, response => {
+                this.Reportes.IndividualClientStatusDATA = [];
+
+                for (item of response.IndividualClientStatusDATA) {
+                    this.Reportes.IndividualClientStatusDATA.push({
+                        descripcion_dcmto: item.descripcion_dcmto,
+                        fecha_emision: item.fecha_emision,
+                        fecha_vcmto: item.fecha_vcmto,
+                        ncf: item.ncf,
+                        diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
+                        pagosAcumulados: item.pagosAcumulados,
+                    });
+                }
+
+                if (!this.Reportes.IndividualClientStatusDATA.length)
+                    MostrarMensage({
+                        title: 'Sin registros',
+                        message: `El código ${this.Reportes.IndividualClientStatusFILTROS.codCliente}, no tiene ningún registro.`,
+                        icon: 'info'
+                    });
             });
         }
 
@@ -906,6 +862,11 @@
     filters: {
         FilterUppercase: value => {
             return value ? value.toString().toUpperCase() : value;
+        },
+
+        FilterDateFormat: value => {
+            const date = new Date(value);
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
         }
     }
 });

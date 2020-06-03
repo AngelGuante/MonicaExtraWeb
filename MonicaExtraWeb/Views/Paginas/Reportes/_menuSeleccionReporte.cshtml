@@ -1,6 +1,6 @@
 ﻿<div id="SeleccionarReporte" hidden>
 
-    <button id="btnReporteMostrarMenu" class="btn btn-info mt-2 btnReporteMenu" v-on:click="BtnMostrarMenuReportes()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">menu</i>Abrir menú</button>
+    <button id="btnReporteMostrarMenu" class="btn btn-info mt-2 btnReporteMenu" onclick="BtnMostrarMenuReportes()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">menu</i>Abrir menú</button>
 
     <hr />
 
@@ -155,7 +155,7 @@
                     <div class="col-sm">
                         <div class="form-group">
                             <label>Codigo Cliente</label>
-                            <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete">
+                            <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete" placeholder="Código del cliente">
                             <small id="validationReportesCodigoCliente" class="form-text" style="color:red;" hidden>Débe ingresar un código.</small>
                         </div>
                     </div>
@@ -163,28 +163,28 @@
                     <div style="font-weight:400">
                         <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportMostrarRNC" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
-                                <label class="form-check-label" for="reportMostrarRNC">Mostrar RNC</label>
+                                <input type="checkbox" class="form-check-input" id="reportMostrarNCF" v-model="Reportes.IndividualClientStatusFILTROS.mostrarNCF">
+                                <label class="form-check-label" for="reportMostrarNCF">Mostrar NCF</label>
                             </div>
                         </div>
 
                         <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportDocsVencidos" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <input type="checkbox" class="form-check-input" id="reportDocsVencidos" v-model="Reportes.IndividualClientStatusFILTROS.soloDocsVencidos">
                                 <label class="form-check-label" for="reportDocsVencidos">Solo DOCS. Vencidos</label>
                             </div>
                         </div>
 
                         <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportFirmas" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="Reportes.IndividualClientStatusFILTROS.incluirFirmas" disabled>
                                 <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
                             </div>
                         </div>
 
                         <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportMoras" onclick="alert('AUN NO IMPLEMENTADO');" disabled>
+                                <input type="checkbox" class="form-check-input" id="reportMoras" v-model="Reportes.IndividualClientStatusFILTROS.incluirMoras" disabled>
                                 <label class="form-check-label" for="reportMoras">Incluir Moras</label>
                             </div>
                         </div>
@@ -197,52 +197,32 @@
     </div>
 
     <div id="contenidosReportes" class="Tables" style="display:flex; justify-content:center">
-        <div>
+        <div v-if="Reportes.IndividualClientStatusDATA.length">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th scope="col">Fecha-Doo</th>
+                        <th scope="col">Emisión</th>
                         <th scope="col">Vencimiento</th>
-                        <th scope="col">NCF</th>
+                        <th scope="col" v-if="Reportes.IndividualClientStatusFILTROS.mostrarNCF">NCF</th>
                         <th scope="col">Descripción</th>
                         <th scope="col">Días Transcurridos</th>
                         <th scope="col">Monto</th>
-                        <th scope="col">Pagos Acum.</th>
+                        <th scope="col">Pagos Acumulados</th>
                         <th scope="col">Saldo</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @*<tr v-for="element in VentanaCierres.Cierres">
-                    <td style="text-align:center;">{{element.NumeroCierre}}</td>
-                    <td>{{element.FechaInicial}}</td>
-                    <td>{{element.FechaFinal}}</td>
-                    <td style="text-align:center;">{{element.SaldoFinal}}</td>
-                    <td style="text-align:center;"><button class="btn btn-outline-info Sombra" type="button" v-on:click="MovimientosEnCierre(element.NumeroCierre)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
-                </tr>*@
+                    <tr v-for="element in Reportes.IndividualClientStatusDATA">
+                        <td style="text-align:center;">{{ element.fecha_emision | FilterDateFormat }}</td>
+                        <td>{{ element.fecha_vcmto | FilterDateFormat }}</td>
+                        <td v-if="Reportes.IndividualClientStatusFILTROS.mostrarNCF">{{ element.ncf }}</td>
+                        <td style="text-align:center;">{{ element.descripcion_dcmto }}</td>
+                        <td style="text-align:center;">{{ element.diasTrancurridos }}</td>
+                        <td style="text-align:center;"></td>
+                        <td style="text-align:center;">{{ element.pagosAcumulados }}</td>
+                        <td style="text-align:center;"></td>
                 </tbody>
             </table>
-
-            <hr />
-
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center">
-                    <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
-                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(1)"><<</a>
-                    </li>
-                    <li v-bind:class="{'page-item': true, disabled: VentanaCierres.PaginatorIndex == 1 ? true : false}">
-                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex - 1)"><</a>
-                    </li>
-                    <li class="page-item disabled">
-                        <a class="page-link">{{VentanaCierres.PaginatorIndex}}</a>
-                    </li>
-                    <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
-                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorIndex + 1)">></a>
-                    </li>
-                    <li v-bind:class="{'page-item':true, disabled: VentanaCierres.PaginatorIndex == VentanaCierres.PaginatorLastPage ? true : false}">
-                        <a class="page-link" v-on:click="CierresCajaPaginatorMovimientos(VentanaCierres.PaginatorLastPage)">>></a>
-                    </li>
-                </ul>
-            </nav>
         </div>
     </div>
 </div>

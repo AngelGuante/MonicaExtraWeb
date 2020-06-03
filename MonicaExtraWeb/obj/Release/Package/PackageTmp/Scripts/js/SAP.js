@@ -2,7 +2,8 @@
     el: '#app',
     data: {
         ApiRuta: '/API/ASPISAP/',
-        ApiClientes: '/API/Clientes//',
+        ApiClientes: '/API/Clientes/',
+        ApiReportes: '/API/Reportes/',
         ApiRuta_ws: '/API/Server_wsActions/',
 
         Navegacion: [
@@ -97,7 +98,14 @@
         //  ------------------------------------------------
         Reportes: {
             codsClientes: [],
-            codCliente: ''
+            IndividualClientStatusDATA: [],
+            IndividualClientStatusFILTROS: {
+                codCliente: '',
+                mostrarNCF: true,
+                soloDocsVencidos: false,
+                incluirFirmas: false,
+                incluirMoras: false
+            }
         }
     },
     created: function () {
@@ -117,9 +125,6 @@
                 .replace('password=', '')
                 .replace(';', '');
         }
-
-
-
     },
     methods: {
         //  DIV PARA LOGEARSE
@@ -750,33 +755,6 @@
 
         //  UTILS
         //----------------------------------------------------------
-        MostrarAlerta(flag) {
-            let Toast = Swal.mixin({
-                toast: true,
-                position: 'bottom',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                onOpen: (toast) => {
-                    toast.addEventListener('mouseenter', Swal.stopTimer)
-                    toast.addEventListener('mouseleave', Swal.resumeTimer)
-                }
-            })
-
-            Toast.fire({
-                icon: flag ? 'success' : 'error',
-                title: flag ? 'Proceso realizado con exito.' : 'Algo ha ocurrido.'
-            })
-        },
-
-        MostrarMensage(config) {
-            Swal.fire(
-                config.title,
-                config.message,
-                config.icon,
-            )
-        },
-
         //  NAVEGACION DE LA PAGINA
         NavigationBehaviour(actual) {
             let divActualVisible = this.Navegacion[this.Navegacion.length - 1].actual;
@@ -827,24 +805,9 @@
             document.getElementById('seleccionarReporte').style.display = 'block';
         },
 
-        OptCuentasPorCobrarClte() {
-            if (window.innerWidth < 990) {
-                document.getElementById('filtrosReportes').style.display = 'flex';
-                document.getElementById('btnReporteMostrarMenu').style.display = 'block';
-                document.getElementById('seleccionarReporte').style.display = 'none';
-            }
-        },
-
         //---------------------------------------------------------------------------------------------------------------------------------------------------
         //                              MODULO DE REPORTES
         //---------------------------------------------------------------------------------------------------------------------------------------------------
-
-        //  MENU DE SOURCE DE REPORTES
-        //----------------------------------------------------------
-        DivSeleccionarSourceParaReporte() {
-            this.NavigationBehaviour('SeleccionarSourceParaReporte');
-            document.getElementById('cargando').setAttribute('hidden', true);
-        },
 
         ObtenerDatos() {
             $.get(`..${this.ApiRuta_ws}GetMoviments`).done((response) => {
@@ -856,7 +819,24 @@
             });
         },
 
-        // MENU DE REPORTES  
+        //  MENU DE SOURCE DE REPORTES
+        //----------------------------------------------------------
+        DivSeleccionarSourceParaReporte() {
+            this.NavigationBehaviour('SeleccionarSourceParaReporte');
+            document.getElementById('cargando').setAttribute('hidden', true);
+        },
+
+        //  OPCIONES DEL MENU
+        //-------------------------------------------------------------------------------
+        OptCuentasPorCobrarClte() {
+            if (window.innerWidth < 990) {
+                document.getElementById('filtrosReportes').style.display = 'flex';
+                document.getElementById('btnReporteMostrarMenu').style.display = 'block';
+                document.getElementById('seleccionarReporte').style.display = 'none';
+            }
+        },
+
+        //  MENU DE REPORTES  
         //----------------------------------------------------------
         DivSeleccionarReporte() {
             this.NavigationBehaviour('SeleccionarReporte');
@@ -872,19 +852,19 @@
         // REPORTES
         //----------------------------------------------------------
         ValidarCampoCodigoCliente() {
-            this.Reportes.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
+            this.Reportes.IndividualClientStatusFILTROS.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
 
-            if (!this.Reportes.codCliente) {
+            if (!this.Reportes.IndividualClientStatusFILTROS.codCliente) {
                 document.getElementById('validationReportesCodigoCliente').removeAttribute('hidden');
                 return;
             }
             else
                 document.getElementById('validationReportesCodigoCliente').setAttribute('hidden', true);
 
-            if (!this.Reportes.codsClientes.includes(this.Reportes.codCliente)) {
-                this.MostrarMensage({
+            if (!this.Reportes.codsClientes.includes(this.Reportes.IndividualClientStatusFILTROS.codCliente)) {
+                MostrarMensage({
                     title: 'Código No Encontrado',
-                    message: `El código ${this.Reportes.codCliente}, no ha sido encontrado, favor ingrese un código válido.`,
+                    message: `El código ${this.Reportes.IndividualClientStatusFILTROS.codCliente}, no ha sido encontrado, favor ingrese un código válido.`,
                     icon: 'info'
                 });
                 return;
@@ -894,8 +874,32 @@
         },
 
         BuscarCliente() {
-            $.get(`..${this.ApiClientes}GetDetails`, { code: this.Reportes.codCliente }, response => {
-                console.log(response);
+            const filtro = {
+                SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
+                //IncluirFirmas: this.Reportes.IndividualClientStatusFILTROS.incluirFirmas,
+                IncluirMoras: this.Reportes.IndividualClientStatusFILTROS.incluirMoras
+            }
+
+            $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente, filtro }, response => {
+                this.Reportes.IndividualClientStatusDATA = [];
+
+                for (item of response.IndividualClientStatusDATA) {
+                    this.Reportes.IndividualClientStatusDATA.push({
+                        descripcion_dcmto: item.descripcion_dcmto,
+                        fecha_emision: item.fecha_emision,
+                        fecha_vcmto: item.fecha_vcmto,
+                        ncf: item.ncf,
+                        diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
+                        pagosAcumulados: item.pagosAcumulados,
+                    });
+                }
+
+                if (!this.Reportes.IndividualClientStatusDATA.length)
+                    MostrarMensage({
+                        title: 'Sin registros',
+                        message: `El código ${this.Reportes.IndividualClientStatusFILTROS.codCliente}, no tiene ningún registro.`,
+                        icon: 'info'
+                    });
             });
         }
 
@@ -903,6 +907,11 @@
     filters: {
         FilterUppercase: value => {
             return value ? value.toString().toUpperCase() : value;
+        },
+
+        FilterDateFormat: value => {
+            const date = new Date(value);
+            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
         }
     }
 });

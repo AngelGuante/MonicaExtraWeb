@@ -121,7 +121,8 @@ input[type=number] {
        display: block;
     }
 
-    .filtros {
+    .filtros,
+    .contenidosReportes {
         width: 100%;
     }
 
@@ -135,7 +136,8 @@ input[type=number] {
         display: block;
     }
 
-    .filtros {
+    .filtros,
+    .contenidosReportes {
         width: 100%;
     }
 
@@ -149,7 +151,8 @@ input[type=number] {
         display: block;
     }
 
-    .filtros {
+    .filtros,
+    .contenidosReportes {
         width: 100%;
     }
 
@@ -163,7 +166,8 @@ input[type=number] {
         display: none;
     }
 
-    .filtros {
+    .filtros,
+    .contenidosReportes{
         width: 50%;
     }
 
@@ -177,7 +181,8 @@ input[type=number] {
         display: none;
     }
 
-    .filtros {
+    .filtros,
+    .contenidosReportes {
         width: 50%;
     }
 

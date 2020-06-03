@@ -5,6 +5,8 @@ using System.Linq;
 using System.IO;
 using System;
 using System.Text;
+using System.Xml;
+using System.Web;
 
 namespace MonicaExtraWeb.Utils
 {
@@ -16,15 +18,45 @@ namespace MonicaExtraWeb.Utils
 
         public static void StartServer()
         {
-            if (_wsServer == null)
+            try
             {
-                _wsServer = new WebSocketServer();
-                _wsServer.Setup(_port);
-                _wsServer.NewSessionConnected += WsServer_NewSessionConnected;
-                _wsServer.NewMessageReceived += WsServer_NewMessageReceived;
-                _wsServer.NewDataReceived += WsServer_NewDataReceived;
-                _wsServer.SessionClosed += WsServer_SessionClosed;
-                _wsServer.Start();
+                throw new Exception("Demo Exception ddd");
+
+                if (_wsServer == null)
+                {
+                    _wsServer = new WebSocketServer();
+                    _wsServer.Setup(_port);
+                    _wsServer.NewSessionConnected += WsServer_NewSessionConnected;
+                    _wsServer.NewMessageReceived += WsServer_NewMessageReceived;
+                    _wsServer.NewDataReceived += WsServer_NewDataReceived;
+                    _wsServer.SessionClosed += WsServer_SessionClosed;
+                    _wsServer.Start();
+                }
+            }
+            catch (Exception e)
+            {
+                var path = HttpContext.Current.Server.MapPath("/Exceptions");
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
+
+                //var path = HttpContext.Current.Server.MapPath("demo.xml");
+                    
+                var newPath = $"{path}/edx.xml";
+
+                var xmlWriter = new XmlTextWriter(newPath, Encoding.UTF8);
+                xmlWriter.Formatting = System.Xml.Formatting.Indented;
+                xmlWriter.WriteStartDocument();
+                xmlWriter.WriteStartElement("Exception");
+
+                xmlWriter.WriteStartElement("demo");
+                xmlWriter.WriteString(e.Message);
+                xmlWriter.WriteEndDocument();
+
+                xmlWriter.WriteEndDocument();
+                xmlWriter.WriteEndDocument();
+
+                xmlWriter.Flush();
+
             }
         }
 
@@ -77,7 +109,8 @@ namespace MonicaExtraWeb.Utils
         {
             _sc.Add(session);
 
-            session.Send(JsonConvert.SerializeObject(new {
+            session.Send(JsonConvert.SerializeObject(new
+            {
                 sessionId = session.SessionID
             }));
         }

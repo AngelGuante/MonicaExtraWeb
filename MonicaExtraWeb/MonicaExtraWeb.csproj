@@ -172,6 +172,7 @@
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
+    <Compile Include="Models\DTO\Reportes\FiltroGetIndividualClientStatus.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
     <Compile Include="Models\monica10\CierresCaja.cs" />
     <Compile Include="Models\monica10\ClasificacionFiscal.cs" />
