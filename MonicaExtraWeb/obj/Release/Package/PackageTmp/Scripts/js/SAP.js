@@ -6,9 +6,6 @@
         ApiReportes: '/API/Reportes/',
         ApiRuta_ws: '/API/Server_wsActions/',
 
-        Navegacion: [
-            { anterior: '', actual: 'menu' }
-        ],
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
 
@@ -101,7 +98,7 @@
             IndividualClientStatusDATA: [],
             IndividualClientStatusFILTROS: {
                 codCliente: '',
-                mostrarNCF: true,
+                mostrarNCF: false,
                 soloDocsVencidos: false,
                 incluirFirmas: false,
                 incluirMoras: false
@@ -178,7 +175,7 @@
         //  DIV CRUD MOVIMIENTOS
         //----------------------------------------------------------
         MovimientosCRUD() {
-            this.NavigationBehaviour(actual = 'MovimientosCRUD');
+            NavigationBehaviour(actual = 'MovimientosCRUD');
 
             //  LLENAR LOS CAMPOS DE ESTA VENTANA: 
             this.Movimiento.Fecha = new Date().toISOString().slice(0, 10);
@@ -649,7 +646,7 @@
             if (flag) {
                 this.VentanaCierres.FechaInicial = new Date().toISOString().slice(0, 10);
                 this.VentanaCierres.FechaFinal = new Date().toISOString().slice(0, 10);
-                this.NavigationBehaviour(actual = 'CuadresDeCajaCRUD');
+                NavigationBehaviour(actual = 'CuadresDeCajaCRUD');
             }
 
             let paramFechaInicial = this.VentanaCierres.FechaInicial == new Date().toISOString().slice(0, 10) ? '' : this.VentanaCierres.FechaInicial;
@@ -755,54 +752,12 @@
 
         //  UTILS
         //----------------------------------------------------------
-        //  NAVEGACION DE LA PAGINA
-        NavigationBehaviour(actual) {
-            let divActualVisible = this.Navegacion[this.Navegacion.length - 1].actual;
-
-            if (actual === 0) {
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById('menu').removeAttribute('hidden');
-                this.Navegacion = this.Navegacion.slice(0, 1);
-            }
-            else if (actual === -1) {
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById(this.Navegacion[this.Navegacion.length - 2].actual).removeAttribute('hidden');
-                this.Navegacion.pop();
-            }
-            else if (actual) {
-                document.getElementById('cargando').removeAttribute('hidden');
-
-                document.getElementById(divActualVisible).setAttribute('hidden', true);
-                document.getElementById(actual).removeAttribute('hidden');
-
-                this.Navegacion.push({ anterior: divActualVisible, actual })
-            }
-
-            //  MOSTRAR EL BOTON DE ATRAS SOLO CUANDO SE HAYA PASADO POR MENU
-            if (this.Navegacion.length >= 2)
-                document.getElementById('btnBack').removeAttribute('hidden');
-            else
-                document.getElementById('btnBack').setAttribute('hidden', true);
-
-            //  MOSTRAR EL BOTON DE HOME
-            if (this.Navegacion.length >= 3)
-                document.getElementById('btnHome').removeAttribute('hidden');
-            else
-                document.getElementById('btnHome').setAttribute('hidden', true);
-        },
-
         PrintMovimiento(idMovimiento) {
             if (idMovimiento) {
                 this.MovimientoSeleccionado(idMovimiento, true);
                 return;
             }
             printJS('toPrint', 'html');
-        },
-
-        BtnMostrarMenuReportes() {
-            document.getElementById('filtrosReportes').style.display = 'none';
-            document.getElementById('btnReporteMostrarMenu').style.display = 'none';
-            document.getElementById('seleccionarReporte').style.display = 'block';
         },
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -822,7 +777,7 @@
         //  MENU DE SOURCE DE REPORTES
         //----------------------------------------------------------
         DivSeleccionarSourceParaReporte() {
-            this.NavigationBehaviour('SeleccionarSourceParaReporte');
+            NavigationBehaviour('SeleccionarSourceParaReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
         },
 
@@ -839,7 +794,7 @@
         //  MENU DE REPORTES  
         //----------------------------------------------------------
         DivSeleccionarReporte() {
-            this.NavigationBehaviour('SeleccionarReporte');
+            NavigationBehaviour('SeleccionarReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
 
             if (this.Reportes.codsClientes.length === 0) {

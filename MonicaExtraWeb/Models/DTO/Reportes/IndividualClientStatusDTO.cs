@@ -6,5 +6,6 @@
         public string fecha_vcmto { get; set; }
         public string ncf { get; set; }
         public string descripcion_dcmto { get; set; }
+        public string pagosAcumulados { get; set; }
     }
 }

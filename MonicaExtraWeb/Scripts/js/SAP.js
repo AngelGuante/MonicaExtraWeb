@@ -4,7 +4,7 @@
         ApiRuta: '/API/ASPISAP/',
         ApiClientes: '/API/Clientes/',
         ApiReportes: '/API/Reportes/',
-        ApiRuta_ws: '/API/Server_wsActions/',
+        ApiReportesLocales: '/API/ReportesLocales/',
 
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
@@ -94,6 +94,7 @@
 
         //  ------------------------------------------------
         Reportes: {
+            sourceResportes: '',
             codsClientes: [],
             IndividualClientStatusDATA: [],
             IndividualClientStatusFILTROS: {
@@ -764,16 +765,6 @@
         //                              MODULO DE REPORTES
         //---------------------------------------------------------------------------------------------------------------------------------------------------
 
-        ObtenerDatos() {
-            $.get(`..${this.ApiRuta_ws}GetMoviments`).done((response) => {
-                //$.get(`..${this.ApiRuta_ws}GetMoviments?sessionId=a1ddb8c4-e576-426f-91e3-49816b3a70dc`).done(response => {
-                //this.paraDemo = JSON.parse('[{"NumeroTransacion":225,"Beneficiario":"49","Concepto":"B","Rnc":"1","Ncf":"2","TipoMovimiento":3,"Monto":0.00,"Itebis":"4","Neto":3.00,"Soporte":"C","Fecha":"2020-05-08","Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":10,"NumeroCierre":53},{"NumeroTransacion":224,"Beneficiario":"49","Concepto":"A","Rnc":"2","Ncf":"3","TipoMovimiento":3,"Monto":1.00,"Itebis":"5","Neto":4.00,"Soporte":"C","Fecha":"2020-05-08","Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":10,"NumeroCierre":53},{"NumeroTransacion":223,"Beneficiario":null,"Concepto":"tewteet","Rnc":"32424","Ncf":"3","TipoMovimiento":3,"Monto":345243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":222,"Beneficiario":null,"Concepto":"ULTIMA PRUEBA","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":141123.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":221,"Beneficiario":null,"Concepto":"erwe","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":341243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":220,"Beneficiario":null,"Concepto":"ewr","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":1234.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":219,"Beneficiario":null,"Concepto":"werqwr","Rnc":"","Ncf":"","TipoMovimiento":994,"Monto":3243.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":218,"Beneficiario":null,"Concepto":"rete","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":4523.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":217,"Beneficiario":null,"Concepto":"2433214124","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":32423.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53},{"NumeroTransacion":216,"Beneficiario":null,"Concepto":"ytyt","Rnc":"","Ncf":"","TipoMovimiento":3,"Monto":55.00,"Itebis":null,"Neto":null,"Soporte":"C","Fecha":null,"Saldo":null,"EntradaSalida":"E","CodigoCajero":null,"NumeroCaja":1,"TipoMoneda":"P","TasaCambio":0.0000,"Estatus":1,"Clasificancf":null,"NumeroCierre":53}]');
-                //document.getElementById('paraDemo').removeAttribute('hidden');
-                //document.getElementById('dondeBuscar').setAttribute('hidden', true);
-                console.log(response);
-            });
-        },
-
         //  MENU DE SOURCE DE REPORTES
         //----------------------------------------------------------
         DivSeleccionarSourceParaReporte() {
@@ -793,20 +784,23 @@
 
         //  MENU DE REPORTES  
         //----------------------------------------------------------
-        DivSeleccionarReporte() {
+        DivSeleccionarReporte(source) {
             NavigationBehaviour('SeleccionarReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
 
-            if (this.Reportes.codsClientes.length === 0) {
-                $.get(`..${this.ApiClientes}GetCodes`, {}, response => {
-                    this.Reportes.codsClientes = response.codes;
-                });
+            this.Reportes.sourceResportes = source;
+            if (this.Reportes.sourceResportes === 'web') {
+                if (this.Reportes.codsClientes.length === 0) {
+                    $.get(`..${this.ApiClientes}GetCodes`, {}, response => {
+                        this.Reportes.codsClientes = response.codes;
+                    });
+                }
             }
         },
 
         // REPORTES
         //----------------------------------------------------------
-        ValidarCampoCodigoCliente() {
+        Buscar() {
             this.Reportes.IndividualClientStatusFILTROS.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
 
             if (!this.Reportes.IndividualClientStatusFILTROS.codCliente) {
@@ -816,6 +810,57 @@
             else
                 document.getElementById('validationReportesCodigoCliente').setAttribute('hidden', true);
 
+            if (this.Reportes.sourceResportes === 'web')
+                this.ValidarCampoCodigoCliente();
+            else if (this.Reportes.sourceResportes === 'local') {
+                document.getElementById('cargando').removeAttribute('hidden');
+                this.Reportes.IndividualClientStatusDATA = [];
+
+                let queryParams = `codigo_clte=${this.Reportes.IndividualClientStatusFILTROS.codCliente};`;
+                queryParams += `${this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos ? 'SoloDocsVencidos=true;' : ''}`;
+
+                fetch(`..${this.ApiReportesLocales}/SendWebsocketServer?status=3&data=${queryParams}`)
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.value === 'false') {
+                            document.getElementById('cargando').setAttribute('hidden', true);
+                            MostrarMensage({
+                                title: 'No se pudo conectar a su Base de Datos..',
+                                message: `Su equipo no tiene monicaWebsocketClient.dll en ejecucion...`,
+                                icon: 'error'
+                            });
+                        }
+                        else if (result.value === 'true') {
+                            let interval = setInterval(() => {
+                                fetch(`..${this.ApiReportesLocales}/GetWebsocketResponseFile`)
+                                    .then(response => response.json())
+                                    .then(resultset => {
+                                        const parsedResultset = JSON.parse(resultset.resultset);
+                                        if (parsedResultset) {
+                                            clearInterval(interval);
+
+                                            this.Reportes.IndividualClientStatusDATA = [];
+
+                                            for (item of JSON.parse(parsedResultset.data)) {
+                                                this.Reportes.IndividualClientStatusDATA.push({
+                                                    descripcion_dcmto: item.descripcion_dcmto,
+                                                    fecha_emision: item.fecha_emision,
+                                                    fecha_vcmto: item.fecha_vcmto,
+                                                    ncf: item.ncf,
+                                                    diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
+                                                    pagosAcumulados: item.pagosAcumulados,
+                                                });
+                                            }
+                                            document.getElementById('cargando').setAttribute('hidden', true);
+                                        }
+                                    })
+                            }, 1000);
+                        }
+                    });
+            }
+        },
+
+        ValidarCampoCodigoCliente() {
             if (!this.Reportes.codsClientes.includes(this.Reportes.IndividualClientStatusFILTROS.codCliente)) {
                 MostrarMensage({
                     title: 'Código No Encontrado',
@@ -825,6 +870,7 @@
                 return;
             }
 
+            document.getElementById('cargando').removeAttribute('hidden');
             this.BuscarCliente();
         },
 
@@ -848,6 +894,8 @@
                         pagosAcumulados: item.pagosAcumulados,
                     });
                 }
+
+                document.getElementById('cargando').setAttribute('hidden', true);
 
                 if (!this.Reportes.IndividualClientStatusDATA.length)
                     MostrarMensage({

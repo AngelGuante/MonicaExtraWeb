@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <sitemanifest>
-  <IisApp path="D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" />
-  <setAcl path="D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
-  <setAcl path="D:\Mis cosas\I\Proyectos\ASP.Net\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
+  <IisApp path="D:\Mis cosas\I\Proyectos\.Net\.Net Framework\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" />
+  <setAcl path="D:\Mis cosas\I\Proyectos\.Net\.Net Framework\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" setAclResourceType="Directory" />
+  <setAcl path="D:\Mis cosas\I\Proyectos\.Net\.Net Framework\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Release\Package\PackageTmp" setAclUser="anonymousAuthenticationUser" setAclResourceType="Directory" />
 </sitemanifest>
