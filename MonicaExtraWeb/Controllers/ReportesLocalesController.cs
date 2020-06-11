@@ -1,13 +1,17 @@
 ﻿using MonicaExtraWeb.Enums;
 using MonicaExtraWeb.Models.DTO;
+using MonicaExtraWeb.Models.DTO.Reportes;
 using Newtonsoft.Json;
-using System.Configuration;
-using System.IO;
-using System.Threading.Tasks;
-using System.Web.Http;
-using static MonicaExtraWeb.Utils.RequestsHTTP;
-using System.Web;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using static MonicaExtraWeb.Utils.Querys;
+using static MonicaExtraWeb.Utils.RequestsHTTP;
+
 
 namespace MonicaExtraWeb.Controllers
 {
@@ -17,14 +21,28 @@ namespace MonicaExtraWeb.Controllers
         private string _websocketServerPATH = ConfigurationManager.AppSettings["websocketServerPATH"];
         private static Dictionary<string, string> DataWebsocketPerClient = new Dictionary<string, string>();
 
-        [HttpGet]
-        [Route("SendWebsocketServer")]
+        [HttpPost]
         [Route("SendWebsocketServer/{status}")]
-        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, string data)
+        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, FiltroGetIndividualClientStatus filtro)
         {
             var IP = HttpContext.Current.Request.UserHostAddress;
+            string query = "";
 
-            var IPExist = await GET($"{_websocketServerPATH}/SendToClient?IP={IP}&status={status}&data={data}");
+            switch (status)
+            {
+                case ClientMessageStatusEnum.IndividualClientStatusReport:
+                    query = IndividualClientQuery(filtro, "");
+                    break;
+            }
+
+            var obj = new WebSocketDTO
+            {
+                data = query
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
+
+            var IPExist = await POST($"{_websocketServerPATH}/SendToClient/{IP}", content);
 
             return Json(new { value = IPExist });
         }

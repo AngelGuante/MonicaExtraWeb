@@ -816,11 +816,18 @@
                 document.getElementById('cargando').removeAttribute('hidden');
                 this.Reportes.IndividualClientStatusDATA = [];
 
-                let queryParams = `codigo_clte=${this.Reportes.IndividualClientStatusFILTROS.codCliente};`;
-                queryParams += `${this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos ? 'SoloDocsVencidos=true;' : ''}`;
+                const filtro = {
+                    clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente,
+                    SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
+                }
 
-                fetch(`..${this.ApiReportesLocales}/SendWebsocketServer?status=3&data=${queryParams}`)
-                    .then(response => response.json())
+                fetch(`..${this.ApiReportesLocales}SendWebsocketServer/1`, {
+                    method: 'POST',
+                    body: JSON.stringify(filtro),
+                    headers: {
+                        'content-type': 'application/json'
+                    }
+                }).then(response => response.json())
                     .then(result => {
                         if (result.value === 'false') {
                             document.getElementById('cargando').setAttribute('hidden', true);
@@ -832,24 +839,38 @@
                         }
                         else if (result.value === 'true') {
                             let interval = setInterval(() => {
-                                fetch(`..${this.ApiReportesLocales}/GetWebsocketResponseFile`)
+                                fetch(`..${this.ApiReportesLocales}GetWebsocketResponseFile`)
                                     .then(response => response.json())
                                     .then(resultset => {
                                         const parsedResultset = JSON.parse(resultset.resultset);
+
                                         if (parsedResultset) {
                                             clearInterval(interval);
 
-                                            this.Reportes.IndividualClientStatusDATA = [];
-
-                                            for (item of JSON.parse(parsedResultset.data)) {
-                                                this.Reportes.IndividualClientStatusDATA.push({
-                                                    descripcion_dcmto: item.descripcion_dcmto,
-                                                    fecha_emision: item.fecha_emision,
-                                                    fecha_vcmto: item.fecha_vcmto,
-                                                    ncf: item.ncf,
-                                                    diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
-                                                    pagosAcumulados: item.pagosAcumulados,
+                                            if (parsedResultset.data.startsWith("Error: ")) {
+                                                MostrarMensage({
+                                                    title: 'A ocurrido un problema..',
+                                                    message: parsedResultset.data.replace("Error: "),
+                                                    icon: 'error'
                                                 });
+                                            }
+                                            else {
+                                                for (item of JSON.parse(parsedResultset.data)) {
+                                                    this.Reportes.IndividualClientStatusDATA.push({
+                                                        descripcion_dcmto: item.descripcion_dcmto,
+                                                        fecha_emision: item.fecha_emision,
+                                                        fecha_vcmto: item.fecha_vcmto,
+                                                        ncf: item.ncf,
+                                                        diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
+                                                        pagosAcumulados: item.pagosAcumulados,
+                                                    });
+                                                }
+                                                if (this.Reportes.IndividualClientStatusDATA.length === 0)
+                                                    MostrarMensage({
+                                                        title: 'Sin coincidencias',
+                                                        message: 'Ningun resultado que coincida con su búsqueda',
+                                                        icon: 'info'
+                                                    });
                                             }
                                             document.getElementById('cargando').setAttribute('hidden', true);
                                         }
@@ -876,12 +897,13 @@
 
         BuscarCliente() {
             const filtro = {
+                clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente,
                 SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
                 //IncluirFirmas: this.Reportes.IndividualClientStatusFILTROS.incluirFirmas,
                 IncluirMoras: this.Reportes.IndividualClientStatusFILTROS.incluirMoras
             }
 
-            $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente, filtro }, response => {
+            $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { filtro }, response => {
                 this.Reportes.IndividualClientStatusDATA = [];
 
                 for (item of response.IndividualClientStatusDATA) {

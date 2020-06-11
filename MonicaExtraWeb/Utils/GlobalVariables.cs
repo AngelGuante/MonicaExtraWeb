@@ -18,6 +18,6 @@ namespace MonicaExtraWeb.Utils
             }
         }
 
-        public static string DbName { get; } = "DB_A5E94C_monica10global";
+        public static string DbName { get; } = "DB_A5E94C_monica10global.";
     }
 }

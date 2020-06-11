@@ -12,7 +12,7 @@
 
                 <hr />
 
-                <button onclick="alert('REPORTE LOCAL AUN NO IMPLEMENTADO')" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
+                <button v-on:click="DivSeleccionarReporte('local')" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
             </div>
         </div>
 
@@ -25,7 +25,7 @@
 
                 <hr />
 
-                <button v-on:click="DivSeleccionarReporte()" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
+                <button v-on:click="DivSeleccionarReporte('web')" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
             </div>
         </div>
     </div>

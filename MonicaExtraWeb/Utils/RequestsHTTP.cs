@@ -5,12 +5,12 @@ namespace MonicaExtraWeb.Utils
 {
     public class RequestsHTTP
     {
-        public static async Task<string> GET(string path)
+        public static async Task<string> POST(string path, StringContent content)
         {
             using (var client = new HttpClient())
-            using (var response = await client.GetAsync(path))
-            using (var content = response.Content)
-                return await content.ReadAsStringAsync();
+            using (var response = await client.PostAsync(path, content))
+            using (var RequestContent = response.Content)
+                return await RequestContent.ReadAsStringAsync();
         }
     }
 }
