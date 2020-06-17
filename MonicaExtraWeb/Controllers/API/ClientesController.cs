@@ -16,8 +16,7 @@ namespace MonicaExtraWeb.Controllers.API
             query.Append("  SELECT TRIM(codigo_clte) ");
             query.Append($" FROM {DbName}dbo.clientes ");
 
-            return Json(new
-            {
+            return Json(new {
                 codes = Conn.Query<string>(query.ToString())
             });
         }

@@ -170,7 +170,7 @@
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
-    <Compile Include="Models\DTO\Reportes\FiltroGetIndividualClientStatus.cs" />
+    <Compile Include="Models\DTO\Reportes\FiltrosReportes.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
     <Compile Include="Models\DTO\WebSocketDTO.cs" />
     <Compile Include="Models\monica10\CierresCaja.cs" />
@@ -183,7 +183,7 @@
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\GlobalVariables.cs" />
-    <Compile Include="Utils\Querys.cs" />
+    <Compile Include="Utils\QuerysReportes.cs" />
     <Compile Include="Utils\RequestsHTTP.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +203,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\Bootstrapt.css" />
+    <Content Include="Content\css\ReportStyle.css" />
     <Content Include="Content\css\SAP.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />

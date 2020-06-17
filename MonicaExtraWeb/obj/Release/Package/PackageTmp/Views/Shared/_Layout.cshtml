@@ -11,14 +11,17 @@
     @*  BOOTSTRAP *@
     <link href="~/Content/css/Bootstrapt.css" rel="stylesheet">
 
+    <link href="~/Content/css/ReportStyle.css" rel="stylesheet">
+
 </head>
 <body>
     <div>
-        <nav class="navbar navbar-dark bg-info">
-            <a class="navbar-brand"> <strong>MONICAEXTRA - SISTEMA DE CAJA WEB</strong> </a>
+        <nav class="navbar navbar-dark bg-info" style="display:flex; justify-content:flex-start">
+            <label class="navbar-brand"> <strong>MONICAEXTRA</strong> </label>
+            <label class="navbar-brand d-none d-sm-block"><strong> -   SISTEMA DE CAJA WEB</strong></label>
         </nav>
 
-        <div class="container body-content">
+        <div id="divMaster" class="container body-content">
             @RenderBody()
         </div>
     </div>

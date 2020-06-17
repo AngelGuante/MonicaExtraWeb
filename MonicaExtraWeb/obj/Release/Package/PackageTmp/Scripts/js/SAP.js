@@ -4,7 +4,6 @@
         ApiRuta: '/API/ASPISAP/',
         ApiClientes: '/API/Clientes/',
         ApiReportes: '/API/Reportes/',
-        ApiReportesLocales: '/API/ReportesLocales/',
 
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
@@ -95,7 +94,21 @@
         //  ------------------------------------------------
         Reportes: {
             sourceResportes: '',
+            opcionReporteSeleccionado: '',
             codsClientes: [],
+
+            VentasYDevolucionesCategoriaYVendedorDATA: [],
+            VentasYDevolucionesCategoriaYVendedorFILTROS: {
+                //Filtro
+                tipoReporte: 'ventas',
+                minFecha_emision: '',
+                maxFecha_emision: '',
+                Codigo_vendedor: '',
+                tipo_factura: '1',
+                vendedores: [],
+                vendedorSeleccionado: '',
+            },
+
             IndividualClientStatusDATA: [],
             IndividualClientStatusFILTROS: {
                 codCliente: '',
@@ -765,24 +778,14 @@
         //                              MODULO DE REPORTES
         //---------------------------------------------------------------------------------------------------------------------------------------------------
 
-        //  MENU DE SOURCE DE REPORTES
+        //  MENU DE MODULO DE REPORTES
         //----------------------------------------------------------
         DivSeleccionarSourceParaReporte() {
             NavigationBehaviour('SeleccionarSourceParaReporte');
             document.getElementById('cargando').setAttribute('hidden', true);
         },
 
-        //  OPCIONES DEL MENU
-        //-------------------------------------------------------------------------------
-        OptCuentasPorCobrarClte() {
-            if (window.innerWidth < 990) {
-                document.getElementById('filtrosReportes').style.display = 'flex';
-                document.getElementById('btnReporteMostrarMenu').style.display = 'block';
-                document.getElementById('seleccionarReporte').style.display = 'none';
-            }
-        },
-
-        //  MENU DE REPORTES  
+        //  SOURCE DE REPORTES  
         //----------------------------------------------------------
         DivSeleccionarReporte(source) {
             NavigationBehaviour('SeleccionarReporte');
@@ -798,9 +801,64 @@
             }
         },
 
+        //  OPCIONES DEL MENU
+        //-------------------------------------------------------------------------------
+        async OpcionMenuCeleccionado(opcionSeleccionada) {
+            $('#sidebar').toggleClass('active');
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA = [];
+            this.Reportes.IndividualClientStatusDATA = [];
+
+            switch (opcionSeleccionada) {
+                case 'VentasYDevolucionesCategoriaYVendedor':
+                    if (!this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision) {
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision = new Date().toISOString().slice(0, 10);
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision = new Date().toISOString().slice(0, 10);
+                    }
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores.length === 0)
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
+                    break;
+            }
+
+            //  MOSTRAR EL FILTRO SELECCONADO Y OCULTAR EL QUE ESTABA VISIBLE
+            if (this.Reportes.opcionReporteSeleccionado)
+                document.getElementById(this.Reportes.opcionReporteSeleccionado).setAttribute('hidden', true);
+            document.getElementById(opcionSeleccionada).removeAttribute('hidden');
+            this.Reportes.opcionReporteSeleccionado = opcionSeleccionada;
+        },
+
         // REPORTES
         //----------------------------------------------------------
-        Buscar() {
+        async Buscar_VentasYDevolucionesCategoriaYVendedor() {
+            if (this.Reportes.sourceResportes === 'web')
+                console.log('Por el momento esta busqueda solo se ha planteado para la parte Local');
+            else if (this.Reportes.sourceResportes === 'local') {
+                this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA = [];
+
+                const filtro = {
+                    minFecha_emision: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision,
+                    maxFecha_emision: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision,
+                    tipo_factura: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura,
+                    tipoReporte: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte,
+                    Codigo_vendedor: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedorSeleccionado.trim(),
+                }
+
+                var result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
+
+                for (item of result) {
+                    this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push({
+                        fecha_emision: item.fecha_emision,
+                        factura_id: item.factura_id,
+                        Nombre_vendedor: item.Nombre_vendedor,
+                        refer_cliente: item.refer_cliente,
+                        subtotal: item.subtotal,
+                        itbis: Math.floor(item.total / 1.18),
+                        total: item.total,
+                    });
+                }
+            }
+        },
+
+        async Buscar() {
             this.Reportes.IndividualClientStatusFILTROS.codCliente = document.getElementById('inputCodigoClienteFiltroReporte').value;
 
             if (!this.Reportes.IndividualClientStatusFILTROS.codCliente) {
@@ -813,71 +871,27 @@
             if (this.Reportes.sourceResportes === 'web')
                 this.ValidarCampoCodigoCliente();
             else if (this.Reportes.sourceResportes === 'local') {
-                document.getElementById('cargando').removeAttribute('hidden');
                 this.Reportes.IndividualClientStatusDATA = [];
 
                 const filtro = {
-                    clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente,
+                    clientCode: this.Reportes.IndividualClientStatusFILTROS.codCliente.trim(),
                     SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
                 }
 
-                fetch(`..${this.ApiReportesLocales}SendWebsocketServer/1`, {
-                    method: 'POST',
-                    body: JSON.stringify(filtro),
-                    headers: {
-                        'content-type': 'application/json'
-                    }
-                }).then(response => response.json())
-                    .then(result => {
-                        if (result.value === 'false') {
-                            document.getElementById('cargando').setAttribute('hidden', true);
-                            MostrarMensage({
-                                title: 'No se pudo conectar a su Base de Datos..',
-                                message: `Su equipo no tiene monicaWebsocketClient.dll en ejecucion...`,
-                                icon: 'error'
-                            });
-                        }
-                        else if (result.value === 'true') {
-                            let interval = setInterval(() => {
-                                fetch(`..${this.ApiReportesLocales}GetWebsocketResponseFile`)
-                                    .then(response => response.json())
-                                    .then(resultset => {
-                                        const parsedResultset = JSON.parse(resultset.resultset);
+                var result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
 
-                                        if (parsedResultset) {
-                                            clearInterval(interval);
-
-                                            if (parsedResultset.data.startsWith("Error: ")) {
-                                                MostrarMensage({
-                                                    title: 'A ocurrido un problema..',
-                                                    message: parsedResultset.data.replace("Error: "),
-                                                    icon: 'error'
-                                                });
-                                            }
-                                            else {
-                                                for (item of JSON.parse(parsedResultset.data)) {
-                                                    this.Reportes.IndividualClientStatusDATA.push({
-                                                        descripcion_dcmto: item.descripcion_dcmto,
-                                                        fecha_emision: item.fecha_emision,
-                                                        fecha_vcmto: item.fecha_vcmto,
-                                                        ncf: item.ncf,
-                                                        diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
-                                                        pagosAcumulados: item.pagosAcumulados,
-                                                    });
-                                                }
-                                                if (this.Reportes.IndividualClientStatusDATA.length === 0)
-                                                    MostrarMensage({
-                                                        title: 'Sin coincidencias',
-                                                        message: 'Ningun resultado que coincida con su búsqueda',
-                                                        icon: 'info'
-                                                    });
-                                            }
-                                            document.getElementById('cargando').setAttribute('hidden', true);
-                                        }
-                                    })
-                            }, 1000);
-                        }
+                for (item of result) {
+                    this.Reportes.IndividualClientStatusDATA.push({
+                        descripcion_dcmto: item.descripcion_dcmto,
+                        fecha_emision: item.fecha_emision,
+                        fecha_vcmto: item.fecha_vcmto,
+                        ncf: item.ncf,
+                        monto: item.monto,
+                        diasTrancurridos: DaysDiff(item.fecha_emision, new Date().toISOString().slice(0, 10)),
+                        pagosAcumulados: item.pagosAcumulados,
+                        balance: item.balance,
                     });
+                }
             }
         },
 

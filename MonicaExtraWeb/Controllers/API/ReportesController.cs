@@ -2,7 +2,7 @@
 using MonicaExtraWeb.Models.DTO.Reportes;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-using static MonicaExtraWeb.Utils.Querys;
+using static MonicaExtraWeb.Utils.QuerysReportes;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -11,7 +11,7 @@ namespace MonicaExtraWeb.Controllers.API
     {
         [HttpGet]
         [Route("GetIndividualClientStatus")]
-        public IHttpActionResult GetIndividualClientStatus([FromUri] FiltroGetIndividualClientStatus filtro)
+        public IHttpActionResult GetIndividualClientStatus([FromUri] FiltrosReportes filtro)
         {
             if (filtro.clientCode == null
                 || filtro.clientCode == default)

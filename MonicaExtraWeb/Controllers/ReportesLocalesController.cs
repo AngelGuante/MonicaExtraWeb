@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using static MonicaExtraWeb.Utils.Querys;
+using static MonicaExtraWeb.Utils.QuerysReportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 
 
@@ -23,7 +23,7 @@ namespace MonicaExtraWeb.Controllers
 
         [HttpPost]
         [Route("SendWebsocketServer/{status}")]
-        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, FiltroGetIndividualClientStatus filtro)
+        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, FiltrosReportes filtro)
         {
             var IP = HttpContext.Current.Request.UserHostAddress;
             string query = "";
@@ -32,6 +32,12 @@ namespace MonicaExtraWeb.Controllers
             {
                 case ClientMessageStatusEnum.IndividualClientStatusReport:
                     query = IndividualClientQuery(filtro, "");
+                    break;
+                case ClientMessageStatusEnum.VentasYDevolucionesCategoriaYVendedor:
+                    query = VentasDevolucionesCategoriaYVendedor(filtro, "");
+                    break;
+                case ClientMessageStatusEnum.VendedoresInformacion:
+                    query = VendedoresInformacionQuery("");
                     break;
             }
 
@@ -59,8 +65,8 @@ namespace MonicaExtraWeb.Controllers
         {
             var IP = HttpContext.Current.Request.UserHostAddress;
             DataWebsocketPerClient.TryGetValue(IP, out string resultset);
-            
-            if(resultset != default)
+
+            if (resultset != default)
                 DataWebsocketPerClient.Remove(IP);
 
             return Json(new { resultset });

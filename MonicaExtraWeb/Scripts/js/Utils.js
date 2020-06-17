@@ -58,6 +58,14 @@ let Navegacion = [
 ];
 
 NavigationBehaviour = actual => {
+    if (actual === 'SeleccionarReporte')
+        document.getElementById('divMaster').classList.remove('container');
+    else {
+        if (!document.getElementById('divMaster').classList.contains('container'))
+            document.getElementById('divMaster').classList.add('container');
+    }
+
+
     let divActualVisible = Navegacion[Navegacion.length - 1].actual;
 
     if (actual === 0) {
@@ -92,10 +100,76 @@ NavigationBehaviour = actual => {
         document.getElementById('btnHome').setAttribute('hidden', true);
 }
 
+//  IR AL LA MAQUINA DEL CLIENTE A BUSCAR INFORMACION EN SU BASE DE DATOS LOCAL.
+const ApiReportesLocales = '/API/ReportesLocales/';
+BuscarInformacionLocal = (ruta, filtro) => {
+    document.getElementById('cargando').removeAttribute('hidden');
+
+    return new Promise(async (resolve, reject) => {
+        let interval;
+        try {
+            const response = await fetch(`..${ApiReportesLocales}${ruta}`, {
+                method: 'POST',
+                body: JSON.stringify(filtro),
+                headers: {
+                    'content-type': 'application/json'
+                }
+            });
+
+            const content = await response.json();
+
+            if (content.value === 'false') {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                MostrarMensage({
+                    title: 'No se pudo conectar a su Base de Datos..',
+                    message: `Su equipo no tiene monicaWebsocketClient.dll en ejecucion...`,
+                    icon: 'error'
+                });
+            }
+            else if (content.value === 'true') {
+                interval = setInterval(async () => {
+                    const innerResponse = await fetch(`..${ApiReportesLocales}GetWebsocketResponseFile`);
+                    const innerContent = await innerResponse.json();
+                    const parsedContent = JSON.parse(innerContent.resultset);
+
+                    if (parsedContent) {
+                        clearInterval(interval);
+
+                        if (parsedContent.data.startsWith("Error: ")) {
+                            MostrarMensage({
+                                title: 'A ocurrido un problema..',
+                                message: parsedContent.data.replace('Error: ', ''),
+                                icon: 'error'
+                            });
+                        }
+
+                        document.getElementById('cargando').setAttribute('hidden', true);
+
+                        if (JSON.parse(parsedContent.data).length === 0)
+                            MostrarMensage({
+                                title: 'Sin coincidencias',
+                                message: 'Ningun resultado que coincida con su búsqueda',
+                                icon: 'info'
+                            });
+
+                        resolve(JSON.parse(parsedContent.data))
+                    }
+                }, 1000);
+            }
+        } catch {
+            clearInterval(interval);
+            document.getElementById('cargando').setAttribute('hidden', true);
+
+            MostrarMensage({
+                title: 'Ha ocurrido un problema',
+                message: 'Algo ha ocurrido al momento de realizar la peticion.',
+                icon: 'error'
+            });
+        }
+    });
+}
+
 //  REPORTES
 //-----------
-BtnMostrarMenuReportes = () => {
-    document.getElementById('filtrosReportes').style.display = 'none';
-    document.getElementById('btnReporteMostrarMenu').style.display = 'none';
-    document.getElementById('seleccionarReporte').style.display = 'block';
-}
+BtnMostrarMenuReportes = () =>
+    $('#sidebar').toggleClass('active');
