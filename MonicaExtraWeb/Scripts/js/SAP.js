@@ -844,17 +844,11 @@
 
                 var result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
-                for (item of result) {
-                    this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push({
-                        fecha_emision: item.fecha_emision,
-                        factura_id: item.factura_id,
-                        Nombre_vendedor: item.Nombre_vendedor,
-                        refer_cliente: item.refer_cliente,
-                        subtotal: item.subtotal,
-                        itbis: Math.floor(item.total / 1.18),
-                        total: item.total,
-                    });
-                }
+                for (item of result)
+                    this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push(item);
+
+                for (item of this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA)
+                    item.itbis = Math.floor(item.total / 1.18)
             }
         },
 
@@ -880,18 +874,11 @@
 
                 var result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
 
-                for (item of result) {
-                    this.Reportes.IndividualClientStatusDATA.push({
-                        descripcion_dcmto: item.descripcion_dcmto,
-                        fecha_emision: item.fecha_emision,
-                        fecha_vcmto: item.fecha_vcmto,
-                        ncf: item.ncf,
-                        monto: item.monto,
-                        diasTrancurridos: DaysDiff(item.fecha_emision, new Date().toISOString().slice(0, 10)),
-                        pagosAcumulados: item.pagosAcumulados,
-                        balance: item.balance,
-                    });
-                }
+                for (item of result)
+                    this.Reportes.IndividualClientStatusDATA.push(item);
+
+                for (item of this.Reportes.IndividualClientStatusDATA)
+                    item.diasTrancurridos = DaysDiff(item.fecha_emision, new Date().toISOString().slice(0, 10))
             }
         },
 
@@ -920,16 +907,11 @@
             $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { filtro }, response => {
                 this.Reportes.IndividualClientStatusDATA = [];
 
-                for (item of response.IndividualClientStatusDATA) {
-                    this.Reportes.IndividualClientStatusDATA.push({
-                        descripcion_dcmto: item.descripcion_dcmto,
-                        fecha_emision: item.fecha_emision,
-                        fecha_vcmto: item.fecha_vcmto,
-                        ncf: item.ncf,
-                        diasTrancurridos: DaysDiff(item.fecha_emision, item.fecha_vcmto),
-                        pagosAcumulados: item.pagosAcumulados,
-                    });
-                }
+                for (item of response.IndividualClientStatusDATA) 
+                    this.Reportes.IndividualClientStatusDATA.push(item);
+
+                for (item of response.IndividualClientStatusDATA)
+                    item.diasTrancurridos = DaysDiff(item.fecha_emision, item.fecha_vcmto),
 
                 document.getElementById('cargando').setAttribute('hidden', true);
 
@@ -951,6 +933,10 @@
         FilterDateFormat: value => {
             const date = new Date(value);
             return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+        },
+
+        FilterStringToMoneyFormat: value => {
+            return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace('$', '');
         }
     }
 });

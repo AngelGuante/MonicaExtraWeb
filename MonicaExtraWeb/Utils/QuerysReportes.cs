@@ -12,7 +12,7 @@ namespace MonicaExtraWeb.Utils
 
             query.Append("  SELECT ");
             query.Append("      D.fecha_emision, ");
-            query.Append("      (D.monto_dcmto - D.balance) monto, ");
+            query.Append("      D.monto_dcmto monto, ");
             query.Append("      D.balance, ");
             query.Append("      D.fecha_vcmto, ");
             query.Append("      D.descripcion_dcmto, ");
@@ -42,7 +42,7 @@ namespace MonicaExtraWeb.Utils
 
             if (filtro.tipoReporte == "ventas")
             {
-                query.Append("  SELECT fecha_emision, factura_id, Nombre_vendedor,refer_cliente, subtotal, total ");
+                query.Append("  SELECT factura.nro_factura as nrodoc, factura.fecha_emision, factura.ncf, clientes.registro_tributario, clientes.nombre_clte, factura.impuesto_monto AS impto, factura.total-factura.impuesto_monto AS SubTotalNeto, factura.total, clientes.categoria_clte_id, vendedores.Codigo_vendedor, vendedores.Nombre_vendedor, Categorias_clte.categoria_clte_id, Categorias_clte.descripcion_categ ");
                 query.Append($" FROM {DbName}dbo.factura, ");
                 query.Append($"      {DbName}dbo.clientes, ");
                 query.Append($"      {DbName}dbo.vendedores, ");
@@ -65,7 +65,7 @@ namespace MonicaExtraWeb.Utils
             }
             else if (filtro.tipoReporte == "devoluciones")
             {
-                query.Append("  SELECT fecha_emision, factura_id, Nombre_vendedor,refer_cliente, subtotal, total ");
+                query.Append("  SELECT devolucion_clte.nro_devolucion_clte as nrodoc, devolucion_clte.fecha_emision, devolucion_clte.ncf, clientes.registro_tributario, clientes.nombre_clte, -(devolucion_clte.total-devolucion_clte.impuesto_monto) AS SubTotalNeto, -devolucion_clte.impuesto_monto AS impto, -devolucion_clte.total AS Total, clientes.categoria_clte_id, vendedores.Codigo_vendedor, vendedores.Nombre_vendedor, Categorias_clte.categoria_clte_id, Categorias_clte.descripcion_categ ");
                 query.Append($"FROM  {DbName}dbo.devolucion_clte, ");
                 query.Append($"      {DbName}dbo.clientes, ");
                 query.Append($"      {DbName}dbo.vendedores, ");
@@ -85,7 +85,9 @@ namespace MonicaExtraWeb.Utils
 
             query.Replace("''", "'");
             query.Replace("\"", "'");
+
             return query.ToString();
+            //return "SELECT '2020-06-17' fecha_emision, '123456' nro_dcmto, 'demo_vendedor' Nombre_vendedor, 'demo_cliente' refer_cliente, '1000' subtotal, '5000' total";
         }
 
         public static string VendedoresInformacionQuery(string DbName)

@@ -20,6 +20,7 @@ a:focus {
     background: #17A2B8;
     color: #fff;
     transition: all 0.3s;
+    height: 78vh;
 }
 
 #sidebar.active {
