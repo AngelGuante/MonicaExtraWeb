@@ -161,6 +161,7 @@
     <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\API\ClientesController.cs" />
     <Compile Include="Controllers\API\ReportesController.cs" />
+    <Compile Include="Controllers\ImpresionController.cs" />
     <Compile Include="Controllers\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
     <Compile Include="Enums\ClientMessageStatusEnum.cs" />
@@ -170,6 +171,8 @@
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
+    <Compile Include="Models\DTO\Impresion\CierreDTO.cs" />
+    <Compile Include="Models\DTO\Impresion\MovimientoDTO.cs" />
     <Compile Include="Models\DTO\Reportes\FiltrosReportes.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
     <Compile Include="Models\DTO\WebSocketDTO.cs" />
@@ -183,7 +186,8 @@
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\GlobalVariables.cs" />
-    <Compile Include="Utils\QuerysReportes.cs" />
+    <Compile Include="Utils\Querys\Data.cs" />
+    <Compile Include="Utils\Querys\Reportes.cs" />
     <Compile Include="Utils\RequestsHTTP.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -203,6 +207,7 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\css\Bootstrapt.css" />
+    <Content Include="Content\css\PrintStyle.css" />
     <Content Include="Content\css\ReportStyle.css" />
     <Content Include="Content\css\SAP.css" />
     <Content Include="favicon.ico" />
@@ -245,7 +250,6 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
-    <Content Include="Scripts\js\Print.js" />
     <Content Include="Scripts\js\SAP.js" />
     <Content Include="Scripts\js\Swal.js" />
     <Content Include="Scripts\js\Utils.js" />
@@ -353,6 +357,9 @@
     <Content Include="Views\Paginas\Reportes\_menuSeleccionSourceReportes.cshtml" />
     <Content Include="Views\Paginas\Reportes\_menuSeleccionReporte.cshtml" />
     <Content Include="Views\Paginas\_inicioSeccion.cshtml" />
+    <Content Include="Views\Impresion\ImpresionesHeader.cshtml" />
+    <Content Include="Views\Impresion\Movimiento.cshtml" />
+    <Content Include="Views\Impresion\Cierre.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

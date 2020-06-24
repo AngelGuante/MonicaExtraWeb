@@ -2,7 +2,7 @@
 using MonicaExtraWeb.Models.DTO.Reportes;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-using static MonicaExtraWeb.Utils.QuerysReportes;
+using static MonicaExtraWeb.Utils.Reportes;
 
 namespace MonicaExtraWeb.Controllers.API
 {

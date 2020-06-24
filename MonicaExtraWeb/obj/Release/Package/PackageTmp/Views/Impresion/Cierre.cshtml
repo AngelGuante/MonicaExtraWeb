@@ -1,0 +1,75 @@
+﻿@model  List<MonicaExtraWeb.Models.monica10.MovimientosCajas>
+
+<div>
+    @Html.Partial("ImpresionesHeader")
+
+    <h4>Cierre de Caja</h4>
+
+    <hr />
+
+    <div style="text-align:center;">
+        <div>
+            <table style="border: 1px solid black; margin: auto;">
+                <thead>
+                    <tr style="border-bottom: 1px solid;">
+                        <th style="border-bottom: 1px solid; text-align:center; width:200px" scope="col">#</th>
+                        <th style="border-bottom: 1px solid; width:200px" scope="col">Fehca Inicial</th>
+                        <th style="border-bottom: 1px solid; width:200px" scope="col">Fecha Final</th>
+                        <th style="border-bottom: 1px solid; width:200px; text-align:center;" scope="col">Saldo Final</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="height:50px; border-bottom: 1px solid;">
+                        <td id="NumeroCierre" style="border-right: 1px solid; text-align:center;"></td>
+                        <td id="FechaInicial" style="border-right: 1px solid;"></td>
+                        <td id="FechaFinal" style="border-right: 1px solid;"></td>
+                        <td id="SaldoFinal" style="text-align:center;"></td>
+                    </tr>
+            </table>
+        </div>
+
+        <hr />
+
+        <div id="todosMovimientosParaCierre" class="Tables" v-if="VentanaCierres.MovimientosDeCierre">
+            <table style="margin: auto;">
+                <thead>
+                    <tr>
+                        <th style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">Beneficiario</th>
+                        <th style="border-right: 1px solid; border-bottom: 1px solid;">Concepto</th>
+                        <th style="border-right: 1px solid; border-bottom: 1px solid;">Monto</th>
+                        <th style="border-right: 1px solid; border-bottom: 1px solid;">Fecha</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (int i = 0; i < Model.Count; i++)
+                    {
+                        <tr v-for="movimiento in VentanaCierres.MovimientosDeCierre">
+                            <td style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">@Model[i].nombre_completo</td>
+                            <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Concepto</td>
+                            <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Monto</td>
+                            <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Fecha</td>
+                        </tr>
+                    }
+            </table>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('Nombre_empresa').innerHTML = localStorage.getItem('Nombre_empresa');
+            document.getElementById('direccionEmpresa1').innerHTML = localStorage.getItem('direccionEmpresa1');
+            document.getElementById('direccionEmpresa2').innerHTML = localStorage.getItem('direccionEmpresa2');
+            document.getElementById('direccionEmpresa3').innerHTML = localStorage.getItem('direccionEmpresa3');
+            document.getElementById('TelefonoEmpresa1').innerHTML = localStorage.getItem('TelefonoEmpresa1');
+
+            document.getElementById('NumeroCierre').innerHTML = localStorage.getItem('NumeroCierre');
+            document.getElementById('FechaInicial').innerHTML = localStorage.getItem('FechaInicial');
+            document.getElementById('FechaFinal').innerHTML = localStorage.getItem('FechaFinal');
+            document.getElementById('SaldoFinal').innerHTML = localStorage.getItem('SaldoFinal');
+
+            window.print();
+        });
+    </script>
+}

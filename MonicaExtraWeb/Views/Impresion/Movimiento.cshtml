@@ -1,0 +1,66 @@
+﻿@model MonicaExtraWeb.Models.monica10.MovimientosCajas
+
+<div>
+    @Html.Partial("ImpresionesHeader")
+
+    <h4>MOVIMIENTO</h4>
+
+    <hr />
+
+    <div style="border-style: solid; border-width: 1px 1px; border-radius: 5px; padding:5px 10px; width: 600px; margin: auto;">
+        <div>
+            <label>DATOS BASICOS</label>
+
+            <hr />
+
+            <p>Emision: @Model.Fecha</p>
+            <div style="margin:0px 30px;">
+                <p>Beneficiario: @Model.Beneficiario.ToUpper()</p>
+                <p>Tipo de Movimiento: @Model.DescripcionMovimiento.ToUpper()</p>
+                <p style="padding-bottom:0;">Concepto:</p>
+                <p style="padding-top:0;">@Model.Concepto.ToUpper()</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <div>
+            <label>DATOS FISCALES</label>
+
+            <hr />
+
+            <div style="margin:0px 30px;" v-if="Movimiento.RNC">
+                <div style="margin-bottom:0">
+                    <p style="display:inline-block; width:300px;">RNC: @Model.Rnc.ToUpper()</p>
+                    <p style="display:inline-block">NCF:@Model.Ncf.ToUpper()</p>
+                </div>
+
+                <div style="margin-bottom:0">
+                    <p style="display:inline-block; width:300px;">Valor sin ITbs: @Model.Neto.ToUpper()</p>
+                    <p style="display:inline-block;">ITBIs facturado: @Model.Itebis.ToUpper()</p>
+                </div>
+
+                <p>CLASIFICACION FISCAL: @Model.DescripcionClasfFiscal.ToUpper()</p>
+            </div>
+
+            <div v-else style="text-align:center;">
+                <label>- ESTE MOVIMIENTO NO TIENE DATOS FISCALES -</label>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('Nombre_empresa').innerHTML = localStorage.getItem('Nombre_empresa');
+            document.getElementById('direccionEmpresa1').innerHTML = localStorage.getItem('direccionEmpresa1');
+            document.getElementById('direccionEmpresa2').innerHTML = localStorage.getItem('direccionEmpresa2');
+            document.getElementById('direccionEmpresa3').innerHTML = localStorage.getItem('direccionEmpresa3');
+            document.getElementById('TelefonoEmpresa1').innerHTML = localStorage.getItem('TelefonoEmpresa1');
+
+            window.print();
+        });
+    </script>
+}

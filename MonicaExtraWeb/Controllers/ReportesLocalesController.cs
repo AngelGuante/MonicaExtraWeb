@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
-using static MonicaExtraWeb.Utils.QuerysReportes;
+using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 
 

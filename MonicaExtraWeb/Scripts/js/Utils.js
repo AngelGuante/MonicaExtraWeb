@@ -1,30 +1,51 @@
-﻿//  [0] => 
+﻿//  [0] =>
 //         El primer caracter debe ser una letra;
 //         Los caracteres 2 y 3 deben ser 01 o 03 o 11 o 14 o 15 o 16;
 //         Debe tener de 11 a 13 caracteres en total.
 //  [1] =>
 //         SOLO PUEDE TENER DE 9 A 11 DIJITOS.
-let patterns = [
+const patterns = [
     "^[a-zA-Z](01|03|11|14|15|16)([a-zA-Z0-9]{8,10}$)",
     "^[0-9]{9,11}$"
 ];
 
 //  COMPROBAR QUE UNA CADENA CUMPLE CON UN REGEX.
-MatchRegex = (patternIndex, text) =>
+const MatchRegex = (patternIndex, text) =>
     text.match(patterns[patternIndex]);
-
 
 //  RETORNA LA DIFERENCIA DE DIAS ENTRE DOS FECHAS.
 //  PARAMETROS RECIVIDOS EN FORMATO MM/dd/yy.
-DaysDiff = (minDate, maxDate) => {
+const DaysDiff = (minDate, maxDate) => {
     const millisecondsInADay = 1000 * 60 * 60 * 24;
     const millisecondsBetweenDates = new Date(maxDate) - new Date(minDate);
 
     return Math.round(millisecondsBetweenDates / millisecondsInADay);
 }
 
+//  CREAR DATOS INICIALES DE LA COOCKIE PARA LA PAGINA.
+const CoockiesIniciales = () => {
+    let rememberPasswordCookie = GetCookieElement('rememberPass=');
+
+    if (!rememberPasswordCookie) {
+        SetCoockie('password=;');
+        SetCoockie('rememberPass=true;');
+    }
+}
+
+//  AGREGAR UN ELEMENTO A LA COOCKIE.
+const SetCoockie = valor =>
+    document.cookie = valor;
+
+//  RETORNA UN ELEMENTO ESPECIFICO DE LA COOCKIE.
+const GetCookieElement = element => {
+    return document.cookie.split('; ')
+        .find(ele => ele.startsWith(element))
+        .replace(element, '')
+        .replace(';', '');
+}
+
 //  MUESTRA ALERTAS.
-MostrarAlerta = flag => {
+const MostrarAlerta = flag => {
     let Toast = Swal.mixin({
         toast: true,
         position: 'bottom',
@@ -44,7 +65,7 @@ MostrarAlerta = flag => {
 }
 
 //  MUESTRA MENSAGES DE ALERTAS.
-MostrarMensage = config => {
+const MostrarMensage = config => {
     Swal.fire(
         config.title,
         config.message,
@@ -57,7 +78,7 @@ let Navegacion = [
     { anterior: '', actual: 'menu' }
 ];
 
-NavigationBehaviour = actual => {
+const NavigationBehaviour = actual => {
     if (actual === 'SeleccionarReporte')
         document.getElementById('divMaster').classList.remove('container');
     else {
@@ -100,9 +121,16 @@ NavigationBehaviour = actual => {
         document.getElementById('btnHome').setAttribute('hidden', true);
 }
 
+//  HACER IMPRESION
+const ImprimirRecursoURL = '/IMPRESION/IMPRIMIR';
+const Print = (type, paramsa) => {
+    const url = `..${ImprimirRecursoURL}?type=${type}&paremetros=${JSON.stringify(paramsa)}`;
+    window.open(url, '_blank', 'top = 0, left = 0, width = 900, height = 900');
+}
+
 //  IR AL LA MAQUINA DEL CLIENTE A BUSCAR INFORMACION EN SU BASE DE DATOS LOCAL.
 const ApiReportesLocales = '/API/ReportesLocales/';
-BuscarInformacionLocal = (ruta, filtro) => {
+const BuscarInformacionLocal = (ruta, filtro) => {
     document.getElementById('cargando').removeAttribute('hidden');
 
     return new Promise(async (resolve, reject) => {
@@ -171,5 +199,5 @@ BuscarInformacionLocal = (ruta, filtro) => {
 
 //  REPORTES
 //-----------
-BtnMostrarMenuReportes = () =>
+const BtnMostrarMenuReportes = () =>
     $('#sidebar').toggleClass('active');

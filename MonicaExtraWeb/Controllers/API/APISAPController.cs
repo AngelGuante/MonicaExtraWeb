@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Utils.Querys.Data;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -62,7 +63,7 @@ namespace MonicaExtraWeb.Controllers.API
 
             StringBuilder query = new StringBuilder();
 
-            query.Append("INSERT INTO {DbName}monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
+            query.Append($"INSERT INTO {DbName}monicaextra.movimientocaja(Soporte, NumeroCaja, TipoMoneda, TasaCambio, Estatus, NumeroTransacion, Beneficiario, Concepto, TipoMovimiento, Monto, Fecha, NumeroCierre, RNC, NCF, Itebis, Neto, EntradaSalida, Clasificancf) ");
             query.Append("VALUES ('C', 1, 'P', 0.0000, 1, ");
             query.Append($"(SELECT MAX(NumeroTransacion) +1 FROM {DbName}monicaextra.movimientocaja), ");
             query.Append("@Beneficiario, @Concepto, @TipoMovimiento, @Monto, @Fecha, ");
@@ -85,7 +86,7 @@ namespace MonicaExtraWeb.Controllers.API
             });
 
             if (RegistroGuardadoCant != 1) return Content(HttpStatusCode.BadRequest, "");
-            return Ok();
+            return Json(new { id = RegistroGuardadoCant });
         }
 
         /// <summary>
@@ -97,16 +98,7 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult ObtenerMovimiento(int id) =>
             Json(new
             {
-                movimiento = Conn.Query<MovimientosCajas>(
-                "SELECT CF.Descripcion DescripcionClasfFiscal, TM.Descripcion DescripcionMovimiento, U.nombre_completo, * " +
-                $"FROM {DbName}monicaextra.movimientocaja M " +
-                $"LEFT JOIN {DbName}dbo.usuarios U " +
-                    "ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) " +
-                $"LEFT JOIN {DbName}monicaextra.clasificacionmovicaja TM " +
-                    "ON M.TipoMovimiento = TM.NumeroTransacion " +
-                $"LEFT JOIN {DbName}monicaextra.clasificacionfiscal CF " +
-                    "ON M.Clasificancf = CF.NumeroTransacion " +
-                "WHERE M.NumeroTransacion = @id", new { id }).FirstOrDefault()
+                movimiento = Conn.Query<MovimientosCajas>(MovimientoCaja(), new { id }).FirstOrDefault()
             });
 
         /// <summary>
@@ -380,33 +372,8 @@ namespace MonicaExtraWeb.Controllers.API
         /// <returns></returns>
         [HttpGet]
         [Route("MovimientosParaCierre")]
-        public IHttpActionResult MovimientosParaCierre(string idCierre = "")
-        {
-            var query = new StringBuilder();
-            IEnumerable<MovimientosCajas> Movimientos;
-
-            query.Append($"SELECT M.NumeroTransacion, U.nombre_completo, Concepto, Monto, Fecha ");
-            query.Append($"FROM {DbName}monicaextra.movimientocaja M ");
-            query.Append($"LEFT JOIN {DbName}dbo.usuarios U ");
-            query.Append("	ON M.Beneficiario = CAST(U.id_usuario as VARCHAR) ");
-            query.Append("WHERE NumeroCierre = ");
-
-            if (idCierre == string.Empty)
-            {
-                query.Append("( ");
-                query.Append($"SELECT MAX(NumeroCierre) +1 Cierre ");
-                query.Append($"FROM {DbName}monicaextra.cierrecaja ");
-                query.Append(") ");
-            }
-            else
-                query.Append($"{idCierre} ");
-
-            query.Append("ORDER BY NumeroTransacion DESC ");
-
-            Movimientos = Conn.Query<MovimientosCajas>(query.ToString());
-
-            return Json(new { Movimientos });
-        }
+        public IHttpActionResult MovimientosParaCierre(string idCierre = "") =>
+            Json(new { Movimientos = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(idCierre)) });
 
         /// <summary>
         /// -------------------------------
@@ -445,7 +412,6 @@ namespace MonicaExtraWeb.Controllers.API
             else return StatusCode(HttpStatusCode.NotImplemented);
         }
         #endregion
-
 
         #region METODOS DE - MOVIMIENTOS
         private IEnumerable<Usuarios> GetUsuarios() =>

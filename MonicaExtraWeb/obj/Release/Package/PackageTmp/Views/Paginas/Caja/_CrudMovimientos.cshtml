@@ -112,7 +112,6 @@
                 <button id="btnClean" type="button" class="btn btn-secondary TextColor Sombra" v-on:click="LimpiarCamposMovimiento()"><i class="material-icons" style="vertical-align:bottom">remove</i>Limpiar Campos</button>
             </div>
             <div id="btnsMovimientoSeleccionado" hidden>
-                @*<button class="btn btn-outline-info Sombra" type="button" onclick="printJS('toPrint', 'html');"><i class="material-icons" style="vertical-align:bottom">print</i></button>*@
                 <button id="btnModificarForm" type="button" class="btn btn-info TextColor Sombra" v-bind:disabled="!SeccionMovimientos.btnGuardarState" v-on:click="ModificarMovimiento()"><i class="material-icons" style="vertical-align:bottom">update</i> Modificar</button>
                 <button id="btnCancelModifyForm" type="button" class="btn btn-danger TextColor Sombra" v-on:click="LimpiarCamposMovimiento(1)"><i class="material-icons" style="vertical-align:bottom">cancel</i> Cancelar</button>
             </div>
@@ -237,7 +236,7 @@
                             <td>{{movimiento.Concepto}}</td>
                             <td>{{movimiento.Monto}}</td>
                             <td>{{movimiento.Fecha}}</td>
-                            <td><button class="btn btn-outline-info Sombra" type="button" v-on:click="PrintMovimiento(movimiento.NumeroTransacion)"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
+                            <td><button class="btn btn-outline-info Sombra" type="button" v-on:click="Print('movimiento', { 'NumeroTransacion': movimiento.NumeroTransacion })"><i class="material-icons" style="vertical-align:bottom">print</i></button></td>
                         </tr>
                 </table>
             </div>

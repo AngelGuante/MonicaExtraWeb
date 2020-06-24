@@ -16,7 +16,6 @@
 
         // DIV EMPRESA
         Empresas: [],
-        EmpresaSeleccionadaInstancia: {},
 
         //  DIV CRUD MOVIMIENTOS
         VentanaCrudMovimientos: {
@@ -27,39 +26,13 @@
             }
         },
 
-        Movimiento: {
-            Fecha: '',
-            Beneficiario: '',
-            Nombre_completo: '',
-            Monto: '',
-            TipoMovimiento: '',
-            DescripcionMovimiento: '',
-            Concepto: '',
-            RNC: '',
-            NCF: '',
-            Clasificancf: '',
-            DescripcionClasfFiscal: '',
-            Neto: '',
-            Itebis: '',
-            NumeroCierre: 0
-        },
+        Movimiento: {},
         MovimientosCrud: [],
         Usuarios: [],
         TiposMovimientos: [],
         ClasificacionesFiscales: [],
         BusquedaMovimiento: {
-            Opcion: 'abiertas',
-            inptConcepto: '',
-            inptNroMovimiento: '',
-            cargadoA: '',
-            inptRNC: '',
-            inptNCF: '',
-            inptNroCierre: '',
-            ES: '',
-            Cfiscal: '',
-            abiertas: '',
-            fechaDesde: '',
-            fechaHasta: ''
+            Opcion: 'abiertas'
         },
         SeccionMovimientos: {
             movimientoSeleccionado: 0,
@@ -77,9 +50,7 @@
             PaginatorIndex: 1,
             PaginatorLastPage: 0,
 
-            CierreSeleccionado: {
-
-            },
+            CierreSeleccionado: {},
             MovimientosDeCierre: [],
 
             VentanaCrearCierreDiario: {
@@ -120,16 +91,10 @@
         }
     },
     created: function () {
-        let rememberPasswordCookie = document.cookie.split('; ')
-            .find(item => item.startsWith('rememberPass='));
+        CoockiesIniciales();
+        let rememberPasswordCookie = GetCookieElement('rememberPass=');
 
-        if (!rememberPasswordCookie) {
-            document.cookie = 'password=;'
-            document.cookie = 'rememberPass=true;'
-            rememberPasswordCookie = 'rememberPass=true;'
-        }
-
-        this.DivLog.remember = rememberPasswordCookie.replace('rememberPass=', '').replace(';', '') == 'true' ? true : false;
+        this.DivLog.remember = rememberPasswordCookie === 'true' ? true : false;
         if (this.DivLog.remember) {
             this.DivLog.pass = rememberPasswordCookie = document.cookie.split('; ')
                 .find(item => item.startsWith('password='))
@@ -142,12 +107,12 @@
         //----------------------------------------------------------
         Log() {
             if (this.DivLog.remember) {
-                document.cookie = `password=${this.DivLog.pass};`
-                document.cookie = `rememberPass=true;`
+                SetCoockie(`password=${this.DivLog.pass};`);
+                SetCoockie(`rememberPass=true;`);
             }
             else {
-                document.cookie = `password=;`
-                document.cookie = `rememberPass=false;`
+                SetCoockie(`password=;`);
+                SetCoockie(`rememberPass=false;`);
             }
 
             let fecha = new Date();
@@ -175,7 +140,12 @@
             document.getElementById('cargando').removeAttribute('hidden');
             $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
                 if (xhr.status == 200) {
-                    this.EmpresaSeleccionadaInstancia = respWonse.Empresa;
+
+                    localStorage.setItem('Nombre_empresa', respWonse.Empresa.Nombre_empresa);
+                    localStorage.setItem('direccionEmpresa1', respWonse.Empresa.direccion1);
+                    localStorage.setItem('direccionEmpresa2', respWonse.Empresa.direccion2);
+                    localStorage.setItem('direccionEmpresa3', respWonse.Empresa.direccion3);
+                    localStorage.setItem('TelefonoEmpresa1', respWonse.Empresa.Telefono1);
 
                     document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
                     document.getElementById('menu').removeAttribute('hidden');
@@ -222,12 +192,13 @@
                     confirmButtonText: 'Si',
                     cancelButtonText: 'No'
                 }).then((result) => {
-                    if (result.value)
-                        this.PrintMovimiento();
-
                     document.getElementById('cargando').removeAttribute('hidden');
                     $.get(`..${this.ApiRuta}GuardarMovimiento?movimiento=${JSON.stringify(this.Movimiento)}`).done((response, statusText, xhr) => {
                         if (xhr.status == 200) {
+                            const id = response.id;
+                            if (id)
+                                Print('movimiento', { 'NumeroTransacion': id });
+
                             this.LimpiarCamposMovimiento();
                             this.MostrarAlerta(true);
                         }
@@ -699,7 +670,6 @@
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             });
-
         },
 
         MovimientosEnCierre(idCierre) {
@@ -766,12 +736,20 @@
 
         //  UTILS
         //----------------------------------------------------------
-        PrintMovimiento(idMovimiento) {
-            if (idMovimiento) {
-                this.MovimientoSeleccionado(idMovimiento, true);
-                return;
+        //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js
+        Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
+            if (SetlocalStorageItemsToPrint) {
+                switch (type) {
+                    case 'cierre':
+                        localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
+                        localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
+                        localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
+                        localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
+                        break;
+                }
             }
-            printJS('toPrint', 'html');
+
+            Print(type, jsonParameters);
         },
 
         //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -907,13 +885,13 @@
             $.get(`..${this.ApiReportes}GetIndividualClientStatus`, { filtro }, response => {
                 this.Reportes.IndividualClientStatusDATA = [];
 
-                for (item of response.IndividualClientStatusDATA) 
+                for (item of response.IndividualClientStatusDATA)
                     this.Reportes.IndividualClientStatusDATA.push(item);
 
                 for (item of response.IndividualClientStatusDATA)
                     item.diasTrancurridos = DaysDiff(item.fecha_emision, item.fecha_vcmto),
 
-                document.getElementById('cargando').setAttribute('hidden', true);
+                        document.getElementById('cargando').setAttribute('hidden', true);
 
                 if (!this.Reportes.IndividualClientStatusDATA.length)
                     MostrarMensage({

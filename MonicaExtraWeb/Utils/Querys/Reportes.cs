@@ -4,7 +4,7 @@ using System.Text;
 
 namespace MonicaExtraWeb.Utils
 {
-    public class QuerysReportes
+    public class Reportes
     {
         public static string IndividualClientQuery(FiltrosReportes filtro, string DbName)
         {
