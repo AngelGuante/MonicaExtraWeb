@@ -19,7 +19,7 @@ const DaysDiff = (minDate, maxDate) => {
     const millisecondsInADay = 1000 * 60 * 60 * 24;
     const millisecondsBetweenDates = new Date(maxDate) - new Date(minDate);
 
-    return Math.round(millisecondsBetweenDates / millisecondsInADay);
+    return (Math.round(millisecondsBetweenDates / millisecondsInADay)) - 1;
 }
 
 //  CREAR DATOS INICIALES DE LA COOCKIE PARA LA PAGINA.
@@ -131,7 +131,10 @@ const Print = (type, paramsa) => {
 //  IR AL LA MAQUINA DEL CLIENTE A BUSCAR INFORMACION EN SU BASE DE DATOS LOCAL.
 const ApiReportesLocales = '/API/ReportesLocales/';
 const BuscarInformacionLocal = (ruta, filtro) => {
-    document.getElementById('cargando').removeAttribute('hidden');
+    let cargando = document.getElementById('cargando');
+
+    if (cargando)
+        cargando.removeAttribute('hidden');
 
     return new Promise(async (resolve, reject) => {
         let interval;
@@ -147,7 +150,9 @@ const BuscarInformacionLocal = (ruta, filtro) => {
             const content = await response.json();
 
             if (content.value === 'false') {
-                document.getElementById('cargando').setAttribute('hidden', true);
+                if (cargando)
+                    cargando.setAttribute('hidden', true);
+
                 MostrarMensage({
                     title: 'No se pudo conectar a su Base de Datos..',
                     message: `Su equipo no tiene monicaWebsocketClient.dll en ejecucion...`,
@@ -171,7 +176,8 @@ const BuscarInformacionLocal = (ruta, filtro) => {
                             });
                         }
 
-                        document.getElementById('cargando').setAttribute('hidden', true);
+                        if (cargando)
+                            cargando.setAttribute('hidden', true);
 
                         if (JSON.parse(parsedContent.data).length === 0)
                             MostrarMensage({
@@ -186,7 +192,8 @@ const BuscarInformacionLocal = (ruta, filtro) => {
             }
         } catch {
             clearInterval(interval);
-            document.getElementById('cargando').setAttribute('hidden', true);
+            if (cargando)
+                cargando.setAttribute('hidden', true);
 
             MostrarMensage({
                 title: 'Ha ocurrido un problema',

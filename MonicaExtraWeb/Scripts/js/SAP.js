@@ -891,7 +891,7 @@
                 for (item of response.IndividualClientStatusDATA)
                     item.diasTrancurridos = DaysDiff(item.fecha_emision, item.fecha_vcmto),
 
-                        document.getElementById('cargando').setAttribute('hidden', true);
+                document.getElementById('cargando').setAttribute('hidden', true);
 
                 if (!this.Reportes.IndividualClientStatusDATA.length)
                     MostrarMensage({

@@ -101,5 +101,15 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
+
+        public static string EmpresaInformacionQuery(string DbName)
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT * ");
+            query.Append($"FROM {DbName}dbo.empresas ");
+
+            return query.ToString();
+        }
     }
 }

@@ -6,6 +6,11 @@ using System.Linq;
 using System.Web.Mvc;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Data;
+using static MonicaExtraWeb.Utils.LocalRequestQuery;
+using System.Threading.Tasks;
+using System.Threading;
+using MonicaExtraWeb.Models.DTO.Impresion.LocalReports;
+using System.Collections.Generic;
 
 namespace MonicaExtraWeb.Controllers
 {
@@ -24,6 +29,8 @@ namespace MonicaExtraWeb.Controllers
                     return RedirectToAction("Movimiento", new { parametros = paremetros });
                 case "cierre":
                     return RedirectToAction("Cierre", new { parametros = paremetros });
+                case "reporteEstadoCuentaCliente":
+                    return RedirectToAction("ReporteEstadoCuentaCliente", new { parametros = paremetros });
             }
 
             return null;
@@ -41,6 +48,27 @@ namespace MonicaExtraWeb.Controllers
             var obj = JsonConvert.DeserializeObject<CierreDTO>(parametros);
             var cierreCaja = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(obj.NumeroCierre));
             return View(cierreCaja);
+        }
+
+        public async Task<ActionResult> ReporteEstadoCuentaCliente(string parametros)
+        {
+
+            string resultset = null;
+
+            var obj = JsonConvert.DeserializeObject<LocalQueryClientDTO>(parametros);
+
+            var IPExist = await SendQueryToClient(obj.status, obj.filtro);
+
+            do
+            {
+                RequestClientData(out resultset);
+                Thread.Sleep(1000);
+            }
+            while (resultset == null);
+
+            var AnonymousData = JsonConvert.DeserializeAnonymousType(resultset, new { data = "" });
+
+            return View(JsonConvert.DeserializeObject<List<IndividualClientDTO>>(AnonymousData.data));
         }
     }
 }

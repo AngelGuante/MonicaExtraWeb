@@ -1,0 +1,55 @@
+﻿@model List<MonicaExtraWeb.Models.DTO.Impresion.LocalReports.IndividualClientDTO>
+
+<div>
+    @Html.Partial("ImpresionesHeader")
+
+    <h4>Estado de Cuenta del cliente</h4>
+
+    <hr />
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th style="text-align:right;" scope="col">Emisión</th>
+                <th style="text-align:right;" scope="col">Vencimiento</th>
+                <th style="text-align:right;" scope="col">NCF</th>
+                <th style="text-align:left;" scope="col">Descripción</th>
+                <th style="text-align:right;" scope="col">Días Transcurridos</th>
+                <th style="text-align:right;" scope="col">Monto</th>
+                <th style="text-align:right;" scope="col">Pagos Acumulados</th>
+                <th style="text-align:right;" scope="col">Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (int i = 0; i < Model.Count; i++)
+            {
+                <tr>
+                    <th style="text-align:right;"> @Model[i].fecha_emision.ToString("dd/MM/yyyy")</th>
+                    <td style="text-align:right;"> @Model[i].fecha_vcmto.ToString("dd/MM/yyyy")</td>
+                    <td style="text-align:right;"> @Model[i].ncf</td>
+                    <td style="text-align:left;"> @Model[i].descripcion_dcmto</td>
+                    <td style="text-align:right;"> @((DateTime.Now - @Model[i].fecha_emision).Days)</td>
+                    <td style="text-align:right;"> @Model[i].monto</td>
+                    <td style="text-align:right;"> @Model[i].pagosAcumulados</td>
+                    <td style="text-align:right;"> @Model[i].balance</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        window.addEventListener('load', async () => {
+            var result = await BuscarInformacionLocal('SendWebsocketServer/4', {});
+
+            document.getElementById('Nombre_empresa').innerHTML = result[0].Nombre_empresa;
+            document.getElementById('direccionEmpresa1').innerHTML = result[0].direccion1;
+            document.getElementById('direccionEmpresa2').innerHTML = result[0].direccion2;
+            document.getElementById('direccionEmpresa3').innerHTML = result[0].direccion3;
+            document.getElementById('TelefonoEmpresa1').innerHTML = result[0].Telefono1;
+
+            window.print();
+        });
+    </script>
+}
