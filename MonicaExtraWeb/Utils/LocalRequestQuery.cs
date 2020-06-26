@@ -37,6 +37,9 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.EmpresaInformacion:
                     query = EmpresaInformacionQuery(monica10_global);
                     break;
+                case ClientMessageStatusEnum.CategoriasClientesInformacion:
+                    query = CategoriasClientesQuery("");
+                    break;
             }
 
             var obj = new WebSocketDTO

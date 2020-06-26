@@ -13,6 +13,7 @@
         public string minFecha_emision { get; set; }
         public string maxFecha_emision { get; set; }
         public string Codigo_vendedor { get; set; }
+        public string categoria_clte_id { get; set; }
         public string tipo_factura { get; set; }
     }
 }

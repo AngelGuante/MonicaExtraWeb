@@ -28,7 +28,7 @@ namespace MonicaExtraWeb.Utils
             if (filtro.SoloDocsVencidos)
             {
                 var dateNow = DateTime.Now;
-                query.Append($" AND fecha_emision <= '{dateNow.Year}-{dateNow.Month}-{dateNow.Day}'  ");
+                query.Append($" AND fecha_vcmto <= '{dateNow.Year}-{dateNow.Month}-{dateNow.Day}'  ");
             }
 
             query.Replace("''", "'");
@@ -59,6 +59,8 @@ namespace MonicaExtraWeb.Utils
                     query.Append($"AND vendedores.Codigo_vendedor = '{filtro.Codigo_vendedor}' ");
                 if (!string.IsNullOrEmpty(filtro.tipo_factura))
                     query.Append($"AND factura.tipo_factura >= '{filtro.tipo_factura}' ");
+                if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                    query.Append($"AND Categorias_clte.categoria_clte_id = '{filtro.categoria_clte_id}' ");
 
                 query.Append(" AND factura.anulada = 0 ");
                 query.Append(" ORDER BY Categorias_clte.categoria_clte_id, factura.fecha_emision ");
@@ -78,6 +80,9 @@ namespace MonicaExtraWeb.Utils
                     query.Append($"AND(devolucion_clte.fecha_emision) >= '{filtro.minFecha_emision}' ");
                 if (!string.IsNullOrEmpty(filtro.maxFecha_emision))
                     query.Append($"AND(devolucion_clte.fecha_emision) <= '{filtro.maxFecha_emision}' ");
+                
+                if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                    query.Append($"AND Categorias_clte.categoria_clte_id = '{filtro.categoria_clte_id}' ");
 
                 query.Append("AND devolucion_clte.anulada = 0 ");
                 query.Append("ORDER BY devolucion_clte.ncf, devolucion_clte.fecha_emision ");
@@ -108,6 +113,19 @@ namespace MonicaExtraWeb.Utils
 
             query.Append("SELECT * ");
             query.Append($"FROM {DbName}dbo.empresas ");
+
+            return query.ToString();
+        }
+
+        public static string CategoriasClientesQuery(string DbName)
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  categoria_clte_id, ");
+            query.Append("  descripcion_categ ");
+            query.Append($"FROM {DbName}dbo.Categorias_clte ");
+            query.Append("ORDER BY descripcion_categ ");
 
             return query.ToString();
         }

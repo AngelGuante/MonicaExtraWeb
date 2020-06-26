@@ -37,93 +37,113 @@
             </ul>
         </nav>
 
-        <div id="content">
-            <div>
-                @*FILTRO REPORTE VENTAS Y DEVOLUCIONES POR CATEGORIA Y VENDEDOR*@
-                <div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 p-3 Sombra card-body text-info" hidden>
-                    <div>
-                        <div class="row">
-                            <div class="col-md">
-                                <label class="font-weight-bold mr-2">Módulos</label>
-                                <div style="display:flex;">
-                                    <div class="form-check" style="padding-right:40px">
-                                        <input class="form-check-input" type="radio" id="ventasCheckVentasYDevolucionesCategoriaYVendedor" value="ventas" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
-                                        <label class="form-check-label" for="ventasCheckVentasYDevolucionesCategoriaYVendedor">
-                                            Ventas
-                                        </label>
+        <div style="display:flex; flex-direction:column; width:100%; padding: 0 20px">
+            <div id="content">
+                <div>
+                    @*FILTRO REPORTE VENTAS Y DEVOLUCIONES POR CATEGORIA Y VENDEDOR*@
+                    <div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 p-3 Sombra card-body text-info" hidden>
+                        <div>
+                            <div class="row">
+                                <div class="col-md">
+                                    <label class="font-weight-bold mr-2">Módulos</label>
+                                    <div style="display:flex;">
+                                        <div class="form-check" style="padding-right:40px">
+                                            <input class="form-check-input" type="radio" id="ventasCheckVentasYDevolucionesCategoriaYVendedor" value="ventas" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
+                                            <label class="form-check-label" for="ventasCheckVentasYDevolucionesCategoriaYVendedor">
+                                                Ventas
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" id="devolucionesCheckVentasYDevolucionesCategoriaYVendedor" value="devoluciones" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
+                                            <label class="form-check-label" for="devolucionesCheckVentasYDevolucionesCategoriaYVendedor">
+                                                Devoluciones
+                                            </label>
+                                        </div>
                                     </div>
+                                </div>
+
+                                <div class="col-md">
+                                    <label class="font-weight-bold mr-2">Tipo de Factura</label>
+                                    <div>
+                                        <div class="row">
+                                            <div class="form-check col" style="margin-left: 15px;">
+                                                <input class="form-check-input" type="radio" id="clase1CheckVentasYDevolucionesCategoriaYVendedor" value="1" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                                <label class="form-check-label" for="clase1CheckVentasYDevolucionesCategoriaYVendedor">
+                                                    Clase 1
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check col">
+                                                <input class="form-check-input" type="radio" id="clase2CheckVentasYDevolucionesCategoriaYVendedor" value="2" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                                <label class="form-check-label" for="clase2CheckVentasYDevolucionesCategoriaYVendedor">
+                                                    Clase 2
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check col">
+                                                <input class="form-check-input" type="radio" id="clase3CheckVentasYDevolucionesCategoriaYVendedor" value="3" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                                <label class="form-check-label" for="clase3CheckVentasYDevolucionesCategoriaYVendedor">
+                                                    Clase 3
+                                                </label>
+                                            </div>
+
+                                            <div class="form-check col">
+                                                <input class="form-check-input" type="radio" id="todoCheckVentasYDevolucionesCategoriaYVendedor" value="" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                                <label class="form-check-label" for="todoCheckVentasYDevolucionesCategoriaYVendedor">
+                                                    Todo
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr style="margin-bottom: 10px;" />
+
+                            <div class="row">
+                                <div class="col-lg-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom" title="Opciones deshabilitadas hasta que se tenga el Query">
+                                    <label class="font-weight-bold mr-2">Tipo de Consulta</label>
+                                    <div class="form-group col">
+                                        <select class="custom-select col">
+                                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                                            <option disabled value="RFA01">Por Rango Numero de Factura</option>
+                                            <option disabled value="RFA02">Por Rango Monto Facturado</option>
+                                            <option disabled value="RFA03">Por Termino de Pago</option>
+                                            <option disabled value="RFA04">Por Cliente registrado</option>
+                                            <option disabled value="RFA05">Por Cliente sin registrar</option>
+                                            <option disabled value="RFA06">Por Producto especifico</option>
+                                            <option disabled value="RFA0">Por Almacén o Bodega</option>
+                                            <option disabled value="RFA08">Por Vendedor y Categoría de Productos</option>
+                                            <option disabled value="RFA09">Por Vendedor y Categoría de Clientes</option>
+                                            <option disabled value="RFA10">Crear Libro de venta 607</option>
+                                            <option disabled value="RFA11">Crear Libro de venta 608</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4">
+                                    <div class="row" style="display:flex; align-items:baseline">
+                                        <label class="font-weight-bold mr-2">Desde</label>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" disabled />
+                                            </div>
+                                        </div>
+
+                                        <label class="font-weight-bold mr-2">Hasta</label>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <input type="text" class="form-control" disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" id="devolucionesCheckVentasYDevolucionesCategoriaYVendedor" value="devoluciones" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
-                                        <label class="form-check-label" for="devolucionesCheckVentasYDevolucionesCategoriaYVendedor">
-                                            Devoluciones
-                                        </label>
+                                        <input type="checkbox" class="form-check-input" disabled>
+                                        <label class="form-check-label">Análsis Grafico</label>
                                     </div>
-                                </div>
-                            </div>
-
-                            <div class="col-md">
-                                <label class="font-weight-bold mr-2">Tipo de Factura</label>
-                                <div>
-                                    <div class="row">
-                                        <div class="form-check col" style="margin-left: 15px;">
-                                            <input class="form-check-input" type="radio" id="clase1CheckVentasYDevolucionesCategoriaYVendedor" value="1" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
-                                            <label class="form-check-label" for="clase1CheckVentasYDevolucionesCategoriaYVendedor">
-                                                Clase 1
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check col">
-                                            <input class="form-check-input" type="radio" id="clase2CheckVentasYDevolucionesCategoriaYVendedor" value="2" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
-                                            <label class="form-check-label" for="clase2CheckVentasYDevolucionesCategoriaYVendedor">
-                                                Clase 2
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check col">
-                                            <input class="form-check-input" type="radio" id="clase3CheckVentasYDevolucionesCategoriaYVendedor" value="3" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
-                                            <label class="form-check-label" for="clase3CheckVentasYDevolucionesCategoriaYVendedor">
-                                                Clase 3
-                                            </label>
-                                        </div>
-
-                                        <div class="form-check col">
-                                            <input class="form-check-input" type="radio" id="todoCheckVentasYDevolucionesCategoriaYVendedor" value="" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
-                                            <label class="form-check-label" for="todoCheckVentasYDevolucionesCategoriaYVendedor">
-                                                Todo
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <hr style="margin-bottom: 10px;" />
-
-                        <div class="row">
-                            <div class="col-lg-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom" title="Opciones deshabilitadas hasta que se tenga el Query">
-                                <label class="font-weight-bold mr-2">Tipo de Consulta</label>
-                                <div class="form-group col">
-                                    <select class="custom-select col">
-                                        <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
-                                        <option disabled value="RFA01">Por Rango Numero de Factura</option>
-                                        <option disabled value="RFA02">Por Rango Monto Facturado</option>
-                                        <option disabled value="RFA03">Por Termino de Pago</option>
-                                        <option disabled value="RFA04">Por Cliente registrado</option>
-                                        <option disabled value="RFA05">Por Cliente sin registrar</option>
-                                        <option disabled value="RFA06">Por Producto especifico</option>
-                                        <option disabled value="RFA0">Por Almacén o Bodega</option>
-                                        <option disabled value="RFA08">Por Vendedor y Categoría de Productos</option>
-                                        <option disabled value="RFA09">Por Vendedor y Categoría de Clientes</option>
-                                        <option disabled value="RFA10">Crear Libro de venta 607</option>
-                                        <option disabled value="RFA11">Crear Libro de venta 608</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="col-6" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
-                                <div class="form-check">
-                                    <input type="checkbox" class="form-check-input" disabled>
-                                    <label class="form-check-label">Análsis Grafico</label>
                                 </div>
                             </div>
                         </div>
@@ -146,16 +166,16 @@
                                     <div class="form-group col">
                                         <label>Vendedor</label>
                                         <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedorSeleccionado">
-                                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
-                                            <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{item.Nombre_vendedor}}</option>
+                                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                            <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{item.Nombre_vendedor | FilterUppercase}}</option>
                                         </select>
                                     </div>
 
                                     <div class="form-group col">
                                         <label>Categoria Cliente</label>
-                                        <select class="custom-select col" disabled>
-                                            <option selected disabled value="">Choose...</option>
-                                            <option>...</option>
+                                        <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesSeleccionada">
+                                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                            <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes" v-bind:value="item.categoria_clte_id">{{item.descripcion_categ | FilterUppercase}}</option>
                                         </select>
                                     </div>
 
@@ -196,7 +216,25 @@
                                 </div>
                             </div>
 
-                            <div class="col-6" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
+                            <div class="col-lg-4">
+                                <div class="row" style="display:flex; align-items:baseline">
+                                    <label class="font-weight-bold mr-2">Desde</label>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" disabled />
+                                        </div>
+                                    </div>
+
+                                    <label class="font-weight-bold mr-2">Hasta</label>
+                                    <div class="col">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" disabled />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-4" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
                                 <div class="form-check">
                                     <input type="checkbox" class="form-check-input" disabled>
                                     <label class="form-check-label">Análsis Grafico</label>
@@ -282,18 +320,6 @@
                                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
-
-                    @*<nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>*@
                 </div>
 
                 @*TABLA RESPORTE CLIENTE INDIVIDUAL STATUS*@
@@ -325,18 +351,6 @@
                                 <td style="text-align:right;">{{ element.balance | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
-
-                    @*<nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item disabled">
-                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
-                                </li>
-                                <li class="page-item"><a class="page-link" href="#">1</a></li>
-                                <li class="page-item">
-                                    <a class="page-link" href="#">Next</a>
-                                </li>
-                            </ul>
-                        </nav>*@
                 </div>
             </div>
         </div>

@@ -78,6 +78,8 @@
                 tipo_factura: '1',
                 vendedores: [],
                 vendedorSeleccionado: '',
+                categoriasClientes: [],
+                categoriaClientesSeleccionada: '',
             },
 
             IndividualClientStatusDATA: [],
@@ -734,24 +736,6 @@
             });
         },
 
-        //  UTILS
-        //----------------------------------------------------------
-        //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js
-        Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
-            if (SetlocalStorageItemsToPrint) {
-                switch (type) {
-                    case 'cierre':
-                        localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
-                        localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
-                        localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
-                        localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
-                        break;
-                }
-            }
-
-            Print(type, jsonParameters);
-        },
-
         //---------------------------------------------------------------------------------------------------------------------------------------------------
         //                              MODULO DE REPORTES
         //---------------------------------------------------------------------------------------------------------------------------------------------------
@@ -794,6 +778,8 @@
                     }
                     if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores.length === 0)
                         this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes.length === 0)
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
                     break;
             }
 
@@ -818,6 +804,7 @@
                     tipo_factura: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura,
                     tipoReporte: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte,
                     Codigo_vendedor: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedorSeleccionado.trim(),
+                    categoria_clte_id: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesSeleccionada,
                 }
 
                 var result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
@@ -891,7 +878,7 @@
                 for (item of response.IndividualClientStatusDATA)
                     item.diasTrancurridos = DaysDiff(item.fecha_emision, item.fecha_vcmto),
 
-                document.getElementById('cargando').setAttribute('hidden', true);
+                        document.getElementById('cargando').setAttribute('hidden', true);
 
                 if (!this.Reportes.IndividualClientStatusDATA.length)
                     MostrarMensage({
@@ -900,6 +887,25 @@
                         icon: 'info'
                     });
             });
+        },
+
+        //----------------------------------------------------------
+        //  UTILS
+        //----------------------------------------------------------
+        //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js
+        Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
+            if (SetlocalStorageItemsToPrint) {
+                switch (type) {
+                    case 'cierre':
+                        localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
+                        localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
+                        localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
+                        localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
+                        break;
+                }
+            }
+
+            Print(type, jsonParameters);
         }
 
     },

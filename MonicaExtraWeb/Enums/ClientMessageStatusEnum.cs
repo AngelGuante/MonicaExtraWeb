@@ -6,5 +6,6 @@
         VentasYDevolucionesCategoriaYVendedor = 2,
         VendedoresInformacion = 3,
         EmpresaInformacion = 4,
+        CategoriasClientesInformacion = 5,
     }
 }
