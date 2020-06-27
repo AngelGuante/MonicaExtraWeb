@@ -173,7 +173,8 @@
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
     <Compile Include="Models\DTO\Impresion\CierreDTO.cs" />
     <Compile Include="Models\DTO\Impresion\LocalQueryClientDTO.cs" />
-    <Compile Include="Models\DTO\Impresion\LocalReports\IndividualClientDTO.cs" />
+    <Compile Include="Models\DTO\Impresion\LocalReports\EstadoCuentaclienteDTO.cs" />
+    <Compile Include="Models\DTO\Impresion\LocalReports\ReporteEstadoCuentaClienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\MovimientoDTO.cs" />
     <Compile Include="Models\DTO\Reportes\FiltrosReportes.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
@@ -364,6 +365,7 @@
     <Content Include="Views\Impresion\Movimiento.cshtml" />
     <Content Include="Views\Impresion\Cierre.cshtml" />
     <Content Include="Views\Impresion\ReporteEstadoCuentaCliente.cshtml" />
+    <Content Include="Views\Impresion\Firmas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

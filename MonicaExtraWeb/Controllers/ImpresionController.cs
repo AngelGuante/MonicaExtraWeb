@@ -52,12 +52,10 @@ namespace MonicaExtraWeb.Controllers
 
         public async Task<ActionResult> ReporteEstadoCuentaCliente(string parametros)
         {
-
-            string resultset = null;
-
             var obj = JsonConvert.DeserializeObject<LocalQueryClientDTO>(parametros);
-
-            var IPExist = await SendQueryToClient(obj.status, obj.filtro);
+            _ = await SendQueryToClient(obj.status, obj.filtro);
+            string resultset;
+            string resultsetCliente;
 
             do
             {
@@ -66,9 +64,26 @@ namespace MonicaExtraWeb.Controllers
             }
             while (resultset == null);
 
-            var AnonymousData = JsonConvert.DeserializeAnonymousType(resultset, new { data = "" });
+            // BUSCAR LOS DATOS DEL CLIENTE
+            _ = await SendQueryToClient(Enums.ClientMessageStatusEnum.ClienteInformacion, obj.filtro);
 
-            return View(JsonConvert.DeserializeObject<List<IndividualClientDTO>>(AnonymousData.data));
+            do
+            {
+                RequestClientData(out resultsetCliente);
+                Thread.Sleep(1000);
+            }
+            while (resultsetCliente == null);
+
+            var AnonymousData = JsonConvert.DeserializeAnonymousType(resultset, new { data = "" });
+            var AnonymousDataClient = JsonConvert.DeserializeAnonymousType(resultsetCliente, new { data = "" });
+
+            var model = new EstadoCuentaclienteDTO
+            {
+                Reportes = JsonConvert.DeserializeObject<List<ReporteEstadoCuentaClienteDTO>>(AnonymousData.data),
+                Client = JsonConvert.DeserializeObject<List<clientes>>(AnonymousDataClient.data).FirstOrDefault()
+            };
+
+            return View(model);
         }
     }
 }

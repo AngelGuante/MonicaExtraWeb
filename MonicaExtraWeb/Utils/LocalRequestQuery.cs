@@ -40,6 +40,9 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.CategoriasClientesInformacion:
                     query = CategoriasClientesQuery("");
                     break;
+                case ClientMessageStatusEnum.ClienteInformacion:
+                    query = ClienteQuery(filtro, "");
+                    break;
             }
 
             var obj = new WebSocketDTO

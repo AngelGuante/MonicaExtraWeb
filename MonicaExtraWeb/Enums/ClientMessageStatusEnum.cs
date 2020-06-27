@@ -7,5 +7,6 @@
         VendedoresInformacion = 3,
         EmpresaInformacion = 4,
         CategoriasClientesInformacion = 5,
+        ClienteInformacion = 6,
     }
 }

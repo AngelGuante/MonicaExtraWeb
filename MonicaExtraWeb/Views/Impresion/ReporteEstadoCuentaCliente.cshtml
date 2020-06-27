@@ -1,53 +1,123 @@
-﻿@model List<MonicaExtraWeb.Models.DTO.Impresion.LocalReports.IndividualClientDTO>
+﻿@model MonicaExtraWeb.Models.DTO.Impresion.LocalReports.EstadoCuentaclienteDTO
 
-<div>
-    @Html.Partial("ImpresionesHeader")
+    <div style="position: relative; height:90vh;">
+        @Html.Partial("ImpresionesHeader")
 
-    <h4>Estado de Cuenta del cliente</h4>
+        <h4>Estado de Cuenta del cliente</h4>
 
-    <hr />
+        <hr />
 
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th style="text-align:right;" scope="col">Emisión</th>
-                <th style="text-align:right;" scope="col">Vencimiento</th>
-                <th style="text-align:right;" scope="col">NCF</th>
-                <th style="text-align:left;" scope="col">Descripción</th>
-                <th style="text-align:right;" scope="col">Días Transcurridos</th>
-                <th style="text-align:right;" scope="col">Monto</th>
-                <th style="text-align:right;" scope="col">Pagos Acumulados</th>
-                <th style="text-align:right;" scope="col">Saldo</th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (int i = 0; i < Model.Count; i++)
-            {
+        <div class="card border-info mb-3" style="width:100%">
+            <div class="card-body text-info">
+                <div class="row" style="display:flex; align-items:baseline">
+                    <div class="col-6">
+                        <div class="row">
+                            <h6 class="card-title col-4">CÓDIGO:</h6>
+                            <p class="card-text">@Model.Client.codigo_clte</p>
+                        </div>
+
+                        <div class="row">
+                            <h6 class="card-title col-4">NOMBRE:</h6>
+                            <p class="card-text">@Model.Client.nombre_clte</p>
+                        </div>
+
+                        <div class="row">
+                            <h6 class="card-title col-4">TEL.:</h6>
+                            <p class="card-text">@Model.Client.telefono1</p>
+                        </div>
+
+                        <div class="row">
+                            <h6 class="card-title col-4">FAX:</h6>
+                            <p class="card-text">@Model.Client.fax</p>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div class="row">
+                            <h6 class="card-title col-4">DIRECCIÓN:</h6>
+                            <p class="card-text">@Model.Client.direccion1</p>
+                        </div>
+
+                        <div class="row">
+                            <h6 class="card-title col-4">EMAIL:</h6>
+                            <p class="card-text">@Model.Client.e_mail1</p>
+                        </div>
+
+                        <div class="row">
+                            <h6 class="card-title col-4">CONTACTO.:</h6>
+                            <p class="card-text">@Model.Client.Contacto</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:center;">
+            <h3 class="card-title" style="text-decoration:underline; color: #17a2b8;">ESTADO DE CUENTA DEL CLIENTE</h3>
+        </div>
+
+        <table id="tablaEstadoCuentaClienteImpresion" class="table table-striped" style="width:100%">
+            <thead>
                 <tr>
-                    <th style="text-align:right;"> @Model[i].fecha_emision.ToString("dd/MM/yyyy")</th>
-                    <td style="text-align:right;"> @Model[i].fecha_vcmto.ToString("dd/MM/yyyy")</td>
-                    <td style="text-align:right;"> @Model[i].ncf</td>
-                    <td style="text-align:left;"> @Model[i].descripcion_dcmto</td>
-                    <td style="text-align:right;"> @((DateTime.Now - @Model[i].fecha_emision).Days)</td>
-                    <td style="text-align:right;"> @Model[i].monto</td>
-                    <td style="text-align:right;"> @Model[i].pagosAcumulados</td>
-                    <td style="text-align:right;"> @Model[i].balance</td>
+                    <th style="text-align:right;" scope="col">Emisión</th>
+                    <th style="text-align:right;" scope="col">Vencimiento</th>
+                    <th style="text-align:right;" scope="col">NCF</th>
+                    <th style="text-align:left;" scope="col">Descripción</th>
+                    <th style="text-align:right;" scope="col">Días Transcurridos</th>
+                    <th style="text-align:right;" scope="col">Monto</th>
+                    <th style="text-align:right;" scope="col">Pagos Acumulados</th>
+                    <th style="text-align:right;" scope="col">Saldo</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.Reportes.Count; i++)
+                {
+                    <tr>
+                        <th style="text-align:right;"> @Model.Reportes[i].fecha_emision.ToString("dd/MM/yyyy")</th>
+                        <td style="text-align:right;"> @Model.Reportes[i].fecha_vcmto.ToString("dd/MM/yyyy")</td>
+                        <td style="text-align:right;"> @Model.Reportes[i].ncf</td>
+                        <td style="text-align:left;"> @Model.Reportes[i].descripcion_dcmto</td>
+                        <td style="text-align:right;"> @((DateTime.Now - @Model.Reportes[i].fecha_emision).Days)</td>
+                        <td style="text-align:right;"> @Model.Reportes[i].monto</td>
+                        <td style="text-align:right;"> @Model.Reportes[i].pagosAcumulados</td>
+                        <td style="text-align:right;"> @Model.Reportes[i].balance</td>
+                    </tr>
+                }
+                <tr>
+                    <th style="text-align:right;"></th>
+                    <td style="text-align:right;"></td>
+                    <td style="text-align:right;"></td>
+                    <td style="text-align:left;"></td>
+                    <td style="text-align:right;"></td>
+                    <td id="sumatoriaMonto" style="text-align:right;"></td>
+                    <td id="sumatoriaPagosAcumulados" style="text-align:right;"></td>
+                    <td id="sumatoriaSaldos" style="text-align:right;"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        @Html.Partial("Firmas")
+    </div>
 
 @section scripts{
     <script>
         window.addEventListener('load', async () => {
-            var result = await BuscarInformacionLocal('SendWebsocketServer/4', {});
+            const tabla = document.getElementById('tablaEstadoCuentaClienteImpresion');
+            const result = await BuscarInformacionLocal('SendWebsocketServer/4', {});
+            const jsonSumatorias = JSON.parse(localStorage.getItem('sumatoriasEstadoCuentaCliente'));
 
             document.getElementById('Nombre_empresa').innerHTML = result[0].Nombre_empresa;
             document.getElementById('direccionEmpresa1').innerHTML = result[0].direccion1;
             document.getElementById('direccionEmpresa2').innerHTML = result[0].direccion2;
             document.getElementById('direccionEmpresa3').innerHTML = result[0].direccion3;
             document.getElementById('TelefonoEmpresa1').innerHTML = result[0].Telefono1;
+
+            //  TOTALIZACIONES.
+            document.getElementById('sumatoriaMonto').innerHTML = jsonSumatorias.sumatoriaMontos;
+            document.getElementById('sumatoriaPagosAcumulados').innerHTML = jsonSumatorias.sumatoriaPagosAcumulados;
+            document.getElementById('sumatoriaSaldos').innerHTML = jsonSumatorias.sumatoriaBalance;
+
+            TablaEstiloTotalizacionFila(tabla, [5, 6, 7]);
 
             window.print();
         });

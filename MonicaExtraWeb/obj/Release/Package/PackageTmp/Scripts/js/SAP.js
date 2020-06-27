@@ -814,6 +814,29 @@
 
                 for (item of this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA)
                     item.itbis = Math.floor(item.total / 1.18)
+
+                //  TOTALIZACIONES.
+                if (this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.length === 0)
+                    return;
+
+                filtro.SUM = true;
+                result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
+
+                this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push(
+                    { '': '', '': '', '': '', '': '', 'SubTotalNeto': result[0].sumatoriaMontos, 'impto': result[0].sumatoriaPagosAcumulados, 'total': result[0].sumatoriaBalance });
+
+                let interval = setInterval(() => {
+                    let tabla = document.getElementById('tablaVentasYDevoluciones');
+
+                    if (tabla) {
+                        TablaEstiloTotalizacionFila(tabla, [4, 5, 6])
+
+                        clearInterval(interval);
+                    }
+                }, 0);
+
+                //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
+                //localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
             }
         },
 
@@ -837,13 +860,36 @@
                     SoloDocsVencidos: this.Reportes.IndividualClientStatusFILTROS.soloDocsVencidos,
                 }
 
-                var result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
+                let result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
 
                 for (item of result)
                     this.Reportes.IndividualClientStatusDATA.push(item);
 
                 for (item of this.Reportes.IndividualClientStatusDATA)
-                    item.diasTrancurridos = DaysDiff(item.fecha_emision, new Date().toISOString().slice(0, 10))
+                    item.diasTrancurridos = DaysDiff(item.fecha_emision, new Date().toISOString().slice(0, 10));
+
+                //  TOTALIZACIONES.
+                if (this.Reportes.IndividualClientStatusDATA.length === 0)
+                    return;
+
+                filtro.SUM = true;
+                result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
+
+                this.Reportes.IndividualClientStatusDATA.push(
+                    { '': '', '': '', '': '', '': '', 'monto': result[0].sumatoriaMontos, 'pagosAcumulados': result[0].sumatoriaPagosAcumulados, 'balance': result[0].sumatoriaBalance });
+
+                let interval = setInterval(() => {
+                    let tabla = document.getElementById('tablaEstadoCuentaCliente');
+
+                    if (tabla) {
+                        TablaEstiloTotalizacionFila(tabla, [4, 5, 6])
+
+                        clearInterval(interval);
+                    }
+                }, 0);
+
+                //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
+                localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
             }
         },
 
@@ -916,11 +962,21 @@
 
         FilterDateFormat: value => {
             const date = new Date(value);
-            return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+            const fecha = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+
+            if (!fecha.includes('NaN'))
+                return fecha;
+            else
+                return value;
         },
 
         FilterStringToMoneyFormat: value => {
-            return Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace('$', '');
+            const mount = Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace('$', '')
+
+            if (mount !== 'NaN')
+                return mount;
+            else
+                return value;
         }
     }
 });

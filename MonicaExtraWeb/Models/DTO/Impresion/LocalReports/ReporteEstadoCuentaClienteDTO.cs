@@ -2,7 +2,7 @@
 
 namespace MonicaExtraWeb.Models.DTO.Impresion.LocalReports
 {
-    public class IndividualClientDTO
+    public class ReporteEstadoCuentaClienteDTO
     {
         public DateTime fecha_emision { get; set; }
         public DateTime fecha_vcmto { get; set; }

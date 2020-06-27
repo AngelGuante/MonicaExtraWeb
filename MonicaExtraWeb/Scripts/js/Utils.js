@@ -73,11 +73,24 @@ const MostrarMensage = config => {
     )
 }
 
+//  AGREGAR ESTILOS A LAS CELDAS QUE VAN A SER LOS TOTALES DE LAS COLUMNAS DE LA TABLA.
+const TablaEstiloTotalizacionFila = (tabla, cols) => {
+    const tableSize = tabla.rows.length - 1;
+    const lastRow = tabla.rows[tableSize].children;
+
+    for (col of cols) {
+        lastRow[col].style.border = ".2px solid #17A2B8"
+        lastRow[col].style.fontWeight = "bolder"
+        lastRow[col].style.color = "#17A2B8"
+    }
+}
+
 //  NAVEGACION DE LA PAGINA
 let Navegacion = [
     { anterior: '', actual: 'menu' }
 ];
 
+//  SISTEMA DE NAVEGACION.
 const NavigationBehaviour = actual => {
     if (actual === 'SeleccionarReporte')
         document.getElementById('divMaster').classList.remove('container');

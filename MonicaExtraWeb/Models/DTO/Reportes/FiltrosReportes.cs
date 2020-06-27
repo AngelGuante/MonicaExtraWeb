@@ -2,6 +2,8 @@
 {
     public class FiltrosReportes
     {
+        public bool SUM { get; set; } = false;
+
         //  **GetIndividualClientStatus**
         public string clientCode { get; set; }
         public bool SoloDocsVencidos { get; set; } = false;
