@@ -1,4 +1,6 @@
-﻿namespace MonicaExtraWeb.Models.DTO.Reportes
+﻿using System;
+
+namespace MonicaExtraWeb.Models.DTO.Reportes
 {
     public class FiltrosReportes
     {
@@ -17,5 +19,9 @@
         public string Codigo_vendedor { get; set; }
         public string categoria_clte_id { get; set; }
         public string tipo_factura { get; set; }
+        public string tipoConsulta { get; set; }
+        public string desde { get; set; }
+        public string hasta { get; set; }
+        public string valor { get; set; }
     }
 }

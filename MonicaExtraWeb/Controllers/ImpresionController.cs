@@ -79,8 +79,8 @@ namespace MonicaExtraWeb.Controllers
 
             var model = new EstadoCuentaclienteDTO
             {
-                Reportes = JsonConvert.DeserializeObject<List<ReporteEstadoCuentaClienteDTO>>(AnonymousData.data),
-                Client = JsonConvert.DeserializeObject<List<clientes>>(AnonymousDataClient.data).FirstOrDefault()
+                Reportes = JsonConvert.DeserializeObject<List<ReporteEstadoCuentaClienteDTO>>(AnonymousData.data) ?? new List<ReporteEstadoCuentaClienteDTO>(),
+                Client = JsonConvert.DeserializeObject<List<clientes>>(AnonymousDataClient.data).FirstOrDefault() ?? new clientes()
             };
 
             return View(model);

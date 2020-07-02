@@ -13,39 +13,39 @@
                     <div class="col-6">
                         <div class="row">
                             <h6 class="card-title col-4">CÓDIGO:</h6>
-                            <p class="card-text">@Model.Client.codigo_clte</p>
+                            <p class="card-text">@(Model.Client.codigo_clte ?? "----------")</p>
                         </div>
 
                         <div class="row">
                             <h6 class="card-title col-4">NOMBRE:</h6>
-                            <p class="card-text">@Model.Client.nombre_clte</p>
+                            <p class="card-text">@(Model.Client.nombre_clte ?? "----------")</p>
                         </div>
 
                         <div class="row">
                             <h6 class="card-title col-4">TEL.:</h6>
-                            <p class="card-text">@Model.Client.telefono1</p>
+                            <p class="card-text">@(Model.Client.telefono1 ?? "----------")</p>
                         </div>
 
                         <div class="row">
                             <h6 class="card-title col-4">FAX:</h6>
-                            <p class="card-text">@Model.Client.fax</p>
+                            <p class="card-text">@(Model.Client.fax ?? "----------")</p>
                         </div>
                     </div>
 
                     <div class="col-6">
                         <div class="row">
                             <h6 class="card-title col-4">DIRECCIÓN:</h6>
-                            <p class="card-text">@Model.Client.direccion1</p>
+                            <p class="card-text">@(Model.Client.direccion1 ?? "----------")</p>
                         </div>
 
                         <div class="row">
                             <h6 class="card-title col-4">EMAIL:</h6>
-                            <p class="card-text">@Model.Client.e_mail1</p>
+                            <p class="card-text">@(Model.Client.e_mail1 ?? "----------")</p>
                         </div>
 
                         <div class="row">
                             <h6 class="card-title col-4">CONTACTO.:</h6>
-                            <p class="card-text">@Model.Client.Contacto</p>
+                            <p class="card-text">@(Model.Client.Contacto ?? "----------")</p>
                         </div>
                     </div>
                 </div>

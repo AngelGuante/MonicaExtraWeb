@@ -26,22 +26,31 @@ namespace MonicaExtraWeb.Utils
             switch (status)
             {
                 case ClientMessageStatusEnum.IndividualClientStatusReport:
-                    query = IndividualClientQuery(filtro, "");
+                    query = IndividualClientQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.VentasYDevolucionesCategoriaYVendedor:
-                    query = VentasDevolucionesCategoriaYVendedor(filtro, "");
+                    query = VentasDevolucionesCategoriaYVendedor(filtro);
                     break;
                 case ClientMessageStatusEnum.VendedoresInformacion:
-                    query = VendedoresInformacionQuery("");
+                    query = VendedoresInformacionQuery();
                     break;
                 case ClientMessageStatusEnum.EmpresaInformacion:
                     query = EmpresaInformacionQuery(monica10_global);
                     break;
                 case ClientMessageStatusEnum.CategoriasClientesInformacion:
-                    query = CategoriasClientesQuery("");
+                    query = CategoriasClientesQuery();
                     break;
                 case ClientMessageStatusEnum.ClienteInformacion:
-                    query = ClienteQuery(filtro, "");
+                    query = ClienteQuery(filtro);
+                    break;
+                case ClientMessageStatusEnum.TerminosPagos:
+                    query = TerminosPagosQuery();
+                    break;
+                case ClientMessageStatusEnum.Bodegas:
+                    query = BodegasQuery();
+                    break;
+                case ClientMessageStatusEnum.CategoriasProductos:
+                    query = CategoriasProductosQuery();
                     break;
             }
 
