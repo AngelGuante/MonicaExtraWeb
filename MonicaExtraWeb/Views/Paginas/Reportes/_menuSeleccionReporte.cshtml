@@ -45,7 +45,7 @@
                         <div>
                             <div class="row">
                                 <div class="col-md">
-                                    <div v-if="!Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta">
+                                    <div>
                                         <label class="font-weight-bold mr-2">Módulos</label>
                                         <div style="display:flex;">
                                             <div class="form-check" style="padding-right:40px">
@@ -54,7 +54,7 @@
                                                     Ventas
                                                 </label>
                                             </div>
-                                            <div class="form-check">
+                                            <div class="form-check" v-if="!Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta">
                                                 <input class="form-check-input" type="radio" id="devolucionesCheckVentasYDevolucionesCategoriaYVendedor" value="devoluciones" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
                                                 <label class="form-check-label" for="devolucionesCheckVentasYDevolucionesCategoriaYVendedor">
                                                     Devoluciones
@@ -103,7 +103,7 @@
                             <hr style="margin-bottom: 10px;" />
 
                             <div class="row">
-                                <div class="col-lg-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom">
+                                <div class="col-xl-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom">
                                     <label class="font-weight-bold mr-2">Tipo de Consulta</label>
                                     <div class="form-group col">
                                         <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
@@ -124,87 +124,95 @@
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4">
-                                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
-                                    <div class="row" style="display:flex; align-items:baseline"
-                                         v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA03'">
-                                        <label class="font-weight-bold mr-2">Opción</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePagoSeleccionado">
-                                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                                    <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
-                                                </select>
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorselectTerminoPago" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" style="display:flex; align-items:baseline"
-                                         v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA0'">
-                                        <label class="font-weight-bold mr-2">Opción</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodegaSeleccionada">
-                                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                                    <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
-                                                </select>
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorselectBodega" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row" style="display:flex; align-items:baseline"
-                                         v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'">
-                                        <label class="font-weight-bold mr-2">Opción</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductosSeleccionada">
-                                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                                    <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{item.Descripcion_categ}}</option>
-                                                </select>
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorselectCategoriaProducto" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @*REPORTES QUE SON CON ENTRADA DE TEXTO*@
-                                    <div class="row" style="display:flex; align-items:baseline"
-                                         v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA04'
-                                                || Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA05'
-                                                || Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA06'">
-                                        <label class="font-weight-bold mr-2">Valor</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.valor" />
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorValor" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    @*REPORTES QUE SON POR RANGO*@
-                                    <div class="row" style="display:flex; align-items:baseline"
-                                         v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA01'
-                                                || Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA02'">
-                                        <label class="font-weight-bold mr-2">Desde</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" v-on:input="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta = Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" />
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorDesde" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>
+                                <div class="col-xl-6">
+                                    <div class="row">
+                                        <div class="col-xl-4"
+                                             v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA0'"
+                                             style="display:flex; align-items:baseline">
+                                            <label class="font-weight-bold mr-2">Opción</label>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodegaSeleccionada">
+                                                        <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                                        <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
+                                                    </select>
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectBodega" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
+                                                </div>
                                             </div>
                                         </div>
 
-                                        <label class="font-weight-bold mr-2">Hasta</label>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta" />
-                                                <small id="validationVentasYDevolucionesCategoriaYVendedorHasta" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>
+                                        <div class="col-xl-4"
+                                             v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'"
+                                             style="display:flex; align-items:baseline">
+                                            <label class="font-weight-bold mr-2">Opción</label>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductosSeleccionada">
+                                                        <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                                        <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{item.Descripcion_categ}}</option>
+                                                    </select>
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectCategoriaProducto" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
+                                        <div class="col-xl-4"
+                                             v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA04'
+                                                        || Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA05'
+                                                        || Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA06'"
+                                             style="display:flex; align-items:baseline">
+                                            <label class="font-weight-bold mr-2">Valor</label>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.valor" />
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorValor" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4" style="display:flex; align-items:baseline"
+                                             v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA03'">
+                                            <label class="font-weight-bold mr-2">Opción</label>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePagoSeleccionado">
+                                                        <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                                        <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                                                    </select>
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectTerminoPago" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xl-4" style="display:flex; align-items:baseline"
+                                             v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== ''
+                                                    && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA05'">
+                                            <label class="font-weight-bold mr-2">Desde</label>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" v-on:input="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta = Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" />
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorDesde" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
+                                                </div>
+                                            </div>
+
+                                            <label class="font-weight-bold mr-2">Hasta</label>
+                                            <div class="col-lg-6">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta" />
+                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorHasta" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-lg-4" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
+                                <div class="col-xl-2" style="text-align: end; flex-direction:column;">
+                                    <div class="form-check">
+                                        <input id="checkboxVentasYDevolucionesCategoriaYVendedorMostrarSubTotal" type="checkbox" class="form-check-input" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.traerSubTotal">
+                                        <label for="checkboxVentasYDevolucionesCategoriaYVendedorMostrarSubTotal" class="form-check-label">Mostrar Sub-Total</label>
+                                    </div>
                                     <div class="form-check">
                                         <input type="checkbox" class="form-check-input" disabled>
                                         <label class="form-check-label">Análsis Grafico</label>
@@ -246,7 +254,7 @@
                                         </div>
                                     </div>
 
-                                    <button class="btn btn-light" style="border-left: 1px solid;" v-on:click="Buscar_VentasYDevolucionesCategoriaYVendedor()"><i class="material-icons">search</i></button>
+                                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar_VentasYDevolucionesCategoriaYVendedor()"><i class="material-icons" style="margin-top:80%;">search</i></a>
                                 </div>
                             </div>
                         </div>
@@ -379,7 +387,7 @@
                         </thead>
                         <tbody>
                             <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
-                                <td style="text-align:right;">{{ element.nrodoc }}</td>
+                                <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                                 <td style="text-align:right;">{{ element.fecha_emision }}</td>
                                 <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
                                 <td style="text-align:left;">{{ element.nombre_clte }}</td>
@@ -405,21 +413,23 @@
                                 <th style="text-align:right;" scope="col">Moneda</th>
                                 <th style="text-align:right;" scope="col">Descuento</th>
                                 <th style="text-align:right;" scope="col">Impuesto</th>
+                                <th style="text-align:right;" scope="col" v-if="Reportes.VentasYDevolucionesCategoriaYVendedorDATA[0] && 'SubTotalNeto' in Reportes.VentasYDevolucionesCategoriaYVendedorDATA[0]">Sub-Total</th>
                                 <th style="text-align:right;" scope="col">Total</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
-                                <td style="text-align:right;">{{ element.nrodoc }}</td>
-                                <td style="text-align:right;">{{ element.fecha_emision }}</td>
-                                <td style="text-align:right;">{{ element.fecha_vcmto }}</td>
+                                <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
+                                <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
+                                <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat}}</td>
                                 <td style="text-align:left;">{{ element.clte_direccion1 }}</td>
                                 <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
                                 <td style="text-align:left;">{{ element.ncf }}</td>
-                                <td style="text-align:left;">{{ element.SubTotalNeto | FilterStringToMoneyFormat }}</td>
+                                <td style="text-align:left;">{{ element.Descripcion_termino }}</td>
                                 <td style="text-align:right;">{{ element.moneda }}</td>
                                 <td style="text-align:right;">{{ element.dscto_monto | FilterStringToMoneyFormat }}</td>
-                                <td style="text-align:right;">{{ element.impto | FilterStringToMoneyFormat }}</td>
+                                <td style="text-align:right;">{{ element.impuesto_monto }}</td>
+                                <td style="text-align:right;" v-if="Reportes.VentasYDevolucionesCategoriaYVendedorDATA[0] && 'SubTotalNeto' in Reportes.VentasYDevolucionesCategoriaYVendedorDATA[0]">{{ element.SubTotalNeto | FilterStringToMoneyFormat }}</td>
                                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>

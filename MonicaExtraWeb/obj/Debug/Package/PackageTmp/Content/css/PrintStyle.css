@@ -1,0 +1,5 @@
+﻿@media print {
+    .dontPrint {
+        visibility: hidden;
+    }
+}

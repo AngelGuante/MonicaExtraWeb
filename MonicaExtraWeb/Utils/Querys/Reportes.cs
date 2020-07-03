@@ -70,12 +70,6 @@ namespace MonicaExtraWeb.Utils
                     query.Append("  factura.total - factura.impuesto_monto AS SubTotalNeto, ");
                     query.Append("  factura.impuesto_monto AS impto, ");
                     query.Append("  factura.total ");
-                    //query.Append("  factura.ncf, ");
-                    //query.Append("  clientes.registro_tributario, ");
-                    //query.Append("  clientes.categoria_clte_id, ");
-                    //query.Append("  vendedores.Codigo_vendedor, ");
-                    //query.Append("  Categorias_clte.categoria_clte_id, ");
-                    //query.Append("  Categorias_clte.descripcion_categ ");
                 }
 
                 query.Append($" FROM {DbName}dbo.factura, ");
@@ -165,47 +159,33 @@ namespace MonicaExtraWeb.Utils
                     query.Append("  factura.fecha_emision, ");
                     query.Append("  factura.fecha_vcmto, ");
                     query.Append("  factura.clte_direccion1, ");
-                    query.Append("  vendedores.Nombre_vendedor, ");
+                    query.Append("  UPPER(vendedores.Nombre_vendedor) Nombre_vendedor, ");
                     query.Append("  ncf, ");
-                    query.Append("  factura.total - factura.impuesto_monto AS SubTotalNeto, ");
-                    query.Append("  factura.moneda, ");
+                    query.Append("  UPPER(terminos_pago.Descripcion_termino) Descripcion_termino, ");
+                    query.Append("  CASE factura.moneda ");
+                    query.Append("      WHEN 0 THEN 'NACIONAL' ");
+                    query.Append("      ELSE 'EXTRANJERA' ");
+                    query.Append("      END moneda, ");
                     query.Append("  factura.dscto_monto, ");
-                    query.Append("  impto, ");
+                    query.Append("  factura.impuesto_monto, ");
                     query.Append("  factura.total ");
-                    //query.Append("  productos.Categoria_id, ");
-                    //query.Append("  categoria_producto.codigo_categoria, ");
-                    //query.Append("  categoria_producto.Descripcion_categ, ");
-                    //query.Append("  sub_categoria_producto.sub_categoria_id, ");
-                    //query.Append("  sub_categoria_producto.codigo_sub_categ, ");
-                    //query.Append("  sub_categoria_producto.Descripcion_sub_categ, ");
-                    //query.Append("  clientes.registro_tributario, ");
-                    //query.Append("  clientes.codigo_clte, ");
-                    //query.Append("  clientes.nombre_clte, ");
-                    //query.Append("  factura_detalle.impto_monto AS ITBIS, ");
-                    //query.Append("  clientes.categoria_clte_id, ");
-                    //query.Append("  productos.descrip_producto , ");
-                    //query.Append("  factura_detalle.cantidad, ");
-                    //query.Append("  factura_detalle.precio_factura AS precio, ");
-                    //query.Append("  factura_detalle.cantidad* factura_detalle.precio_factura AS TPRECIO, ");
-                    //query.Append("  factura_detalle.cantidad* factura_detalle.costo_producto AS Tcosto, ");
-                    //query.Append("  (factura_detalle.cantidad * factura_detalle.precio_factura) + (factura_detalle.impto_monto + factura_detalle.impto2_monto - factura_detalle.descto_monto) AS TotalPPRo, ");
-                    //query.Append("  vendedores.vendedor_id, ");
-                    //query.Append("  vendedores.Codigo_vendedor, ");
+
+                    if (filtro.traerSubTotal)
+                        query.Append(" , factura.total - factura.impuesto_monto AS SubTotalNeto ");
+
                 }
 
                 query.Append("FROM ");
                 query.Append($" {DbName}factura, ");
                 query.Append($" {DbName}clientes, ");
-                query.Append($" {DbName}vendedores ");
+                query.Append($" {DbName}vendedores, ");
+                query.Append($" {DbName}terminos_pago ");
 
                 if (!string.IsNullOrEmpty(filtro.tipoConsulta))
                     switch (filtro.tipoConsulta)
                     {
                         case "RFA02":
                             query.Append($", {DbName}factura_detalle ");
-                            break;
-                        case "RFA03":
-                            query.Append($", {DbName}terminos_pago ");
                             break;
                         case "RFA0":
                             query.Append($", {DbName}nombre_bodegas ");
@@ -222,11 +202,15 @@ namespace MonicaExtraWeb.Utils
                 query.Append("WHERE ");
                 query.Append("  factura.cliente_id = clientes.cliente_id ");
                 query.Append("  AND factura.vendedor_id = vendedores.vendedor_id ");
+                query.Append("  AND terminos_pago.termino_id = factura.termino_id ");
                 query.Append("  AND factura.anulada = 0 ");
 
                 if (!string.IsNullOrEmpty(filtro.tipoConsulta))
                     switch (filtro.tipoConsulta)
                     {
+                        case "RFA02":
+                            query.Append("  AND factura.factura_id = factura_detalle.factura_id ");
+                            break;
                         case "RFA06":
                         case "RFA08":
                             query.Append("  AND productos.Categoria_id = categoria_producto.categoria_id ");
@@ -244,6 +228,14 @@ namespace MonicaExtraWeb.Utils
                     query.Append($"AND factura.tipo_factura >= '{filtro.tipo_factura}' ");
                 if (!string.IsNullOrEmpty(filtro.Codigo_vendedor))
                     query.Append($"AND vendedores.Codigo_vendedor = '{filtro.Codigo_vendedor}' ");
+
+                if (filtro.tipoConsulta != "RFA02")
+                {
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                        query.Append($"AND factura.nro_factura >= '{filtro.desde}' ");
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                        query.Append($"AND factura.nro_factura <= '{filtro.hasta}' ");
+                }
 
                 switch (filtro.tipoConsulta)
                 {
@@ -297,22 +289,55 @@ namespace MonicaExtraWeb.Utils
                     {
                         case "RFA02":
                             query.Append("GROUP BY ");
+                            query.Append(" 	(factura_detalle.cantidad*factura_detalle.precio_factura)+(factura_detalle.impto_monto+factura_detalle.impto2_monto-factura_detalle.descto_monto), ");
+                            query.Append(" factura.nro_factura, ");
                             query.Append(" ltrim(str(factura.nro_factura)), ");
                             query.Append(" factura.fecha_emision, ");
                             query.Append(" factura.fecha_vcmto, ");
                             query.Append(" factura.clte_direccion1, ");
                             query.Append(" vendedores.Nombre_vendedor, ");
                             query.Append(" ncf, ");
-                            query.Append(" factura.total - factura.impuesto_monto, ");
+                            query.Append(" terminos_pago.Descripcion_termino, ");
                             query.Append(" factura.moneda, ");
                             query.Append(" factura.dscto_monto, ");
-                            query.Append(" clientes.impto, ");
+                            query.Append(" factura.impuesto_monto, ");
                             query.Append(" factura.total ");
                             break;
                     }
 
                 if (!filtro.SUM)
-                    query.Append("ORDER BY Factura.fecha_emision ");
+                {
+                    switch (filtro.tipoConsulta)
+                    {
+                        case "RFA01":
+                            query.Append("ORDER BY factura.nro_factura ");
+                            break;
+                        case "RFA02":
+                            query.Append("ORDER BY (factura_detalle.cantidad*factura_detalle.precio_factura)+(factura_detalle.impto_monto+factura_detalle.impto2_monto-factura_detalle.descto_monto) ");
+                            break;
+                        case "RFA03":
+                            query.Append("ORDER BY terminos_pago.termino_id ");
+                            break;
+                        case "RFA04":
+                            query.Append("ORDER BY clientes.cliente_id ");
+                            break;
+                        case "RFA05":
+                            query.Append("ORDER BY factura.clte_direccion1 ");
+                            break;
+                        case "RFA06":
+                            query.Append("ORDER BY productos.descrip_producto ");
+                            break;
+                        case "RFA0":
+                            query.Append("ORDER BY nombre_bodegas.bodega_id ");
+                            break;
+                        case "RFA08":
+                            query.Append("ORDER BY categoria_producto.categoria_id, productos.Categoria_id ");
+                            break;
+                        default:
+                            query.Append("ORDER BY Factura.fecha_emision ");
+                            break;
+                    }
+                }
             }
 
             query.Replace("''", "'");

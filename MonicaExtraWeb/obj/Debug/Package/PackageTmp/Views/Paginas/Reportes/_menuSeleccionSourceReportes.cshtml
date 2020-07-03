@@ -1,0 +1,32 @@
+﻿<div id="SeleccionarSourceParaReporte" hidden>
+
+    <hr />
+
+    <div id="dondeBuscar" class="row" style="display:flex; justify-content:center">
+        @*  OBTENER LA DATA LOCAL*@
+        <div class="col-lg-3 card">
+            <img class="card-img-top CentrarImage" src="~/Content/assets/tower-pc.png" alt="Reportes_Icon" style="width:40%">
+            <div class="card-body">
+                <h5 class="card-title">LOCAL</h5>
+                <p class="card-text">Obtener la data desde este dispositivo. </p>
+
+                <hr />
+
+                <button v-on:click="DivSeleccionarReporte('local')" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
+            </div>
+        </div>
+
+        @*  OBTENER LA DATE DESDE EL SERVIDOR WEB*@
+        <div class="col-lg-3 card">
+            <img class="card-img-top CentrarImage" src="~/Content/assets/server.png" alt="Reportes_Icon" style="width:40%">
+            <div class="card-body">
+                <h5 class="card-title">ONLINE</h5>
+                <p class="card-text">Obtener la data desde el servidor web. </p>
+
+                <hr />
+
+                <button v-on:click="DivSeleccionarReporte('web')" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">play_for_work</i>Entrar</button>
+            </div>
+        </div>
+    </div>
+</div>
