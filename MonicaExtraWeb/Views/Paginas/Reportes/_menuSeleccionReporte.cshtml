@@ -27,13 +27,59 @@
                 </li>
 
                 <li>
-                    <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cuentas por Cobrar<br />Cliente</a>
-                    <ul class="collapse list-unstyled" id="pageSubmenu">
+                    <a href="#cuentasPorCobrarYPagar" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cuentas por<br />Cobrar y por Pagar</a>
+                    <ul class="collapse list-unstyled" id="cuentasPorCobrarYPagar">
                         <li>
                             <a v-on:click="OpcionMenuCeleccionado('filtrosClienteIndividualStatus')">Consultas y Reportes</a>
                         </li>
                     </ul>
                 </li>
+
+                <li>
+                    <a href="#demo3" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inventario y<br />Liquidación</a>
+                    <ul class="collapse list-unstyled" id="demo3">
+                        <li>
+                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#demo4" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Compras y<br />Devoluciones</a>
+                    <ul class="collapse list-unstyled" id="demo4">
+                        <li>
+                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#demo5" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Banco y<br />Contabilidad</a>
+                    <ul class="collapse list-unstyled" id="demo5">
+                        <li>
+                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#demo6" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cotizaciones<br />y Conduces</a>
+                    <ul class="collapse list-unstyled" id="demo6">
+                        <li>
+                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#demo7" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Otros Módulos</a>
+                    <ul class="collapse list-unstyled" id="demo7">
+                        <li>
+                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
             </ul>
         </nav>
 
@@ -54,7 +100,7 @@
                                                     Ventas
                                                 </label>
                                             </div>
-                                            <div class="form-check" v-if="!Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta">
+                                            <div class="form-check">
                                                 <input class="form-check-input" type="radio" id="devolucionesCheckVentasYDevolucionesCategoriaYVendedor" value="devoluciones" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
                                                 <label class="form-check-label" for="devolucionesCheckVentasYDevolucionesCategoriaYVendedor">
                                                     Devoluciones
@@ -64,7 +110,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-md">
+                                <div class="col-md" v-if="!(Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte === 'devoluciones' && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta)">
                                     <label class="font-weight-bold mr-2">Tipo de Factura</label>
                                     <div>
                                         <div class="row">
@@ -107,19 +153,17 @@
                                     <label class="font-weight-bold mr-2">Tipo de Consulta</label>
                                     <div class="form-group col">
                                         <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
-                                            <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                            <option value="RFA01">Por Rango Numero de Factura</option>
-                                            <option value="RFA02">Por Rango Monto Facturado</option>
+                                            <option value="RFA01">Por Numero</option>
+                                            <option value="RFA02">Por Monto Facturado</option>
                                             <option value="RFA03">Por Termino de Pago</option>
                                             <option value="RFA04">Por Cliente registrado</option>
                                             <option value="RFA05">Por Cliente sin registrar</option>
                                             <option value="RFA06">Por Producto especifico</option>
                                             <option value="RFA0">Por Almacén o Bodega</option>
                                             <option value="RFA08">Por Vendedor y Categoría de Productos</option>
-
-                                            <option disabled value="RFA09">Por Vendedor y Categoría de Clientes</option>
-                                            <option disabled value="RFA10">Crear Libro de venta 607</option>
-                                            <option disabled value="RFA11">Crear Libro de venta 608</option>
+                                            <option value="RFA09">Por Vendedor y Categoría de Clientes</option>
+                                            @*<option disabled value="RFA10">Crear Libro de venta 607</option>
+                                                <option disabled value="RFA11">Crear Libro de venta 608</option>*@
                                         </select>
                                     </div>
                                 </div>
@@ -136,7 +180,6 @@
                                                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                                                         <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
                                                     </select>
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectBodega" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -151,7 +194,6 @@
                                                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                                                         <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{item.Descripcion_categ}}</option>
                                                     </select>
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectCategoriaProducto" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -167,7 +209,6 @@
                                             <div class="col">
                                                 <div class="form-group">
                                                     <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.valor" />
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorValor" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -181,7 +222,6 @@
                                                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                                                         <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
                                                     </select>
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorselectTerminoPago" class="form-text" style="color:red;" hidden>Débe seleccionar una opción.</small>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -193,7 +233,6 @@
                                             <div class="col-lg-6">
                                                 <div class="form-group">
                                                     <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" v-on:input="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta = Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desde" />
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorDesde" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
                                                 </div>
                                             </div>
 
@@ -201,7 +240,6 @@
                                             <div class="col-lg-6">
                                                 <div class="form-group">
                                                     <input type="text" class="form-control" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta" />
-                                                    @*<small id="validationVentasYDevolucionesCategoriaYVendedorHasta" class="form-text" style="color:red;" hidden>Débe ingresar un valor en este campo.</small>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -232,7 +270,7 @@
                                     </div>
 
                                     <div class="form-group col">
-                                        <label for="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor">Desde</label>
+                                        <label for="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor">Hasta</label>
                                         <input id="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision" />
                                     </div>
 
@@ -244,7 +282,7 @@
                                         </select>
                                     </div>
 
-                                    <div v-if="!Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta">
+                                    <div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA09'">
                                         <div class="form-group col">
                                             <label>Categoria Cliente</label>
                                             <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesSeleccionada">
@@ -254,7 +292,7 @@
                                         </div>
                                     </div>
 
-                                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar_VentasYDevolucionesCategoriaYVendedor()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+                                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor()"><i class="material-icons" style="margin-top:80%;">search</i></a>
                                 </div>
                             </div>
                         </div>
@@ -388,7 +426,7 @@
                         <tbody>
                             <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
                                 <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
-                                <td style="text-align:right;">{{ element.fecha_emision }}</td>
+                                <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                                 <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
                                 <td style="text-align:left;">{{ element.nombre_clte }}</td>
                                 <td style="text-align:right;">{{ element.SubTotalNeto | FilterStringToMoneyFormat}}</td>
@@ -396,6 +434,26 @@
                                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
+
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
+                            </li>
+                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
+                            </li>
+                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
+                            </li>
+                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
                 @*----POR RANGO, NUMERO DE FACTURA----*@
@@ -433,6 +491,26 @@
                                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
+
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination justify-content-center">
+                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
+                            </li>
+                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
+                            </li>
+                            <li class="page-item active">
+                                <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
+                            </li>
+                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
+                            </li>
+                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
                 @*TABLA RESPORTE CLIENTE INDIVIDUAL STATUS*@

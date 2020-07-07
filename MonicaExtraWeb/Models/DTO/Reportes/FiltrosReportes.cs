@@ -4,6 +4,8 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
 {
     public class FiltrosReportes
     {
+        private int _take;
+
         public bool SUM { get; set; } = false;
 
         //  **GetIndividualClientStatus**
@@ -24,5 +26,13 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string hasta { get; set; }
         public string valor { get; set; }
         public bool traerSubTotal { get; set; }
+
+        //  PAGINACION
+        public int skip { get; set; } = 0;
+        public int take
+        {
+            get => _take > 0 ? _take : 20;
+            set => _take = value;
+        }
     }
 }
