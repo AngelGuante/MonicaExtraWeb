@@ -7,6 +7,7 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         private int _take;
 
         public bool SUM { get; set; } = false;
+        public bool GROUP { get; set; } = false;
 
         //  **GetIndividualClientStatus**
         public string clientCode { get; set; }

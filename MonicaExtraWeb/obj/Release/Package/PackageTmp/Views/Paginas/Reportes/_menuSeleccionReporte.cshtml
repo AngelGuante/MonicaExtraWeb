@@ -410,50 +410,116 @@
             <div id="contenidosReportes" class="Tables" style="display:flex; justify-content:center">
                 @*TABLA REPORTE VENTANAS Y REPORTES POR CATEGORIA Y VENDEDOR*@
                 @*----VENTAS & DEVOLUCIONES----*@
+                @*<div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaVentasYDevoluciones'" style="width:99%">
+                        <table id="tablaVentasYDevoluciones" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th style="text-align:right;" scope="col">Nro.</th>
+                                    <th style="text-align:right;" scope="col">Fecha</th>
+                                    <th style="text-align:left;" scope="col">Vendedor</th>
+                                    <th style="text-align:left;" scope="col">Cliente</th>
+                                    <th style="text-align:right;" scope="col">Sub-Total</th>
+                                    <th style="text-align:right;" scope="col">ITBIS</th>
+                                    <th style="text-align:right;" scope="col">TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
+                                    <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
+                                    <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
+                                    <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
+                                    <td style="text-align:left;">{{ element.nombre_clte }}</td>
+                                    <td style="text-align:right;">{{ element.SubTotalNeto | FilterStringToMoneyFormat}}</td>
+                                    <td style="text-align:right;">{{ element.impto | FilterStringToMoneyFormat }}</td>
+                                    <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
+                            </tbody>
+                        </table>
+
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
+                                </li>
+                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
+                                </li>
+                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
+                                </li>
+                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>*@
+
+                @*----VENTAS & DEVOLUCIONES----*@
                 <div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaVentasYDevoluciones'" style="width:99%">
-                    <table id="tablaVentasYDevoluciones" class="table table-striped">
-                        <thead>
-                            <tr>
-                                <th style="text-align:right;" scope="col">Nro.</th>
-                                <th style="text-align:right;" scope="col">Fecha</th>
-                                <th style="text-align:left;" scope="col">Vendedor</th>
-                                <th style="text-align:left;" scope="col">Cliente</th>
-                                <th style="text-align:right;" scope="col">Sub-Total</th>
-                                <th style="text-align:right;" scope="col">ITBIS</th>
-                                <th style="text-align:right;" scope="col">TOTAL</th>
-                            </tr>
-                        </thead>
+                    <table id="tablaVentasYDevoluciones" class="table">
                         <tbody>
-                            <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
-                                <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
-                                <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
-                                <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
-                                <td style="text-align:left;">{{ element.nombre_clte }}</td>
-                                <td style="text-align:right;">{{ element.SubTotalNeto | FilterStringToMoneyFormat}}</td>
-                                <td style="text-align:right;">{{ element.impto | FilterStringToMoneyFormat }}</td>
-                                <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
+                            <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA">
+                                <td>
+                                    <div>
+                                        <div class="card border-info" style="width:100%">
+                                            
+                                            <div class="card-header"><p class="font-weight-bold mb-0">{{element[0].categoria_id | FilterCategoria}}</p></div>
+                                        </div>
+
+                                        <table id="tablaRangoNroFactura" class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th style="text-align:right;" scope="col">Fecha</th>
+                                                    <th style="text-align:right;" scope="col">Nro</th>
+                                                    <th style="text-align:left;" scope="col">Cliente</th>
+                                                    <th style="text-align:left;" scope="col">Articulo</th>
+                                                    <th style="text-align:right;" scope="col">Cantidad</th>
+                                                    <th style="text-align:right;" scope="col">Precio</th>
+                                                    <th style="text-align:right;" scope="col">Valor</th>
+                                                    <th style="text-align:right;" scope="col">ITBIS</th>
+                                                    <th style="text-align:right;" scope="col">TOTAL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr v-for="innerElement in element">
+                                                    <td style="text-align:right;">{{ innerElement.fecha_emision | FilterDateFormat }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.nrodoc | FilterRemoveLeftZeros }}</td>
+                                                    <td style="text-align:left;">{{ innerElement.clte_direccion1 }}</td>
+                                                    <td style="text-align:left;">{{ innerElement.descrip_producto }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.cantidad }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.precio_factura | FilterStringToMoneyFormat }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.valor_inventario | FilterStringToMoneyFormat }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.impto_monto | FilterStringToMoneyFormat }}</td>
+                                                    <td style="text-align:right;">{{ innerElement.total | FilterStringToMoneyFormat }}</td>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination justify-content-center">
-                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
-                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
-                            </li>
-                            <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
-                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
-                            </li>
-                            <li class="page-item active">
-                                <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
-                            </li>
-                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
-                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
-                            </li>
-                            <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
-                                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
-                            </li>
-                        </ul>
-                    </nav>
+                    @*<nav aria-label="Page navigation example">
+                            <ul class="pagination justify-content-center">
+                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
+                                </li>
+                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
+                                </li>
+                                <li class="page-item active">
+                                    <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
+                                </li>
+                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
+                                </li>
+                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
+                                </li>
+                            </ul>
+                        </nav>*@
                 </div>
 
                 @*----POR RANGO, NUMERO DE FACTURA----*@
