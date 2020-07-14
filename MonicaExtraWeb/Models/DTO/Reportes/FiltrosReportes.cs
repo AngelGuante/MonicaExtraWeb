@@ -17,6 +17,7 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
 
         //  **VentasDevolucionesCategoriaYVendedor**
         public string tipoReporte { get; set; }
+        public string tipoCorte { get; set; }
         public string minFecha_emision { get; set; }
         public string maxFecha_emision { get; set; }
         public string Codigo_vendedor { get; set; }
@@ -26,7 +27,6 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string desde { get; set; }
         public string hasta { get; set; }
         public string valor { get; set; }
-        public bool traerSubTotal { get; set; }
 
         //  PAGINACION
         public int skip { get; set; } = 0;
