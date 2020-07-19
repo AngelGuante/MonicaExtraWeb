@@ -69,7 +69,7 @@
 
             VentasYDevolucionesCategoriaYVendedorTablaVisible: '',
             VentasYDevolucionesCategoriaYVendedorDATA: [],
-            VentasYDevolucionesCategoriaYVendedorGroupDATA: [{ '': '', '': '', '': '', '': '', 'cantidad': '', 'TPRECIO': '', 'precio_factura': '', 'ITBIS': '', 'total': '' }],
+            VentasYDevolucionesCategoriaYVendedorGroupDATA: [],
             VentasYDevolucionesCategoriaYVendedorFILTROS: {
                 tipoReporte: 'ventas',
                 tipoCorte: '',
@@ -82,6 +82,7 @@
                 categoriasClientes: [],
                 categoriaClientesSeleccionada: '',
                 tipoConsulta: 'RFA01',
+                desdeHastaRango: 0,
                 desde: '',
                 hasta: '',
                 valor: '',
@@ -91,10 +92,24 @@
                 nombresBodega: [],
                 categoriasProductosSeleccionada: '',
                 categoriasProductos: [],
+
                 mostrarDetallesProductosCorte: false,
                 toggleTableColumns_byMostrarDetallesProductosCorte: true,
+
                 PaginatorIndex: 0,
-                PaginatorLastPage: 0
+                PaginatorLastPage: 0,
+
+                FormatoConsultas: '',
+                columnaVendedor: false,
+                columnaComprobante: false,
+                columnaTermino: false,
+                columnaMoneda: false,
+                ConsultaTrajoColumnaVendedor: false,
+                ConsultaTrajoColumnaComprobante: false,
+                ConsultaTrajoColumnaTermino: false,
+                ConsultaTrajoColumnaMoneda: false,
+
+
             },
 
             IndividualClientStatusDATA: [],
@@ -127,8 +142,30 @@
             this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta.replace(/^0/g, '');
         },
         'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta'() {
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte = false;
             if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08')
                 this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte = 'porCategoria';
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas'() {
+            SetCoockie(`formatoDataVentasYDevoluciones=${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas};`);
+            this.LimpiarTablas();
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor'() {
+            SetCoockie(`formatoDataVentasYDevoluciones_vendedor=${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor};`);
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante'() {
+            SetCoockie(`formatoDataVentasYDevoluciones_comprobante=${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante};`);
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino'() {
+            SetCoockie(`formatoDataVentasYDevoluciones_termino=${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino};`);
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda'() {
+            SetCoockie(`formatoDataVentasYDevoluciones_moneda=${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda};`);
+        },
+        'Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desdeHastaRango'() {
+            const rango = getIntervalDate(this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desdeHastaRango);
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision = rango.firstday;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision = rango.lastday;
         }
     },
     methods: {
@@ -848,12 +885,17 @@
         async Buscar_VentasYDevolucionesCategoriaYVendedor() {
             this.LimpiarTablas();
             this.Reportes.toggleTableColumns_byMostrarDetallesProductosCorte = !this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaVendedor = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaComprobante = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaMoneda = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda;
 
             if (this.Reportes.sourceResportes === 'web')
-                console.log('Por el momento esta busqueda solo se ha planteado para la parte Local');
+                alert('Por el momento esta busqueda solo se ha planteado para la parte Local');
             else if (this.Reportes.sourceResportes === 'local') {
                 this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA = [];
                 this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA = [];
+                let campo;
 
                 const filtro = {
                     minFecha_emision: this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision,
@@ -900,27 +942,35 @@
                     filtro.hasta = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.hasta;
                 }
 
+                //  AGREGAR COLUMNAS
+                if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo') {
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor)
+                        filtro.colVendedor = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor;
+
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante)
+                        filtro.colComprobante = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante;
+
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino)
+                        filtro.colTermino = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino;
+
+                    if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda)
+                        filtro.colMoneda = this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda;
+                }
+
                 if (!this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte) {
                     var result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
                     for (item of result)
                         this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push(item);
 
-                    //
+                    //  SI ES UNA DATA AGRUPADA, SE ASIGNA EL CAMPO POR EL QUE SE VA A AGRUPAR.
                     if (filtro.GROUP) {
-                        var arregloAgruparPor;
-                        var campo;
-
-                        if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria') {
-                            arregloAgruparPor = [... new Set(this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.map(data => data.categoria_id))];
+                        if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria')
                             campo = 'categoria_id';
-                        }
-                        else if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCliente') {
-                            arregloAgruparPor = [... new Set(this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.map(data => data.nombre_clte))];
+                        else if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCliente')
                             campo = 'nombre_clte';
-                        }
 
-                        for (let item of arregloAgruparPor) {
+                        for (let item of [... new Set(this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.map(data => data[campo]))]) {
                             this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.push(
                                 this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.filter(el => el[campo] === item)
                             );
@@ -940,7 +990,7 @@
                 //}
                 if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08') {
                     tableName = 'tablaVentasYDevolucionesGROUP';
-                    camposArray = [4, 6, 7, 8];
+                    camposArray = [3, 4, 6, 7, 8];
                 }
                 else {
                     tableName = 'tablaRangoNroFactura';
@@ -948,14 +998,15 @@
                 }
 
                 //  SI NO TRAE DATA TERMINA EL PROCESO
-                if (!this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte) {
+                if (!this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte)
                     if (this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.length === 0 && this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length === 0)
                         return;
-                }
+
                 // TOTALIZACIONES.
                 this.Reportes.VentasYDevolucionesCategoriaYVendedorTablaVisible = tableName;
 
                 filtro.SUM = true;
+
                 result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
                 //
@@ -964,9 +1015,9 @@
 
                     let jsonTotalizacion = {};
                     if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === '')
-                        jsonTotalizacion = { '': '', '': '', '': '', '': '', 'SubTotalNeto': result[0].sumatoriaMontos, 'impto': result[0].sumatoriaPagosAcumulados, 'total': result[0].sumatoriaBalance };
+                        jsonTotalizacion = { 'SubTotalNeto': result[0].sumatoriaMontos, 'impto': result[0].sumatoriaPagosAcumulados, 'total': result[0].sumatoriaBalance };
                     else
-                        jsonTotalizacion = { '': '', '': '', '': '', '': '', '': '', '': '', 'ITBIS': result[0].impuesto, 'SubTotalNeto': result[0].subtotal, 'dscto_monto': result[0].dscto_monto, '': '', 'total': result[0].total };
+                        jsonTotalizacion = { 'ITBIS': result[0].impuesto, 'SubTotalNeto': result[0].subtotal, 'dscto_monto': result[0].dscto_monto, '': '', 'total': result[0].total };
 
                     this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA.push(jsonTotalizacion);
 
@@ -981,34 +1032,88 @@
                     }, 0);
                 }
                 else {
+                    //SI LA DATA ESTA AGRUPADA:
                     let totalCantidad = 0;
                     let totalTotal = 0;
-                    //let totalPrecio = 0;
                     let totalValor = 0;
                     let totalImpuesto = 0;
+
+                    let tableTotalPositionsRows = [];
+
+                    //  CON DETALLES DE PRODUCTOS
                     if (!this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte) {
+                        let contadorDeLineas = 0;
                         for (let index = 0; index < result.length; index++) {
-                            this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[index].push({ '': '', '': '', '': '', '': '', 'cantidad': result[index].cantidad, 'TPRECIO': result[index].TPRECIO, 'precio_factura': result[index].precio_factura, 'ITBIS': result[index].impto_monto, 'total': result[index].total });
+                            contadorDeLineas += this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[index].length + 1;
+                            //  OBTENER LA POSICION DEL TOTAL DE CADA GRUPO PARA DARLE ESTILOS.
+                            tableTotalPositionsRows.push(contadorDeLineas);
+
+                            //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
+                            for (let i = 0; i < this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length; i++)
+                                if (this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[i][0][campo] === result[index][campo]) {
+                                    this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[i].push({
+                                        'descrip_producto': `${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria' ? result[index].Descripcion_categ : result[index].nombre_clte} => `,
+                                        'cantidad': result[index].cantidad,
+                                        'TPRECIO': result[index].TPRECIO,
+                                        'precio_factura': result[index].precio_factura,
+                                        'ITBIS': result[index].impto_monto,
+                                        'total': result[index].total
+                                    });
+                                }
                             totalCantidad += result[index].cantidad;
-                            //totalPrecio += result[index].precio_factura;
                             totalValor += result[index].TPRECIO;
                             totalImpuesto += result[index].impto_monto;
                             totalTotal += result[index].total;
                         }
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.push({ 'cantidad': `${totalCantidad}`, 'TPRECIO': `${totalValor}`, 'ITBIS': `${totalImpuesto}`, 'total': `${totalTotal}` });
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA = this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.flat();
+
+                        let columnasExtras = 0;
+                        if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo') {
+                            if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor)
+                                columnasExtras++;
+                            if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante)
+                                columnasExtras++;
+                            if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino)
+                                columnasExtras++;
+                            if (this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda)
+                                columnasExtras++;
+                        }
+
+                        for (let i = 0; i < camposArray.length; i++)
+                            camposArray[i] = camposArray[i] + columnasExtras;
+
+                        setTimeout(() => {
+                            TablaEstiloTotalizacionFilaAgrupadas('tablaRangoNroFactura', camposArray, tableTotalPositionsRows);
+                            TablaEstiloTotalizacionFila(document.getElementById('tablaRangoNroFactura'), [4 + columnasExtras, 6 + columnasExtras, 7 + columnasExtras, 8 + columnasExtras]);
+                        }, 1);
                     }
+                    //  SIN CON DETALLES DE PRODUCTOS
                     else {
                         for (let index = 0; index < result.length; index++) {
                             this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.push([]);
-                            this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[index].push({ '': '', 'Descripcion_categ': result[index].Descripcion_categ, 'nombre_clte': result[index].nombre_clte, '': '', 'cantidad': result[index].cantidad, 'TPRECIO': result[index].TPRECIO, 'precio_factura': result[index].precio_factura, 'ITBIS': result[index].impto_monto, 'total': result[index].total });
+                            this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[index].push({
+                                'categorizacionSinDetalles': `${this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria'
+                                    ? result[index].Descripcion_categ
+                                    : result[index].nombre_clte} =>`, 'nombre_clte': result[index].nombre_clte,
+                                'cantidad': result[index].cantidad,
+                                'TPRECIO': result[index].TPRECIO,
+                                'precio_factura': result[index].precio_factura,
+                                'ITBIS': result[index].impto_monto,
+                                'total': result[index].total
+                            });
                             totalCantidad += result[index].cantidad;
-                            //totalPrecio += result[index].precio_factura;
                             totalValor += result[index].TPRECIO;
                             totalImpuesto += result[index].impto_monto;
                             totalTotal += result[index].total;
                         }
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.push({ 'cantidad': `${totalCantidad}`, 'TPRECIO': `${totalValor}`, 'ITBIS': `${totalImpuesto}`, 'total': `${totalTotal}` });
+                        this.Reportes.VentasYDevolucionesCategoriaYVendedorDATA = this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.flat();
+                        setTimeout(() => {
+                            TablaEstiloTotalizacionFilaAgrupadas('tablaRangoNroFactura', [0, 1, 2, 3, 4])
+                            TablaEstiloTotalizacionFila(document.getElementById('tablaRangoNroFactura'), [1, 2, 3, 4]);
+                        }, 1);
                     }
-
-                    this.Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.push({ '': '', '': '', '': '', '': '', 'cantidad': `CANTIDAD => ${totalCantidad}`, 'TPRECIO': `VALOR => ${totalValor}`, /*'precio_factura': `PRECIO => ${totalPrecio}`,*/ 'ITBIS': `ITBIS => ${totalImpuesto}`, 'total': `TOTAL => ${totalTotal}` });
                 }
 
                 //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
@@ -1159,9 +1264,22 @@
             }
 
             Print(type, jsonParameters);
-        }
+        },
 
+        AjustesAvanzadosFiltros() {
+            $('#reporteModal').modal('show');
+            $('#modificarFiltrosId').collapse('hide');
+
+            const formatoDataVentasYDevoluciones = GetCookieElement('formatoDataVentasYDevoluciones=');
+
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas = formatoDataVentasYDevoluciones ? formatoDataVentasYDevoluciones : 'simple';
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor = GetCookieElement('formatoDataVentasYDevoluciones_vendedor=') === 'false' ? false : true;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante = GetCookieElement('formatoDataVentasYDevoluciones_comprobante=') === 'false' ? false : true;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino = GetCookieElement('formatoDataVentasYDevoluciones_termino=') === 'false' ? false : true;
+            this.Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda = GetCookieElement('formatoDataVentasYDevoluciones_moneda=') === 'false' ? false : true;
+        }
     },
+
     filters: {
         FilterUppercase: value => {
             return value ? value.toString().toUpperCase() : value;
@@ -1190,6 +1308,16 @@
             return value ? value.toString().replace(/^0*/g, '') : value;
         },
 
+        FilterMoneda: value => {
+            let returnValue;
+
+            if (value === 0)
+                returnValue = 'NACIONAL';
+            else if (value === 1)
+                returnValue = 'EXTRANJERA';
+
+            return returnValue;
+        }
 
         //FilterCategoria: value => {
         //    const dictionary = { 58: 'NACIONAL', 59: 'INTERNACIONAL' }

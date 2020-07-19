@@ -87,8 +87,18 @@
             <div id="content">
                 <div>
                     @*FILTRO REPORTE VENTAS Y DEVOLUCIONES POR CATEGORIA Y VENDEDOR*@
-                    <div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 p-3 Sombra card-body text-info" hidden>
-                        <div>
+                    <div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
+                        <div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'">
+                            <button class="btn btn-info"
+                                    style="float: right; border:none; background:none; display:flex; color:#17a2b8;"
+                                    title="Configuraciones avanzadas para los filtros"
+                                    v-on:click="AjustesAvanzadosFiltros()"
+                                    v-bind:disabled="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte">
+                                Ajustes Avanzados <i class="material-icons" style="color:#17a2b8; margin-left:4px;">settings</i>
+                            </button>
+                        </div>
+
+                        <div style="margin-top: 10px;">
                             <div class="row">
                                 <div class="col-12 col-md-8">
                                     <div class="row pl-3">
@@ -178,7 +188,7 @@
                                 </div>
                             </div>
 
-                            <hr style="margin-bottom: 10px;" />
+                            <hr style="margin: 10px;" />
 
                             <div class="row">
                                 <div class="col-12 col-lg-4" data-toggle="tooltip" data-placement="bottom">
@@ -211,6 +221,7 @@
                                             <label class="font-weight-bold mr-2">Opción</label>
                                             <div class="col">
                                                 <div class="form-group">
+                                                    f
                                                     <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodegaSeleccionada">
                                                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                                                         <option v-for="item in Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
@@ -302,11 +313,36 @@
                             </div>
                         </div>
 
-                        <hr style="margin-top: 0;" />
-
                         <div class="card border-info">
                             <div class="card-body" style="padding: 15px;">
                                 <div class="row">
+                                    <div class="form-group col-12 col-lg-2">
+                                        <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Elegir Fecha</label>
+                                        <select class="custom-select" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.desdeHastaRango">
+                                            <option value="0">Hoy</option>
+                                            <option value="1">Esta Semana</option>
+                                            <option value="2">Este Mes</option>
+                                            <option value="3">Mes Anterior</option>
+                                            <option value="4">Este Año</option>
+                                            <option value="5">2 Años</option>
+                                            <option value="6">3 Años</option>
+                                            <optgroup label="Meses">
+                                                <option value="7">Enero</option>
+                                                <option value="8">Febrero</option>
+                                                <option value="9">Marzo</option>
+                                                <option value="10">Abril</option>
+                                                <option value="11">Mayo</option>
+                                                <option value="12">Junio</option>
+                                                <option value="13">Julio</option>
+                                                <option value="14">Agosto</option>
+                                                <option value="15">Septiembre</option>
+                                                <option value="16">Octubre</option>
+                                                <option value="17">Noviembre</option>
+                                                <option value="18">Diciembre</option>
+                                            </optgroup>
+                                        </select>
+                                    </div>
+
                                     <div class="form-group col">
                                         <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Desde</label>
                                         <input id="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision" />
@@ -325,7 +361,7 @@
                                         </select>
                                     </div>
 
-                                    <div @*v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA09'"*@>
+                                    <div>
                                         <div class="form-group col">
                                             <label>Categoria Cliente</label>
                                             <select class="custom-select col" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesSeleccionada">
@@ -500,95 +536,65 @@
                     </div>*@
 
                 @*----VENTAS & DEVOLUCIONES----*@
+                @*  POR RANGO, DATOS AGRUPADOS*@
                 <div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaVentasYDevolucionesGROUP'" style="width:99%">
-                    <table id="tablaVentasYDevolucionesGROUP" class="table">
-                        <tbody>
-                            <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.filter(item => item.length)">
-                                <td>
-                                    <div class="card border-info" style="width:100%">
-                                        <div class="card-header" v-if="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria'">
-                                            <p class="font-weight-bold mb-0">{{element[0].Descripcion_categ}}</p>
-                                        </div>
-                                        <div class="card-header" v-else>
-                                            <p class="font-weight-bold mb-0">{{ element[0].nombre_clte }}</p>
-                                        </div>
-                                    </div>
+                    <label v-if="!Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
 
-                                    <table id="tablaRangoNroFactura" class="table table-striped">
-                                        <thead>
-                                            <tr>
-                                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Nro</th>
-                                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Fecha</th>
-                                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Cliente</th>
-                                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Articulo</th>
-                                                <th style="text-align:right;" scope="col">Cantidad</th>
-                                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Precio</th>
-                                                <th style="text-align:right;" scope="col">Valor</th>
-                                                <th style="text-align:right;" scope="col">ITBIS</th>
-                                                <th style="text-align:right;" scope="col">TOTAL</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="innerElement in element">
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ innerElement.nrodoc | FilterRemoveLeftZeros }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ innerElement.fecha_emision | FilterDateFormat }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ innerElement.nombre_clte }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ innerElement.descrip_producto }}</td>
-                                                <td style="text-align:right;">{{ innerElement.cantidad }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ innerElement.precio_factura | FilterStringToMoneyFormat }}</td>
-                                                <td style="text-align:right;">{{ innerElement.TPRECIO | FilterStringToMoneyFormat }}</td>
-                                                <td style="text-align:right;">{{ innerElement.ITBIS | FilterStringToMoneyFormat }}</td>
-                                                <td style="text-align:right;">{{ innerElement.total | FilterStringToMoneyFormat }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
-                            </tr>
-
+                    <table id="tablaRangoNroFactura" class="table table-striped">
+                        <thead>
                             <tr>
-                                <td>
-                                    <table class="table">
-                                        <tbody>
-                                            <tr>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" colspan="4" style="text-align:right;">{{  }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" colspan="4" style="text-align:right;">{{  }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" colspan="4" style="text-align:right;">{{  }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" colspan="4" style="text-align:right;">{{  }}</td>
-                                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" colspan="4" style="text-align:right;">{{  }}</td>
-                                                <td class="font-weight-bold" style="text-align:right; border: 0.2px solid rgb(23, 162, 184); font-weight: bolder; color: rgb(23, 162, 184);">{{ Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length - 1].cantidad }}</td>
-                                                <td class="font-weight-bold" style="text-align:right; border: 0.2px solid rgb(23, 162, 184); font-weight: bolder; color: rgb(23, 162, 184);">{{ Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length - 1].TPRECIO | FilterStringToMoneyFormat }}</td>
-                                                <td class="font-weight-bold" style="text-align:right; border: 0.2px solid rgb(23, 162, 184); font-weight: bolder; color: rgb(23, 162, 184);">{{ Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length - 1].ITBIS | FilterStringToMoneyFormat }}</td>
-                                                <td class="font-weight-bold" style="text-align:right; border: 0.2px solid rgb(23, 162, 184); font-weight: bolder; color: rgb(23, 162, 184);">{{ Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA[Reportes.VentasYDevolucionesCategoriaYVendedorGroupDATA.length - 1].total | FilterStringToMoneyFormat }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </td>
+                                <th v-if="!Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
+
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Nro</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Fecha</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Cliente</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaVendedor
+                                                         && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                    style="text-align:left;" scope="col">Vendedor</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaComprobante
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                    style="text-align:left;" scope="col">Comprobante Fiscal</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                    style="text-align:left;" scope="col">Término</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino
+                                                        && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                    style="text-align:left;" scope="col">Moneda</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Articulo</th>
+                                <th style="text-align:right;" scope="col">Cantidad</th>
+                                <th v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Precio</th>
+                                <th style="text-align:right;" scope="col">Valor</th>
+                                <th style="text-align:right;" scope="col">ITBIS</th>
+                                <th style="text-align:right;" scope="col">TOTAL</th>
+                        </thead>
+                        <tbody>
+                            <tr v-for="element in Reportes.VentasYDevolucionesCategoriaYVendedorDATA">
+                                <td v-if="!Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
+
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.nombre_clte | FilterUppercase }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaVendedor && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaComprobante && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.ncf | FilterUppercase }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaMoneda && Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.moneda | FilterMoneda }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.descrip_producto | FilterUppercase }}</td>
+                                <td style="text-align:right;">{{ element.cantidad }}</td>
+                                <td v-if="Reportes.toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.precio_factura | FilterStringToMoneyFormat }}</td>
+                                <td style="text-align:right;">{{ element.TPRECIO | FilterStringToMoneyFormat }}</td>
+                                <td style="text-align:right;">{{ element.ITBIS | FilterStringToMoneyFormat }}</td>
+                                <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                             </tr>
+
                         </tbody>
                     </table>
-
-                    @*<nav aria-label="Page navigation example">
-                            <ul class="pagination justify-content-center">
-                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
-                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
-                                </li>
-                                <li v-bind:class="{'page-item': true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
-                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
-                                </li>
-                                <li class="page-item active">
-                                    <a class="page-link">{{ Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
-                                </li>
-                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
-                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
-                                </li>
-                                <li v-bind:class="{'page-item':true, disabled: Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
-                                    <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
-                                </li>
-                            </ul>
-                        </nav>*@
                 </div>
 
-                @*----POR RANGO, NUMERO DE FACTURA----*@
+                @*  POR RANGO, NUMERO DE FACTURA*@
                 <div v-if="Reportes.VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaRangoNroFactura'" style="width:99%">
                     <table id="tablaRangoNroFactura" class="table table-striped">
                         <thead>
@@ -600,7 +606,7 @@
                                 <th style="text-align:left;" scope="col">Vendedor</th>
                                 <th style="text-align:left;" scope="col">Comprobante Fiscal</th>
                                 <th style="text-align:left;" scope="col">Término</th>
-                                <th style="text-align:right;" scope="col">Moneda</th>
+                                <th style="text-align:left;" scope="col">Moneda</th>
                                 <th style="text-align:right;" scope="col">Descuento</th>
                                 <th style="text-align:right;" scope="col">Sub-Total</th>
                                 <th style="text-align:right;" scope="col">Impuesto</th>
@@ -612,14 +618,14 @@
                                 <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                                 <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                                 <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat}}</td>
-                                <td style="text-align:left;">{{ element.clte_direccion1 }}</td>
-                                <td style="text-align:left;">{{ element.Nombre_vendedor }}</td>
-                                <td style="text-align:left;">{{ element.ncf }}</td>
+                                <td style="text-align:left;">{{ element.clte_direccion1 | FilterUppercase}}</td>
+                                <td style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
+                                <td style="text-align:left;">{{ element.ncf | FilterUppercase }}</td>
                                 <td style="text-align:left;">{{ element.Descripcion_termino }}</td>
-                                <td style="text-align:right;">{{ element.moneda }}</td>
+                                <td style="text-align:left;">{{ element.moneda }}</td>
                                 <td style="text-align:right;">{{ element.dscto_monto | FilterStringToMoneyFormat }}</td>
                                 <td style="text-align:right;">{{ element.SubTotalNeto | FilterStringToMoneyFormat }}</td>
-                                <td style="text-align:right;">{{ element.ITBIS }}</td>
+                                <td style="text-align:right;">{{ element.ITBIS | FilterStringToMoneyFormat }}</td>
                                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
@@ -677,13 +683,95 @@
                                 <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                                 <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat }}</td>
                                 <td v-if="Reportes.IndividualClientStatusFILTROS.mostrarNCF">{{ element.ncf }}</td>
-                                <td style="text-align:left;">{{ element.descripcion_dcmto }}</td>
+                                <td style="text-align:left;">{{ element.descripcion_dcmto | FilterUppercase }}</td>
                                 <td style="text-align:right;">{{ element.diasTrancurridos }}</td>
                                 <td style="text-align:right;">{{ element.monto | FilterStringToMoneyFormat }}</td>
                                 <td style="text-align:right;">{{ element.pagosAcumulados | FilterStringToMoneyFormat }}</td>
                                 <td style="text-align:right;">{{ element.balance | FilterStringToMoneyFormat }}</td>
                         </tbody>
                     </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*  MODAL  *@
+<div class="modal fade bd-example-modal-lg" id="reporteModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-5">
+                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#reporteModal').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+
+                @* FILTRO DE VENTAS Y DEVOLUCIONES*@
+                <div>
+                    <h1>Ajustes Avanzados Para las Consultas</h1>
+
+                    <hr />
+
+                    <div class="card border-info text-info">
+                        <div class="card-body p-4">
+                            <label class="font-weight-bold">Formato Para Mostrar la Data</label>
+                            <div class="row">
+                                @*  FILTROS*@
+                                <div class="col-12">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="radio" id="chckFormatoSimple" value="simple" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoSimple">
+                                                Formato Simple
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="radio" id="chckFormatoCompleto" value="completo" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoCompleto">
+                                                Formato Completo
+                                            </label>
+
+                                        </div>
+
+                                        <div class="col justify-content-end">
+                                            <button class="btn btn-outline-info"
+                                                    style="float: right; display:flex;"
+                                                    title="Cambiar los campos que traerá el formato completo"
+                                                    data-toggle="collapse" data-target="#modificarFiltrosId" aria-expanded="false" aria-controls="modificarFiltrosId">
+                                                <i class="material-icons" style="color:#17a2b8; margin-right: 4px;">settings</i> Modificar Filtros
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*  CONFIGURAR FILTROS*@
+                                <div class="collapse col" id="modificarFiltrosId" style="margin-top: 16px;">
+                                    <div class="card card-body">
+                                        <label class="font-weight-bold">Formato Completo</label>
+                                        <div class="row">
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoVendedor" type="checkbox" class="form-check-input" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor">
+                                                <label class="form-check-label" for="chckFiltroCampoVendedor">Vendedor</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-3">
+                                                <input id="chckFiltroCampoComprobante" type="checkbox" class="form-check-input" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante">
+                                                <label class="form-check-label" for="chckFiltroCampoComprobante">Comprobante</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoTermino" type="checkbox" class="form-check-input" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino">
+                                                <label class="form-check-label" for="chckFiltroCampoTermino">Término</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoMoneda" type="checkbox" class="form-check-input" v-model="Reportes.VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda">
+                                                <label class="form-check-label" for="chckFiltroCampoMoneda">Moneda</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -27,6 +27,10 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string desde { get; set; }
         public string hasta { get; set; }
         public string valor { get; set; }
+        public string colVendedor { get; set; }
+        public string colComprobante { get; set; }
+        public string colTermino { get; set; }
+        public string colMoneda { get; set; }
 
         //  PAGINACION
         public int skip { get; set; } = 0;

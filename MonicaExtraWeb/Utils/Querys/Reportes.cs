@@ -147,7 +147,7 @@ namespace MonicaExtraWeb.Utils
             string TableSourceEntryId = "";
             string TableSourcePrecio = "";
             string TableDetilsSource = "";
-            //string TableDetailSourceID = "";
+            //string TableDetailSourceID = "";  
 
             if (filtro.tipoReporte == "ventas" && !string.IsNullOrEmpty(filtro.tipoConsulta))
             {
@@ -177,21 +177,24 @@ namespace MonicaExtraWeb.Utils
 
                 if (!filtro.GROUP)
                 {
-                    query.Append("   SUM(TS.total) total ");
-                    query.Append(",  SUM(TS.dscto_monto) dscto_monto ");
-                    query.Append(",  SUM(TS.total - TS.impuesto_monto) subtotal ");
-                    query.Append(",  SUM(TS.impuesto_monto) impuesto ");
+                    query.Append("  SUM(CAST(TS.total AS FLOAT)) total ");
+                    query.Append(", SUM(CAST(TS.dscto_monto AS FLOAT)) dscto_monto ");
+                    query.Append(", SUM(CAST(TS.total AS FLOAT) - CAST(TS.impuesto_monto AS FLOAT)) subtotal ");
+                    query.Append(", SUM(CAST(TS.impuesto_monto AS FLOAT)) impuesto ");
                 }
                 else
                 {
-                    query.Append("   SUM(TDS.cantidad) cantidad, ");
+                    query.Append("  SUM(TDS.cantidad) cantidad, ");
                     //query.Append($"  SUM(TDS.{TableSourcePrecio}) precio_factura, ");
-                    query.Append($"  SUM(TDS.cantidad*TDS.{TableSourcePrecio}) TPRECIO, ");
-                    query.Append("   SUM(TDS.impto_monto) impto_monto, ");
-                    query.Append($"  SUM((TDS.cantidad*TDS.{TableSourcePrecio})+(TDS.impto_monto+TDS.impto2_monto-TDS.descto_monto)) total ");
+                    query.Append($" SUM(TDS.cantidad * TDS.{TableSourcePrecio}) TPRECIO, ");
+                    query.Append("  SUM(TDS.impto_monto) impto_monto, ");
+                    query.Append($" SUM((TDS.cantidad * TDS.{TableSourcePrecio}) + (TDS.impto_monto + TDS.impto2_monto - TDS.descto_monto)) total ");
                     if (!string.IsNullOrEmpty(filtro.tipoCorte))
                         if (filtro.tipoCorte == "porCategoria")
-                            query.Append($", MAX(CP.Descripcion_categ) Descripcion_categ ");
+                        {
+                            query.Append(", MAX(CP.Descripcion_categ) Descripcion_categ, ");
+                            query.Append("  Max(CP.categoria_id) categoria_id ");
+                        }
                         else if (filtro.tipoCorte == "porCliente")
                             query.Append(",   C.nombre_clte ");
                 }
@@ -215,11 +218,11 @@ namespace MonicaExtraWeb.Utils
                     query.Append("  TS.impuesto_monto ITBIS, ");
                     query.Append("  TS.clte_direccion1, ");
                     query.Append("  TS.total, ");
-                    query.Append("  (TS.total - TS.impuesto_monto)  SubTotalNeto ");
+                    query.Append("  (CAST(TS.total AS FLOAT) - CAST(TS.impuesto_monto AS FLOAT)) SubTotalNeto ");
                 }
                 else
                 {
-                    query.Append($", (TDS.cantidad*TDS.{TableSourcePrecio})+(TDS.impto_monto+TDS.impto2_monto-TDS.descto_monto) total, ");
+                    query.Append($", (TDS.cantidad * TDS.{TableSourcePrecio}) + (TDS.impto_monto+TDS.impto2_monto - TDS.descto_monto) total, ");
                     query.Append("   CP.categoria_id, ");
                     query.Append("   P.descrip_producto, ");
                     query.Append($"  TDS.cantidad*TDS.{TableSourcePrecio} TPRECIO, ");
@@ -227,6 +230,16 @@ namespace MonicaExtraWeb.Utils
                     query.Append($"  TDS.{TableSourcePrecio}, ");
                     query.Append("   C.nombre_clte, ");
                     query.Append("   TDS.impto_monto ITBIS ");
+
+                    if (!string.IsNullOrEmpty(filtro.colVendedor))
+                        query.Append($", V.Nombre_vendedor ");
+                    if (!string.IsNullOrEmpty(filtro.colComprobante))
+                        query.Append($",  Substring(Rtrim(TS.ncf),1, 19) ncf ");
+                    if (!string.IsNullOrEmpty(filtro.colTermino))
+                        query.Append($", TP.Descripcion_termino ");
+                    if (!string.IsNullOrEmpty(filtro.colMoneda))
+                        query.Append($", TS.moneda ");
+
                     if (filtro.tipoCorte == "porCategoria")
                         query.Append(", UPPER(CP.Descripcion_categ) Descripcion_categ ");
 
@@ -238,18 +251,20 @@ namespace MonicaExtraWeb.Utils
             query.Append("FROM ");
             query.Append($" {DbName}{TableSource} ");
             query.Append($", {DbName}vendedores V ");
+            query.Append($", {DbName}clientes C ");
 
-            if (!filtro.GROUP)
+            if (!filtro.GROUP || !string.IsNullOrEmpty(filtro.colTermino))
                 query.Append($",  {DbName}terminos_pago TP ");
-            if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
-                query.Append($", {DbName}dbo.Categorias_clte CC ");
+            //if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+            //query.Append($", {DbName}dbo.Clientes C ");
+            //query.Append($", {DbName}dbo.Categorias_clte CC ");
 
             if (!string.IsNullOrEmpty(filtro.tipoConsulta))
                 switch (filtro.tipoConsulta)
                 {
-                    case "RFA04":
-                        query.Append($", {DbName}clientes C ");
-                        break;
+                    //case "RFA04":
+                    //    query.Append($", {DbName}clientes C ");
+                    //    break;
                     case "RFA0":
                         query.Append($", {DbName}nombre_bodegas NB ");
                         break;
@@ -258,15 +273,19 @@ namespace MonicaExtraWeb.Utils
                         query.Append($", {DbName}productos P ");
                         break;
                     case "RFA08":
-                        query.Append($", {DbName}clientes C ");
+                        //query.Append($", {DbName}clientes C ");
                         query.Append($", {DbName}productos P ");
                         query.Append($", {DbName}{TableDetilsSource} ");
                         query.Append($", {DbName}categoria_producto CP ");
                         //query.Append($", {DbName}sub_categoria_producto SCP ");
                         break;
-                    //case "RFA09":
-                    //    query.Append($", {DbName}dbo.Categorias_clte CC ");
-                    //    break;
+                        //case "RFA09":
+                        //query.Append($", {DbName}dbo.Clientes C ");
+                        //if (string.IsNullOrEmpty(filtro.categoria_clte_id))
+                        //{
+                        //    //query.Append($", {DbName}dbo.Categorias_clte CC, ");
+                        //}
+                        //break;
                 }
             #endregion
 
@@ -274,27 +293,38 @@ namespace MonicaExtraWeb.Utils
             query.Append("WHERE ");
             query.Append("  TS.anulada = 0 ");
             query.Append("  AND TS.vendedor_id = V.vendedor_id ");
+            query.Append("  AND TS.cliente_id = C.cliente_id ");
 
-            if (!filtro.GROUP)
-                query.Append("  AND TP.termino_id = TS.termino_id ");
+            if (!filtro.GROUP || !string.IsNullOrEmpty(filtro.colTermino))
+                query.Append("  AND TS.termino_id = TP.termino_id ");
+            if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                query.Append($" AND C.Categoria_Clte_id = '{filtro.categoria_clte_id}' ");
 
             if (!string.IsNullOrEmpty(filtro.tipoConsulta))
                 switch (filtro.tipoConsulta)
                 {
-                    case "RFA04":
-                        query.Append("  AND TS.cliente_id = C.cliente_id ");
-                        break;
+                    //case "RFA04":
+                    //    if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                    //        query.Append($" AND C.Categoria_Clte_id = '{filtro.categoria_clte_id}' ");
+                    //    break;
                     case "RFA06":
-                        query.Append("  AND TDS.producto_id = P.producto_id ");
                         query.Append($" AND TS.{TableSourceID} = TDS.{TableSourceID} ");
+                        query.Append("  AND TDS.producto_id = P.producto_id ");
                         break;
                     case "RFA08":
-                        query.Append("  AND C.cliente_id = TS.cliente_id ");
-                        query.Append("  AND P.Categoria_id = CP.categoria_id ");
-                        query.Append("  AND TDS.producto_id = P.producto_id ");
+                        //query.Append("  AND TS.cliente_id = C.cliente_id ");
                         query.Append($" AND TS.{TableSourceID} = TDS.{TableSourceID} ");
+                        query.Append("  AND TDS.producto_id = P.producto_id ");
+                        query.Append("  AND P.Categoria_id = CP.categoria_id ");
+                        //if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                            //query.Append($" AND C.Categoria_Clte_id = '{filtro.categoria_clte_id}' ");
                         //query.Append("  AND CP.Categoria_id = SCP.Categoria_id ");
                         break;
+                    //case "RFA09":
+                    //    query.Append("AND TS.cliente_id = C.cliente_id ");
+                    //    if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                    //        query.Append($"AND C.categoria_clte_id = '{filtro.categoria_clte_id}' ");
+                    //    break;
                 }
 
             if (!string.IsNullOrEmpty(filtro.minFecha_emision))
@@ -305,15 +335,13 @@ namespace MonicaExtraWeb.Utils
                 query.Append($"AND TS.tipo_factura >= '{filtro.tipo_factura}' ");
             if (!string.IsNullOrEmpty(filtro.Codigo_vendedor))
                 query.Append($"AND V.Codigo_vendedor = '{filtro.Codigo_vendedor}' ");
-            if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
-                query.Append($" AND CC.categoria_clte_id = '{filtro.categoria_clte_id}' ");
 
             if (filtro.tipoConsulta != "RFA02")
             {
                 if (!string.IsNullOrEmpty(filtro.desde))
-                    query.Append($"AND SUBSTRING(STR(TS.{TableSourceID}), Patindex('%[^0 ]%', STR(TS.{TableSourceID}) + ' '), LEN(TS.{TableSourceID})) >= CAST('{filtro.desde}' AS FLOAT) ");
+                    query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryId}) + ' '), LEN(TS.{TableSourceEntryId})) >= CAST('{filtro.desde}' AS FLOAT) ");
                 if (!string.IsNullOrEmpty(filtro.hasta))
-                    query.Append($"AND SUBSTRING(STR(TS.{TableSourceID}), Patindex('%[^0 ]%', STR(TS.{TableSourceID}) + ' '), LEN(TS.{TableSourceID})) <= CAST('{filtro.hasta}' AS FLOAT) ");
+                    query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryId}) + ' '), LEN(TS.{TableSourceEntryId})) <= CAST('{filtro.hasta}' AS FLOAT) ");
             }
 
             switch (filtro.tipoConsulta)
@@ -360,6 +388,46 @@ namespace MonicaExtraWeb.Utils
             }
             #endregion
 
+            #region GROUP BY
+            if (filtro.SUM && filtro.GROUP)
+            {
+                query.Append("GROUP BY ");
+
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA08":
+                        if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                            if (filtro.tipoCorte == "porCategoria")
+                                query.Append(" TS.moneda ");
+                            else if (filtro.tipoCorte == "porCliente")
+                                query.Append(" C.nombre_clte ");
+                        break;
+                }
+            }
+            else
+            {
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA06":
+                        query.Append("GROUP BY ");
+
+                        query.Append(" TS.nro_factura, ");
+                        query.Append(" TS.fecha_emision, ");
+                        query.Append(" TS.fecha_vcmto, ");
+                        query.Append(" V.Nombre_vendedor, ");
+                        query.Append(" ncf, ");
+                        query.Append(" Descripcion_termino, ");
+                        query.Append(" TS.moneda, ");
+                        query.Append(" TS.impuesto_monto, ");
+                        query.Append(" TS.clte_direccion1, ");
+                        query.Append(" TS.total, ");
+                        query.Append(" TS.dscto_monto, ");
+                        query.Append(" TS.factura_id ");
+                        break;
+                }
+            }
+            #endregion
+
             #region ORDER BY
             if (!filtro.SUM)
             {
@@ -367,7 +435,7 @@ namespace MonicaExtraWeb.Utils
                 switch (filtro.tipoConsulta)
                 {
                     case "RFA02":
-                        query.Append(" TS.total ");
+                        query.Append(" TS.total DESC ");
                         break;
                     case "RFA03":
                         query.Append(" TP.Descripcion_termino ");
@@ -378,29 +446,26 @@ namespace MonicaExtraWeb.Utils
                     case "RFA05":
                         query.Append(" TS.clte_direccion1 ");
                         break;
-                    case "RFA06":
-                        query.Append(" P.descrip_producto ");
-                        break;
                     case "RFA0":
-                        query.Append(" NB.bodega_id ");
+                        query.Append(" NB.Nombre_bodega ");
                         break;
                     case "RFA08":
                         if (!string.IsNullOrEmpty(filtro.tipoCorte))
                         {
                             if (filtro.tipoCorte == "porCategoria")
-                                query.Append(" CP.categoria_id ");
+                                query.Append(" CP.Descripcion_categ ");
                             else if (filtro.tipoCorte == "porCliente")
                                 query.Append(" C.nombre_clte ");
                         }
                         break;
                     case "RFA09":
-                        query.Append(" CC.categoria_clte_id ");
+                        query.Append(" C.cliente_id DESC ");
                         break;
                     default:
-                        query.Append(" TS.fecha_emision ");
+                        query.Append(" TS.fecha_emision DESC ");
                         break;
                 }
-                query.Append($", TS.{TableSourceID} ");
+                query.Append($", TS.{TableSourceEntryId} DESC ");
 
                 if (!filtro.GROUP)
                 {
@@ -410,23 +475,35 @@ namespace MonicaExtraWeb.Utils
             }
             #endregion
 
-            #region GROUP BY
-            if (filtro.SUM)
+            #region SUMAR DATOS AGRUPADOS
+            if (filtro.SUM && !filtro.GROUP)
             {
-                if (filtro.GROUP)
+                switch (filtro.tipoConsulta)
                 {
-                    query.Append("GROUP BY ");
+                    case "RFA06":
+                        var tmpQuery = query.ToString();
+                        var demoSelect = new StringBuilder();
+                        demoSelect.Append("SELECT ");
+                        demoSelect.Append("TS.dscto_monto, ");
+                        demoSelect.Append("TS.impuesto_monto ITBIS, ");
+                        demoSelect.Append("TS.total, ");
+                        demoSelect.Append("( TS.total - TS.impuesto_monto ) SubTotalNeto ");
+                        int fromIndex = tmpQuery.IndexOf("FROM");
+                        query.Clear();
 
-                    switch (filtro.tipoConsulta)
-                    {
-                        case "RFA08":
-                            if (!string.IsNullOrEmpty(filtro.tipoCorte))
-                                if (filtro.tipoCorte == "porCategoria")
-                                    query.Append(" TS.moneda ");
-                                else if (filtro.tipoCorte == "porCliente")
-                                    query.Append(" C.nombre_clte ");
-                            break;
-                    }
+                        tmpQuery = $"{demoSelect} {tmpQuery.Substring(fromIndex)}";
+
+                        query.Append("SELECT ");
+                        query.Append("COUNT(*) count, ");
+                        query.Append("SUM(total) total, ");
+                        query.Append("SUM(dscto_monto) dscto_monto, ");
+                        query.Append("SUM(SubTotalNeto) subtotal, ");
+                        query.Append("SUM(ITBIS) impuesto ");
+
+                        query.Append("FROM (");
+                        query.Append(tmpQuery);
+                        query.Append(") resultset ");
+                        break;
                 }
             }
             #endregion
@@ -442,6 +519,7 @@ namespace MonicaExtraWeb.Utils
             query.Append("  TRIM(Nombre_vendedor) Nombre_vendedor, ");
             query.Append("  TRIM(Codigo_vendedor) Codigo_vendedor ");
             query.Append($"FROM {DbName}dbo.vendedores ");
+            query.Append($"ORDER BY Nombre_vendedor ");
 
             return query.ToString();
         }
@@ -495,6 +573,7 @@ namespace MonicaExtraWeb.Utils
             query.Append("  termino_id, ");
             query.Append("  TRIM(UPPER(Descripcion_termino)) Descripcion_termino ");
             query.Append($"FROM {DbName}dbo.terminos_pago ");
+            query.Append("ORDER BY Descripcion_termino ");
 
             return query.ToString();
         }
@@ -507,6 +586,7 @@ namespace MonicaExtraWeb.Utils
             query.Append("  bodega_id, ");
             query.Append("  TRIM(UPPER(Nombre_bodega)) Nombre_bodega ");
             query.Append($"FROM {DbName}dbo.nombre_bodegas ");
+            query.Append("ORDER BY Nombre_bodega ");
 
             return query.ToString();
         }
