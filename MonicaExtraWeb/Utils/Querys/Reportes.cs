@@ -196,7 +196,12 @@ namespace MonicaExtraWeb.Utils
                             query.Append("  Max(CP.categoria_id) categoria_id ");
                         }
                         else if (filtro.tipoCorte == "porCliente")
-                            query.Append(",   C.nombre_clte ");
+                            query.Append(", C.nombre_clte ");
+                        else if (filtro.tipoCorte == "porVendedor")
+                        {
+                            query.Append(", V.vendedor_id, ");
+                            query.Append("  MAX(V.Nombre_vendedor) Nombre_vendedor ");
+                        }
                 }
             }
             else
@@ -242,6 +247,11 @@ namespace MonicaExtraWeb.Utils
 
                     if (filtro.tipoCorte == "porCategoria")
                         query.Append(", UPPER(CP.Descripcion_categ) Descripcion_categ ");
+                    else if (filtro.tipoCorte == "porVendedor")
+                    {
+                        query.Append(", V.vendedor_id, ");
+                        query.Append("  V.Nombre_vendedor ");
+                    }
 
                 }
             }
@@ -317,14 +327,14 @@ namespace MonicaExtraWeb.Utils
                         query.Append("  AND TDS.producto_id = P.producto_id ");
                         query.Append("  AND P.Categoria_id = CP.categoria_id ");
                         //if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
-                            //query.Append($" AND C.Categoria_Clte_id = '{filtro.categoria_clte_id}' ");
+                        //query.Append($" AND C.Categoria_Clte_id = '{filtro.categoria_clte_id}' ");
                         //query.Append("  AND CP.Categoria_id = SCP.Categoria_id ");
                         break;
-                    //case "RFA09":
-                    //    query.Append("AND TS.cliente_id = C.cliente_id ");
-                    //    if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
-                    //        query.Append($"AND C.categoria_clte_id = '{filtro.categoria_clte_id}' ");
-                    //    break;
+                        //case "RFA09":
+                        //    query.Append("AND TS.cliente_id = C.cliente_id ");
+                        //    if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
+                        //        query.Append($"AND C.categoria_clte_id = '{filtro.categoria_clte_id}' ");
+                        //    break;
                 }
 
             if (!string.IsNullOrEmpty(filtro.minFecha_emision))
@@ -384,6 +394,8 @@ namespace MonicaExtraWeb.Utils
                             query.Append($"AND CP.categoria_id = '{filtro.valor}' ");
                         else if (filtro.tipoCorte == "porCliente")
                             query.Append($"AND C.nombre_clte LIKE '%{filtro.valor}%' ");
+                        else if (filtro.tipoCorte == "porVendedor")
+                            query.Append($"AND V.Nombre_vendedor LIKE '%{filtro.valor}%' ");
                     break;
             }
             #endregion
@@ -401,6 +413,8 @@ namespace MonicaExtraWeb.Utils
                                 query.Append(" TS.moneda ");
                             else if (filtro.tipoCorte == "porCliente")
                                 query.Append(" C.nombre_clte ");
+                            else if (filtro.tipoCorte == "porVendedor")
+                                query.Append(" V.vendedor_id ");
                         break;
                 }
             }
@@ -456,6 +470,8 @@ namespace MonicaExtraWeb.Utils
                                 query.Append(" CP.Descripcion_categ ");
                             else if (filtro.tipoCorte == "porCliente")
                                 query.Append(" C.nombre_clte ");
+                            else if (filtro.tipoCorte == "porVendedor")
+                                query.Append(" V.Nombre_vendedor ");
                         }
                         break;
                     case "RFA09":
