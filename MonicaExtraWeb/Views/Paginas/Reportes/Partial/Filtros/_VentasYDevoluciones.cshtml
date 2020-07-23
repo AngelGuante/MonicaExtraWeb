@@ -1,0 +1,347 @@
+﻿<div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
+    <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'">
+        <button class="btn btn-info"
+                style="float: right; border:none; background:none; display:flex; color:#17a2b8;"
+                title="Configuraciones avanzadas para los filtros"
+                v-on:click="AjustesAvanzadosFiltros()"
+                v-bind:disabled="VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte">
+            Ajustes Avanzados <i class="material-icons" style="color:#17a2b8; margin-left:4px;">settings</i>
+        </button>
+    </div>
+
+    <div style="margin-top: 10px;">
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="row pl-3">
+                    <div class="col-12 col-md-5 form-group">
+                        <label class="font-weight-bold">Módulos</label>
+                        <div class="row">
+                            <div class="form-check col-4">
+                                <input class="form-check-input" type="radio" id="ventasCheckVentasYDevolucionesCategoriaYVendedor" value="ventas" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
+                                <label class="form-check-label" for="ventasCheckVentasYDevolucionesCategoriaYVendedor">
+                                    Ventas
+                                </label>
+                            </div>
+                            <div class="form-check col-3">
+                                <input class="form-check-input" type="radio" id="devolucionesCheckVentasYDevolucionesCategoriaYVendedor" value="devoluciones" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte">
+                                <label class="form-check-label" for="devolucionesCheckVentasYDevolucionesCategoriaYVendedor">
+                                    Devoluciones
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-info col-12 col-lg-4 form-group mb-0" v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'">
+                        <div class="card-body p-1">
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <label class="font-weight-bold">Tipo de Corte</label>
+                                    <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
+                                        <option value="porCategoria">Por Categoria</option>
+                                        <option value="porCliente">Por Cliente</option>
+                                        <option value="porVendedor">Por Vendedor</option>
+                                        <option value="porMoneda">Por Moneda</option>
+                                        <option value="porComprobante">Por Comprobante</option>
+                                        <option value="porFecha_Emision">Por Fecha Emisión</option>
+                                        <option value="porFecha_Vencimiento">Por Fecha Vencimiento</option>
+                                        <option value="porTermino_de_Pago">Por Término de Pago</option>
+                                        <option value="porCategorias_de_Clientes">Por Categoria de Clientes</option>
+                                    </select>
+                                </div>
+
+                                <div class="d-flex flex-column justify-content-end col-12 col-lg-6">
+                                    <div class="form-check">
+                                        <input id="checkboxVentasYDevolucionesCategoriaYVendedorMostrarDetalles" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte">
+                                        <label for="checkboxVentasYDevolucionesCategoriaYVendedorMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input id="checkboxVentasYDevolucionesCategoriaYVendedorAnalisisGrafico" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.analisisGrafico">
+                                        <label for="checkboxVentasYDevolucionesCategoriaYVendedorAnalisisGrafico" class="form-check-label font-italic">Análisis Gráfico</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div v-if="!(VentasYDevolucionesCategoriaYVendedorFILTROS.tipoReporte === 'devoluciones' && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta)">
+                    <label class="font-weight-bold mr-2">Tipo de Factura</label>
+                    <div>
+                        <div class="row">
+                            <div class="form-check col">
+                                <input class="form-check-input" type="radio" id="clase1CheckVentasYDevolucionesCategoriaYVendedor" value="1" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                <label class="form-check-label" for="clase1CheckVentasYDevolucionesCategoriaYVendedor">
+                                    Clase 1
+                                </label>
+                            </div>
+
+                            <div class="form-check col">
+                                <input class="form-check-input" type="radio" id="clase2CheckVentasYDevolucionesCategoriaYVendedor" value="2" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                <label class="form-check-label" for="clase2CheckVentasYDevolucionesCategoriaYVendedor">
+                                    Clase 2
+                                </label>
+                            </div>
+
+                            <div class="form-check col">
+                                <input class="form-check-input" type="radio" id="clase3CheckVentasYDevolucionesCategoriaYVendedor" value="3" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                <label class="form-check-label" for="clase3CheckVentasYDevolucionesCategoriaYVendedor">
+                                    Clase 3
+                                </label>
+                            </div>
+
+                            <div class="form-check col">
+                                <input class="form-check-input" type="radio" id="todoCheckVentasYDevolucionesCategoriaYVendedor" value="" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipo_factura">
+                                <label class="form-check-label" for="todoCheckVentasYDevolucionesCategoriaYVendedor">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 10px;" />
+
+        <div class="row">
+            <div class="col-12 col-lg-4" data-toggle="tooltip" data-placement="bottom">
+                <label class="font-weight-bold">Tipo Consulta</label>
+                <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
+                    <option value="RFA01">Por Numero</option>
+                    <option value="RFA02">Por Monto Facturado</option>
+                    <option value="RFA03">Por Termino de Pago</option>
+                    <option value="RFA04">Por Cliente registrado</option>
+                    <option value="RFA05">Por Cliente sin registrar</option>
+                    <option value="RFA06">Por Producto especifico</option>
+                    <option value="RFA0">Por Almacén o Bodega</option>
+                    <option value="RFA08">Por Vendedor y Categoría de Productos</option>
+                    <option value="RFA09">Por Vendedor y Categoría de Clientes</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="row">
+                    @*SELECT BODEGA*@
+                    <div class="col-12 col-lg-4"
+                         v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA0'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodegaSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
+                        </select>
+                    </div>
+
+                    @*METODO DE AGRUPACION*@
+                    <div id="agrupacionDiv" class="col-12 col-lg-5"
+                         v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA08'">
+                        @* FILTRO AGRUPACION POR CATEGORIA*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategoria'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select col" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductosSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{ item.Descripcion_categ }}</option>
+                            </select>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR MONEDA*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porMoneda'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.monedaAgrupacionSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option value="0">NACIONAL</option>
+                                <option value="1">EXTRANJERA</option>
+                            </select>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR TERMINO PAGO*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porTermino_de_Pago'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.terminoPagoAgrupacionSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                            </select>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR CATEGORIA DE CLIENTE*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCategorias_de_Clientes'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesAgrupacionSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes" v-bind:value="item.termino_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                            </select>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR FECHA RANGO*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porFecha_Emision'
+                                                    || VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                            <div class="row">
+                                <div class="form-group col-12 col-lg-2">
+                                    <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Elegir Fecha</label>
+                                    <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.desdeHastaRango">
+                                        <option value="" disabled>Personalizada</option>
+                                        <option value="0">Hoy</option>
+                                        <option value="1">Esta Semana</option>
+                                        <option value="2">Este Mes</option>
+                                        <option value="3">Mes Anterior</option>
+                                        <option value="4">Este Año</option>
+                                        <option value="5">2 Años</option>
+                                        <option value="6">3 Años</option>
+                                        <optgroup label="Meses">
+                                            <option value="7">Enero</option>
+                                            <option value="8">Febrero</option>
+                                            <option value="9">Marzo</option>
+                                            <option value="10">Abril</option>
+                                            <option value="11">Mayo</option>
+                                            <option value="12">Junio</option>
+                                            <option value="13">Julio</option>
+                                            <option value="14">Agosto</option>
+                                            <option value="15">Septiembre</option>
+                                            <option value="16">Octubre</option>
+                                            <option value="17">Noviembre</option>
+                                            <option value="18">Diciembre</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Desde</label>
+                                    <input id="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision" />
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor">Hasta</label>
+                                    <input id="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision" />
+                                </div>
+                            </div>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR VALOR ESPECIFIVO*@
+                        <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porCliente'
+                                                 || VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porVendedor'
+                                                 || VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte === 'porComprobante'">
+                            <label class="font-weight-bold">
+                                {{ VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Espesifico
+                            </label>
+                            <input type="text" class="form-control" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.valor" />
+                        </div>
+                    </div>
+
+                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
+                    <div class="col-lg-5"
+                         v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA04'
+                                                        || VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA05'
+                                                        || VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA06'">
+                        <label class="font-weight-bold">Valor</label>
+                        <input type="text" class="form-control" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.valor" />
+                    </div>
+
+                    @*SELECT TERMINO PAGO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta === 'RFA03'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePagoSeleccionado">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                        </select>
+                    </div>
+
+                    @*DESDE Y HASTA*@
+                    <div class="col-12 col-lg-7" v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA05'
+                                             && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Emision'
+                                             && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Desde</label>
+                                <input type="text" class="form-control"
+                                       v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.desde"
+                                       v-on:input="VentasYDevolucionesCategoriaYVendedorFILTROS.hasta = VentasYDevolucionesCategoriaYVendedorFILTROS.desde"
+                                       v-bind:disabled="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA01'
+                                                                            && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Hasta</label>
+                                <input type="text" class="form-control"
+                                       v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.hasta"
+                                       v-bind:disabled="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA01'
+                                                                            && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 10px;" />
+    </div>
+
+    <div class="card border-info">
+        <div class="card-body" style="padding: 15px;">
+            <div class="row">
+                <div class="form-group col-12 col-lg-2" v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Emision'
+                                             && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Elegir Fecha</label>
+                    <select class="custom-select" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.desdeHastaRango">
+                        <option value="" disabled>Personalizada</option>
+                        <option value="0">Hoy</option>
+                        <option value="1">Esta Semana</option>
+                        <option value="2">Este Mes</option>
+                        <option value="3">Mes Anterior</option>
+                        <option value="4">Este Año</option>
+                        <option value="5">2 Años</option>
+                        <option value="6">3 Años</option>
+                        <optgroup label="Meses">
+                            <option value="7">Enero</option>
+                            <option value="8">Febrero</option>
+                            <option value="9">Marzo</option>
+                            <option value="10">Abril</option>
+                            <option value="11">Mayo</option>
+                            <option value="12">Junio</option>
+                            <option value="13">Julio</option>
+                            <option value="14">Agosto</option>
+                            <option value="15">Septiembre</option>
+                            <option value="16">Octubre</option>
+                            <option value="17">Noviembre</option>
+                            <option value="18">Diciembre</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group col" v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor">Desde</label>
+                    <input id="reporteFechaDesdeVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision" />
+                </div>
+
+                <div class="form-group col" v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor">Hasta</label>
+                    <input id="reporteFechaHastaVentasYDevolucionesCategoriaYVendedor" class="form-control col-md" type="date" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision" />
+                </div>
+
+                <div class="form-group col">
+                    <label>Vendedor</label>
+                    <select class="custom-select col" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.vendedorSeleccionado">
+                        <option selected value="">--SELECCIONE UNA OPCION--</option>
+                        <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{ item.Nombre_vendedor | FilterUppercase }}</option>
+                    </select>
+                </div>
+
+                <div v-if="VentasYDevolucionesCategoriaYVendedorFILTROS.tipoCorte !== 'porCategorias_de_Clientes'">
+                    <div class="form-group col">
+                        <label>Categoria Cliente</label>
+                        <select class="custom-select col" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes" v-bind:value="item.categoria_clte_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+            </div>
+        </div>
+    </div>
+</div>

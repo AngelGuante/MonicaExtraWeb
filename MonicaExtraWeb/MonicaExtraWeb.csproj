@@ -162,6 +162,7 @@
     <Compile Include="Controllers\API\ClientesController.cs" />
     <Compile Include="Controllers\API\ReportesController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
+    <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
     <Compile Include="Enums\ClientMessageStatusEnum.cs" />
@@ -255,6 +256,9 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\js\Chart.js" />
+    <Content Include="Scripts\js\Reportes\Reportes.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_ventasYDevoluciones.js" />
     <Content Include="Scripts\js\SAP.js" />
     <Content Include="Scripts\js\Swal.js" />
     <Content Include="Scripts\js\Utils.js" />
@@ -367,6 +371,14 @@
     <Content Include="Views\Impresion\Cierre.cshtml" />
     <Content Include="Views\Impresion\ReporteEstadoCuentaCliente.cshtml" />
     <Content Include="Views\Impresion\Firmas.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_VentasYDevoluciones.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_CuentasPorCobrarYPagar.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_CotizacionesYConduces.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_CotizacionesYConduces.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_VentasYDevoluciones.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_CuentasPorCobrarYPagar.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_VentasYDevoluciones.cshtml" />
+    <Content Include="Views\Reportes\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

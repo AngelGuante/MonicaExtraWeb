@@ -150,7 +150,9 @@ const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows) => {
     const tabla = document.getElementById(tableName);
 
     if (rows) {
+        rows[rows.length - 1] = (tabla.rows.length - 2);
         for (item of rows) {
+
             let row = tabla.rows[item].children;
 
             for (col of cols) {
@@ -174,12 +176,12 @@ const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows) => {
 }
 
 //  NAVEGACION DE LA PAGINA
-let Navegacion = [
-    { anterior: '', actual: 'menu' }
+const Navegacion = [
+    { anterior: '', actual: '' }
 ];
 
 //  SISTEMA DE NAVEGACION.
-const NavigationBehaviour = actual => {
+const NavigationBehaviour = (actual, inicial) => {
     if (actual === 'SeleccionarReporte')
         document.getElementById('divMaster').classList.remove('container');
     else {
@@ -202,7 +204,14 @@ const NavigationBehaviour = actual => {
     else if (actual) {
         document.getElementById('cargando').removeAttribute('hidden');
 
-        document.getElementById(divActualVisible).setAttribute('hidden', true);
+        if (divActualVisible.length > 0)
+            document.getElementById(divActualVisible).setAttribute('hidden', true);
+        else {
+            document.getElementById(inicial).setAttribute('hidden', true);
+            Navegacion[Navegacion.length - 1].actual = inicial;
+            divActualVisible = inicial;
+        }
+
         document.getElementById(actual).removeAttribute('hidden');
 
         Navegacion.push({ anterior: divActualVisible, actual })

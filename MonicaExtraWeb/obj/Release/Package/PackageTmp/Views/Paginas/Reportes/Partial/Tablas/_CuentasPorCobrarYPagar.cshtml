@@ -1,0 +1,39 @@
+﻿<div class="col-12" v-if="IndividualClientStatusDATA.length > 0" style="width:99%">
+    <button class="btn btn-outline-info Sombra" style="margin-bottom: 10px; width:25%" type="button"
+            onclick="let jsonFiltro = {
+                                        'status': 1,
+                                        'filtro': {
+                                            'clientCode': document.getElementById('inputCodigoClienteFiltroReporte').value,
+                                            'SoloDocsVencidos': document.getElementById('reportDocsVencidos').checked
+                                        }
+                                     };
+                                     Print('reporteEstadoCuentaCliente', jsonFiltro);">
+        <i class="material-icons" style="vertical-align:bottom">print</i>
+    </button>
+
+    <table id="tablaEstadoCuentaCliente" class="table table-striped">
+        <thead>
+            <tr>
+                <th style="text-align:right;" scope="col">Emisión</th>
+                <th style="text-align:right;" scope="col">Vencimiento</th>
+                <th scope="col" v-if="IndividualClientStatusFILTROS.mostrarNCF">NCF</th>
+                <th style="text-align:left;" scope="col">Descripción</th>
+                <th style="text-align:right;" scope="col">Días Transcurridos</th>
+                <th style="text-align:right;" scope="col">Monto</th>
+                <th style="text-align:right;" scope="col">Pagos Acumulados</th>
+                <th style="text-align:right;" scope="col">Saldo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="element in IndividualClientStatusDATA">
+                <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
+                <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat }}</td>
+                <td v-if="IndividualClientStatusFILTROS.mostrarNCF">{{ element.ncf }}</td>
+                <td style="text-align:left;">{{ element.descripcion_dcmto | FilterUppercase }}</td>
+                <td style="text-align:right;">{{ element.diasTrancurridos }}</td>
+                <td style="text-align:right;">{{ element.monto | FilterStringToMoneyFormat }}</td>
+                <td style="text-align:right;">{{ element.pagosAcumulados | FilterStringToMoneyFormat }}</td>
+                <td style="text-align:right;">{{ element.balance | FilterStringToMoneyFormat }}</td>
+        </tbody>
+    </table>
+</div>

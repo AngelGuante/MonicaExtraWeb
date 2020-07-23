@@ -1,0 +1,80 @@
+﻿<div class="modal fade bd-example-modal-lg" id="reporteModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-5">
+                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#reporteModal').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+
+                @* FILTRO DE VENTAS Y DEVOLUCIONES*@
+                <div>
+                    <h1>Ajustes Avanzados Para las Consultas</h1>
+
+                    <hr />
+
+                    <div class="card border-info text-info">
+                        <div class="card-body p-4">
+                            <label class="font-weight-bold">Formato Para Mostrar la Data</label>
+                            <div class="row">
+                                @*  FILTROS*@
+                                <div class="col-12">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="radio" id="chckFormatoSimple" value="simple" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoSimple">
+                                                Formato Simple
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="radio" id="chckFormatoCompleto" value="completo" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoCompleto">
+                                                Formato Completo
+                                            </label>
+
+                                        </div>
+
+                                        <div class="col justify-content-end">
+                                            <button class="btn btn-outline-info"
+                                                    style="float: right; display:flex;"
+                                                    title="Cambiar los campos que traerá el formato completo"
+                                                    data-toggle="collapse" data-target="#modificarFiltrosId" aria-expanded="false" aria-controls="modificarFiltrosId">
+                                                <i class="material-icons" style="color:#17a2b8; margin-right: 4px;">settings</i> Modificar Filtros
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*  CONFIGURAR FILTROS*@
+                                <div class="collapse col" id="modificarFiltrosId" style="margin-top: 16px;">
+                                    <div class="card card-body">
+                                        <label class="font-weight-bold">Formato Completo</label>
+                                        <div class="row">
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoVendedor" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.columnaVendedor">
+                                                <label class="form-check-label" for="chckFiltroCampoVendedor">Vendedor</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-3">
+                                                <input id="chckFiltroCampoComprobante" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.columnaComprobante">
+                                                <label class="form-check-label" for="chckFiltroCampoComprobante">Comprobante</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoTermino" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.columnaTermino">
+                                                <label class="form-check-label" for="chckFiltroCampoTermino">Término</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-2">
+                                                <input id="chckFiltroCampoMoneda" type="checkbox" class="form-check-input" v-model="VentasYDevolucionesCategoriaYVendedorFILTROS.columnaMoneda">
+                                                <label class="form-check-label" for="chckFiltroCampoMoneda">Moneda</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+﻿<div id="filtrosClienteIndividualStatus" class="card border-info mb-3 p-3 Sombra card-body text-info" hidden>
+    <div>
+        <div class="row">
+            <div class="col-md">
+                <label class="font-weight-bold mr-2">Módulos</label>
+                <div style="display:flex;">
+                    <div class="form-check" style="padding-right:40px">
+                        <input class="form-check-input" type="radio" id="estadoCuentaClienteIndividualStatus" value="estadoCuentaCliente" checked>
+                        <label class="form-check-label" for="estadoCuentaClienteIndividualStatus">
+                            Estado de Cuenta del cliente
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin-bottom: 10px;" />
+
+        <div class="row">
+            <div class="col-lg-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom" title="Opciones deshabilitadas hasta que se tenga el Query">
+                <label class="font-weight-bold mr-2">Tipo de Consulta</label>
+                <div class="form-group col">
+                    <select class="custom-select col" disabled>
+                        <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="row" style="display:flex; align-items:baseline">
+                    <label class="font-weight-bold mr-2">Desde</label>
+                    <div class="col">
+                        <div class="form-group">
+                            <input type="text" class="form-control" disabled />
+                        </div>
+                    </div>
+
+                    <label class="font-weight-bold mr-2">Hasta</label>
+                    <div class="col">
+                        <div class="form-group">
+                            <input type="text" class="form-control" disabled />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" disabled>
+                    <label class="form-check-label">Análsis Grafico</label>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin-top: 0;" />
+
+        <div class="card border-info">
+            <div class="card-body" style="padding: 15px;">
+                <div class="row">
+                    <div class="col-sm">
+                        <div class="form-group">
+                            <label>Codigo Cliente</label>
+                            <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete" placeholder="Código del cliente">
+                            <small id="validationReportesCodigoCliente" class="form-text" style="color:red;" hidden>Débe ingresar un código.</small>
+                        </div>
+                    </div>
+
+                    <div style="font-weight:400">
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportMostrarNCF" v-model="IndividualClientStatusFILTROS.mostrarNCF">
+                                <label class="form-check-label" for="reportMostrarNCF">Mostrar NCF</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportDocsVencidos" v-model="IndividualClientStatusFILTROS.soloDocsVencidos">
+                                <label class="form-check-label" for="reportDocsVencidos">Solo DOCS. Vencidos</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="IndividualClientStatusFILTROS.incluirFirmas" disabled>
+                                <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
+                            </div>
+                        </div>
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportMoras" v-model="IndividualClientStatusFILTROS.incluirMoras" disabled>
+                                <label class="form-check-label" for="reportMoras">Incluir Moras</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
