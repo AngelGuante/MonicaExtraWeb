@@ -1,7 +1,7 @@
 ﻿@*  GRAFICOS*@
 <div id="divGraficosDatosAgrupados"
      class="col-12"
-     v-if="VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaVentasYDevolucionesGROUP'">
+     v-if="TablaVisible === 'tablaGROUP'">
     <div class="row">
         <div class="col-12 col-lg-8">
             <canvas id="reportesGraficos"></canvas>
@@ -14,8 +14,8 @@
                         <div class="card-header">
                             <label class="font-weight-bold">Parámetros de Análisis Gráfico</label>
                         </div>
-                        <label class="font-weight-bold">Desde {{ VentasYDevolucionesCategoriaYVendedorFILTROS.fechaMinReporteBuscado | FilterDateFormat }} Hasta {{ VentasYDevolucionesCategoriaYVendedorFILTROS.fechaMaxReporteBuscado  | FilterDateFormat }}</label>
-                        <label class="font-weight-bold">Categoria Clientes {{ VentasYDevolucionesCategoriaYVendedorFILTROS.categoriaClientesBuscada | FilterUppercase }}</label>
+                        <label class="font-weight-bold">Desde {{ FILTROS.fechaMinReporteBuscado | FilterDateFormat }} Hasta {{ FILTROS.fechaMaxReporteBuscado  | FilterDateFormat }}</label>
+                        <label class="font-weight-bold">Categoria Clientes {{ FILTROS.categoriaClientesBuscada | FilterUppercase }}</label>
                     </div>
                 </div>
 
@@ -24,7 +24,7 @@
                         <div class="card-header">
                             <label class="font-weight-bold">Ventas Totales</label>
                         </div>
-                        <label class="font-weight-bold">{{ VentasYDevolucionesCategoriaYVendedorFILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
+                        <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
                     </div>
                 </div>
             </div>
@@ -35,9 +35,9 @@
 @*  DATOS AGRUPADOS*@
 <div id="tablaDatosAgrupados"
      class="col-12"
-     v-if="VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaVentasYDevolucionesGROUP'"
+     v-if="TablaVisible === 'tablaGROUP'"
      style="width:99%">
-    <label v-if="!VentasYDevolucionesCategoriaYVendedorFILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{ VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
+    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
 
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
@@ -48,20 +48,20 @@
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Fecha</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Cliente</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaVendedor
-                                                         && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                                        && FILTROS.ConsultaTrajoColumnaVendedor
+                                                         && FILTROS.FormatoConsultas === 'completo'"
                     style="text-align:left;" scope="col">Vendedor</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaComprobante
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                                        && FILTROS.ConsultaTrajoColumnaComprobante
+                                                        && FILTROS.FormatoConsultas === 'completo'"
                     style="text-align:left;" scope="col">Comprobante Fiscal</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                                        && FILTROS.ConsultaTrajoColumnaTermino
+                                                        && FILTROS.FormatoConsultas === 'completo'"
                     style="text-align:left;" scope="col">Término</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino
-                                                        && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'"
+                                                        && FILTROS.ConsultaTrajoColumnaTermino
+                                                        && FILTROS.FormatoConsultas === 'completo'"
                     style="text-align:left;" scope="col">Moneda</th>
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;" scope="col">Articulo</th>
                 <th style="text-align:right;" scope="col">Cantidad</th>
@@ -71,16 +71,16 @@
                 <th style="text-align:right;" scope="col">TOTAL</th>
         </thead>
         <tbody>
-            <tr v-for="element in VentasYDevolucionesCategoriaYVendedorDATA">
+            <tr v-for="element in DATA">
                 <td v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
 
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.nombre_clte | FilterUppercase }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaVendedor && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaComprobante && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.ncf | FilterUppercase }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaTermino && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && VentasYDevolucionesCategoriaYVendedorFILTROS.ConsultaTrajoColumnaMoneda && VentasYDevolucionesCategoriaYVendedorFILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.moneda | FilterMoneda }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaVendedor && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaComprobante && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.ncf | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaTermino && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaMoneda && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.moneda | FilterMoneda }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.descrip_producto | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.cantidad }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.precio_factura | FilterStringToMoneyFormat }}</td>
@@ -94,7 +94,7 @@
 </div>
 
 @*  POR RANGO, NUMERO DE FACTURA*@
-<div class="col-12" v-if="VentasYDevolucionesCategoriaYVendedorTablaVisible === 'tablaRangoNroFactura'" style="width:99%">
+<div class="col-12" v-if="TablaVisible === 'tablaRangoNroFactura'" style="width:99%">
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
             <tr>
@@ -113,7 +113,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="element in VentasYDevolucionesCategoriaYVendedorDATA">
+            <tr v-for="element in DATA">
                 <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                 <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                 <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat}}</td>
@@ -131,20 +131,20 @@
 
     <nav aria-label="Page navigation example">
         <ul class="pagination justify-content-center">
-            <li v-bind:class="{'page-item': true, disabled: VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
-                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(0)"><<</a>
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                <a class="page-link" v-on:click="Pagination(0)"><<</a>
             </li>
-            <li v-bind:class="{'page-item': true, disabled: VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
-                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(-1)"><</a>
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                <a class="page-link" v-on:click="Pagination(-1)"><</a>
             </li>
             <li class="page-item active">
-                <a class="page-link">{{ VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex + 1 }}</a>
+                <a class="page-link">{{ FILTROS.PaginatorIndex + 1 }}</a>
             </li>
-            <li v-bind:class="{'page-item':true, disabled: VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
-                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor(+1)">></a>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                <a class="page-link" v-on:click="Pagination(+1)">></a>
             </li>
-            <li v-bind:class="{'page-item':true, disabled: VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorIndex === VentasYDevolucionesCategoriaYVendedorFILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
-                <a class="page-link" v-on:click="PaginationVentasYDevolucionesCategoriaYVendedor('MAX')">>></a>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                <a class="page-link" v-on:click="Pagination('MAX')">>></a>
             </li>
         </ul>
     </nav>

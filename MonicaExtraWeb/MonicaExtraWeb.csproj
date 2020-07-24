@@ -258,6 +258,7 @@
     <Content Include="Scripts\js\Chart.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reporte_ventasYDevoluciones.js" />
     <Content Include="Scripts\js\SAP.js" />
     <Content Include="Scripts\js\Swal.js" />

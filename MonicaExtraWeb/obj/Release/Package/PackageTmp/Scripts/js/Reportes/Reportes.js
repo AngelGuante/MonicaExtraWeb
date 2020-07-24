@@ -2,9 +2,48 @@
     el: '#moduloReportes',
 
     data: {
+        fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: '',
         codsClientes: [],
         opcionReporteSeleccionado: '',
+        vendedores: [],
+        categoriasClientes: [],
+        terminoDePago: [],
+        nombresBodega: [],
+        categoriasProductos: [],
+        minFecha_emision: '',
+        maxFecha_emision: '',
+    },
+
+    watch: {
+        vendedores: () => {
+            reporte_ventasYDevoluciones.FILTROS.vendedores = monicaReportes.vendedores;
+            reporte_cotizacionesYConduces.FILTROS.vendedores = monicaReportes.vendedores;
+        },
+        categoriasClientes: () => {
+            reporte_ventasYDevoluciones.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
+            reporte_cotizacionesYConduces.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
+        },
+        minFecha_emision: () => {
+            reporte_ventasYDevoluciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
+            reporte_cotizacionesYConduces.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
+        },
+        maxFecha_emision: () => {
+            reporte_ventasYDevoluciones.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
+            reporte_cotizacionesYConduces.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
+        },
+        terminoDePago: () => {
+            reporte_ventasYDevoluciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            reporte_cotizacionesYConduces.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+        },
+        nombresBodega: () => {
+            reporte_ventasYDevoluciones.FILTROS.nombresBodega = monicaReportes.nombresBodega;
+            reporte_cotizacionesYConduces.FILTROS.nombresBodega = monicaReportes.nombresBodega;
+        },
+        categoriasProductos: () => {
+            reporte_ventasYDevoluciones.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
+            reporte_cotizacionesYConduces.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
+        },
     },
 
     methods: {
@@ -29,20 +68,26 @@
             this.LimpiarTablas();
             $('#sidebar').toggleClass('active');
 
+            //  GENERICO PARA TODOS LOS REPORTES
+            if (!this.minFecha_emision) {
+                this.minFecha_emision = this.fechaHoy;
+                this.maxFecha_emision = this.fechaHoy;
+            }
+
+            await this.BuscarData('vendedores');
+            await this.BuscarData('categoriasClientes');
+
+            //  PARA CADA REPORTE EN ESPECIFICO
             switch (opcionSeleccionada) {
                 case 'VentasYDevolucionesCategoriaYVendedor':
-                    reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorDATA = [];
-                    reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorGroupDATA = [];
+                    reporte_ventasYDevoluciones.DATA = [];
+                    reporte_ventasYDevoluciones.GroupDATA = [];
                     reporte_ventasYDevoluciones.IndividualClientStatusDATA = [];
-
-                    if (!reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision) {
-                        reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.minFecha_emision = new Date().toISOString().slice(0, 10);
-                        reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.maxFecha_emision = new Date().toISOString().slice(0, 10);
-                    }
-                    if (reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores.length === 0)
-                        reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
-                    if (reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes.length === 0)
-                        reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorFILTROS.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
+                    break;
+                case 'CotizacionesYConducesFiltro':
+                    reporte_cotizacionesYConduces.DATA = [];
+                    reporte_cotizacionesYConduces.GroupDATA = [];
+                    reporte_cotizacionesYConduces.IndividualClientStatusDATA = [];
                     break;
             }
 
@@ -70,8 +115,39 @@
             Print(type, jsonParameters);
         },
 
+        //  BUSCAR INFORMACION SI ES NECESARIA.
+        async BuscarData(data) {
+            switch (data) {
+                case 'terminoDePago':
+                    if (this.terminoDePago.length === 0)
+                        this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});
+                    break;
+                case 'nombresBodega':
+                    if (this.nombresBodega.length === 0)
+                        this.nombresBodega = await BuscarInformacionLocal('SendWebsocketServer/8', {});
+                    break;
+                case 'categoriasProductos':
+                    if (this.categoriasProductos.length === 0)
+                        this.categoriasProductos = (await BuscarInformacionLocal('SendWebsocketServer/9', {})).reverse();
+                    break;
+                case 'vendedores':
+                    if (this.vendedores.length === 0)
+                        this.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
+                    break;
+                case 'categoriasClientes':
+                    if (this.categoriasClientes.length === 0)
+                        this.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
+                    break;
+                default:
+                    alert('Console Error');
+                    new Error(`Opcion: ${data}, NO manejada.`);
+                    break;
+            }
+        },
+
         LimpiarTablas() {
-            reporte_ventasYDevoluciones.VentasYDevolucionesCategoriaYVendedorTablaVisible = '';
+            reporte_cotizacionesYConduces.TablaVisible = '';
+            reporte_ventasYDevoluciones.TablaVisible = '';
             reporte_clienteIndividualStatus.IndividualClientStatusDATA = [];
         },
     },

@@ -32,6 +32,11 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string colTermino { get; set; }
         public string colMoneda { get; set; }
 
+        //  **CotizacionesYConduces**
+        public string estatus { get; set; }
+
+
+
         //  PAGINACION
         public int skip { get; set; } = 0;
         public int take

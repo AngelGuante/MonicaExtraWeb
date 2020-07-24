@@ -63,10 +63,10 @@
                 </li>
 
                 <li>
-                    <a href="#cotizacionesYConduces" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cotizaciones<br />y Conduces</a>
-                    <ul class="collapse list-unstyled" id="cotizacionesYConduces">
+                    <a href="#cotizacionesYConducesMenuOption" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Cotizaciones<br />y Conduces</a>
+                    <ul class="collapse list-unstyled" id="cotizacionesYConducesMenuOption">
                         <li>
-                            <a v-on:click="OpcionMenuCeleccionado('CotizacionesYConducesFiltro')">Consultas y Reportes</a>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('CotizacionesYConducesFiltro')">Consultas y Reportes</a>
                         </li>
                     </ul>
                 </li>
@@ -117,7 +117,7 @@
             @*---------------------------------*@
             @*-----COTIZACIONES & CONDUCES-----*@
             @*---------------------------------*@
-            @*<div id="cotizacionesYConduces">
+            <div id="cotizacionesYConduces">
                 <div>
                     @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_CotizacionesYConduces.cshtml")
 
@@ -127,7 +127,7 @@
                         </div>
                     </div>
                 </div>
-            </div>*@
+            </div>
         </div>
     </div>
 </div>

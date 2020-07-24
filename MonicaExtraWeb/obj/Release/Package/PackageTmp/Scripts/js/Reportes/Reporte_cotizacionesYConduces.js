@@ -1,5 +1,5 @@
-﻿const reporte_ventasYDevoluciones = new Vue({
-    el: '#ventasYDevoluciones',
+﻿const reporte_cotizacionesYConduces = new Vue({
+    el: '#cotizacionesYConduces',
 
     data: {
         TablaVisible: '',
@@ -14,10 +14,10 @@
             minFecha_emision: '',
             maxFecha_emision: '',
 
-            tipoReporte: 'ventas',
+            tipoReporte: 'cotizaciones',
             tipoCorte: '',
             Codigo_vendedor: '',
-            tipo_factura: '1',
+            estatus: 'abierto',
             vendedorSeleccionado: '',
             categoriaClientesSeleccionada: '',
             tipoConsulta: 'RFA01',
@@ -214,8 +214,8 @@
                     skip: this.FILTROS.PaginatorIndex
                 }
 
-                if (this.FILTROS.tipoReporte === 'ventas')
-                    filtro.tipo_factura = this.FILTROS.tipo_factura
+                if (this.FILTROS.tipoReporte === 'cotizaciones')
+                    filtro.estatus = this.FILTROS.estatus
 
                 if (this.FILTROS.tipoConsulta === 'RFA01'
                     || this.FILTROS.tipoConsulta === 'RFA02') {
@@ -295,7 +295,7 @@
                         else if (this.FILTROS.tipoCorte === 'porMoneda')
                             campo = 'moneda';
                         else if (this.FILTROS.tipoCorte === 'porComprobante')
-                            campo = 'ncf';
+                            campo = 'tipo_documento';
                         else if (this.FILTROS.tipoCorte === 'porFecha_Emision')
                             campo = 'fecha_emision';
                         else if (this.FILTROS.tipoCorte === 'porFecha_Vencimiento')
@@ -503,7 +503,7 @@
                 case 'porMoneda':
                     return filters.FilterMoneda(result[index].moneda);
                 case 'porComprobante':
-                    return result[index].ncf;
+                    return result[index].tipo_documento;
                 case 'porFecha_Emision':
                     return filters.FilterDateFormat(result[index].fecha_emision);
                 case 'porFecha_Vencimiento':
