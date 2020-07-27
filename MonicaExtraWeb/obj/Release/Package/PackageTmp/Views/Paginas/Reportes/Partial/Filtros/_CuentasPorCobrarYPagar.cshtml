@@ -1,102 +1,200 @@
-﻿<div id="filtrosClienteIndividualStatus" class="card border-info mb-3 p-3 Sombra card-body text-info" hidden>
-    <div>
+﻿<div id="filtrosClienteIndividualStatus" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
+    <div style="margin-top: 10px;">
         <div class="row">
-            <div class="col-md">
-                <label class="font-weight-bold mr-2">Módulos</label>
-                <div style="display:flex;">
-                    <div class="form-check" style="padding-right:40px">
-                        <input class="form-check-input" type="radio" id="estadoCuentaClienteIndividualStatus" value="estadoCuentaCliente" checked>
-                        <label class="form-check-label" for="estadoCuentaClienteIndividualStatus">
-                            Estado de Cuenta del cliente
-                        </label>
+            <div class="col-12 col-md-8">
+                <div class="row pl-3">
+                    <div class="col-12 col-md-5 form-group">
+                        <label class="font-weight-bold">Módulos</label>
+                        <div class="row">
+                            <div class="form-check col-6">
+                                <input class="form-check-input" type="radio" id="CPCCPPporCobrarCheck" value="PorCobrar" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="CPCCPPporCobrarCheck">
+                                    Cuentas Por Cobrar
+                                </label>
+                            </div>
+                            <div class="form-check col-6">
+                                <input class="form-check-input" type="radio" id="CPCCPPporPagar" value="porPagar" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="CPCCPPporPagar">
+                                    Cuentas Por Pagar
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <hr style="margin-bottom: 10px;" />
+        <hr style="margin: 10px;" />
 
         <div class="row">
-            <div class="col-lg-4" style="display:flex; align-items:baseline" data-toggle="tooltip" data-placement="bottom" title="Opciones deshabilitadas hasta que se tenga el Query">
-                <label class="font-weight-bold mr-2">Tipo de Consulta</label>
-                <div class="form-group col">
-                    <select class="custom-select col" disabled>
-                        <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+            <div class="col-12 col-lg-4" data-toggle="tooltip" data-placement="bottom">
+                <label class="font-weight-bold">Tipo Consulta</label>
+                <select class="custom-select" v-model="FILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
+                    <option value="">Por Cuenta por Cobrar en General</option>
+                    <option value="RFA01">Por Numero</option>
+                    <option value="RFA02">Por Monto</option>
+                    <option value="RFA03" disabled>Por Termino de Pago</option>
+                    <option value="RFA04" disabled>Por Cliente</option>
+                    <option value="estadoCuentaIndividual">Estado de Cuenta Individual</option>
+                    <option value="" disabled>Por Tipo de Documento</option>
+                    <option value="RFA09" disabled>Por Comprobante</option>
+                    <option value="" disabled>Por Estado de Cuenta Individual</option>
+                    <option value="" disabled>Por Antigüedad de Saldos</option>
+                    <option value="" disabled>Por Analisis de Cobros</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="row">
+                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
+                    <div class="col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA04'
+                                                        || FILTROS.tipoConsulta === 'RFA09'">
+                        <label class="font-weight-bold">Valor</label>
+                        <div class="input-group" id="VDPorComprobanteReporte">
+                            <div class="input-group-prepend" v-if="FILTROS.tipoConsulta === 'RFA09'">
+                                <div class="input-group-text">{{ FILTROS.valorComprobanteAutocompletado }}</div>
+                            </div>
+                            <input type="text" class="form-control" v-model="FILTROS.valor" />
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5" v-if=" FILTROS.tipoConsulta === 'estadoCuentaIndividual'">
+                        <label class="font-weight-bold">Código</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <button type="button" class="btn btn-info" style="padding:3px;" v-on:click="ModalBuscarClientes()"><i class="material-icons">person_search</i></button>
+                            </div>
+                            <input type="text" class="form-control" v-model="FILTROS.codCliente" placeholder="Código">
+                        </div>
+                    </div>
+
+                    @*SELECT COMPROBANTE*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA09'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.comprobante" v-bind:disabled="FILTROS.tipoReporte === 'devoluciones'">
+                            @*<option selected value="">--SELECCIONE UNA OPCION--</option>*@
+                            <option v-if="FILTROS.tipoReporte === 'devoluciones'" value="consumidorFinal">Consumo</option>
+                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="creditoFiscal">Crédito Fiscal</option>
+                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="consumo">Consumo</option>
+                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="gubernamental">Gubernamental</option>
+                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="especial">Especial</option>
+                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="exportaciones">Exportaciones</option>
+                        </select>
+                    </div>
+
+                    @*DESDE Y HASTA*@
+                    <div class="col-12 col-lg-7" v-if="FILTROS.tipoConsulta === 'RFA01'
+                                                        || FILTROS.tipoConsulta === 'RFA02'">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Desde</label>
+                                <input type="text" class="form-control"
+                                       v-model="FILTROS.desde"
+                                       v-on:input="FILTROS.hasta = FILTROS.desde"
+                                       v-bind:disabled="FILTROS.tipoConsulta !== 'RFA01'
+                                                                            && FILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Hasta</label>
+                                <input type="text" class="form-control"
+                                       v-model="FILTROS.hasta"
+                                       v-bind:disabled="FILTROS.tipoConsulta !== 'RFA01'
+                                                                            && FILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 10px;" />
+    </div>
+
+    <div class="card border-info">
+        <div class="card-body" style="padding: 15px;">
+            <div class="row">
+                <div class="form-group col-12 col-lg-2" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                             && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesde">Elegir Fecha</label>
+                    <select class="custom-select" v-model="FILTROS.desdeHastaRango">
+                        <option value="" disabled>Personalizada</option>
+                        <option value="0">Hoy</option>
+                        <option value="1">Esta Semana</option>
+                        <option value="2">Este Mes</option>
+                        <option value="3">Mes Anterior</option>
+                        <option value="4">Este Año</option>
+                        <option value="5">2 Años</option>
+                        <option value="6">3 Años</option>
+                        <optgroup label="Meses">
+                            <option value="7">Enero</option>
+                            <option value="8">Febrero</option>
+                            <option value="9">Marzo</option>
+                            <option value="10">Abril</option>
+                            <option value="11">Mayo</option>
+                            <option value="12">Junio</option>
+                            <option value="13">Julio</option>
+                            <option value="14">Agosto</option>
+                            <option value="15">Septiembre</option>
+                            <option value="16">Octubre</option>
+                            <option value="17">Noviembre</option>
+                            <option value="18">Diciembre</option>
+                        </optgroup>
                     </select>
                 </div>
-            </div>
 
-            <div class="col-lg-4">
-                <div class="row" style="display:flex; align-items:baseline">
-                    <label class="font-weight-bold mr-2">Desde</label>
-                    <div class="col">
-                        <div class="form-group">
-                            <input type="text" class="form-control" disabled />
-                        </div>
-                    </div>
-
-                    <label class="font-weight-bold mr-2">Hasta</label>
-                    <div class="col">
-                        <div class="form-group">
-                            <input type="text" class="form-control" disabled />
-                        </div>
-                    </div>
+                <div class="form-group col" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesde">Desde</label>
+                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
                 </div>
-            </div>
 
-            <div class="col-4" style="text-align: end; display: flex; align-items: center; justify-content: flex-end; align-items:center">
-                <div class="form-check">
-                    <input type="checkbox" class="form-check-input" disabled>
-                    <label class="form-check-label">Análsis Grafico</label>
+                <div class="form-group col" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaHasta">Hasta</label>
+                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
                 </div>
-            </div>
-        </div>
 
-        <hr style="margin-top: 0;" />
-
-        <div class="card border-info">
-            <div class="card-body" style="padding: 15px;">
-                <div class="row">
-                    <div class="col-sm">
-                        <div class="form-group">
-                            <label>Codigo Cliente</label>
-                            <input type="text" id="inputCodigoClienteFiltroReporte" style="width:100%" class="form-control autocomplete" placeholder="Código del cliente">
-                            <small id="validationReportesCodigoCliente" class="form-text" style="color:red;" hidden>Débe ingresar un código.</small>
+                <div style="font-weight:400">
+                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportMostrarNCF" v-model="FILTROS.mostrarNCF">
+                            <label class="form-check-label" for="reportMostrarNCF">Mostrar NCF</label>
                         </div>
                     </div>
 
-                    <div style="font-weight:400">
-                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportMostrarNCF" v-model="IndividualClientStatusFILTROS.mostrarNCF">
-                                <label class="form-check-label" for="reportMostrarNCF">Mostrar NCF</label>
-                            </div>
-                        </div>
-
-                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportDocsVencidos" v-model="IndividualClientStatusFILTROS.soloDocsVencidos">
-                                <label class="form-check-label" for="reportDocsVencidos">Solo DOCS. Vencidos</label>
-                            </div>
-                        </div>
-
-                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="IndividualClientStatusFILTROS.incluirFirmas" disabled>
-                                <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
-                            </div>
-                        </div>
-
-                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                            <div class="form-check">
-                                <input type="checkbox" class="form-check-input" id="reportMoras" v-model="IndividualClientStatusFILTROS.incluirMoras" disabled>
-                                <label class="form-check-label" for="reportMoras">Incluir Moras</label>
-                            </div>
+                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportDocsVencidos" v-model="FILTROS.soloDocsVencidos">
+                            <label class="form-check-label" for="reportDocsVencidos">Solo DOCS. Vencidos</label>
                         </div>
                     </div>
 
-                    <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="FILTROS.incluirFirmas" disabled>
+                            <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
+                        </div>
+                    </div>
+
+                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.incluirMoras" disabled>
+                            <label class="form-check-label" for="reportMoras">Incluir Moras</label>
+                        </div>
+                    </div>
+
+                    @*<div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.incluirMoras" disabled>
+                            <label class="form-check-label" for="reportMoras">Descripció Simplificada</label>
+                        </div>
+                    </div>*@
                 </div>
+
+                <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:80%;">search</i></a>
             </div>
         </div>
     </div>

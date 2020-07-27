@@ -27,10 +27,12 @@
         minFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
             reporte_cotizacionesYConduces.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
+            reporte_clienteIndividualStatus.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
         },
         maxFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
             reporte_cotizacionesYConduces.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
+            reporte_clienteIndividualStatus.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
         },
         terminoDePago: () => {
             reporte_ventasYDevoluciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
@@ -69,25 +71,27 @@
             $('#sidebar').toggleClass('active');
 
             //  GENERICO PARA TODOS LOS REPORTES
-            if (!this.minFecha_emision) {
-                this.minFecha_emision = this.fechaHoy;
-                this.maxFecha_emision = this.fechaHoy;
-            }
+            this.minFecha_emision = this.fechaHoy;
+            this.maxFecha_emision = this.fechaHoy;
 
-            await this.BuscarData('vendedores');
-            await this.BuscarData('categoriasClientes');
+            //CARGAR LA DATA CORRESPONDIENTE PARA CADA FILTRO
+            if (opcionSeleccionada === 'VentasYDevolucionesCategoriaYVendedor'
+                || opcionSeleccionada === 'CotizacionesYConducesFiltro') {
+                await this.BuscarData('vendedores');
+                await this.BuscarData('categoriasClientes');
+            }
 
             //  PARA CADA REPORTE EN ESPECIFICO
             switch (opcionSeleccionada) {
                 case 'VentasYDevolucionesCategoriaYVendedor':
                     reporte_ventasYDevoluciones.DATA = [];
                     reporte_ventasYDevoluciones.GroupDATA = [];
-                    reporte_ventasYDevoluciones.IndividualClientStatusDATA = [];
+                    reporte_ventasYDevoluciones.DATA = [];
                     break;
                 case 'CotizacionesYConducesFiltro':
                     reporte_cotizacionesYConduces.DATA = [];
                     reporte_cotizacionesYConduces.GroupDATA = [];
-                    reporte_cotizacionesYConduces.IndividualClientStatusDATA = [];
+                    reporte_cotizacionesYConduces.DATA = [];
                     break;
             }
 
@@ -116,7 +120,7 @@
         },
 
         //  BUSCAR INFORMACION SI ES NECESARIA.
-        async BuscarData(data) {
+        async BuscarData(data, filtro) {
             switch (data) {
                 case 'terminoDePago':
                     if (this.terminoDePago.length === 0)
@@ -138,6 +142,10 @@
                     if (this.categoriasClientes.length === 0)
                         this.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
                     break;
+                case 'clientes':
+                    return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
+                case 'proveedores':
+                    return await BuscarInformacionLocal('SendWebsocketServer/10', filtro);
                 default:
                     alert('Console Error');
                     new Error(`Opcion: ${data}, NO manejada.`);
@@ -148,7 +156,7 @@
         LimpiarTablas() {
             reporte_cotizacionesYConduces.TablaVisible = '';
             reporte_ventasYDevoluciones.TablaVisible = '';
-            reporte_clienteIndividualStatus.IndividualClientStatusDATA = [];
+            reporte_clienteIndividualStatus.DATA = [];
         },
     },
 

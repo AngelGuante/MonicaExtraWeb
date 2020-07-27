@@ -11,37 +11,100 @@ namespace MonicaExtraWeb.Utils
         {
             var query = new StringBuilder();
 
+            string TableSource = "";
+            string TableSourceName = "";
+            string TableSourceID = "";
+            string TableSourceEntryId = "";
+            string TableSourcePrecio = "";
+            string TableDetilsSource = "";
+            string TableSourceCodigo = "";
+
+            switch (filtro.tipoReporte)
+            {
+                case "PorCobrar":
+                    TableSource = "clientes TS";
+                    TableDetilsSource = "docs_cc TDS";
+                    TableSourceName = "nombre_clte";
+                    TableSourceID = "cliente_id";
+                    TableSourceEntryId = "nro_dcmto";
+                    TableSourceCodigo = "codigo_clte";
+                    break;
+                case "porPagar":
+                    TableSource = "proveedores TS";
+                    TableDetilsSource = "docs_cp TDS";
+                    TableSourceName = "nombre_proveedor";
+                    TableSourceID = "proveedor_id";
+                    TableSourceEntryId = "nro_dcmto";
+                    TableSourcePrecio = "precio_devolucion_clte";
+                    TableSourceCodigo = "codigo_proveedor";
+                    break;
+            }
+
+            #region SELECT
             query.Append("  SELECT ");
 
             if (filtro.SUM)
             {
-                query.Append("   SUM(D.monto_dcmto) sumatoriaMontos, ");
-                query.Append("   SUM(D.balance) sumatoriaBalance, ");
-                query.Append("   SUM(D.monto_dcmto - D.balance) sumatoriaPagosAcumulados ");
+                query.Append("   SUM(TDS.monto_dcmto) sumatoriaMontos, ");
+                query.Append("   SUM(TDS.balance) sumatoriaBalance, ");
+                query.Append("   SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
             }
             else
             {
-                query.Append("   D.fecha_emision, ");
-                query.Append("   D.monto_dcmto monto, ");
-                query.Append("   D.balance, ");
-                query.Append("   D.fecha_vcmto, ");
-                query.Append("   D.descripcion_dcmto, ");
-                query.Append("   (D.monto_dcmto - D.balance) pagosAcumulados, ");
-                query.Append("   SUBSTRING(rtrim(ncf),1, 19) ncf ");
+                query.Append($" TS.{TableSourceName}, ");
+                query.Append("  TDS.fecha_emision, ");
+                query.Append("  TDS.monto_dcmto monto, ");
+                query.Append("  TDS.balance, ");
+                query.Append("  TDS.fecha_vcmto, ");
+                query.Append("  TDS.descripcion_dcmto, ");
+                query.Append("  (TDS.monto_dcmto - TDS.balance) pagosAcumulados ");
+
+                if (filtro.tipoConsulta == "PorCobrar")
+                    query.Append(", SUBSTRING(rtrim(TDS.ncf),1, 19) ncf ");
             }
+            #endregion
 
-            query.Append($" FROM {DbName}dbo.clientes C ");
-            query.Append("  JOIN docs_cc D ON C.cliente_id = D.cliente_id ");
-            query.Append($" WHERE C.codigo_clte = '{filtro.clientCode}' ");
-            query.Append("  AND D.Estado_registro = '0' ");
-            query.Append("  AND D.balance > 0 ");
-            query.Append("  AND D.tipo = 'D' ");
+            #region FROM
+            query.Append($" FROM {DbName}{TableSource} ");
+            query.Append($" JOIN {TableDetilsSource} ON TS.{TableSourceID} = TDS.{TableSourceID} ");
+            #endregion
 
+            #region WHERE
+            query.Append("  WHERE TDS.Estado_registro = '0' ");
+            query.Append("  AND TDS.balance > 0 ");
+            query.Append("  AND TDS.tipo = 'D' ");
+
+            if (!string.IsNullOrEmpty(filtro.minFecha_emision))
+                query.Append($"AND TDS.fecha_emision >= '{filtro.minFecha_emision}' ");
+            if (!string.IsNullOrEmpty(filtro.maxFecha_emision))
+                query.Append($"AND TDS.fecha_emision <= '{filtro.maxFecha_emision}' ");
+            if (!string.IsNullOrEmpty(filtro.code))
+                query.Append($" AND TS.{TableSourceCodigo} = '{filtro.code}' ");
+            else
+                query.Append($" AND TS.{TableSourceID} = TDS.{TableSourceID} ");
             if (filtro.SoloDocsVencidos)
             {
                 var dateNow = DateTime.Now;
-                query.Append($" AND fecha_vcmto <= '{dateNow.Year}-{dateNow.Month}-{dateNow.Day}'  ");
+                query.Append($" AND TDS.fecha_vcmto <= '{dateNow.Year}-{dateNow.Month}-{dateNow.Day}'  ");
             }
+
+            switch (filtro.tipoConsulta)
+            {
+                case "RFA01":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                        query.Append($"AND SUBSTRING(STR(TDS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TDS.{TableSourceEntryId}) + ' '), LEN(TDS.{TableSourceEntryId})) >= CAST('{filtro.desde}' AS FLOAT) ");
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                        query.Append($"AND SUBSTRING(STR(TDS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TDS.{TableSourceEntryId}) + ' '), LEN(TDS.{TableSourceEntryId})) <= CAST('{filtro.hasta}' AS FLOAT) ");
+                    break;
+                case "RFA02":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                        query.Append($"AND TDS.Monto_dcmto >= '{filtro.desde}' ");
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                        query.Append($"AND TDS.Monto_dcmto <= '{filtro.hasta}' ");
+                    break;
+            }
+
+            #endregion
 
             query.Replace("''", "'");
             query.Replace("\"", "'");
@@ -88,13 +151,13 @@ namespace MonicaExtraWeb.Utils
                     TableSourceEntryId = "nro_estimado";
                     TableSourcePrecio = "precio_estimado";
                     break;
-                //case "conduces":
-                //    TableSource = "devolucion_clte TS";
-                //    TableDetilsSource = "devolucion_clte_detalle TDS";
-                //    TableSourceID = "devolucion_clte_id";
-                //    TableSourceEntryId = "nro_devolucion_clte";
-                //    TableSourcePrecio = "precio_devolucion_clte";
-                //    break;
+                    //case "conduces":
+                    //    TableSource = "devolucion_clte TS";
+                    //    TableDetilsSource = "devolucion_clte_detalle TDS";
+                    //    TableSourceID = "devolucion_clte_id";
+                    //    TableSourceEntryId = "nro_devolucion_clte";
+                    //    TableSourcePrecio = "precio_devolucion_clte";
+                    //    break;
             }
 
             #region SELECT
@@ -144,10 +207,16 @@ namespace MonicaExtraWeb.Utils
                                     query.Append(", TS.moneda ");
                                 break;
                             case "porFecha_Emision":
-                                query.Append(", TS.fecha_emision ");
+                                if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    query.Append(", CONCAT(MONTH(TS.fecha_emision), '/', YEAR(TS.fecha_emision)) fecha_emision ");
+                                else
+                                    query.Append(", TS.fecha_emision ");
                                 break;
                             case "porFecha_Vencimiento":
-                                query.Append(", TS.fecha_vcmto ");
+                                if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    query.Append(", CONCAT(MONTH(TS.fecha_emision), '/', YEAR(TS.fecha_emision)) fecha_vcmto ");
+                                else
+                                    query.Append(", TS.fecha_vcmto ");
                                 break;
                             case "porTermino_de_Pago":
                                 query.Append(", TS.termino_id ");
@@ -237,10 +306,14 @@ namespace MonicaExtraWeb.Utils
                                 query.Append(", TS.tipo_documento ");
                             break;
                         case "porFecha_Emision":
-                            query.Append(", TS.fecha_emision ");
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TS.fecha_emision), '/', YEAR(TS.fecha_emision)) fecha_emision ");
                             break;
                         case "porFecha_Vencimiento":
-                            query.Append(", TS.fecha_vcmto ");
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TS.fecha_emision), '/', YEAR(TS.fecha_emision)) fecha_vcmto ");
+                            else
+                                query.Append(", TS.fecha_vcmto ");
                             break;
                         case "porTermino_de_Pago":
                             query.Append(", TS.termino_id ");
@@ -296,8 +369,8 @@ namespace MonicaExtraWeb.Utils
 
             #region WHERE
             query.Append("WHERE ");
-            query.Append("  TS.vendedor_id = V.vendedor_id ");
-            query.Append("  AND TS.cliente_id = C.cliente_id ");
+            query.Append(" TS.vendedor_id = V.vendedor_id ");
+            query.Append(" AND TS.cliente_id = C.cliente_id ");
 
             if (!string.IsNullOrEmpty(filtro.minFecha_emision))
                 query.Append($"AND TS.fecha_emision >= '{filtro.minFecha_emision}' ");
@@ -350,28 +423,30 @@ namespace MonicaExtraWeb.Utils
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND TP.termino_id = '{filtro.valor}' ");
                     break;
-
                 case "RFA04":
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND C.nombre_clte LIKE '%{filtro.valor}%' ");
                     break;
-
                 case "RFA05":
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND TS.clte_direccion1 LIKE '%{filtro.valor}%' ");
                     break;
-
                 case "RFA06":
                     query.Append($" AND TS.{TableSourceID} = TDS.{TableSourceID} ");
                     query.Append("  AND TDS.producto_id = P.producto_id ");
-
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND P.descrip_producto LIKE '%{filtro.valor}%' ");
                     break;
-
                 case "RFA0":
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND NB.bodega_id = '{filtro.valor}' ");
+                    break;
+                case "RFA09":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
+                            query.Append($"AND TS.ncf LIKE '%{filtro.valor}%' ");
+                        else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                            query.Append($"AND TS.tipo_documento LIKE '%{filtro.valor}%' ");
                     break;
 
                 case "RFA08":
@@ -444,10 +519,16 @@ namespace MonicaExtraWeb.Utils
                                         query.Append(" TS.tipo_documento ");
                                     break;
                                 case "porFecha_Emision":
-                                    query.Append(" TS.fecha_emision ");
+                                    if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                        query.Append(" YEAR(TS.fecha_emision), MONTH(TS.fecha_emision) ");
+                                    else
+                                        query.Append(" TS.fecha_emision ");
                                     break;
                                 case "porFecha_Vencimiento":
-                                    query.Append(" TS.fecha_vcmto ");
+                                    if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                        query.Append(" YEAR(TS.fecha_emision), MONTH(TS.fecha_emision) ");
+                                    else
+                                        query.Append(" TS.fecha_vcmto ");
                                     break;
                                 case "porTermino_de_Pago":
                                     query.Append(" TS.termino_id ");
@@ -531,10 +612,22 @@ namespace MonicaExtraWeb.Utils
                                         query.Append(" TS.tipo_documento ");
                                     break;
                                 case "porFecha_Emision":
-                                    query.Append(" TS.fecha_emision ");
+                                    if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    {
+                                        query.Append(" Year(TS.fecha_emision) DESC,  ");
+                                        query.Append(" Month(TS.fecha_emision) DESC  ");
+                                    }
+                                    else
+                                        query.Append(" TS.fecha_emision ");
                                     break;
                                 case "porFecha_Vencimiento":
-                                    query.Append(" TS.fecha_vcmto ");
+                                    if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    {
+                                        query.Append(" Year(TS.fecha_emision) DESC,  ");
+                                        query.Append(" Month(TS.fecha_emision) DESC  ");
+                                    }
+                                    else
+                                        query.Append(" TS.fecha_vcmto ");
                                     break;
                                 case "porTermino_de_Pago":
                                     query.Append(" TP.Descripcion_termino ");
@@ -599,19 +692,6 @@ namespace MonicaExtraWeb.Utils
         #endregion
 
         #region DATA SUELTA
-        public static string VendedoresInformacionQuery(string DbName = "")
-        {
-            var query = new StringBuilder();
-
-            query.Append("SELECT ");
-            query.Append("  TRIM(Nombre_vendedor) Nombre_vendedor, ");
-            query.Append("  TRIM(Codigo_vendedor) Codigo_vendedor ");
-            query.Append($"FROM {DbName}dbo.vendedores ");
-            query.Append($"ORDER BY Nombre_vendedor ");
-
-            return query.ToString();
-        }
-
         public static string EmpresaInformacionQuery(string DbName = "")
         {
             var query = new StringBuilder();
@@ -635,20 +715,77 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
+        public static string VendedoresInformacionQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  TRIM(Nombre_vendedor) Nombre_vendedor, ");
+            query.Append("  TRIM(Codigo_vendedor) Codigo_vendedor ");
+            query.Append($"FROM {DbName}dbo.vendedores ");
+            query.Append($"ORDER BY Nombre_vendedor ");
+
+            return query.ToString();
+        }
+
         public static string ClienteQuery(FiltrosReportes filtro, string DbName = "")
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
-            query.Append("  UPPER(nombre_clte) nombre_clte, ");
-            query.Append("  codigo_clte, ");
-            query.Append("  telefono1, ");
-            query.Append("  fax, ");
-            query.Append("  UPPER(e_mail1) e_mail1, ");
-            query.Append("  UPPER(direccion1) direccion1, ");
-            query.Append("  Contacto ");
+
+            if (filtro.SUM)
+                query.Append("COUNT(*) count ");
+            else
+            {
+                query.Append("  TRIM(nombre_clte) nombre, ");
+                query.Append("  codigo_clte codigo ");
+            }
+
             query.Append($"FROM {DbName}dbo.clientes ");
-            query.Append($"WHERE codigo_clte = '{filtro.clientCode}'");
+
+            if (!string.IsNullOrEmpty(filtro.code))
+                query.Append($"WHERE codigo_clte = '{filtro.code}'");
+            if (!string.IsNullOrEmpty(filtro.name))
+                query.Append($"WHERE nombre_clte LIKE '%{filtro.name}%'");
+
+            if (!filtro.SUM)
+            {
+                query.Append($" ORDER BY nombre_clte ");
+                query.Append($" OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($" FETCH NEXT {filtro.take} ROWS ONLY ");
+            }
+
+            return query.ToString();
+        }
+
+        public static string ProveedoresQuery(FiltrosReportes filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+
+            if (filtro.SUM)
+                query.Append("COUNT(*) count ");
+            else
+            {
+                query.Append("  TRIM(nombre_proveedor) nombre, ");
+                query.Append("  codigo_proveedor codigo ");
+            }
+
+            query.Append($"FROM {DbName}dbo.proveedores ");
+
+            if (!string.IsNullOrEmpty(filtro.code))
+                query.Append($"WHERE codigo_proveedor = '{filtro.code}'");
+            if (!string.IsNullOrEmpty(filtro.name))
+                query.Append($"WHERE nombre_proveedor LIKE '%{filtro.name}%'");
+
+            if (!filtro.SUM)
+            {
+                query.Append($" ORDER BY nombre_proveedor ");
+                query.Append($" OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($" FETCH NEXT {filtro.take} ROWS ONLY ");
+            }
 
             return query.ToString();
         }

@@ -133,6 +133,48 @@ const MostrarMensage = config => {
     )
 }
 
+//  COMVERTIR MESES DE ESCALARES A DESCRIPCION
+const ConvertirMesADescripcion = value => {
+    switch (value) {
+        case '1':
+        case '01':
+            return 'ENERO';
+        case '2':
+        case '02':
+            return 'FEBRERO';
+        case '3':
+        case '03':
+            return 'MARZO';
+        case '4':
+        case '04':
+            return 'ABRIL';
+        case '5':
+        case '05':
+            return 'MAYO';
+        case '6':
+        case '06':
+            return 'JUNIO';
+        case '7':
+        case '07':
+            return 'JULIO';
+        case '8':
+        case '08':
+            return 'AGOSTO';
+        case '9':
+        case '09':
+            return 'SEPTIEMBRE';
+        case '10':
+            return 'OCTUBRE';
+        case '11':
+            return 'NOVIEMBRE';
+        case '12':
+            return 'DICIEMBRE';
+        case '1':
+        case '01':
+            return 'ENERO';
+    }
+}
+
 //  AGREGAR ESTILOS A LAS CELDAS QUE VAN A SER LOS TOTALES DE LAS COLUMNAS DE LA TABLA.
 const TablaEstiloTotalizacionFila = (tabla, cols) => {
     const tableSize = tabla.rows.length - 1;

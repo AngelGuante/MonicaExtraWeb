@@ -11,5 +11,6 @@
         TerminosPagos = 7,
         Bodegas = 8,
         CategoriasProductos = 9,
+        Proveedores = 10,
     }
 }

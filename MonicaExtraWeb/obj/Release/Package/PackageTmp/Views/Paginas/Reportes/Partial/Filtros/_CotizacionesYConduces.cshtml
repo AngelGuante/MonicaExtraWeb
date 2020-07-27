@@ -50,6 +50,12 @@
                                 </div>
 
                                 <div class="d-flex flex-column justify-content-end col-12 col-lg-6">
+                                    <div class="form-check" v-if="this.FILTROS.tipoCorte === 'porFecha_Emision'
+                                                                    || this.FILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                                        <input id="VDcheckboxPorMes" type="checkbox" class="form-check-input" v-model="FILTROS.agruparPorMes">
+                                        <label for="VDcheckboxPorMes" class="form-check-label font-italic">Por Mes</label>
+                                    </div>
+
                                     <div class="form-check">
                                         <input id="checkboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.mostrarDetallesProductosCorte">
                                         <label for="checkboxMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
@@ -119,6 +125,7 @@
                     <option value="RFA0">Por Almacén o Bodega</option>
                     <option value="RFA08">Por Vendedor y Categoría de Productos</option>
                     <option value="RFA09">Por Comprobante</option>
+                    <option value="CCEstatusDocumento" disabled>Estatus del Documento</option>
                 </select>
             </div>
 

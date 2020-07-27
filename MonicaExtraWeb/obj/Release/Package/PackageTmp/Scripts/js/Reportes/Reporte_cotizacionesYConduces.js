@@ -31,6 +31,7 @@
             comprobante: 'creditoFiscal',
             valorComprobanteAutocompletado: 'A01',
 
+            agruparPorMes: false,
             mostrarDetallesProductosCorte: false,
             toggleTableColumns_byMostrarDetallesProductosCorte: true,
 
@@ -66,6 +67,11 @@
     },
 
     watch: {
+        'FILTROS.tipoCorte'() {
+            if (this.FILTROS.tipoCorte !== 'porFecha_Emision'
+                && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')
+                this.FILTROS.agruparPorMes = false;
+        },
         'FILTROS.desde'() {
             this.FILTROS.desde = this.FILTROS.desde.replace(/^0/g, '');
         },
@@ -74,6 +80,7 @@
         },
         'FILTROS.tipoConsulta'() {
             this.TablaVisible = [];
+            this.FILTROS.agruparPorMes = false;
             this.FILTROS.mostrarDetallesProductosCorte = false;
             this.FILTROS.analisisGrafico = false;
             this.FILTROS.tipoCorte = 'porCategoria';
@@ -174,11 +181,6 @@
         },
 
         async Buscar() {
-            if (this.FILTROS.tipoConsulta === 'RFA09') {
-                alert('El funcionamiento de este reporte se publicará el 24/07/2020, debido a la hora en la que estoy terminando esta parte.');
-                return;
-            }
-
             monicaReportes.LimpiarTablas();
 
             this.FILTROS.toggleData_tablaCorteYReporteGrafico = this.FILTROS.analisisGrafico;
@@ -217,8 +219,15 @@
                 if (this.FILTROS.tipoReporte === 'cotizaciones')
                     filtro.estatus = this.FILTROS.estatus
 
-                if (this.FILTROS.tipoConsulta === 'RFA01'
-                    || this.FILTROS.tipoConsulta === 'RFA02') {
+                if ((this.FILTROS.tipoConsulta === 'RFA01'
+                    || this.FILTROS.tipoConsulta === 'RFA02'
+                    || this.FILTROS.tipoConsulta === 'RFA03'
+                    || this.FILTROS.tipoConsulta === 'RFA04'
+                    || this.FILTROS.tipoConsulta === 'RFA06'
+                    || this.FILTROS.tipoConsulta === 'RFA0'
+                    || this.FILTROS.tipoConsulta === 'RFA08')
+                    && (this.FILTROS.tipoCorte !== 'porFecha_Emision'
+                        && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')) {
                     filtro.desde = this.FILTROS.desde;
                     filtro.hasta = this.FILTROS.hasta;
                 }
@@ -251,18 +260,13 @@
                     || this.FILTROS.tipoConsulta === 'RFA05'
                     || this.FILTROS.tipoConsulta === 'RFA06')
                     filtro.valor = this.FILTROS.valor;
+                else if (this.FILTROS.tipoConsulta === 'RFA09')
+                    filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
 
-                //  AGREGAR desde hasta VALORES
-                if ((this.FILTROS.tipoConsulta === 'RFA03'
-                    || this.FILTROS.tipoConsulta === 'RFA04'
-                    || this.FILTROS.tipoConsulta === 'RFA06'
-                    || this.FILTROS.tipoConsulta === 'RFA0'
-                    || this.FILTROS.tipoConsulta === 'RFA08')
-                    && (this.FILTROS.tipoCorte !== 'porFecha_Emision'
-                        && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')) {
-                    filtro.desde = this.FILTROS.desde;
-                    filtro.hasta = this.FILTROS.hasta;
-                }
+                if (this.FILTROS.tipoCorte === 'porFecha_Emision'
+                    || this.FILTROS.tipoCorte === 'porFecha_Vencimiento')
+                    if (this.FILTROS.agruparPorMes)
+                        filtro.agruparPorMes = this.FILTROS.agruparPorMes;
 
                 //  AGREGAR COLUMNAS
                 if (this.FILTROS.FormatoConsultas === 'completo') {
@@ -505,9 +509,17 @@
                 case 'porComprobante':
                     return result[index].tipo_documento;
                 case 'porFecha_Emision':
-                    return filters.FilterDateFormat(result[index].fecha_emision);
+                    if (this.FILTROS.agruparPorMes) {
+                        const dateSplited = result[index].fecha_emision.split('/');
+                        return `${ConvertirMesADescripcion(dateSplited[0])}/${dateSplited[1]}`;
+                    } else
+                        return filters.FilterDateFormat(result[index].fecha_emision);
                 case 'porFecha_Vencimiento':
-                    return filters.FilterDateFormat(result[index].fecha_vcmto);
+                    if (this.FILTROS.agruparPorMes) {
+                        const dateSplited = result[index].fecha_vcmto.split('/');
+                        return `${ConvertirMesADescripcion(dateSplited[0])}/${dateSplited[1]}`;
+                    } else
+                        return filters.FilterDateFormat(result[index].fecha_vcmto);
                 case 'porTermino_de_Pago':
                     return result[index].descripcion_termino;
                     break;

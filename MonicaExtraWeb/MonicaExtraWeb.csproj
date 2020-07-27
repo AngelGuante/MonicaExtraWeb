@@ -380,6 +380,7 @@
     <Content Include="Views\Paginas\Reportes\Partial\Tablas\_CuentasPorCobrarYPagar.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_VentasYDevoluciones.cshtml" />
     <Content Include="Views\Reportes\Index.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_CuentasPorCobrarYPagar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

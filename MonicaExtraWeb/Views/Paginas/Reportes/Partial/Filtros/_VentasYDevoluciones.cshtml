@@ -50,6 +50,12 @@
                                 </div>
 
                                 <div class="d-flex flex-column justify-content-end col-12 col-lg-6">
+                                    <div class="form-check" v-if="this.FILTROS.tipoCorte === 'porFecha_Emision'
+                                                                    || this.FILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                                        <input id="VDcheckboxPorMes" type="checkbox" class="form-check-input" v-model="FILTROS.agruparPorMes">
+                                        <label for="VDcheckboxPorMes" class="form-check-label font-italic">Por Mes</label>
+                                    </div>
+
                                     <div class="form-check">
                                         <input id="checkboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.mostrarDetallesProductosCorte">
                                         <label for="checkboxMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
@@ -135,99 +141,99 @@
                     </div>
 
                     @*METODO DE AGRUPACION*@
-                    <div id="agrupacionDiv" class="col-12 col-lg-5"
-                         v-if="FILTROS.tipoConsulta === 'RFA08'">
-                        @* FILTRO AGRUPACION POR CATEGORIA*@
-                        <div v-if="FILTROS.tipoCorte === 'porCategoria'">
-                            <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select col" v-model="FILTROS.categoriasProductosSeleccionada">
-                                <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                <option v-for="item in FILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{ item.Descripcion_categ }}</option>
-                            </select>
-                        </div>
+                <div id="agrupacionDiv" class="col-12 col-lg-5"
+                     v-if="FILTROS.tipoConsulta === 'RFA08'">
+                    @* FILTRO AGRUPACION POR CATEGORIA*@
+                    <div v-if="FILTROS.tipoCorte === 'porCategoria'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col" v-model="FILTROS.categoriasProductosSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{ item.Descripcion_categ }}</option>
+                        </select>
+                    </div>
 
-                        @* FILTRO AGRUPACION POR MONEDA*@
-                        <div v-if="FILTROS.tipoCorte === 'porMoneda'">
-                            <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select" v-model="FILTROS.monedaAgrupacionSeleccionada">
-                                <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                <option value="0">NACIONAL</option>
-                                <option value="1">EXTRANJERA</option>
-                            </select>
-                        </div>
+                    @* FILTRO AGRUPACION POR MONEDA*@
+                    <div v-if="FILTROS.tipoCorte === 'porMoneda'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.monedaAgrupacionSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option value="0">NACIONAL</option>
+                            <option value="1">EXTRANJERA</option>
+                        </select>
+                    </div>
 
-                        @* FILTRO AGRUPACION POR TERMINO PAGO*@
-                        <div v-if="FILTROS.tipoCorte === 'porTermino_de_Pago'">
-                            <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select" v-model="FILTROS.terminoPagoAgrupacionSeleccionada">
-                                <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
-                            </select>
-                        </div>
+                    @* FILTRO AGRUPACION POR TERMINO PAGO*@
+                    <div v-if="FILTROS.tipoCorte === 'porTermino_de_Pago'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.terminoPagoAgrupacionSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                        </select>
+                    </div>
 
-                        @* FILTRO AGRUPACION POR CATEGORIA DE CLIENTE*@
-                        <div v-if="FILTROS.tipoCorte === 'porCategorias_de_Clientes'">
-                            <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select" v-model="FILTROS.categoriaClientesAgrupacionSeleccionada">
-                                <option selected value="">--SELECCIONE UNA OPCION--</option>
-                                <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.termino_id">{{ item.descripcion_categ | FilterUppercase }}</option>
-                            </select>
-                        </div>
+                    @* FILTRO AGRUPACION POR CATEGORIA DE CLIENTE*@
+                    <div v-if="FILTROS.tipoCorte === 'porCategorias_de_Clientes'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.categoriaClientesAgrupacionSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.termino_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                        </select>
+                    </div>
 
-                        @* FILTRO AGRUPACION POR FECHA RANGO*@
-                        <div v-if="FILTROS.tipoCorte === 'porFecha_Emision'
-                                                    || FILTROS.tipoCorte === 'porFecha_Vencimiento'">
-                            <div class="row">
-                                <div class="form-group col-12 col-lg-2">
-                                    <label for="reporteFechaDesde">Elegir Fecha</label>
-                                    <select class="custom-select" v-model="FILTROS.desdeHastaRango">
-                                        <option value="" disabled>Personalizada</option>
-                                        <option value="0">Hoy</option>
-                                        <option value="1">Esta Semana</option>
-                                        <option value="2">Este Mes</option>
-                                        <option value="3">Mes Anterior</option>
-                                        <option value="4">Este Año</option>
-                                        <option value="5">2 Años</option>
-                                        <option value="6">3 Años</option>
-                                        <optgroup label="Meses">
-                                            <option value="7">Enero</option>
-                                            <option value="8">Febrero</option>
-                                            <option value="9">Marzo</option>
-                                            <option value="10">Abril</option>
-                                            <option value="11">Mayo</option>
-                                            <option value="12">Junio</option>
-                                            <option value="13">Julio</option>
-                                            <option value="14">Agosto</option>
-                                            <option value="15">Septiembre</option>
-                                            <option value="16">Octubre</option>
-                                            <option value="17">Noviembre</option>
-                                            <option value="18">Diciembre</option>
-                                        </optgroup>
-                                    </select>
-                                </div>
+                    @* FILTRO AGRUPACION POR FECHA RANGO*@
+                    <div v-if="FILTROS.tipoCorte === 'porFecha_Emision'
+                                             || FILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                        <div class="row">
+                            <div class="form-group col-12 col-lg-2">
+                                <label for="reporteFechaDesde">Elegir Fecha</label>
+                                <select class="custom-select" v-model="FILTROS.desdeHastaRango">
+                                    <option value="" disabled>Personalizada</option>
+                                    <option value="0">Hoy</option>
+                                    <option value="1">Esta Semana</option>
+                                    <option value="2">Este Mes</option>
+                                    <option value="3">Mes Anterior</option>
+                                    <option value="4">Este Año</option>
+                                    <option value="5">2 Años</option>
+                                    <option value="6">3 Años</option>
+                                    <optgroup label="Meses">
+                                        <option value="7">Enero</option>
+                                        <option value="8">Febrero</option>
+                                        <option value="9">Marzo</option>
+                                        <option value="10">Abril</option>
+                                        <option value="11">Mayo</option>
+                                        <option value="12">Junio</option>
+                                        <option value="13">Julio</option>
+                                        <option value="14">Agosto</option>
+                                        <option value="15">Septiembre</option>
+                                        <option value="16">Octubre</option>
+                                        <option value="17">Noviembre</option>
+                                        <option value="18">Diciembre</option>
+                                    </optgroup>
+                                </select>
+                            </div>
 
-                                <div class="form-group col">
-                                    <label for="reporteFechaDesde">Desde</label>
-                                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
-                                </div>
+                            <div class="form-group col">
+                                <label for="reporteFechaDesde">Desde</label>
+                                <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                            </div>
 
-                                <div class="form-group col">
-                                    <label for="reporteFechaHasta">Hasta</label>
-                                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
-                                </div>
+                            <div class="form-group col">
+                                <label for="reporteFechaHasta">Hasta</label>
+                                <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
                             </div>
                         </div>
+                    </div>
 
-                        @* FILTRO AGRUPACION POR VALOR ESPECIFIVO*@
-                        <div v-if="FILTROS.tipoCorte === 'porCliente'
+                    @* FILTRO AGRUPACION POR VALOR ESPECIFIVO*@
+                    <div v-if="FILTROS.tipoCorte === 'porCliente'
                                                  || FILTROS.tipoCorte === 'porVendedor'
                                                  || FILTROS.tipoCorte === 'porComprobante'">
-                            <label class="font-weight-bold">
-                                {{ FILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Espesifico
-                            </label>
-                            <input type="text" class="form-control" v-model="FILTROS.valor" />
-                        </div>
+                        <label class="font-weight-bold">
+                            {{ FILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Espesifico
+                        </label>
+                        <input type="text" class="form-control" v-model="FILTROS.valor" />
                     </div>
+                </div>
 
                     @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
                     <div class="col-lg-5"

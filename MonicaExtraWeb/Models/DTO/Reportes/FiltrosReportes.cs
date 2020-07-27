@@ -10,7 +10,8 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public bool GROUP { get; set; } = false;
 
         //  **GetIndividualClientStatus**
-        public string clientCode { get; set; }
+        public string code { get; set; }
+        public string name { get; set; }
         public bool SoloDocsVencidos { get; set; } = false;
         //public bool IncluirFirmas { get; set; } = false;
         //public bool IncluirMoras { get; set; } = false;
@@ -31,6 +32,7 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string colComprobante { get; set; }
         public string colTermino { get; set; }
         public string colMoneda { get; set; }
+        public string agruparPorMes { get; set; }
 
         //  **CotizacionesYConduces**
         public string estatus { get; set; }

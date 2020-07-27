@@ -13,8 +13,8 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("GetIndividualClientStatus")]
         public IHttpActionResult GetIndividualClientStatus([FromUri] FiltrosReportes filtro)
         {
-            if (filtro.clientCode == null
-                || filtro.clientCode == default)
+            if (filtro.code == null
+                || filtro.code == default)
                 return StatusCode(System.Net.HttpStatusCode.BadRequest);
 
             var query = IndividualClientQuery(filtro, DbName);
