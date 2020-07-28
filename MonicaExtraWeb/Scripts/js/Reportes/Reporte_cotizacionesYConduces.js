@@ -18,6 +18,7 @@
             tipoCorte: '',
             Codigo_vendedor: '',
             estatus: 'abierto',
+            estatusSeleccionado: 'abierto',
             vendedorSeleccionado: '',
             categoriaClientesSeleccionada: '',
             tipoConsulta: 'RFA01',
@@ -183,6 +184,7 @@
         async Buscar() {
             monicaReportes.LimpiarTablas();
 
+            this.FILTROS.estatusSeleccionado = this.FILTROS.estatus;
             this.FILTROS.toggleData_tablaCorteYReporteGrafico = this.FILTROS.analisisGrafico;
             this.toggleTableColumns_byMostrarDetallesProductosCorte = !this.FILTROS.mostrarDetallesProductosCorte;
             this.FILTROS.ConsultaTrajoColumnaVendedor = this.FILTROS.columnaVendedor;
@@ -205,7 +207,7 @@
                 this.DATA = [];
                 this.GroupDATA = [];
                 let campo;
-
+                
                 const filtro = {
                     minFecha_emision: this.FILTROS.minFecha_emision,
                     maxFecha_emision: this.FILTROS.maxFecha_emision,
@@ -223,9 +225,7 @@
                     || this.FILTROS.tipoConsulta === 'RFA02'
                     || this.FILTROS.tipoConsulta === 'RFA03'
                     || this.FILTROS.tipoConsulta === 'RFA04'
-                    || this.FILTROS.tipoConsulta === 'RFA06'
-                    || this.FILTROS.tipoConsulta === 'RFA0'
-                    || this.FILTROS.tipoConsulta === 'RFA08')
+                    || this.FILTROS.tipoConsulta === 'RFA0')
                     && (this.FILTROS.tipoCorte !== 'porFecha_Emision'
                         && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')) {
                     filtro.desde = this.FILTROS.desde;
@@ -268,20 +268,6 @@
                     if (this.FILTROS.agruparPorMes)
                         filtro.agruparPorMes = this.FILTROS.agruparPorMes;
 
-                //  AGREGAR COLUMNAS
-                if (this.FILTROS.FormatoConsultas === 'completo') {
-                    if (this.FILTROS.columnaVendedor)
-                        filtro.colVendedor = this.FILTROS.columnaVendedor;
-
-                    if (this.FILTROS.columnaComprobante)
-                        filtro.colComprobante = this.FILTROS.columnaComprobante;
-
-                    if (this.FILTROS.columnaTermino)
-                        filtro.colTermino = this.FILTROS.columnaTermino;
-
-                    if (this.FILTROS.columnaMoneda)
-                        filtro.colMoneda = this.FILTROS.columnaMoneda;
-                }
                 if (!this.FILTROS.mostrarDetallesProductosCorte) {
                     let result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
@@ -293,7 +279,7 @@
                         if (this.FILTROS.tipoCorte === 'porCategoria')
                             campo = 'categoria_id';
                         else if (this.FILTROS.tipoCorte === 'porCliente')
-                            campo = 'nombre_clte';
+                            campo = 'clte_direccion1';
                         else if (this.FILTROS.tipoCorte === 'porVendedor')
                             campo = 'vendedor_id';
                         else if (this.FILTROS.tipoCorte === 'porMoneda')
@@ -323,11 +309,16 @@
 
                 if (this.FILTROS.tipoConsulta === 'RFA08') {
                     tableName = 'tablaGROUP';
-                    camposArray = [3, 4, 6, 7, 8];
+                    camposArray = [4, 5, 6, 7, 8, 9];
                 }
                 else {
+                    let colsAgregadas = 0;
+
+                    if (this.FILTROS.estatusSeleccionado !== 'abierto')
+                        colsAgregadas++;
+
                     tableName = 'tablaRangoNroFactura';
-                    camposArray = [8, 9, 10, 11];
+                    camposArray = [9 + colsAgregadas, 10 + colsAgregadas, 11 + colsAgregadas, 12 + colsAgregadas];
                 }
 
                 //  SI NO TRAE DATA TERMINA EL PROCESO
@@ -365,6 +356,7 @@
                 }
                 else {
                     //SI LA DATA ESTA AGRUPADA:
+                    let totalPrecio = 0;
                     let totalCantidad = 0;
                     let totalTotal = 0;
                     let totalValor = 0;
@@ -390,6 +382,7 @@
                                     this.GroupDATA[i].push({
                                         'descrip_producto': `${valorAgrupadoPor} => `,
                                         'cantidad': result[index].cantidad,
+                                        'precio_estimado': result[index].precio_estimado,
                                         'TPRECIO': result[index].TPRECIO,
                                         'precio_factura': result[index].precio_factura,
                                         'ITBIS': result[index].impto_monto,
@@ -397,33 +390,18 @@
                                     });
                                 }
                             }
-
+                            totalPrecio += result[index].precio_estimado;
                             totalCantidad += result[index].cantidad;
                             totalValor += result[index].TPRECIO;
                             totalImpuesto += result[index].impto_monto;
                             totalTotal += result[index].total;
                         }
-                        this.GroupDATA.push({ 'cantidad': `${totalCantidad}`, 'TPRECIO': `${totalValor}`, 'ITBIS': `${totalImpuesto}`, 'total': `${totalTotal}` });
+                        this.GroupDATA.push({ 'cantidad': `${totalCantidad}`, 'precio_estimado': `${totalPrecio}`, 'TPRECIO': `${totalValor}`, 'ITBIS': `${totalImpuesto}`, 'total': `${totalTotal}` });
                         this.DATA = this.GroupDATA.flat();
-
-                        let columnasExtras = 0;
-                        if (this.FILTROS.FormatoConsultas === 'completo') {
-                            if (this.FILTROS.columnaVendedor)
-                                columnasExtras++;
-                            if (this.FILTROS.columnaComprobante)
-                                columnasExtras++;
-                            if (this.FILTROS.columnaTermino)
-                                columnasExtras++;
-                            if (this.FILTROS.columnaMoneda)
-                                columnasExtras++;
-                        }
-
-                        for (let i = 0; i < camposArray.length; i++)
-                            camposArray[i] = camposArray[i] + columnasExtras;
 
                         setTimeout(() => {
                             TablaEstiloTotalizacionFilaAgrupadas('tablaRangoNroFactura', camposArray, tableTotalPositionsRows);
-                            TablaEstiloTotalizacionFila(document.getElementById('tablaRangoNroFactura'), [4 + columnasExtras, 6 + columnasExtras, 7 + columnasExtras, 8 + columnasExtras]);
+                            TablaEstiloTotalizacionFila(document.getElementById('tablaRangoNroFactura'), [5, 6, 7, 8, 9]);
                         }, 1);
                     }
                     //  SIN DETALLES DE PRODUCTOS
@@ -468,14 +446,14 @@
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();
 
-                        let ctx = document.getElementById('reportesGraficos').getContext('2d');
+                        let ctx = document.getElementById('CCreportesGraficos').getContext('2d');
 
                         this.FILTROS.chartAnalisisGrafico = new Chart(ctx, {
                             type: 'horizontalBar',
                             data: {
                                 labels: reporteGraficoLabels,
                                 datasets: [{
-                                    label: `Análisis de Ventas por ${(this.FILTROS.tipoCorte).replace('por', '')}`,
+                                    label: `Análisis de ${this.FILTROS.tipoReporte[0].toUpperCase() + this.FILTROS.tipoReporte.substr(1)} por ${(this.FILTROS.tipoCorte).replace('por', '')}`,
                                     backgroundColor: reporteGraficoBacground,
                                     data: reporteGraficoTotales
                                 }]
@@ -501,7 +479,7 @@
                 case 'porCategoria':
                     return result[index].Descripcion_categ;
                 case 'porCliente':
-                    return result[index].nombre_clte;
+                    return result[index].clte_direccion1;
                 case 'porVendedor':
                     return result[index].Nombre_vendedor;
                 case 'porMoneda':

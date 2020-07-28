@@ -18,7 +18,7 @@
                 <th style="text-align:right;" scope="col">Vencimiento</th>
                 <th scope="col" v-if="FILTROS.mostrarNCF">NCF</th>
                 <th style="text-align:left;" scope="col">Descripción</th>
-                <th style="text-align:left;" scope="col">Nombre Cliente</th>
+                <th style="text-align:left;" scope="col">Nombre</th>
                 <th style="text-align:right;" scope="col">Días Transcurridos</th>
                 <th style="text-align:right;" scope="col">Monto</th>
                 <th style="text-align:right;" scope="col">Pagos Acumulados</th>
@@ -31,7 +31,7 @@
                 <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat }}</td>
                 <td v-if="FILTROS.mostrarNCF">{{ element.ncf }}</td>
                 <td style="text-align:left;">{{ element.descripcion_dcmto | FilterUppercase }}</td>
-                <td style="text-align:left;">{{ element.nombre_clte, | FilterUppercase }}</td>
+                <td style="text-align:left;">{{ element.nombre, | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.diasTrancurridos }}</td>
                 <td style="text-align:right;">{{ element.monto | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.pagosAcumulados | FilterStringToMoneyFormat }}</td>

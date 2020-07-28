@@ -4,7 +4,7 @@
      v-if="TablaVisible === 'tablaGROUP'">
     <div class="row">
         <div class="col-12 col-lg-8">
-            <canvas id="reportesGraficos"></canvas>
+            <canvas id="CCreportesGraficos"></canvas>
         </div>
 
         <div class="col-12 col-lg-4">
@@ -77,7 +77,7 @@
 
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.nombre_clte | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.clte_direccion1 | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaVendedor && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaComprobante && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.tipo_documento | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.Estatus | FilterUppercase }}</td>
@@ -85,7 +85,7 @@
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaMoneda && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.moneda | FilterMoneda }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.descrip_producto | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.cantidad }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.precio_factura | FilterStringToMoneyFormat }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.precio_estimado | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.TPRECIO | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.ITBIS | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.total | FilterStringToMoneyFormat }}</td>
@@ -107,6 +107,7 @@
                 <th style="text-align:left;" scope="col">Vendedor</th>
                 <th style="text-align:left;" scope="col">Comprobante Fiscal</th>
                 <th style="text-align:left;" scope="col">Estatus</th>
+                <th style="text-align:left;" scope="col" v-if="FILTROS.estatusSeleccionado !== 'abierto'">Factura Generda</th>
                 <th style="text-align:left;" scope="col">Término</th>
                 <th style="text-align:left;" scope="col">Moneda</th>
                 <th style="text-align:right;" scope="col">Descuento</th>
@@ -124,6 +125,7 @@
                 <td style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td style="text-align:left;">{{ element.tipo_documento | FilterUppercase }}</td>
                 <td style="text-align:left;">{{ element.Estatus | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.estatusSeleccionado !== 'abierto'">{{ element.FacturaGenerda | FilterUppercase }}</td>
                 <td style="text-align:left;">{{ element.Descripcion_termino }}</td>
                 <td style="text-align:left;">{{ element.moneda }}</td>
                 <td style="text-align:right;">{{ element.dscto_monto | FilterStringToMoneyFormat }}</td>

@@ -221,11 +221,8 @@
 
                 if ((this.FILTROS.tipoConsulta === 'RFA01'
                     || this.FILTROS.tipoConsulta === 'RFA02'
-                    || this.FILTROS.tipoConsulta === 'RFA03'
                     || this.FILTROS.tipoConsulta === 'RFA04'
-                    || this.FILTROS.tipoConsulta === 'RFA06'
-                    || this.FILTROS.tipoConsulta === 'RFA0'
-                    || this.FILTROS.tipoConsulta === 'RFA08')
+                    || this.FILTROS.tipoConsulta === 'RFA06')
                     && (this.FILTROS.tipoCorte !== 'porFecha_Emision'
                         && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')) {
                     filtro.desde = this.FILTROS.desde;
@@ -293,7 +290,7 @@
                         if (this.FILTROS.tipoCorte === 'porCategoria')
                             campo = 'categoria_id';
                         else if (this.FILTROS.tipoCorte === 'porCliente')
-                            campo = 'nombre_clte';
+                            campo = 'clte_direccion1';
                         else if (this.FILTROS.tipoCorte === 'porVendedor')
                             campo = 'vendedor_id';
                         else if (this.FILTROS.tipoCorte === 'porMoneda')
@@ -381,7 +378,7 @@
                             contadorDeLineas += this.GroupDATA[index].length + 1;
                             //  OBTENER LA POSICION DEL TOTAL DE CADA GRUPO PARA DARLE ESTILOS.
                             tableTotalPositionsRows.push(contadorDeLineas);
-
+                             
                             //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
                             for (let i = 0; i < this.GroupDATA.length; i++) {
                                 const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
@@ -501,7 +498,7 @@
                 case 'porCategoria':
                     return result[index].Descripcion_categ;
                 case 'porCliente':
-                    return result[index].nombre_clte;
+                    return result[index].clte_direccion1;
                 case 'porVendedor':
                     return result[index].Nombre_vendedor;
                 case 'porMoneda':

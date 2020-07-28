@@ -24,7 +24,7 @@ namespace MonicaExtraWeb.Utils
                 case "PorCobrar":
                     TableSource = "clientes TS";
                     TableDetilsSource = "docs_cc TDS";
-                    TableSourceName = "nombre_clte";
+                    TableSourceName = "nombre_clte nombre";
                     TableSourceID = "cliente_id";
                     TableSourceEntryId = "nro_dcmto";
                     TableSourceCodigo = "codigo_clte";
@@ -32,7 +32,7 @@ namespace MonicaExtraWeb.Utils
                 case "porPagar":
                     TableSource = "proveedores TS";
                     TableDetilsSource = "docs_cp TDS";
-                    TableSourceName = "nombre_proveedor";
+                    TableSourceName = "nombre_proveedor nombre";
                     TableSourceID = "proveedor_id";
                     TableSourceEntryId = "nro_dcmto";
                     TableSourcePrecio = "precio_devolucion_clte";
@@ -67,6 +67,9 @@ namespace MonicaExtraWeb.Utils
             #region FROM
             query.Append($" FROM {DbName}{TableSource} ");
             query.Append($" JOIN {TableDetilsSource} ON TS.{TableSourceID} = TDS.{TableSourceID} ");
+
+            if (!string.IsNullOrEmpty(filtro.tipoConsulta) && filtro.tipoConsulta == "RFA03")
+                query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
             #endregion
 
             #region WHERE
@@ -102,8 +105,44 @@ namespace MonicaExtraWeb.Utils
                     if (!string.IsNullOrEmpty(filtro.hasta))
                         query.Append($"AND TDS.Monto_dcmto <= '{filtro.hasta}' ");
                     break;
+                case "RFA03":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        query.Append($"AND TP.termino_id = '{filtro.valor}' ");
+                    break;
             }
 
+            #endregion
+
+            #region ORDER BY
+            if (!filtro.SUM)
+            {
+                query.Append("ORDER BY ");
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA02":
+                        query.Append(" TDS.Monto_dcmto ");
+                        break;
+                    case "RFA03":
+                        query.Append(" TP.Descripcion_termino ");
+                        break;
+                        //case "RFA04":
+                        //    query.Append(" C.nombre_clte ");
+                        //    break;
+                        //case "RFA05":
+                        //    query.Append(" TS.clte_direccion1 ");
+                        //    break;
+                        //case "RFA0":
+                        //    query.Append(" NB.Nombre_bodega ");
+                        //    break;
+                        //case "RFA09":
+                        //    query.Append(" C.cliente_id DESC ");
+                        //    break;
+                        //default:
+                        //    query.Append(" TS.fecha_emision DESC ");
+                        //    break;
+                }
+                query.Append($", TDS.{TableSourceEntryId} DESC ");
+            }
             #endregion
 
             query.Replace("''", "'");
@@ -151,13 +190,13 @@ namespace MonicaExtraWeb.Utils
                     TableSourceEntryId = "nro_estimado";
                     TableSourcePrecio = "precio_estimado";
                     break;
-                    //case "conduces":
-                    //    TableSource = "devolucion_clte TS";
-                    //    TableDetilsSource = "devolucion_clte_detalle TDS";
-                    //    TableSourceID = "devolucion_clte_id";
-                    //    TableSourceEntryId = "nro_devolucion_clte";
-                    //    TableSourcePrecio = "precio_devolucion_clte";
-                    //    break;
+                case "conduces":
+                    TableSource = "consignacion TS";
+                    TableDetilsSource = "consignacion_detalle TDS";
+                    TableSourceID = "consignacion_id";
+                    TableSourceEntryId = "nro_consignacion";
+                    TableSourcePrecio = "precio_consignacion";
+                    break;
             }
 
             #region SELECT
@@ -181,15 +220,18 @@ namespace MonicaExtraWeb.Utils
                     query.Append("  SUM(TDS.impto_monto) impto_monto, ");
                     query.Append($" SUM((TDS.cantidad * TDS.{TableSourcePrecio}) + (TDS.impto_monto + TDS.impto2_monto - TDS.descto_monto)) total ");
 
+                    if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                        query.Append(", SUM(TDS.precio_estimado) precio_estimado ");
+
                     if (!string.IsNullOrEmpty(filtro.tipoCorte))
                         switch (filtro.tipoCorte)
                         {
                             case "porCategoria":
                                 query.Append(", MAX(CP.Descripcion_categ) Descripcion_categ, ");
-                                query.Append("  Max(CP.categoria_id) categoria_id ");
+                                query.Append("  MAX(CP.categoria_id) categoria_id ");
                                 break;
                             case "porCliente":
-                                query.Append(", C.nombre_clte ");
+                                query.Append(", TS.clte_direccion1 ");
                                 break;
                             case "porVendedor":
                                 query.Append(", V.vendedor_id, ");
@@ -260,8 +302,18 @@ namespace MonicaExtraWeb.Utils
                         query.Append("  WHEN len(TS.genero_factura2) > 1 THEN 'Fact2#' + ltrim(str(genero_factura2)) ");
                         query.Append("  WHEN len(TS.genero_factura3) >  1 THEN 'Fact3#' + ltrim(str(genero_factura3)) ");
                         query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) = 1 THEN 'Cerrado S/F' ");
+                        query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) > 1 THEN 'Cerrado' ");
                         query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) =  0 THEN 'Abierto' ");
                         query.Append("  END  Estatus ");
+
+                        if (filtro.estatus != "abierto")
+                        {
+                            query.Append(", CASE ");
+                            query.Append("  WHEN len(TS.genero_factura1) >  1 THEN 'Fact1#'+ltrim(str(genero_factura1)) ");
+                            query.Append("  WHEN len(TS.genero_factura2) >  1 THEN 'Fact2#'+ltrim(str(genero_factura2)) ");
+                            query.Append("  WHEN len(TS.genero_factura3) >  1 THEN 'Fact3#'+ltrim(str(genero_factura3)) ");
+                            query.Append("  END  FacturaGenerda ");
+                        }
                     }
                 }
                 else
@@ -272,8 +324,21 @@ namespace MonicaExtraWeb.Utils
                     query.Append($"  TDS.cantidad*TDS.{TableSourcePrecio} TPRECIO, ");
                     query.Append("   TDS.cantidad, ");
                     query.Append($"  TDS.{TableSourcePrecio}, ");
-                    query.Append("   C.nombre_clte, ");
+                    query.Append("   TS.clte_direccion1, ");
                     query.Append("   TDS.impto_monto ITBIS ");
+
+                    if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                    {
+                        query.Append(", SUBSTRING(rtrim(TS.tipo_documento), 1, 19) tipo_documento ");
+
+                        query.Append(", CASE ");
+                        query.Append("  WHEN len(TS.genero_factura2) > 1 THEN 'Fact2#' + ltrim(str(genero_factura2)) ");
+                        query.Append("  WHEN len(TS.genero_factura3) >  1 THEN 'Fact3#' + ltrim(str(genero_factura3)) ");
+                        query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) = 1 THEN 'Cerrado S/F' ");
+                        query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) > 1 THEN 'Cerrado' ");
+                        query.Append("  WHEN len(genero_factura1 + genero_factura2 + genero_factura3) =  0 THEN 'Abierto' ");
+                        query.Append("  END  Estatus ");
+                    }
 
                     if (!string.IsNullOrEmpty(filtro.colVendedor))
                         query.Append($", V.Nombre_vendedor ");
@@ -461,7 +526,7 @@ namespace MonicaExtraWeb.Utils
                                 query.Append($"AND CP.categoria_id = '{filtro.valor}' ");
                                 break;
                             case "porCliente":
-                                query.Append($"AND C.nombre_clte LIKE '%{filtro.valor}%' ");
+                                query.Append($"AND TS.clte_direccion1 LIKE '%{filtro.valor}%' ");
                                 break;
                             case "porVendedor":
                                 query.Append($"AND V.Nombre_vendedor LIKE '%{filtro.valor}%' ");
@@ -501,10 +566,10 @@ namespace MonicaExtraWeb.Utils
                             switch (filtro.tipoCorte)
                             {
                                 case "porCategoria":
-                                    query.Append(" TS.moneda ");
+                                    query.Append(" P.Categoria_id ");
                                     break;
                                 case "porCliente":
-                                    query.Append(" C.nombre_clte ");
+                                    query.Append(" TS.clte_direccion1 ");
                                     break;
                                 case "porVendedor":
                                     query.Append(" V.vendedor_id ");
@@ -542,28 +607,49 @@ namespace MonicaExtraWeb.Utils
             }
             else
             {
-                switch (filtro.tipoConsulta)
+                if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
                 {
-                    case "RFA06":
-                        query.Append("GROUP BY ");
-                        query.Append($" TS.{TableSourceEntryId}, ");
-                        query.Append(" TS.fecha_emision, ");
-                        query.Append(" TS.fecha_vcmto, ");
-                        query.Append(" V.Nombre_vendedor, ");
-                        query.Append(" Descripcion_termino, ");
-                        query.Append(" TS.moneda, ");
-                        query.Append(" TS.impuesto_monto, ");
-                        query.Append(" TS.clte_direccion1, ");
-                        query.Append(" TS.total, ");
-                        query.Append(" TS.dscto_monto, ");
-                        query.Append($" TS.{TableSourceID} ");
-
-                        if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
+                    switch (filtro.tipoConsulta)
+                    {
+                        case "RFA06":
+                            query.Append("GROUP BY ");
+                            query.Append($" TS.{TableSourceEntryId}, ");
+                            query.Append(" TS.fecha_emision, ");
+                            query.Append(" TS.fecha_vcmto, ");
+                            query.Append(" V.Nombre_vendedor, ");
+                            query.Append(" Descripcion_termino, ");
+                            query.Append(" TS.moneda, ");
+                            query.Append(" TS.impuesto_monto, ");
+                            query.Append(" TS.clte_direccion1, ");
+                            query.Append(" TS.total, ");
+                            query.Append(" TS.dscto_monto, ");
+                            query.Append($" TS.{TableSourceID} ");
                             query.Append(", TS.ncf ");
-                        else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                            query.Append(", TS.tipo_documento ");
-
-                        break;
+                            break;
+                    }
+                }
+                else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                {
+                    switch (filtro.tipoConsulta)
+                    {
+                        case "RFA06":
+                            query.Append("GROUP BY ");
+                            query.Append($" TS.{TableSourceEntryId}, ");
+                            query.Append(" TS.fecha_emision, ");
+                            query.Append(" TS.fecha_vcmto, ");
+                            query.Append(" V.Nombre_vendedor, ");
+                            query.Append(" Descripcion_termino, ");
+                            query.Append(" TS.moneda, ");
+                            query.Append(" TS.dscto_monto, ");
+                            query.Append(" TS.impuesto_monto, ");
+                            query.Append(" TS.clte_direccion1, ");
+                            query.Append(" TS.total, ");
+                            query.Append(" TS.tipo_documento, ");
+                            query.Append(" TS.genero_factura1, ");
+                            query.Append(" TS.genero_factura2, ");
+                            query.Append(" TS.genero_factura3 ");
+                            break;
+                    }
                 }
             }
             #endregion
@@ -597,7 +683,7 @@ namespace MonicaExtraWeb.Utils
                                     query.Append(" CP.Descripcion_categ ");
                                     break;
                                 case "porCliente":
-                                    query.Append(" C.nombre_clte ");
+                                    query.Append(" TS.clte_direccion1 ");
                                     break;
                                 case "porVendedor":
                                     query.Append(" V.Nombre_vendedor ");

@@ -6,6 +6,8 @@
 
         DATA: [],
         FILTROS: {
+            terminoDePago: [],
+
             codCliente: '',
             mostrarNCF: false,
             soloDocsVencidos: false,
@@ -17,6 +19,8 @@
             desdeHastaRango: 0,
             desde: 0,
             hasta: 0,
+            valor: '',
+            terminoDePagoSeleccionado: '',
         },
 
         modalData: {
@@ -91,15 +95,15 @@
                 }
                 
                 if (this.FILTROS.tipoConsulta === 'RFA01'
-                    || this.FILTROS.tipoConsulta === 'RFA02'
-                    || this.FILTROS.tipoConsulta === 'RFA03'
+                    || this.FILTROS.tipoConsulta === 'RFA02'    
                     || this.FILTROS.tipoConsulta === 'RFA04'
                     || this.FILTROS.tipoConsulta === 'RFA06'
-                    || this.FILTROS.tipoConsulta === 'RFA0'
                     || this.FILTROS.tipoConsulta === 'RFA08') {
                     filtro.desde = this.FILTROS.desde;
                     filtro.hasta = this.FILTROS.hasta;
                 }
+                else if (this.FILTROS.tipoConsulta === 'RFA03')
+                    filtro.valor = this.FILTROS.terminoDePagoSeleccionado;
 
                 let result = await BuscarInformacionLocal('SendWebsocketServer/1', filtro);
 
@@ -209,23 +213,19 @@
 
         async TipoConsultaSelectChanged() {
             //  LIMPIAR TODOS LOS CAMPOS.
-            //this.FILTROS.Codigo_vendedor = '';
-            //this.FILTROS.vendedorSeleccionado = '';
             //this.FILTROS.categoriaClientesSeleccionada = '';
-            //this.FILTROS.desde = '';
-            //this.FILTROS.hasta = '';
+            this.FILTROS.desde = '';
+            this.FILTROS.hasta = '';
             //this.FILTROS.valor = '';
-            //this.FILTROS.terminoDePagoSeleccionado = '';
-            //this.FILTROS.nombresBodegaSeleccionada = '';
-            //this.FILTROS.categoriasProductosSeleccionada = '';
+            this.FILTROS.terminoDePagoSeleccionado = '';
 
             //const inputValor = document.getElementById('VDPorComprobanteReporte');
             //if (inputValor && 'input-group' in inputValor.classList)
             //    inputValor.classList.remmove('input-group');
 
             //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
-            //if (this.FILTROS.tipoConsulta === 'RFA03')
-            //    monicaReportes.BuscarData('terminoDePago');
+            if (this.FILTROS.tipoConsulta === 'RFA03')
+                monicaReportes.BuscarData('terminoDePago');
             //if (this.FILTROS.tipoConsulta === 'RFA0')
             //    monicaReportes.BuscarData('nombresBodega');
             //if (this.FILTROS.tipoConsulta === 'RFA08')

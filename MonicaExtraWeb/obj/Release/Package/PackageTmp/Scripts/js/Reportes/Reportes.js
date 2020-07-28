@@ -37,6 +37,7 @@
         terminoDePago: () => {
             reporte_ventasYDevoluciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_cotizacionesYConduces.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            reporte_clienteIndividualStatus.FILTROS.terminoDePago = monicaReportes.terminoDePago;
         },
         nombresBodega: () => {
             reporte_ventasYDevoluciones.FILTROS.nombresBodega = monicaReportes.nombresBodega;

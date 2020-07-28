@@ -33,7 +33,7 @@
                     <option value="">Por Cuenta por Cobrar en General</option>
                     <option value="RFA01">Por Numero</option>
                     <option value="RFA02">Por Monto</option>
-                    <option value="RFA03" disabled>Por Termino de Pago</option>
+                    <option value="RFA03">Por Termino de Pago</option>
                     <option value="RFA04" disabled>Por Cliente</option>
                     <option value="estadoCuentaIndividual">Estado de Cuenta Individual</option>
                     <option value="" disabled>Por Tipo de Documento</option>
@@ -81,6 +81,16 @@
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="gubernamental">Gubernamental</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="especial">Especial</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="exportaciones">Exportaciones</option>
+                        </select>
+                    </div>
+
+                    @*SELECT TERMINO PAGO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA03'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.terminoDePagoSeleccionado">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
                         </select>
                     </div>
 
