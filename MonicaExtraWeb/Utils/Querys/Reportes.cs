@@ -1,6 +1,7 @@
 ﻿using MonicaExtraWeb.Models.DTO.Reportes;
 using System;
 using System.Text;
+using static MonicaExtraWeb.Utils.Helper;
 
 namespace MonicaExtraWeb.Utils
 {
@@ -15,28 +16,41 @@ namespace MonicaExtraWeb.Utils
             string TableSourceName = "";
             string TableSourceID = "";
             string TableSourceEntryId = "";
-            string TableSourcePrecio = "";
             string TableDetilsSource = "";
             string TableSourceCodigo = "";
+            string TableSourceDocumentoId = "";
+            string TableDetailsNro_fiscal = "";
+            string TablaTipoFactua = "";
+            string TablaTipoFacturaCampoRef = "";
+            string TablaSourceProveedorVendedor = "";
 
             switch (filtro.tipoReporte)
             {
-                case "PorCobrar":
+                case "porCobrar":
                     TableSource = "clientes TS";
                     TableDetilsSource = "docs_cc TDS";
                     TableSourceName = "nombre_clte nombre";
                     TableSourceID = "cliente_id";
-                    TableSourceEntryId = "nro_dcmto";
+                    TableSourceEntryId = "cc_id";
                     TableSourceCodigo = "codigo_clte";
+                    TableSourceDocumentoId = "docs_cc_id";
+                    TableDetailsNro_fiscal = "ncf";
+                    TablaTipoFactua = "factura";
+                    TablaTipoFacturaCampoRef = "nro_factura";
+                    TablaSourceProveedorVendedor = "vendedor_id";
                     break;
                 case "porPagar":
                     TableSource = "proveedores TS";
                     TableDetilsSource = "docs_cp TDS";
                     TableSourceName = "nombre_proveedor nombre";
                     TableSourceID = "proveedor_id";
-                    TableSourceEntryId = "nro_dcmto";
-                    TableSourcePrecio = "precio_devolucion_clte";
+                    TableSourceEntryId = "cp_id";
                     TableSourceCodigo = "codigo_proveedor";
+                    TableSourceDocumentoId = "docs_cp_id";
+                    TableDetailsNro_fiscal = "ref_pago";
+                    TablaTipoFactua = "orden_compra";
+                    TablaTipoFacturaCampoRef = "nro_compra";
+                    TablaSourceProveedorVendedor = "proveedor_id";
                     break;
             }
 
@@ -45,9 +59,9 @@ namespace MonicaExtraWeb.Utils
 
             if (filtro.SUM)
             {
-                query.Append("   SUM(TDS.monto_dcmto) sumatoriaMontos, ");
-                query.Append("   SUM(TDS.balance) sumatoriaBalance, ");
-                query.Append("   SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
+                query.Append(" SUM(TDS.monto_dcmto) sumatoriaMontos, ");
+                query.Append(" SUM(TDS.balance) sumatoriaBalance, ");
+                query.Append(" SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
             }
             else
             {
@@ -56,20 +70,43 @@ namespace MonicaExtraWeb.Utils
                 query.Append("  TDS.monto_dcmto monto, ");
                 query.Append("  TDS.balance, ");
                 query.Append("  TDS.fecha_vcmto, ");
-                query.Append("  TDS.descripcion_dcmto, ");
-                query.Append("  (TDS.monto_dcmto - TDS.balance) pagosAcumulados ");
+                query.Append("  TDS.nro_dcmto, ");
+                query.Append($" TS.{TableSourceCodigo}, ");
+                query.Append("  TDS.balance, ");
+                query.Append("  V.Nombre_vendedor, ");
+                query.Append("  TDS.tipo, ");
 
-                if (filtro.tipoConsulta == "PorCobrar")
-                    query.Append(", SUBSTRING(rtrim(TDS.ncf),1, 19) ncf ");
+                if (filtro.descripcionSimplificada)
+                    query.Append($"  REPLACE(REPLACE(TDS.descripcion_dcmto, ' - Cuota unica', ''), ' - CUOTA DIFERIDA', '') descripcion_dcmto, ");
+                else
+                    query.Append($"  TDS.descripcion_dcmto, ");
+
+                query.Append("  (TDS.monto_dcmto - TDS.balance) pagosAcumulados, ");
+                query.Append($" SUBSTRING(rtrim(TDS.{TableDetailsNro_fiscal}),1, 19) ncf ");
             }
             #endregion
 
             #region FROM
             query.Append($" FROM {DbName}{TableSource} ");
             query.Append($" JOIN {TableDetilsSource} ON TS.{TableSourceID} = TDS.{TableSourceID} ");
+            query.Append($" JOIN vendedores V ON V.vendedor_id = TS.{TablaSourceProveedorVendedor} ");
 
-            if (!string.IsNullOrEmpty(filtro.tipoConsulta) && filtro.tipoConsulta == "RFA03")
-                query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
+            if (!string.IsNullOrEmpty(filtro.tipoConsulta))
+            {
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA01":
+                        if (!string.IsNullOrEmpty(filtro.opcion))
+                            query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
+                        break;
+                    case "RFA03":
+                        query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
+                        break;
+                    case "RFA09":
+                        query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
+                        break;
+                }
+            }
             #endregion
 
             #region WHERE
@@ -94,10 +131,24 @@ namespace MonicaExtraWeb.Utils
             switch (filtro.tipoConsulta)
             {
                 case "RFA01":
-                    if (!string.IsNullOrEmpty(filtro.desde))
-                        query.Append($"AND SUBSTRING(STR(TDS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TDS.{TableSourceEntryId}) + ' '), LEN(TDS.{TableSourceEntryId})) >= CAST('{filtro.desde}' AS FLOAT) ");
-                    if (!string.IsNullOrEmpty(filtro.hasta))
-                        query.Append($"AND SUBSTRING(STR(TDS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TDS.{TableSourceEntryId}) + ' '), LEN(TDS.{TableSourceEntryId})) <= CAST('{filtro.hasta}' AS FLOAT) ");
+                    if (!string.IsNullOrEmpty(filtro.opcion))
+                    {
+                        switch (filtro.opcion)
+                        {
+                            case "documento":
+                                if (!string.IsNullOrEmpty(filtro.desde))
+                                    query.Append($"AND SUBSTRING(STR(TDS.nro_dcmto), Patindex('%[^0 ]%', STR(TDS.nro_dcmto) + ' '), LEN(TDS.nro_dcmto)) >= CAST('{filtro.desde}' AS FLOAT) ");
+                                if (!string.IsNullOrEmpty(filtro.hasta))
+                                    query.Append($"AND SUBSTRING(STR(TDS.nro_dcmto), Patindex('%[^0 ]%', STR(TDS.nro_dcmto) + ' '), LEN(TDS.nro_dcmto)) <= CAST('{filtro.hasta}' AS FLOAT) ");
+                                break;
+                            case "factura":
+                                if (!string.IsNullOrEmpty(filtro.desde))
+                                    query.Append($"AND F.{TablaTipoFacturaCampoRef} >= '{filtro.desde}' ");
+                                if (!string.IsNullOrEmpty(filtro.hasta))
+                                    query.Append($"AND F.{TablaTipoFacturaCampoRef} <= '{filtro.hasta}' ");
+                                break;
+                        }
+                    }
                     break;
                 case "RFA02":
                     if (!string.IsNullOrEmpty(filtro.desde))
@@ -108,6 +159,10 @@ namespace MonicaExtraWeb.Utils
                 case "RFA03":
                     if (!string.IsNullOrEmpty(filtro.valor))
                         query.Append($"AND TP.termino_id = '{filtro.valor}' ");
+                    break;
+                case "RFA09":
+                    if (!string.IsNullOrEmpty(filtro.comprobante))
+                        query.Append($"AND F.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
                     break;
             }
 
@@ -125,28 +180,29 @@ namespace MonicaExtraWeb.Utils
                     case "RFA03":
                         query.Append(" TP.Descripcion_termino ");
                         break;
-                        //case "RFA04":
-                        //    query.Append(" C.nombre_clte ");
-                        //    break;
-                        //case "RFA05":
-                        //    query.Append(" TS.clte_direccion1 ");
-                        //    break;
-                        //case "RFA0":
-                        //    query.Append(" NB.Nombre_bodega ");
-                        //    break;
-                        //case "RFA09":
-                        //    query.Append(" C.cliente_id DESC ");
-                        //    break;
-                        //default:
-                        //    query.Append(" TS.fecha_emision DESC ");
-                        //    break;
+                    case "estadoCuentaIndividual":
+                        query.Append($" TS.{TableSourceName.Replace(" nombre", "")} ");
+                        break;
+                    //case "RFA04":
+                    //    query.Append(" C.nombre_clte ");
+                    //    break;
+                    //case "RFA05":
+                    //    query.Append(" TS.clte_direccion1 ");
+                    //    break;
+                    //case "RFA0":
+                    //    query.Append(" NB.Nombre_bodega ");
+                    //    break;
+                    //case "RFA09":
+                    //    query.Append(" C.cliente_id DESC ");
+                    //    break;
+                    default:
+                        query.Append(" TDS.fecha_emision DESC ");
+                        break;
                 }
                 query.Append($", TDS.{TableSourceEntryId} DESC ");
             }
             #endregion
 
-            query.Replace("''", "'");
-            query.Replace("\"", "'");
             return query.ToString();
         }
 
@@ -221,7 +277,7 @@ namespace MonicaExtraWeb.Utils
                     query.Append($" SUM((TDS.cantidad * TDS.{TableSourcePrecio}) + (TDS.impto_monto + TDS.impto2_monto - TDS.descto_monto)) total ");
 
                     if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                        query.Append(", SUM(TDS.precio_estimado) precio_estimado ");
+                        query.Append($", SUM(TDS.{TableSourcePrecio}) precio_estimado ");
 
                     if (!string.IsNullOrEmpty(filtro.tipoCorte))
                         switch (filtro.tipoCorte)
@@ -507,6 +563,8 @@ namespace MonicaExtraWeb.Utils
                         query.Append($"AND NB.bodega_id = '{filtro.valor}' ");
                     break;
                 case "RFA09":
+                    if (!string.IsNullOrEmpty(filtro.comprobante))
+                        query.Append($"AND TS.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
                     if (!string.IsNullOrEmpty(filtro.valor))
                         if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
                             query.Append($"AND TS.ncf LIKE '%{filtro.valor}%' ");

@@ -30,7 +30,7 @@
             nombresBodegaSeleccionada: '',
             categoriasProductosSeleccionada: '',
             comprobante: 'creditoFiscal',
-            valorComprobanteAutocompletado: 'A01',
+            //valorComprobanteAutocompletado: 'A01',
 
             agruparPorMes: false,
             mostrarDetallesProductosCorte: false,
@@ -86,22 +86,6 @@
             this.FILTROS.analisisGrafico = false;
             this.FILTROS.tipoCorte = 'porCategoria';
         },
-        'FILTROS.FormatoConsultas'() {
-            SetCoockie(`formatoDataVentasYDevoluciones=${this.FILTROS.FormatoConsultas};`);
-            monicaReportes.LimpiarTablas();
-        },
-        'FILTROS.columnaVendedor'() {
-            SetCoockie(`formatoDataVentasYDevoluciones_vendedor=${this.FILTROS.columnaVendedor};`);
-        },
-        'FILTROS.columnaComprobante'() {
-            SetCoockie(`formatoDataVentasYDevoluciones_comprobante=${this.FILTROS.columnaComprobante};`);
-        },
-        'FILTROS.columnaTermino'() {
-            SetCoockie(`formatoDataVentasYDevoluciones_termino=${this.FILTROS.columnaTermino};`);
-        },
-        'FILTROS.columnaMoneda'() {
-            SetCoockie(`formatoDataVentasYDevoluciones_moneda=${this.FILTROS.columnaMoneda};`);
-        },
         'FILTROS.desdeHastaRango'() {
             const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
 
@@ -127,34 +111,33 @@
                 }
             }
         },
-        'FILTROS.comprobante'() {
-            switch (this.FILTROS.comprobante) {
-                case 'creditoFiscal':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A01';
-                    break;
-                case 'consumo':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A02';
-                    break;
-                case 'gubernamental':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A15';
-                    break;
-                case 'especial':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A14';
-                    break;
-                case 'exportaciones':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A17';
-                    break;
-            }
-        },
+        //'FILTROS.comprobante'() {
+        //    switch (this.FILTROS.comprobante) {
+        //        case 'creditoFiscal':
+        //            this.FILTROS.valorComprobanteAutocompletado = 'A01';
+        //            break;
+        //        case 'consumo':
+        //            this.FILTROS.valorComprobanteAutocompletado = 'A02';
+        //            break;
+        //        case 'gubernamental':
+        //            this.FILTROS.valorComprobanteAutocompletado = 'A15';
+        //            break;
+        //        case 'especial':
+        //            this.FILTROS.valorComprobanteAutocompletado = 'A14';
+        //            break;
+        //        case 'exportaciones':
+        //            this.FILTROS.valorComprobanteAutocompletado = 'A17';
+        //            break;
+        //    }
+        //},
         'FILTROS.tipoReporte'() {
             switch (this.FILTROS.tipoReporte) {
-                case 'ventas':
+                case 'cotizaciones':
                     this.FILTROS.valorComprobanteAutocompletado = 'A01';
-                    this.FILTROS.comprobante = 'creditoFiscal';
                     break;
-                case 'devoluciones':
+                case 'conduces':
                     this.FILTROS.valorComprobanteAutocompletado = 'A04';
-                    this.FILTROS.comprobante = 'consumidorFinal';
+                    this.FILTROS.comprobante = 'consumo';
                     break;
             }
         }
@@ -260,8 +243,10 @@
                     || this.FILTROS.tipoConsulta === 'RFA05'
                     || this.FILTROS.tipoConsulta === 'RFA06')
                     filtro.valor = this.FILTROS.valor;
-                else if (this.FILTROS.tipoConsulta === 'RFA09')
-                    filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
+                else if (this.FILTROS.tipoConsulta === 'RFA09') {
+                    filtro.comprobante = this.FILTROS.comprobante;
+                    //filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
+                }
 
                 if (this.FILTROS.tipoCorte === 'porFecha_Emision'
                     || this.FILTROS.tipoCorte === 'porFecha_Vencimiento')
@@ -558,19 +543,6 @@
         //----------------------------------------------------------
         Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
             monicaReportes.Print(type, jsonParameters, SetlocalStorageItemsToPrint)
-        },
-
-        AjustesAvanzadosFiltros() {
-            $('#reporteModal').modal('show');
-            $('#modificarFiltrosId').collapse('hide');
-
-            const formatoData = GetCookieElement('formatoDataVentasYDevoluciones=');
-
-            this.FILTROS.FormatoConsultas = formatoData ? formatoData : 'simple';
-            this.FILTROS.columnaVendedor = GetCookieElement('formatoDataVentasYDevoluciones_vendedor=') === 'false' ? false : true;
-            this.FILTROS.columnaComprobante = GetCookieElement('formatoDataVentasYDevoluciones_comprobante=') === 'false' ? false : true;
-            this.FILTROS.columnaTermino = GetCookieElement('formatoDataVentasYDevoluciones_termino=') === 'false' ? false : true;
-            this.FILTROS.columnaMoneda = GetCookieElement('formatoDataVentasYDevoluciones_moneda=') === 'false' ? false : true;
         }
     },
 

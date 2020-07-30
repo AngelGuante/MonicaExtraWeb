@@ -13,8 +13,12 @@
             soloDocsVencidos: false,
             incluirFirmas: false,
             incluirMoras: false,
+            descripcionSimplificada: true,
 
-            tipoReporte: 'PorCobrar',
+            comprobante: 'creditoFiscal',
+            tipoDocumento: '',
+            numeroSeleccion: 'documento',
+            tipoReporte: 'porCobrar',
             tipoConsulta: '',
             desdeHastaRango: 0,
             desde: 0,
@@ -32,6 +36,13 @@
     },
 
     watch: {
+        'FILTROS.tipoReporte'() {
+            switch (this.FILTROS.tipoReporte) {
+                case 'porPagar':
+                    this.FILTROS.tipoConsulta = '';  
+                    break;
+            }
+        },
         'FILTROS.desdeHastaRango'() {
             const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
 
@@ -93,7 +104,10 @@
                     tipoReporte: this.FILTROS.tipoReporte,
                     tipoConsulta: this.FILTROS.tipoConsulta,
                 }
-                
+
+                if (this.FILTROS.descripcionSimplificada)
+                    filtro.descripcionSimplificada = this.FILTROS.descripcionSimplificada;
+
                 if (this.FILTROS.tipoConsulta === 'RFA01'
                     || this.FILTROS.tipoConsulta === 'RFA02'    
                     || this.FILTROS.tipoConsulta === 'RFA04'
@@ -102,6 +116,11 @@
                     filtro.desde = this.FILTROS.desde;
                     filtro.hasta = this.FILTROS.hasta;
                 }
+                else if (this.FILTROS.tipoConsulta === 'RFA09')
+                    filtro.comprobante = this.FILTROS.comprobante;
+
+                if (this.FILTROS.tipoConsulta === 'RFA01')
+                    filtro.opcion = this.FILTROS.numeroSeleccion;
                 else if (this.FILTROS.tipoConsulta === 'RFA03')
                     filtro.valor = this.FILTROS.terminoDePagoSeleccionado;
 
@@ -127,7 +146,7 @@
                     let tabla = document.getElementById('tablaEstadoCuentaCliente');
 
                     if (tabla) {
-                        TablaEstiloTotalizacionFila(tabla, [5, 6, 7])
+                        TablaEstiloTotalizacionFila(tabla, [9, 10, 11])
 
                         clearInterval(interval);
                     }

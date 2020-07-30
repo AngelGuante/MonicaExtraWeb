@@ -1,14 +1,4 @@
 ﻿<div id="CotizacionesYConducesFiltro" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
-    @*<div v-if="FILTROS.tipoConsulta === 'RFA08'">
-            <button class="btn btn-info"
-                    style="float: right; border:none; background:none; display:flex; color:#17a2b8;"
-                    title="Configuraciones avanzadas para los filtros"
-                    v-on:click="AjustesAvanzadosFiltros()"
-                    v-bind:disabled="FILTROS.mostrarDetallesProductosCorte">
-                Ajustes Avanzados <i class="material-icons" style="color:#17a2b8; margin-left:4px;">settings</i>
-            </button>
-        </div>*@
-
     <div style="margin-top: 10px;">
         <div class="row">
             <div class="col-12 col-md-8">
@@ -237,7 +227,7 @@
                     </div>
 
                     @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
-                    <div class="col-lg-5"
+                    @*<div class="col-lg-5"
                          v-if="FILTROS.tipoConsulta === 'RFA04'
                                                         || FILTROS.tipoConsulta === 'RFA05'
                                                         || FILTROS.tipoConsulta === 'RFA06'
@@ -249,7 +239,7 @@
                             </div>
                             <input type="text" class="form-control" v-model="FILTROS.valor" />
                         </div>
-                    </div>
+                    </div>*@
 
                     @*SELECT TERMINO PAGO*@
                     <div class="col-12 col-lg-5"
@@ -267,9 +257,8 @@
                         <label class="font-weight-bold">Opción</label>
                         <select class="custom-select" v-model="FILTROS.comprobante" v-bind:disabled="FILTROS.tipoReporte === 'conduces'">
                             @*<option selected value="">--SELECCIONE UNA OPCION--</option>*@
-                            <option v-if="FILTROS.tipoReporte === 'conduces'" value="consumidorFinal">Consumo</option>
+                            <option value="consumo">Consumo</option>
                             <option v-if="FILTROS.tipoReporte === 'cotizaciones'" value="creditoFiscal">Crédito Fiscal</option>
-                            <option v-if="FILTROS.tipoReporte === 'cotizaciones'" value="consumo">Consumo</option>
                             <option v-if="FILTROS.tipoReporte === 'cotizaciones'" value="gubernamental">Gubernamental</option>
                             <option v-if="FILTROS.tipoReporte === 'cotizaciones'" value="especial">Especial</option>
                             <option v-if="FILTROS.tipoReporte === 'cotizaciones'" value="exportaciones">Exportaciones</option>

@@ -149,11 +149,10 @@
             switch (this.FILTROS.tipoReporte) {
                 case 'ventas':
                     this.FILTROS.valorComprobanteAutocompletado = 'A01';
-                    this.FILTROS.comprobante = 'creditoFiscal';
                     break;
                 case 'devoluciones':
                     this.FILTROS.valorComprobanteAutocompletado = 'A04';
-                    this.FILTROS.comprobante = 'consumidorFinal';
+                    this.FILTROS.comprobante = 'consumo';
                     break;
             }
         }
@@ -257,8 +256,10 @@
                     || this.FILTROS.tipoConsulta === 'RFA05'
                     || this.FILTROS.tipoConsulta === 'RFA06')
                     filtro.valor = this.FILTROS.valor;
-                else if (this.FILTROS.tipoConsulta === 'RFA09')
+                else if (this.FILTROS.tipoConsulta === 'RFA09') {
                     filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
+                    filtro.comprobante = this.FILTROS.comprobante;
+                }
 
                 if (this.FILTROS.tipoCorte === 'porFecha_Emision'
                     || this.FILTROS.tipoCorte === 'porFecha_Vencimiento')

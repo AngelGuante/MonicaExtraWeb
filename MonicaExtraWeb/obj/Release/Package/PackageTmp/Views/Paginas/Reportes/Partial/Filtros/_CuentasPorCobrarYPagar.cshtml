@@ -7,7 +7,7 @@
                         <label class="font-weight-bold">Módulos</label>
                         <div class="row">
                             <div class="form-check col-6">
-                                <input class="form-check-input" type="radio" id="CPCCPPporCobrarCheck" value="PorCobrar" v-model="FILTROS.tipoReporte">
+                                <input class="form-check-input" type="radio" id="CPCCPPporCobrarCheck" value="porCobrar" v-model="FILTROS.tipoReporte">
                                 <label class="form-check-label" for="CPCCPPporCobrarCheck">
                                     Cuentas Por Cobrar
                                 </label>
@@ -33,12 +33,11 @@
                     <option value="">Por Cuenta por Cobrar en General</option>
                     <option value="RFA01">Por Numero</option>
                     <option value="RFA02">Por Monto</option>
-                    <option value="RFA03">Por Termino de Pago</option>
                     <option value="RFA04" disabled>Por Cliente</option>
+                    <option value="RFA03">Por Termino de Pago</option>
+                    <option value="RFA09" v-if="FILTROS.tipoReporte === 'porCobrar'">Por Comprobante</option>
+                    <option value="tipo_de_Documento">Por Tipo de Documento</option>
                     <option value="estadoCuentaIndividual">Estado de Cuenta Individual</option>
-                    <option value="" disabled>Por Tipo de Documento</option>
-                    <option value="RFA09" disabled>Por Comprobante</option>
-                    <option value="" disabled>Por Estado de Cuenta Individual</option>
                     <option value="" disabled>Por Antigüedad de Saldos</option>
                     <option value="" disabled>Por Analisis de Cobros</option>
                 </select>
@@ -47,18 +46,28 @@
             <div class="col-12 col-lg-8">
                 <div class="row">
                     @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
-                    <div class="col-lg-5"
-                         v-if="FILTROS.tipoConsulta === 'RFA04'
-                                                        || FILTROS.tipoConsulta === 'RFA09'">
-                        <label class="font-weight-bold">Valor</label>
-                        <div class="input-group" id="VDPorComprobanteReporte">
-                            <div class="input-group-prepend" v-if="FILTROS.tipoConsulta === 'RFA09'">
-                                <div class="input-group-text">{{ FILTROS.valorComprobanteAutocompletado }}</div>
+                    @*<div class="col-lg-5"
+                             v-if="FILTROS.tipoConsulta === 'RFA04'
+                                                            || FILTROS.tipoConsulta === 'RFA09'">
+                            <label class="font-weight-bold">Valor</label>
+                            <div class="input-group" id="VDPorComprobanteReporte">
+                                <div class="input-group-prepend" v-if="FILTROS.tipoConsulta === 'RFA09'">
+                                    <div class="input-group-text">{{ FILTROS.valorComprobanteAutocompletado }}</div>
+                                </div>
+                                <input type="text" class="form-control" v-model="FILTROS.valor" />
                             </div>
+                        </div>*@
+
+                    <div class="col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA04'">
+                        <label class="font-weight-bold">Valor</label>
+                        <div class="input-group">
                             <input type="text" class="form-control" v-model="FILTROS.valor" />
                         </div>
                     </div>
 
+
+                    @*CLIENTES PROVEEDORES*@
                     <div class="col-lg-5" v-if=" FILTROS.tipoConsulta === 'estadoCuentaIndividual'">
                         <label class="font-weight-bold">Código</label>
                         <div class="input-group">
@@ -69,18 +78,33 @@
                         </div>
                     </div>
 
-                    @*SELECT COMPROBANTE*@
+                    @*SELECT TIPO DOCUMENTO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'tipo_de_Documento'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.tipoDocumento">
+                            <option disabled selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option disabled value="factura" v-if="FILTROS.tipoReporte === 'porCobrar'">Factura</option>
+                            <option disabled value="compra" v-if="FILTROS.tipoReporte === 'porPagar'">Compra</option>
+                            <option disabled value="nota_debito">Nota Débito</option>
+                            <option disabled value="nota_credito">Nota Crédito</option>
+                            <option disabled value="gubernamental">Pago</option>
+                        </select>
+                    </div>
+
+                    @*SELECT POR COMPROBANTE*@
                     <div class="col-12 col-lg-5"
                          v-if="FILTROS.tipoConsulta === 'RFA09'">
                         <label class="font-weight-bold">Opción</label>
-                        <select class="custom-select" v-model="FILTROS.comprobante" v-bind:disabled="FILTROS.tipoReporte === 'devoluciones'">
-                            @*<option selected value="">--SELECCIONE UNA OPCION--</option>*@
-                            <option v-if="FILTROS.tipoReporte === 'devoluciones'" value="consumidorFinal">Consumo</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="creditoFiscal">Crédito Fiscal</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="consumo">Consumo</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="gubernamental">Gubernamental</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="especial">Especial</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="exportaciones">Exportaciones</option>
+                        <select class="custom-select" v-model="FILTROS.comprobante">
+                            <option value="creditoFiscal">Crédito Fiscal</option>
+                            <option value="consumo">Consumo</option>
+                            <option value="gubernamental">Gubernamental</option>
+                            <option value="especial">Especial</option>
+                            <option value="exportaciones">Exportaciones</option>
+                            <option disabled value="nota_de_debito">Nota de Débito</option>
+                            <option disabled value="nota_de_credito">Nota Crédito</option>
+
                         </select>
                     </div>
 
@@ -91,6 +115,16 @@
                         <select class="custom-select" v-model="FILTROS.terminoDePagoSeleccionado">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                        </select>
+                    </div>
+
+                    @*SELECT POR NUMERO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA01'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.numeroSeleccion">
+                            <option selected value="documento">Documento</option>
+                            <option value="factura">Factura</option>
                         </select>
                     </div>
 
@@ -182,26 +216,26 @@
                         </div>
                     </div>
 
-                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="FILTROS.incluirFirmas" disabled>
-                            <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
-                        </div>
-                    </div>
-
-                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.incluirMoras" disabled>
-                            <label class="form-check-label" for="reportMoras">Incluir Moras</label>
-                        </div>
-                    </div>
-
                     @*<div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.incluirMoras" disabled>
-                            <label class="form-check-label" for="reportMoras">Descripció Simplificada</label>
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportFirmas" v-model="FILTROS.incluirFirmas" disabled>
+                                <label class="form-check-label" for="reportFirmas">Incluir Firmas</label>
+                            </div>
                         </div>
-                    </div>*@
+
+                        <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.incluirMoras" disabled>
+                                <label class="form-check-label" for="reportMoras">Incluir Moras</label>
+                            </div>
+                        </div>*@
+
+                    <div class="col-sm" style="display:flex; align-items:center; border-left: 1px solid;">
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="reportMoras" v-model="FILTROS.descripcionSimplificada">
+                            <label class="form-check-label" for="reportMoras">Descripción Simplificada</label>
+                        </div>
+                    </div>
                 </div>
 
                 <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:80%;">search</i></a>

@@ -265,10 +265,8 @@
                          v-if="FILTROS.tipoConsulta === 'RFA09'">
                         <label class="font-weight-bold">Opción</label>
                         <select class="custom-select" v-model="FILTROS.comprobante" v-bind:disabled="FILTROS.tipoReporte === 'devoluciones'">
-                            @*<option selected value="">--SELECCIONE UNA OPCION--</option>*@
-                            <option v-if="FILTROS.tipoReporte === 'devoluciones'" value="consumidorFinal">Consumo</option>
+                            <option value="consumo">Consumo</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="creditoFiscal">Crédito Fiscal</option>
-                            <option v-if="FILTROS.tipoReporte === 'ventas'" value="consumo">Consumo</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="gubernamental">Gubernamental</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="especial">Especial</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="exportaciones">Exportaciones</option>
