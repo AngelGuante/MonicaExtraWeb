@@ -8,11 +8,16 @@
         opcionReporteSeleccionado: '',
         vendedores: [],
         categoriasClientes: [],
+        categoriasProveedores: [],
         terminoDePago: [],
         nombresBodega: [],
         categoriasProductos: [],
         minFecha_emision: '',
         maxFecha_emision: '',
+    },
+
+    created: () => {
+        document.getElementById('btnHome').removeAttribute('hidden');
     },
 
     watch: {
@@ -23,6 +28,10 @@
         categoriasClientes: () => {
             reporte_ventasYDevoluciones.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
             reporte_cotizacionesYConduces.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
+            reporte_clienteIndividualStatus.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
+        },
+        categoriasProveedores: () => {
+            reporte_clienteIndividualStatus.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
         },
         minFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
@@ -142,6 +151,10 @@
                 case 'categoriasClientes':
                     if (this.categoriasClientes.length === 0)
                         this.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
+                    break;
+                case 'categoriasProveedores':
+                    if (this.categoriasProveedores.length === 0)
+                        this.categoriasProveedores = await BuscarInformacionLocal('SendWebsocketServer/11', {});
                     break;
                 case 'clientes':
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);

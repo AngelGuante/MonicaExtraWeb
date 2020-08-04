@@ -11,7 +11,7 @@ namespace MonicaExtraWeb.Controllers.API
     {
         [HttpGet]
         [Route("GetIndividualClientStatus")]
-        public IHttpActionResult GetIndividualClientStatus([FromUri] FiltrosReportes filtro)
+        public IHttpActionResult GetIndividualClientStatus([FromUri] Filtros filtro)
         {
             if (filtro.code == null
                 || filtro.code == default)

@@ -6,6 +6,6 @@ namespace MonicaExtraWeb.Models.DTO.Impresion
     public class LocalQueryClientDTO
     {
         public ClientMessageStatusEnum status { get; set; }
-        public FiltrosReportes filtro { get; set; }
+        public Filtros filtro { get; set; }
     }
 }

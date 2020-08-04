@@ -2,16 +2,18 @@
     <table id="tablaEstadoCuentaCliente" class="table table-striped">
         <thead>
             <tr>
-                <th style="text-align:right;" scope="col">Número</th>
-                <th style="text-align:left;" scope="col">Tipo</th>
-                <th style="text-align:right;" scope="col">Emisión</th>
-                <th style="text-align:right;" scope="col">Vencimiento</th>
-                <th scope="col" v-if="FILTROS.mostrarNCF">NCF</th>
-                <th style="text-align:left;" scope="col">Descripción</th>
-                <th style="text-align:right;" scope="col">Cod. Cliente</th>
-                <th style="text-align:left;" scope="col">Nombre</th>
-                <th style="text-align:right;" scope="col">Días Transcurridos</th>
-                <th style="text-align:left;" scope="col">Nombre Vendedor</th>
+                <th v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
+
+                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Número</th>
+                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Tipo</th>
+                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Emisión</th>
+                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Vencimiento</th>
+                <th scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.campoNCFBuscado) && toggleTableColumns_byMostrarDetallesProductosCorte">NCF</th>
+                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Descripción</th>
+                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Cod. Cliente</th>
+                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Nombre</th>
+                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ tituloDiasMostrados }}</th>
+                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Nombre Vendedor</th>
                 <th style="text-align:right;" scope="col">Monto</th>
                 <th style="text-align:right;" scope="col">Pagos Acumulados</th>
                 <th style="text-align:right;" scope="col">Saldo</th>
@@ -19,19 +21,55 @@
         </thead>
         <tbody>
             <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'background-color: #17a2b8' : element.nro_dcmto ? 'background-color: #f76876' : ''">
-                <td style="text-align:right;">{{ element.nro_dcmto }}</td>
-                <td style="text-align:left;" >{{ element.tipo }}</td>
-                <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
-                <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat }}</td>
-                <td v-if="FILTROS.mostrarNCF">{{ element.ncf }}</td>
-                <td style="text-align:left;">{{ element.descripcion_dcmto | FilterUppercase }}</td>
-                <td style="text-align:right;">{{ element.codigo_clte }}</td>
-                <td style="text-align:left;">{{ element.nombre | FilterUppercase }}</td>
-                <td style="text-align:right;">{{ element.diasTrancurridos }}</td>
-                <td style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
+                <td v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
+
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto }}</td>
+                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo }}</td>
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_emision | FilterDateFormat }}</td>
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_vcmto | FilterDateFormat }}</td>
+                <td v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.campoNCFBuscado) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.ncf }}</td>
+                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.descripcion_dcmto | FilterUppercase }}</td>
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.codigo_clte }}</td>
+                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nombre | FilterUppercase }}</td>
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.diasTrancurridos }}</td>
+                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.monto | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.pagosAcumulados | FilterStringToMoneyFormat }}</td>
                 <td style="text-align:right;">{{ element.balance | FilterStringToMoneyFormat }}</td>
         </tbody>
     </table>
+</div>
+
+@*  GRAFICOS*@
+<div id="CPCCPPdivGraficosDatosAgrupados"
+     class="col-12"
+     hidden>
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <canvas id="CPCCPPreportesGraficos"></canvas>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="row">
+                <div class="col-12 mb-2">
+                    <div class="card card-body border-info text-info text-center p-0">
+                        <div class="card-header">
+                            <label class="font-weight-bold">Parámetros de Análisis Gráfico</label>
+                        </div>
+                        <label class="font-weight-bold">Desde {{ FILTROS.fechaMinReporteBuscado | FilterDateFormat }} Hasta {{ FILTROS.fechaMaxReporteBuscado  | FilterDateFormat }}</label>
+                        <label class="font-weight-bold">Categoria Clientes {{ FILTROS.categoriaClientesBuscada | FilterUppercase }}</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card card-body border-info text-info text-center p-0">
+                        <div class="card-header">
+                            <label class="font-weight-bold">Ventas Totales</label>
+                        </div>
+                        <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

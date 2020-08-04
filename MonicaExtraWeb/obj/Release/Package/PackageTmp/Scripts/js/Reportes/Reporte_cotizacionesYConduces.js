@@ -30,7 +30,6 @@
             nombresBodegaSeleccionada: '',
             categoriasProductosSeleccionada: '',
             comprobante: 'creditoFiscal',
-            //valorComprobanteAutocompletado: 'A01',
 
             agruparPorMes: false,
             mostrarDetallesProductosCorte: false,
@@ -111,25 +110,6 @@
                 }
             }
         },
-        //'FILTROS.comprobante'() {
-        //    switch (this.FILTROS.comprobante) {
-        //        case 'creditoFiscal':
-        //            this.FILTROS.valorComprobanteAutocompletado = 'A01';
-        //            break;
-        //        case 'consumo':
-        //            this.FILTROS.valorComprobanteAutocompletado = 'A02';
-        //            break;
-        //        case 'gubernamental':
-        //            this.FILTROS.valorComprobanteAutocompletado = 'A15';
-        //            break;
-        //        case 'especial':
-        //            this.FILTROS.valorComprobanteAutocompletado = 'A14';
-        //            break;
-        //        case 'exportaciones':
-        //            this.FILTROS.valorComprobanteAutocompletado = 'A17';
-        //            break;
-        //    }
-        //},
         'FILTROS.tipoReporte'() {
             switch (this.FILTROS.tipoReporte) {
                 case 'cotizaciones':

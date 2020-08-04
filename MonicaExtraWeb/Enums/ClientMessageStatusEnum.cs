@@ -12,5 +12,10 @@
         Bodegas = 8,
         CategoriasProductos = 9,
         Proveedores = 10,
+        CategoriasProveedoresInformacion = 11,
+
+        ObtenerCotizacion = 12,
+        ObtenerEstimado = 13,
+        ActualizarEstimado = 14,
     }
 }

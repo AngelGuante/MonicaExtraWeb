@@ -226,21 +226,6 @@
                         </div>
                     </div>
 
-                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
-                    @*<div class="col-lg-5"
-                         v-if="FILTROS.tipoConsulta === 'RFA04'
-                                                        || FILTROS.tipoConsulta === 'RFA05'
-                                                        || FILTROS.tipoConsulta === 'RFA06'
-                                                        || FILTROS.tipoConsulta === 'RFA09'">
-                        <label class="font-weight-bold">Valor</label>
-                        <div class="input-group" id="VDPorComprobanteReporte">
-                            <div class="input-group-prepend" v-if="FILTROS.tipoConsulta === 'RFA09'">
-                                <div class="input-group-text">{{ FILTROS.valorComprobanteAutocompletado }}</div>
-                            </div>
-                            <input type="text" class="form-control" v-model="FILTROS.valor" />
-                        </div>
-                    </div>*@
-
                     @*SELECT TERMINO PAGO*@
                     <div class="col-12 col-lg-5"
                          v-if="FILTROS.tipoConsulta === 'RFA03'">

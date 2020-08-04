@@ -1,0 +1,89 @@
+﻿<div class="modal fade bd-example-modal-lg" id="CPCCPPreporteModalFormato" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-5">
+                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#CPCCPPreporteModalFormato').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+
+                <div>
+                    <h1>Ajustes Avanzados Para las Consultas</h1>
+
+                    <hr />
+
+                    <div class="card border-info text-info">
+                        <div class="card-body p-4">
+                            <label class="font-weight-bold">Formato Para Mostrar la Data</label>
+                            <div class="row">
+                                @*  FILTROS*@
+                                <div class="col-12">
+                                    <div class="row d-flex align-items-center">
+                                        <div class="form-check col-12 col-lg-3">
+                                            <input class="form-check-input" type="radio" id="chckFormatoSimple" value="simple" v-model="FILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoSimple">
+                                                Formato Simple
+                                            </label>
+                                        </div>
+
+                                        <div class="form-check col-12 col-lg-4">
+                                            <input class="form-check-input" type="radio" id="chckFormatoPersonalizado" value="personalizado" v-model="FILTROS.FormatoConsultas">
+                                            <label class="form-check-label" for="chckFormatoPersonalizado">
+                                                Formato Personalizado
+                                            </label>
+
+                                        </div>
+
+                                        <div class="col justify-content-end">
+                                            <button class="btn btn-outline-info"
+                                                    style="float: right; display:flex;"
+                                                    title="Cambiar los campos que traerá el formato completo"
+                                                    data-toggle="collapse" data-target="#CPCCPPmodificarFiltrosId" aria-expanded="false" aria-controls="CPCCPPmodificarFiltrosId">
+                                                <i class="material-icons" style="color:#17a2b8; margin-right: 4px;">settings</i> Modificar Filtros
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                @*  CONFIGURAR FILTROS*@
+                                <div class="collapse col" id="CPCCPPmodificarFiltrosId" style="margin-top: 16px;">
+                                    <div class="card card-body">
+                                        <label class="font-weight-bold">Formato Personalizado</label>
+                                        <div class="row">
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input id="CPCCPP1" type="checkbox" class="form-check-input" v-model="FILTROS.columnaNCF">
+                                                <label class="form-check-label" for="CPCCPP1">Mostrar NCF</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input type="checkbox" class="form-check-input" id="CPCCPP5" v-model="FILTROS.descripcionSimplificada">
+                                                <label class="form-check-label" for="CPCCPP5">Descripción Simplificada</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input id="CPCCPP4" type="checkbox" class="form-check-input" v-model="FILTROS.incluirMoras" disabled>
+                                                <label class="form-check-label" for="CPCCPP4">Incluir Moras</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input id="CPCCPP2" type="checkbox" class="form-check-input" v-model="FILTROS.soloDocsVencidos">
+                                                <label class="form-check-label" for="CPCCPP2">Solo DOCS. Vencidos</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input id="CPCCPP3" type="checkbox" class="form-check-input" v-model="FILTROS.incluirFirmas" disabled>
+                                                <label class="form-check-label" for="CPCCPP3">Incluir Firmas</label>
+                                            </div>
+
+                                            <div class="form-check col-12 col-lg-4">
+                                                <input id="chckFiltroCampoMoneda" type="checkbox" class="form-check-input" v-model="FILTROS.diasVencidos">
+                                                <label class="form-check-label" for="chckFiltroCampoMoneda">Mostrar días Vencidos</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

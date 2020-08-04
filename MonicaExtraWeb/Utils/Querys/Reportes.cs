@@ -8,7 +8,7 @@ namespace MonicaExtraWeb.Utils
     public class Reportes
     {
         #region REPORTES
-        public static string IndividualClientQuery(FiltrosReportes filtro, string DbName = "")
+        public static string IndividualClientQuery(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
 
@@ -23,6 +23,9 @@ namespace MonicaExtraWeb.Utils
             string TablaTipoFactua = "";
             string TablaTipoFacturaCampoRef = "";
             string TablaSourceProveedorVendedor = "";
+            string TableClienteProveedorId = "";
+            string TableCategoriaClienteProveedor = "";
+            string TableCategoriaClienteProveedorDescripcion = "";
 
             switch (filtro.tipoReporte)
             {
@@ -38,6 +41,9 @@ namespace MonicaExtraWeb.Utils
                     TablaTipoFactua = "factura";
                     TablaTipoFacturaCampoRef = "nro_factura";
                     TablaSourceProveedorVendedor = "vendedor_id";
+                    TableCategoriaClienteProveedor = "Categorias_clte";
+                    TableClienteProveedorId = "categoria_clte_id";
+                    TableCategoriaClienteProveedorDescripcion = "descripcion_categ";
                     break;
                 case "porPagar":
                     TableSource = "proveedores TS";
@@ -51,6 +57,9 @@ namespace MonicaExtraWeb.Utils
                     TablaTipoFactua = "orden_compra";
                     TablaTipoFacturaCampoRef = "nro_compra";
                     TablaSourceProveedorVendedor = "proveedor_id";
+                    TableCategoriaClienteProveedor = "categorias_pv";
+                    TableClienteProveedorId = "Categoria_idpv";
+                    TableCategoriaClienteProveedorDescripcion = "descripcion_categpv";
                     break;
             }
 
@@ -62,10 +71,38 @@ namespace MonicaExtraWeb.Utils
                 query.Append(" SUM(TDS.monto_dcmto) sumatoriaMontos, ");
                 query.Append(" SUM(TDS.balance) sumatoriaBalance, ");
                 query.Append(" SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
+
+                if (filtro.tipoConsulta == "analisis_Grafico")
+                {
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porFecha_Emision":
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TDS.fecha_emision), '/', YEAR(TDS.fecha_emision)) fecha_emision ");
+                            else
+                                query.Append(", TDS.fecha_emision ");
+                            break;
+                        case "porFecha_Vencimiento":
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TDS.fecha_emision), '/', YEAR(TDS.fecha_emision)) fecha_vcmto ");
+                            else
+                                query.Append(", TDS.fecha_vcmto ");
+                            break;
+                        case "porCliente":
+                            query.Append($", TRIM(MAX(TS.nombre_clte)) nombre ");
+                            break;
+                        case "porVendedor":
+                            query.Append($", TRIM(MAX(V.Nombre_vendedor)) Nombre_vendedor ");
+                            break;
+                        case "porCategorias_de_Clientes":
+                            query.Append($", TRIM(CCP.{TableCategoriaClienteProveedorDescripcion}) CCPDescripcion ");
+                            break;
+                    }
+                }
             }
             else
             {
-                query.Append($" TS.{TableSourceName}, ");
+                query.Append($" TRIM(TS.{TableSourceName.Replace(" nombre", "")}) nombre, ");
                 query.Append("  TDS.fecha_emision, ");
                 query.Append("  TDS.monto_dcmto monto, ");
                 query.Append("  TDS.balance, ");
@@ -73,16 +110,40 @@ namespace MonicaExtraWeb.Utils
                 query.Append("  TDS.nro_dcmto, ");
                 query.Append($" TS.{TableSourceCodigo}, ");
                 query.Append("  TDS.balance, ");
-                query.Append("  V.Nombre_vendedor, ");
+                query.Append("  TRIM(V.Nombre_vendedor) Nombre_vendedor, ");
                 query.Append("  TDS.tipo, ");
+                query.Append("  (TDS.monto_dcmto - TDS.balance) pagosAcumulados ");
 
                 if (filtro.descripcionSimplificada)
-                    query.Append($"  REPLACE(REPLACE(TDS.descripcion_dcmto, ' - Cuota unica', ''), ' - CUOTA DIFERIDA', '') descripcion_dcmto, ");
+                    query.Append($", REPLACE(REPLACE(TDS.descripcion_dcmto, ' - Cuota unica', ''), ' - CUOTA DIFERIDA', '') descripcion_dcmto ");
                 else
-                    query.Append($"  TDS.descripcion_dcmto, ");
+                    query.Append(", TDS.descripcion_dcmto ");
 
-                query.Append("  (TDS.monto_dcmto - TDS.balance) pagosAcumulados, ");
-                query.Append($" SUBSTRING(rtrim(TDS.{TableDetailsNro_fiscal}),1, 19) ncf ");
+                if (!string.IsNullOrEmpty(filtro.colComprobante))
+                    query.Append($", SUBSTRING(rtrim(TDS.{TableDetailsNro_fiscal}),1, 19) ncf ");
+
+                if (filtro.tipoConsulta == "analisis_Grafico")
+                {
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porFecha_Emision":
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TDS.fecha_emision), '/', YEAR(TDS.fecha_emision)) fecha_emision ");
+                            else
+                                query.Append(", TDS.fecha_emision ");
+                            break;
+                        case "porFecha_Vencimiento":
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TDS.fecha_emision), '/', YEAR(TDS.fecha_emision)) fecha_vcmto ");
+                            else
+                                query.Append(", TDS.fecha_vcmto ");
+                            break;
+                        case "porCategorias_de_Clientes":
+                            query.Append($", TRIM(CCP.{TableCategoriaClienteProveedorDescripcion}) CCPDescripcion ");
+                            break;
+                    }
+                }
+
             }
             #endregion
 
@@ -102,8 +163,16 @@ namespace MonicaExtraWeb.Utils
                     case "RFA03":
                         query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
                         break;
-                    case "RFA09":
-                        query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
+                    //case "RFA09":
+                    //    query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
+                    //    break;
+                    case "analisis_Grafico":
+                        switch (filtro.tipoCorte)
+                        {
+                            case "porCategorias_de_Clientes":
+                                query.Append($" JOIN {DbName}{TableCategoriaClienteProveedor} CCP ON TS.{TableClienteProveedorId} = REPLACE(CCP.{TableClienteProveedorId}, '\"', '') ");
+                                break;
+                        }
                         break;
                 }
             }
@@ -162,7 +231,36 @@ namespace MonicaExtraWeb.Utils
                     break;
                 case "RFA09":
                     if (!string.IsNullOrEmpty(filtro.comprobante))
-                        query.Append($"AND F.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
+                    {
+                        //query.Append($"AND F.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
+                        if (filtro.soloNCFFormatoElectronico == null
+                            || string.IsNullOrEmpty(filtro.soloNCFFormatoElectronico))
+                        {
+                            query.Append($"AND SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 2, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
+                            query.Append($"OR SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 1) + SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 10, 2) = 'A{ComprobanteDictionary(filtro.comprobante)}' ");
+                        }
+                        if (!string.IsNullOrEmpty(filtro.tipoReporte))
+                            if (filtro.tipoReporte == "porPagar")
+                                query.Append($" OR SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 1) + SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 10, 2) = 'E{ComprobanteDictionary(filtro.comprobante)}' ");
+                    }
+                    break;
+                case "analisis_Grafico":
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porCliente":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND TS.{TableSourceName.Replace(" nombre", "")} LIKE '%{filtro.valor}%' ");
+                            break;
+                        case "porVendedor":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND V.Nombre_vendedor LIKE '%{filtro.valor}%' ");
+                            break;
+                        case "porCategorias_de_Clientes":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND CCP.categoria_clte_id = '%{filtro.valor}%' ");
+                            break;
+                    }
+
                     break;
             }
 
@@ -183,23 +281,43 @@ namespace MonicaExtraWeb.Utils
                     case "estadoCuentaIndividual":
                         query.Append($" TS.{TableSourceName.Replace(" nombre", "")} ");
                         break;
-                    //case "RFA04":
-                    //    query.Append(" C.nombre_clte ");
-                    //    break;
-                    //case "RFA05":
-                    //    query.Append(" TS.clte_direccion1 ");
-                    //    break;
-                    //case "RFA0":
-                    //    query.Append(" NB.Nombre_bodega ");
-                    //    break;
-                    //case "RFA09":
-                    //    query.Append(" C.cliente_id DESC ");
-                    //    break;
                     default:
                         query.Append(" TDS.fecha_emision DESC ");
                         break;
                 }
                 query.Append($", TDS.{TableSourceEntryId} DESC ");
+            }
+            #endregion
+
+            #region GROUP BY
+            if (filtro.SUM && filtro.GROUP)
+            {
+                query.Append("GROUP BY ");
+
+                switch (filtro.tipoCorte)
+                {
+                    case "porFecha_Emision":
+                        if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                            query.Append(" YEAR(TDS.fecha_emision), MONTH(TDS.fecha_emision) ");
+                        else
+                            query.Append(" TDS.fecha_emision ");
+                        break;
+                    case "porFecha_Vencimiento":
+                        if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                            query.Append(" YEAR(TDS.fecha_emision), MONTH(TDS.fecha_emision) ");
+                        else
+                            query.Append(" TDS.fecha_vcmto ");
+                        break;
+                    case "porCliente":
+                        query.Append("TS.cliente_id ");
+                        break;
+                    case "porVendedor":
+                        query.Append("V.Nombre_vendedor ");
+                        break;
+                    case "porCategorias_de_Clientes":
+                        query.Append($"CCP.{TableCategoriaClienteProveedorDescripcion} ");
+                        break;
+                }
             }
             #endregion
 
@@ -213,7 +331,7 @@ namespace MonicaExtraWeb.Utils
         /// <param name="filtro"></param>
         /// <param name="DbName"></param>
         /// <returns></returns>
-        public static string VentasDevolucionesCategoriaYVendedor(FiltrosReportes filtro, string DbName = "")
+        public static string VentasDevolucionesCategoriaYVendedor(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
 
@@ -859,6 +977,19 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
+        public static string CategoriasProveedoresQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  Categoria_idpv, ");
+            query.Append("  descripcion_categpv ");
+            query.Append($"FROM {DbName}dbo.categorias_pv ");
+            query.Append("ORDER BY descripcion_categpv ");
+
+            return query.ToString();
+        }
+
         public static string VendedoresInformacionQuery(string DbName = "")
         {
             var query = new StringBuilder();
@@ -872,7 +1003,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ClienteQuery(FiltrosReportes filtro, string DbName = "")
+        public static string ClienteQuery(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
 
@@ -903,7 +1034,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ProveedoresQuery(FiltrosReportes filtro, string DbName = "")
+        public static string ProveedoresQuery(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
 

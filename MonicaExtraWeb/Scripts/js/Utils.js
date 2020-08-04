@@ -224,7 +224,7 @@ const Navegacion = [
 
 //  SISTEMA DE NAVEGACION.
 const NavigationBehaviour = (actual, inicial) => {
-    if (actual === 'SeleccionarReporte')
+    if (actual === 'SeleccionarReporte' || actual === 'SeleccionarManejoDeData')
         document.getElementById('divMaster').classList.remove('container');
     else {
         if (!document.getElementById('divMaster').classList.contains('container'))
@@ -233,11 +233,8 @@ const NavigationBehaviour = (actual, inicial) => {
 
     let divActualVisible = Navegacion[Navegacion.length - 1].actual;
 
-    if (actual === 0) {
-        document.getElementById(divActualVisible).setAttribute('hidden', true);
-        document.getElementById('menu').removeAttribute('hidden');
-        Navegacion = Navegacion.slice(0, 1);
-    }
+    if (actual === 0)
+        window.location.href = '/';
     else if (actual === -1) {
         document.getElementById(divActualVisible).setAttribute('hidden', true);
         document.getElementById(Navegacion[Navegacion.length - 2].actual).removeAttribute('hidden');
@@ -264,12 +261,6 @@ const NavigationBehaviour = (actual, inicial) => {
         document.getElementById('btnBack').removeAttribute('hidden');
     else
         document.getElementById('btnBack').setAttribute('hidden', true);
-
-    //  MOSTRAR EL BOTON DE HOME
-    if (Navegacion.length >= 3)
-        document.getElementById('btnHome').removeAttribute('hidden');
-    else
-        document.getElementById('btnHome').setAttribute('hidden', true);
 }
 
 //  HACER IMPRESION
@@ -281,7 +272,7 @@ const Print = (type, paramsa) => {
 
 //  IR AL LA MAQUINA DEL CLIENTE A BUSCAR INFORMACION EN SU BASE DE DATOS LOCAL.
 const ApiReportesLocales = '/API/ReportesLocales/';
-const BuscarInformacionLocal = (ruta, filtro) => {
+const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     let cargando = document.getElementById('cargando');
 
     if (cargando)
@@ -331,11 +322,12 @@ const BuscarInformacionLocal = (ruta, filtro) => {
                             cargando.setAttribute('hidden', true);
 
                         if (JSON.parse(parsedContent.data).length === 0)
-                            MostrarMensage({
-                                title: 'Sin coincidencias',
-                                message: 'Ningun resultado que coincida con su búsqueda',
-                                icon: 'info'
-                            });
+                            if (!mostrarAlerta)
+                                MostrarMensage({
+                                    title: 'Sin coincidencias',
+                                    message: 'Ningún resultado que coincida con su búsqueda',
+                                    icon: 'info'
+                                });
 
                         resolve(JSON.parse(parsedContent.data))
                     }

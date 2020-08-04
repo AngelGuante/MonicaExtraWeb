@@ -280,6 +280,8 @@
                     if (this.FILTROS.columnaMoneda)
                         filtro.colMoneda = this.FILTROS.columnaMoneda;
                 }
+
+                //  SI this.FILTROS.mostrarDetallesProductosCorte ES FALSO, NO SE BUSCAN LOS DETALLES DE LOS PRODUCTOS, PARA SOLO TRAER LA SUMATORIA DE CADA CATEGORIA.
                 if (!this.FILTROS.mostrarDetallesProductosCorte) {
                     let result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
@@ -315,7 +317,6 @@
                     }
                 }
 
-                //
                 let tableName = '';
                 let camposArray = [];
 
@@ -332,14 +333,13 @@
                 if (!this.FILTROS.mostrarDetallesProductosCorte)
                     if (this.DATA.length === 0 && this.GroupDATA.length === 0)
                         return;
+
                 // TOTALIZACIONES.
                 this.TablaVisible = tableName;
 
                 filtro.SUM = true;
-
                 result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
-                //
                 if (!filtro.GROUP) {
                     this.FILTROS.PaginatorLastPage = Math.floor(result[0].count / 20);
 
@@ -487,6 +487,7 @@
                             setTimeout(() => document.getElementById('divGraficosDatosAgrupados').setAttribute('hidden', true), 2);
                     }
                 }
+
                 //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
                 //localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
             }

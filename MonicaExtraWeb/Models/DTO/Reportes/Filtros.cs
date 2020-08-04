@@ -1,12 +1,11 @@
-﻿using System;
-
-namespace MonicaExtraWeb.Models.DTO.Reportes
+﻿namespace MonicaExtraWeb.Models.DTO.Reportes
 {
-    public class FiltrosReportes
+    public class Filtros
     {
         private int _take;
 
         public bool SUM { get; set; } = false;
+        public bool COUNT { get; set; } = false;
         public bool GROUP { get; set; } = false;
 
         //  **GetIndividualClientStatus**
@@ -14,7 +13,7 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         public string code { get; set; }
         public string name { get; set; }
         public bool SoloDocsVencidos { get; set; } = false;
-        public bool descripcionSimplificada { get; set; } = false;
+        public bool descripcionSimplificada { get; set; } = true;
         //public bool IncluirFirmas { get; set; } = false;
         //public bool IncluirMoras { get; set; } = false;
 
@@ -40,7 +39,12 @@ namespace MonicaExtraWeb.Models.DTO.Reportes
         //  **CotizacionesYConduces**
         public string estatus { get; set; }
 
-
+        //  MANEJO DE DATA COTIZACIONES
+        public string NroCotizacion { get; set; }
+        public string NroFactura { get; set; }
+        public string notas { get; set; }
+        public string genero_factura1 { get; set; }
+        public string soloNCFFormatoElectronico { get; set; }
 
         //  PAGINACION
         public int skip { get; set; } = 0;

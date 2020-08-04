@@ -15,7 +15,7 @@ namespace MonicaExtraWeb.Controllers
     {
         [HttpPost]
         [Route("SendWebsocketServer/{status}")]
-        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, FiltrosReportes filtro) =>
+        public async Task<IHttpActionResult> SendWebsocketServer(ClientMessageStatusEnum status, Filtros filtro) =>
             Json(new { value = await SendQueryToClient(status, filtro) });
 
         [HttpPost]

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Web;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Reportes;
+using static MonicaExtraWeb.Utils.Querys.ManejoDeData;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 
 
@@ -18,7 +19,7 @@ namespace MonicaExtraWeb.Utils
     {
         private static string _websocketServerPATH = ConfigurationManager.AppSettings["websocketServerPATH"];
 
-        public static async Task<string> SendQueryToClient(ClientMessageStatusEnum status, FiltrosReportes filtro)
+        public static async Task<string> SendQueryToClient(ClientMessageStatusEnum status, Filtros filtro)
         {
             var IP = HttpContext.Current.Request.UserHostAddress;
             string query = "";
@@ -54,6 +55,19 @@ namespace MonicaExtraWeb.Utils
                     break;
                 case ClientMessageStatusEnum.Proveedores:
                     query = ProveedoresQuery(filtro);
+                    break;
+                case ClientMessageStatusEnum.CategoriasProveedoresInformacion:
+                    query = CategoriasProveedoresQuery();
+                    break;
+
+                case ClientMessageStatusEnum.ObtenerCotizacion:
+                    query = GetCotizacionQuery(filtro);
+                    break;
+                case ClientMessageStatusEnum.ObtenerEstimado:
+                    query = GetEstimadoQuery(filtro);
+                    break;
+                case ClientMessageStatusEnum.ActualizarEstimado:
+                    query = CerrarCotizacionQuery(filtro);
                     break;
             }
 
