@@ -1,4 +1,5 @@
 ﻿using MonicaExtraWeb.Models.DTO.Reportes;
+using MonicaExtraWeb.Utils.Querys;
 using System;
 using System.Text;
 using static MonicaExtraWeb.Utils.Helper;
@@ -163,9 +164,6 @@ namespace MonicaExtraWeb.Utils
                     case "RFA03":
                         query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
                         break;
-                    //case "RFA09":
-                    //    query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
-                    //    break;
                     case "analisis_Grafico":
                         switch (filtro.tipoCorte)
                         {
@@ -232,11 +230,10 @@ namespace MonicaExtraWeb.Utils
                 case "RFA09":
                     if (!string.IsNullOrEmpty(filtro.comprobante))
                     {
-                        //query.Append($"AND F.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
                         if (filtro.soloNCFFormatoElectronico == null
                             || string.IsNullOrEmpty(filtro.soloNCFFormatoElectronico))
                         {
-                            query.Append($"AND SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 2, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
+                            query.Append($"AND SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
                             query.Append($"OR SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 1) + SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 10, 2) = 'A{ComprobanteDictionary(filtro.comprobante)}' ");
                         }
                         if (!string.IsNullOrEmpty(filtro.tipoReporte))
@@ -337,9 +334,10 @@ namespace MonicaExtraWeb.Utils
 
             string TableSource = "";
             string TableSourceID = "";
-            string TableSourceEntryId = "";
+            string TableSourceEntryNro = "";
             string TableSourcePrecio = "";
             string TableDetilsSource = "";
+            string TableSourceComprobante = "";
 
             switch (filtro.tipoReporte)
             {
@@ -347,29 +345,33 @@ namespace MonicaExtraWeb.Utils
                     TableSource = "factura TS";
                     TableDetilsSource = "factura_detalle TDS";
                     TableSourceID = "factura_id";
-                    TableSourceEntryId = "nro_factura";
+                    TableSourceEntryNro = "nro_factura";
                     TableSourcePrecio = "precio_factura";
+                    TableSourceComprobante = "ncf";
                     break;
                 case "devoluciones":
                     TableSource = "devolucion_clte TS";
                     TableDetilsSource = "devolucion_clte_detalle TDS";
                     TableSourceID = "devolucion_clte_id";
-                    TableSourceEntryId = "nro_devolucion_clte";
+                    TableSourceEntryNro = "nro_devolucion_clte";
                     TableSourcePrecio = "precio_devolucion_clte";
+                    TableSourceComprobante = "ncf";
                     break;
                 case "cotizaciones":
                     TableSource = "estimado TS";
                     TableDetilsSource = "estimado_detalle TDS";
                     TableSourceID = "estimado_id";
-                    TableSourceEntryId = "nro_estimado";
+                    TableSourceEntryNro = "nro_estimado";
                     TableSourcePrecio = "precio_estimado";
+                    TableSourceComprobante = "tipo_documento";
                     break;
                 case "conduces":
                     TableSource = "consignacion TS";
                     TableDetilsSource = "consignacion_detalle TDS";
                     TableSourceID = "consignacion_id";
-                    TableSourceEntryId = "nro_consignacion";
+                    TableSourceEntryNro = "nro_consignacion";
                     TableSourcePrecio = "precio_consignacion";
+                    TableSourceComprobante = "tipo_documento";
                     break;
             }
 
@@ -412,11 +414,9 @@ namespace MonicaExtraWeb.Utils
                                 query.Append("  MAX(V.Nombre_vendedor) Nombre_vendedor ");
                                 break;
                             case "porComprobante":
-                                if (string.IsNullOrEmpty(filtro.colComprobante))
-                                    if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                                        query.Append(", TS.ncf ");
-                                    else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                                        query.Append(", TS.tipo_documento ");
+                                //if (string.IsNullOrEmpty(filtro.colComprobante))
+                                //query.Append($", TS.{TableSourceComprobante} ");
+                                query.Append($", Substring(Trim(TS.{TableSourceComprobante}), 1, 1) + Substring(Trim(TS.{TableSourceComprobante}), 10, 2) ncf ");
                                 break;
                             case "porMoneda":
                                 if (string.IsNullOrEmpty(filtro.colMoneda))
@@ -448,7 +448,7 @@ namespace MonicaExtraWeb.Utils
             }
             else
             {
-                query.Append($" TS.{TableSourceEntryId} nrodoc, ");
+                query.Append($" TS.{TableSourceEntryNro} nrodoc, ");
                 query.Append("  TS.fecha_emision ");
 
                 if (!filtro.GROUP)
@@ -539,10 +539,8 @@ namespace MonicaExtraWeb.Utils
                             query.Append(", TS.moneda ");
                             break;
                         case "porComprobante":
-                            if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                                query.Append(", TS.ncf ");
-                            else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                                query.Append(", TS.tipo_documento ");
+                            //query.Append($", TS.{TableSourceComprobante} ");
+                            query.Append($", Substring(Trim(ts.{TableSourceComprobante}), 1, 1) + Substring(Trim(ts.{TableSourceComprobante}), 10, 2) ncf ");
                             break;
                         case "porFecha_Emision":
                             if (!string.IsNullOrEmpty(filtro.agruparPorMes))
@@ -648,9 +646,9 @@ namespace MonicaExtraWeb.Utils
             {
                 case "RFA01":
                     if (!string.IsNullOrEmpty(filtro.desde))
-                        query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryId}) + ' '), LEN(TS.{TableSourceEntryId})) >= CAST('{filtro.desde}' AS FLOAT) ");
+                        query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryNro}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryNro}) + ' '), LEN(TS.{TableSourceEntryNro})) >= CAST('{filtro.desde}' AS FLOAT) ");
                     if (!string.IsNullOrEmpty(filtro.hasta))
-                        query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryId}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryId}) + ' '), LEN(TS.{TableSourceEntryId})) <= CAST('{filtro.hasta}' AS FLOAT) ");
+                        query.Append($"AND SUBSTRING(STR(TS.{TableSourceEntryNro}), Patindex('%[^0 ]%', STR(TS.{TableSourceEntryNro}) + ' '), LEN(TS.{TableSourceEntryNro})) <= CAST('{filtro.hasta}' AS FLOAT) ");
                     break;
                 case "RFA02":
                     if (!string.IsNullOrEmpty(filtro.desde))
@@ -681,13 +679,8 @@ namespace MonicaExtraWeb.Utils
                         query.Append($"AND NB.bodega_id = '{filtro.valor}' ");
                     break;
                 case "RFA09":
-                    if (!string.IsNullOrEmpty(filtro.comprobante))
-                        query.Append($"AND TS.tipo_documento = '{ComprobanteDictionary(filtro.comprobante)}' ");
                     if (!string.IsNullOrEmpty(filtro.valor))
-                        if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                            query.Append($"AND TS.ncf LIKE '%{filtro.valor}%' ");
-                        else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                            query.Append($"AND TS.tipo_documento LIKE '%{filtro.valor}%' ");
+                        query.Append($"AND TS.{TableSourceComprobante} LIKE '%{filtro.valor}%' ");
                     break;
 
                 case "RFA08":
@@ -711,10 +704,8 @@ namespace MonicaExtraWeb.Utils
                                 query.Append($"AND TS.moneda = '%{filtro.valor}%' ");
                                 break;
                             case "porComprobante":
-                                if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                                    query.Append($"AND TS.ncf LIKE '%{filtro.valor}%' ");
-                                else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                                    query.Append($"AND TS.tipo_documento LIKE '%{filtro.valor}%' ");
+                                if (!string.IsNullOrEmpty(filtro.valor))
+                                    query.Append($"AND TS.{TableSourceComprobante} LIKE '%{filtro.valor}%' ");
                                 break;
                             case "porTermino_de_Pago":
                                 query.Append($"AND TS.termino_id = '%{filtro.valor}%' ");
@@ -728,6 +719,27 @@ namespace MonicaExtraWeb.Utils
 
             if (!filtro.GROUP || !string.IsNullOrEmpty(filtro.colTermino) || filtro.tipoCorte == "porTermino_de_Pago")
                 query.Append("AND TS.termino_id = TP.termino_id ");
+            #endregion
+
+            #region AGREGANDO CONTENIDO EXTRA AL WHERE SEGUN ALGUNA CONDICION
+            switch (filtro.tipoConsulta)
+            {
+                case "RFA09":
+                    if (!string.IsNullOrEmpty(filtro.comprobante))
+                    {
+                        if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                            query.Append($"AND TS.tipo_documento = '{ComprobanteDictionary(filtro.comprobante, true)}' ");
+                        else
+                        {
+                            query.Append($"AND ts.{TableSourceEntryNro} IN ( ");
+                            query.Append($"SELECT {TableSourceEntryNro} ");
+                            query.Append($"FROM {TableSource} ");
+                            query.Append($"WHERE SUBSTRING(TRIM(TS.{TableSourceComprobante}), 1, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
+                            query.Append($"OR SUBSTRING(TRIM(TS.{TableSourceComprobante}), 1, 1) + SUBSTRING(TRIM(TS.{TableSourceComprobante}), 10, 2) = 'A{ComprobanteDictionary(filtro.comprobante)}') ");
+                        }
+                    }
+                    break;
+            }
             #endregion
 
             #region GROUP BY
@@ -754,10 +766,7 @@ namespace MonicaExtraWeb.Utils
                                     query.Append(" TS.moneda ");
                                     break;
                                 case "porComprobante":
-                                    if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                                        query.Append(" TS.ncf ");
-                                    else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                                        query.Append(" TS.tipo_documento ");
+                                    query.Append($" Substring(Trim(TS.{TableSourceComprobante}), 1, 1) + Substring(Trim(TS.{TableSourceComprobante}), 10, 2) ");
                                     break;
                                 case "porFecha_Emision":
                                     if (!string.IsNullOrEmpty(filtro.agruparPorMes))
@@ -789,7 +798,7 @@ namespace MonicaExtraWeb.Utils
                     {
                         case "RFA06":
                             query.Append("GROUP BY ");
-                            query.Append($" TS.{TableSourceEntryId}, ");
+                            query.Append($" TS.{TableSourceEntryNro}, ");
                             query.Append(" TS.fecha_emision, ");
                             query.Append(" TS.fecha_vcmto, ");
                             query.Append(" V.Nombre_vendedor, ");
@@ -810,7 +819,7 @@ namespace MonicaExtraWeb.Utils
                     {
                         case "RFA06":
                             query.Append("GROUP BY ");
-                            query.Append($" TS.{TableSourceEntryId}, ");
+                            query.Append($" TS.{TableSourceEntryNro}, ");
                             query.Append(" TS.fecha_emision, ");
                             query.Append(" TS.fecha_vcmto, ");
                             query.Append(" V.Nombre_vendedor, ");
@@ -868,10 +877,7 @@ namespace MonicaExtraWeb.Utils
                                     query.Append(" TS.moneda ");
                                     break;
                                 case "porComprobante":
-                                    if (filtro.tipoReporte == "ventas" || filtro.tipoReporte == "devoluciones")
-                                        query.Append(" TS.ncf ");
-                                    else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
-                                        query.Append(" TS.tipo_documento ");
+                                    query.Append($" TS.{TableSourceComprobante} ");
                                     break;
                                 case "porFecha_Emision":
                                     if (!string.IsNullOrEmpty(filtro.agruparPorMes))
@@ -906,7 +912,7 @@ namespace MonicaExtraWeb.Utils
                         query.Append(" TS.fecha_emision DESC ");
                         break;
                 }
-                query.Append($", TS.{TableSourceEntryId} DESC ");
+                query.Append($", TS.{TableSourceEntryNro} DESC ");
 
                 if (!filtro.GROUP)
                 {
@@ -1102,6 +1108,70 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
+
+        //  --------------
+        //  MANEJO DE DATA
+        //  --------------
+
+        public static string GetEstimadoQuery(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+            var queryWhere = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("COUNT(*) count ");
+
+            query.Append("FROM ");
+            query.Append($"{DbName}dbo.estimado E ");
+
+            #region WHERE
+            queryWhere.Append("WHERE ");
+            if (filtro.validarParaCierre)
+            {
+                queryWhere.Append($"genero_factura1 = '{filtro.genero_factura1}' ");
+                queryWhere.Append($"OR genero_factura2 = '{filtro.genero_factura2}' ");
+                queryWhere.Append($"OR genero_factura3 = '{filtro.genero_factura3}' ");
+            }
+
+            if (!string.IsNullOrEmpty(filtro.NroCotizacion))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append($"AND ");
+                queryWhere.Append($"nro_estimado = '{filtro.NroCotizacion}' ");
+            }
+
+            if (queryWhere.Length > 6)
+                query.Append(queryWhere.ToString());
+            #endregion
+
+            return query.ToString();
+        }
         #endregion
+
+        public static string CerrarCotizacionQuery(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+            var setQuery = new StringBuilder();
+
+            query.Append("UPDATE ");
+            query.Append($"{DbName}dbo.estimado ");
+
+            query.Append("SET ");
+            if (!string.IsNullOrEmpty(filtro.NroFactura))
+                setQuery.Append($"genero_factura1 = '{filtro.NroFactura}' ");
+            if (!string.IsNullOrEmpty(filtro.notas))
+            {
+                if (setQuery.Length > 0)
+                    setQuery.Append(",");
+                setQuery.Append($"notas = notas + '{filtro.notas}' ");
+            }
+
+            query.Append(setQuery.ToString());
+
+            if (!string.IsNullOrEmpty(filtro.NroCotizacion))
+                query.Append($"WHERE nro_estimado = '{filtro.NroCotizacion}' ");
+
+            return query.ToString();
+        }
     }
 }

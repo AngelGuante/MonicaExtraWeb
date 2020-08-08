@@ -184,6 +184,7 @@
                 if (this.FILTROS.tipoReporte === 'cotizaciones')
                     filtro.estatus = this.FILTROS.estatus
 
+                //  AGREGAR RANGO
                 if ((this.FILTROS.tipoConsulta === 'RFA01'
                     || this.FILTROS.tipoConsulta === 'RFA02'
                     || this.FILTROS.tipoConsulta === 'RFA03'
@@ -194,7 +195,8 @@
                     filtro.desde = this.FILTROS.desde;
                     filtro.hasta = this.FILTROS.hasta;
                 }
-                else if (this.FILTROS.tipoConsulta === 'RFA03')
+                //  AGREGAR VALORES
+                if (this.FILTROS.tipoConsulta === 'RFA03')
                     filtro.valor = this.FILTROS.terminoDePagoSeleccionado;
                 else if (this.FILTROS.tipoConsulta === 'RFA0')
                     filtro.valor = this.FILTROS.nombresBodegaSeleccionada;
@@ -223,16 +225,15 @@
                     || this.FILTROS.tipoConsulta === 'RFA05'
                     || this.FILTROS.tipoConsulta === 'RFA06')
                     filtro.valor = this.FILTROS.valor;
-                else if (this.FILTROS.tipoConsulta === 'RFA09') {
+                else if (this.FILTROS.tipoConsulta === 'RFA09')
                     filtro.comprobante = this.FILTROS.comprobante;
-                    //filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
-                }
 
                 if (this.FILTROS.tipoCorte === 'porFecha_Emision'
                     || this.FILTROS.tipoCorte === 'porFecha_Vencimiento')
                     if (this.FILTROS.agruparPorMes)
                         filtro.agruparPorMes = this.FILTROS.agruparPorMes;
 
+                //  SI this.FILTROS.mostrarDetallesProductosCorte ES FALSO, NO SE BUSCAN LOS DETALLES DE LOS PRODUCTOS, PARA SOLO TRAER LA SUMATORIA DE CADA CATEGORIA.
                 if (!this.FILTROS.mostrarDetallesProductosCorte) {
                     let result = await BuscarInformacionLocal('SendWebsocketServer/2', filtro);
 
@@ -406,7 +407,7 @@
 
                         //  REPORTE GRAFICO.
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#17a2b8');
+                        reporteGraficoBacground.fill('#73bfb8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();

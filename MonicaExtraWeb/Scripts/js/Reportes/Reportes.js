@@ -132,6 +132,9 @@
         //  BUSCAR INFORMACION SI ES NECESARIA.
         async BuscarData(data, filtro) {
             switch (data) {
+                //  ---------
+                //  REPORTES.
+                //  ---------
                 case 'terminoDePago':
                     if (this.terminoDePago.length === 0)
                         this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});
@@ -160,6 +163,17 @@
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
                 case 'proveedores':
                     return await BuscarInformacionLocal('SendWebsocketServer/10', filtro);
+
+                //  ---------------
+                //  MANEJO DE DATA.
+                //  ---------------
+                //case 'obtenerCotizacion':
+                //    return await BuscarInformacionLocal('SendWebsocketServer/12', filtro, true);
+                case 'obtenerEstimado':
+                    return await BuscarInformacionLocal('SendWebsocketServer/13', filtro);
+                case 'actualizarEstimado':
+                    return await BuscarInformacionLocal('SendWebsocketServer/14', filtro, true);
+
                 default:
                     alert('Console Error');
                     new Error(`Opcion: ${data}, NO manejada.`);

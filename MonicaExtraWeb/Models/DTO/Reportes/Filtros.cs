@@ -35,6 +35,7 @@
         public string colMoneda { get; set; }
         public string agruparPorMes { get; set; }
         public string comprobante { get; set; }
+        public string soloNCFFormatoElectronico { get; set; }
 
         //  **CotizacionesYConduces**
         public string estatus { get; set; }
@@ -42,9 +43,11 @@
         //  MANEJO DE DATA COTIZACIONES
         public string NroCotizacion { get; set; }
         public string NroFactura { get; set; }
+        public bool validarParaCierre { get; set; } = false;
         public string notas { get; set; }
         public string genero_factura1 { get; set; }
-        public string soloNCFFormatoElectronico { get; set; }
+        public string genero_factura2 { get; set; }
+        public string genero_factura3 { get; set; }
 
         //  PAGINACION
         public int skip { get; set; } = 0;

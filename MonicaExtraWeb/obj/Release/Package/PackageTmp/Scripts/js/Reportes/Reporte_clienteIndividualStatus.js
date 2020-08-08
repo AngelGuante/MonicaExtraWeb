@@ -21,6 +21,7 @@
             incluirMoras: false,
             descripcionSimplificada: true,
             diasVencidos: false,
+            soloNCFFormatoElectronico: false,
 
             fechaMinReporteBuscado: '',
             fechaMaxReporteBuscado: '',
@@ -36,7 +37,7 @@
             numeroSeleccion: 'documento',
             tipoReporte: 'porCobrar',
             tipoConsulta: '',
-            desdeHastaRango: 0,
+            desdeHastaRango: '-1',
             desde: 0,
             hasta: 0,
             valor: '',
@@ -70,6 +71,7 @@
             this.FILTROS.agruparPorMes = false;
             this.FILTROS.mostrarDetallesProductosCorte = false;
             this.FILTROS.analisisGrafico = false;
+            this.FILTROS.codCliente = '';
 
             if (this.FILTROS.tipoConsulta === 'analisis_Grafico')
                 this.FILTROS.tipoCorte = 'porFecha_Emision';
@@ -77,20 +79,26 @@
                 this.FILTROS.tipoCorte = '';
         },
         'FILTROS.tipoReporte'() {
+            this.FILTROS.soloNCFFormatoElectronico = false;
+
             switch (this.FILTROS.tipoReporte) {
                 case 'porCobrar':
                     this.tituloClienteOProveedor = 'Clientes';
+
+                    if (this.FILTROS.comprobante === 'comprobante_de_compras'
+                        || this.FILTROS.comprobante === 'gasto_menor')
+                        this.FILTROS.comprobante = 'creditoFiscal';
                     break;
                 case 'porPagar':
                     this.TipoCorteChanged();
-
                     this.tituloClienteOProveedor = 'Proveedores';
-                    if (this.FILTROS.tipoConsulta === 'RFA09')
-                        this.FILTROS.tipoConsulta = '';
                     break;
             }
         },
         'FILTROS.desdeHastaRango'() {
+            if (this.FILTROS.desdeHastaRango === '-1')
+                return;
+
             const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
 
             this.FILTROS.minFecha_emision = rango.firstday;
@@ -178,7 +186,7 @@
             if (this.FILTROS.tipoConsulta === 'estadoCuentaIndividual' && !codigo) {
                 MostrarMensage({
                     title: 'No se puede hacer su búsqueda.',
-                    message: `Debe ingresar un codigo de cliente.`,
+                    message: `Debe ingresar un codigo.`,
                     icon: 'info'
                 });
                 return;
@@ -191,13 +199,16 @@
                 this.GroupDATA = [];
 
                 const filtro = {
-                    minFecha_emision: this.FILTROS.minFecha_emision,
-                    maxFecha_emision: this.FILTROS.maxFecha_emision,
                     code: codigo,
                     tipoReporte: this.FILTROS.tipoReporte,
                     tipoConsulta: this.FILTROS.tipoConsulta,
                 }
-                debugger
+                
+                if (this.FILTROS.desdeHastaRango !== '-1') {
+                    filtro.minFecha_emision = this.FILTROS.minFecha_emision;
+                    filtro.maxFecha_emision = this.FILTROS.maxFecha_emision;
+                }
+
                 //  AGREGAR VALORES DEL FRILTRO PERSONALIZADO
                 if (this.FILTROS.FormatoConsultas === 'personalizado') {
                     if (!this.FILTROS.descripcionSimplificada)
@@ -241,8 +252,11 @@
                     filtro.desde = this.FILTROS.desde;
                     filtro.hasta = this.FILTROS.hasta;
                 }
-                else if (this.FILTROS.tipoConsulta === 'RFA09')
+                else if (this.FILTROS.tipoConsulta === 'RFA09') {
                     filtro.comprobante = this.FILTROS.comprobante;
+                    if (this.FILTROS.tipoReporte === 'porPagar')
+                        filtro.soloNCFFormatoElectronico = this.FILTROS.soloNCFFormatoElectronico;
+                }
 
                 //  AGREGAR VALORES
                 if (this.FILTROS.tipoConsulta === 'RFA01')
@@ -409,7 +423,7 @@
                         document.getElementById('CPCCPPdivGraficosDatosAgrupados').removeAttribute('hidden');
 
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#17a2b8');
+                        reporteGraficoBacground.fill('#73bfb8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();
@@ -480,7 +494,7 @@
             if (this.modalData.nombreClienteABuscar)
                 filtros.name = this.modalData.nombreClienteABuscar;
 
-            if (this.FILTROS.tipoReporte === 'PorCobrar') {
+            if (this.FILTROS.tipoReporte === 'porCobrar') {
                 this.modalData.clientes = await monicaReportes.BuscarData('clientes', filtros);
                 filtros.SUM = true;
                 this.modalData.PaginatorLastPage = Math.floor((await monicaReportes.BuscarData('clientes', filtros))[0].count / 20);
@@ -523,8 +537,8 @@
 
             document.getElementById('CPCCPPIconBottonBuscar').style = 'margin-top: 3%';
 
-            if (!('col-lg-5' in divAgrupacion.classList))
-                divAgrupacion.classList.add('col-lg-5');
+            if (divAgrupacion !== null && !('col-lg-5' in divAgrupacion.classList.add('col-lg-5')))
+                document.getElementById('agrupacionDiv').classList.add('col-lg-5');
 
             switch (this.FILTROS.tipoCorte) {
                 case 'porTermino_de_Pago':
@@ -539,7 +553,6 @@
                     this.FILTROS.maxFecha_emisionAgrupacionSeleccionada = new Date().toISOString().slice(0, 10);
                     break;
                 case 'porCategorias_de_Clientes':
-                    debugger
                     if (this.FILTROS.tipoReporte === 'porCobrar')
                         await monicaReportes.BuscarData('categoriasClientes');
                     else if (this.FILTROS.tipoReporte === 'porPagar')

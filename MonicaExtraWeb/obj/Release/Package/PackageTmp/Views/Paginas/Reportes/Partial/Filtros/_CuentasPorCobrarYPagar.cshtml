@@ -1,11 +1,11 @@
 ﻿<div id="filtrosClienteIndividualStatus" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
     <div>
         <button class="btn btn-info"
-                style="float: right; border:none; background:none; display:flex; color:#17a2b8;"
+                style="float: right; border:none; background:none; display:flex; color:#73bfb8;"
                 title="Configuraciones avanzadas para los filtros"
                 v-on:click="AjustesAvanzadosFiltros()"
                 v-bind:disabled="FILTROS.mostrarDetallesProductosCorte">
-            Ajustes Avanzados <i class="material-icons" style="color:#17a2b8; margin-left:4px;">settings</i>
+            Ajustes Avanzados <i class="material-icons" style="color:#73bfb8; margin-left:4px;">settings</i>
         </button>
     </div>
 
@@ -35,7 +35,7 @@
                         <div class="card-body p-1">
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    <label class="font-weight-bold">Tipo de Corte</label>
+                                    <label class="font-weight-bold">Tipo de análisis</label>
                                     <select class="custom-select" v-model="FILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
                                         <option value="porFecha_Emision">Por Fecha Emisión</option>
                                         <option value="porFecha_Vencimiento">Por Fecha Vencimiento</option>
@@ -81,17 +81,17 @@
                     <option value="RFA04" disabled>Por Cliente</option>
                     <option value="RFA03">Por Termino de Pago</option>
                     <option value="tipo_de_Documento">Por Tipo de Documento</option>
-                    <option value="RFA09" v-if="FILTROS.tipoReporte === 'porCobrar'">Por Comprobante</option>
+                    <option value="RFA09">Por Comprobante</option>
                     <option value="estadoCuentaIndividual">Estado de Cuenta Individual</option>
                     <option value="">Por Cuenta por Cobrar en General</option>
                     <option value="" disabled>Por Antigüedad de Saldos</option>
                     <option value="" disabled>Por Analisis de Cobros</option>
-                    <option value="analisis_Grafico">Reportes Agrupados</option>
+                    <option value="analisis_Grafico">Análisis Gráfico y Estadísticas Avanzadas</option>
                 </select>
             </div>
 
             <div class="col-12 col-lg-8">
-                <div class="row">
+                <div class="row d-flex align-items-end">
                     @*METODO DE AGRUPACION*@
                     <div id="CPCCPPagrupacionDiv" class="col-12"
                          v-if="FILTROS.tipoConsulta === 'analisis_Grafico'">
@@ -103,6 +103,7 @@
                                     <label for="reporteFechaDesde">Elegir Fecha</label>
                                     <select class="custom-select" v-model="FILTROS.desdeHastaRango">
                                         <option value="" disabled>Personalizada</option>
+                                        <option value="-1" selected>Sin Fecha</option>
                                         <option value="0">Hoy</option>
                                         <option value="1">Esta Semana</option>
                                         <option value="2">Este Mes</option>
@@ -129,12 +130,12 @@
 
                                 <div class="form-group col">
                                     <label for="reporteFechaDesde">Desde</label>
-                                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                                    <input id="reporteFechaDesde" v-bind:disabled="FILTROS.desdeHastaRango === '-1'" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
                                 </div>
 
                                 <div class="form-group col">
                                     <label for="reporteFechaHasta">Hasta</label>
-                                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
+                                    <input id="reporteFechaHasta" v-bind:disabled="FILTROS.desdeHastaRango === '-1'" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
                                 </div>
                             </div>
                         </div>
@@ -208,13 +209,21 @@
                         <select class="custom-select" v-model="FILTROS.comprobante">
                             <option value="creditoFiscal">Crédito Fiscal</option>
                             <option value="consumo">Consumo</option>
-                            <option value="gubernamental">Gubernamental</option>
+                            <option value="nota_de_debito">Nota de Débito</option>
+                            <option value="nota_de_credito">Nota Crédito</option>
+                            <option value="comprobante_de_compras" v-if="FILTROS.tipoReporte === 'porPagar'">Comprobante de Compra</option>
+                            <option value="gasto_menor" v-if="FILTROS.tipoReporte === 'porPagar'">Gasto Menor</option>
                             <option value="especial">Especial</option>
+                            <option value="gubernamental">Gubernamental</option>
                             <option value="exportaciones">Exportaciones</option>
-                            <option disabled value="nota_de_debito">Nota de Débito</option>
-                            <option disabled value="nota_de_credito">Nota Crédito</option>
-
                         </select>
+                    </div>
+
+                    <div class="form-check col-12 col-lg-4"
+                         v-if="FILTROS.tipoConsulta === 'RFA09'
+                            && FILTROS.tipoReporte === 'porPagar'">
+                        <input type="checkbox" class="form-check-input" id="CPCCPPporCobrarCheckSoloFormatoElectronico" v-model="FILTROS.soloNCFFormatoElectronico">
+                        <label class="form-check-label" for="CPCCPPporCobrarCheckSoloFormatoElectronico">Sólo Electronico</label>
                     </div>
 
                     @*SELECT TERMINO PAGO*@
@@ -274,6 +283,7 @@
                     <label for="reporteFechaDesde">Elegir Fecha</label>
                     <select class="custom-select" v-model="FILTROS.desdeHastaRango">
                         <option value="" disabled>Personalizada</option>
+                        <option value="-1" selected>Sin Fecha</option>
                         <option value="0">Hoy</option>
                         <option value="1">Esta Semana</option>
                         <option value="2">Este Mes</option>
@@ -301,13 +311,21 @@
                 <div class="form-group col-12 col-lg-2" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
                                                                         && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
                     <label for="reporteFechaDesde">Desde</label>
-                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                    <input id="reporteFechaDesde"
+                           class="form-control col-md"
+                           type="date"
+                           v-model="FILTROS.minFecha_emision"
+                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'"/>
                 </div>
 
                 <div class="form-group col-12 col-lg-2" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
                                                                         && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
                     <label for="reporteFechaHasta">Hasta</label>
-                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
+                    <input id="reporteFechaHasta"
+                           class="form-control col-md"
+                           type="date"
+                           v-model="FILTROS.maxFecha_emision"
+                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'"/>
                 </div>
 
                 <a class="btn btn-light col" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:3%;" id="CPCCPPIconBottonBuscar">search</i></a>

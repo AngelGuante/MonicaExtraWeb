@@ -17,7 +17,7 @@ a:focus {
 #sidebar {
     min-width: 250px;
     max-width: 250px;
-    background: #17A2B8;
+    background: #73bfb8;
     color: #fff;
     transition: all 0.3s;
     height: 100vh;
@@ -55,7 +55,7 @@ a:focus {
 #sidebar ul li.active > a,
 a[aria-expanded="true"] {
     color: #fff;
-    background: #17A2B8;
+    background: #73bfb8;
 }
 
 a[data-toggle="collapse"] {
@@ -70,10 +70,15 @@ a[data-toggle="collapse"] {
     transform: translateY(-50%);
 }
 
+.tableHeader {
+    background-color:#00309b;
+    color: white;
+}
+
 ul ul a {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #17A2B8;
+    background: #73bfb8;
 }
 
 ul.CTAs {
@@ -90,7 +95,7 @@ ul.CTAs a {
 
 a.article,
 a.article:hover {
-    background: #17A2B8 !important;
+    background: #73bfb8!important;
     color: #fff !important;
 }
 

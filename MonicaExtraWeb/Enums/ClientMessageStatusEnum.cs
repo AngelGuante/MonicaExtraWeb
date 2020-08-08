@@ -14,7 +14,7 @@
         Proveedores = 10,
         CategoriasProveedoresInformacion = 11,
 
-        ObtenerCotizacion = 12,
+        //ObtenerCotizacion = 12,
         ObtenerEstimado = 13,
         ActualizarEstimado = 14,
     }

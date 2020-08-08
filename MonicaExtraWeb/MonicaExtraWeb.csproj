@@ -162,7 +162,6 @@
     <Compile Include="Controllers\API\ClientesController.cs" />
     <Compile Include="Controllers\API\ReportesController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
-    <Compile Include="Controllers\ManejoDeDataController.cs" />
     <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
@@ -194,7 +193,6 @@
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\LocalRequestQuery.cs" />
     <Compile Include="Utils\Querys\Data.cs" />
-    <Compile Include="Utils\Querys\ManejoDeData.cs" />
     <Compile Include="Utils\Querys\Reportes.cs" />
     <Compile Include="Utils\RequestsHTTP.cs" />
   </ItemGroup>
@@ -204,6 +202,7 @@
     <Content Include="Content\assets\down-arrow.png" />
     <Content Include="Content\assets\graphic.png" />
     <Content Include="Content\assets\loading.gif" />
+    <Content Include="Content\assets\logoHeaderMonica.png" />
     <Content Include="Content\assets\management.png" />
     <Content Include="Content\assets\sell.png" />
     <Content Include="Content\assets\server.png" />
@@ -260,8 +259,8 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\js\Chart.js" />
-    <Content Include="Scripts\js\ManejoDeData\ManejoDeData.js" />
-    <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizaciones.js" />
+    <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
+    <Content Include="Scripts\js\Reportes\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
     <Content Include="Scripts\js\Reportes\Reporte_cotizacionesYConduces.js" />
@@ -388,10 +387,7 @@
     <Content Include="Views\Reportes\Index.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_CuentasPorCobrarYPagar.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_CuentasPorCobrarYPorPagarFormatoTablas.cshtml" />
-    <Content Include="Views\ManejoDeData\Index.cshtml" />
-    <Content Include="Views\Paginas\ManejoDeData\_menuSeleccionManejoDeData.cshtml" />
-    <Content Include="Views\Paginas\ManejoDeData\_menuSeleccionSourceManejoDeData.cshtml" />
-    <Content Include="Views\Paginas\ManejoDeData\Partial\_cotizacion.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\ManejoDeData\Cerrar\_CotizacionesYConduces.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -289,7 +289,6 @@ D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\M
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Newtonsoft.Json.xml
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Antlr3.Runtime.pdb
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.xml
-D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csprojAssemblyReference.cache
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csproj.CoreCompileInputs.cache
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csproj.CopyComplete
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.dll

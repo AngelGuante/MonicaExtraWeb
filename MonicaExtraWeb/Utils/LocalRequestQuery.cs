@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Web;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Reportes;
-using static MonicaExtraWeb.Utils.Querys.ManejoDeData;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 
 
@@ -60,9 +59,6 @@ namespace MonicaExtraWeb.Utils
                     query = CategoriasProveedoresQuery();
                     break;
 
-                case ClientMessageStatusEnum.ObtenerCotizacion:
-                    query = GetCotizacionQuery(filtro);
-                    break;
                 case ClientMessageStatusEnum.ObtenerEstimado:
                     query = GetEstimadoQuery(filtro);
                     break;

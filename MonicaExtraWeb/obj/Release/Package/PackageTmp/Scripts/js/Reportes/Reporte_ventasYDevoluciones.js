@@ -2,6 +2,7 @@
     el: '#ventasYDevoluciones',
 
     data: {
+        SelctComprobantePersonalizadoSeleccionado: false,
         TablaVisible: '',
         DATA: [],
         GroupDATA: [],
@@ -29,7 +30,6 @@
             nombresBodegaSeleccionada: '',
             categoriasProductosSeleccionada: '',
             comprobante: 'creditoFiscal',
-            valorComprobanteAutocompletado: 'A01',
 
             agruparPorMes: false,
             mostrarDetallesProductosCorte: false,
@@ -67,6 +67,21 @@
     },
 
     watch: {
+        'FILTROS.valor'() {
+            if (this.FILTROS.tipoConsulta === 'RFA09')
+                if (this.FILTROS.valor.length === 0)
+                    this.FILTROS.comprobante = 'creditoFiscal';
+                else {
+                    this.FILTROS.comprobante = '';
+                    this.SelctComprobantePersonalizadoSeleccionado = true;
+                }
+        },
+        'FILTROS.comprobante'() {
+            if (this.SelctComprobantePersonalizadoSeleccionado && this.FILTROS.comprobante.length > 0) {
+                this.FILTROS.valor = '';
+                this.SelctComprobantePersonalizadoSeleccionado = false;
+            }
+        },
         'FILTROS.tipoCorte'() {
             if (this.FILTROS.tipoCorte !== 'porFecha_Emision'
                 && this.FILTROS.tipoCorte !== 'porFecha_Vencimiento')
@@ -126,32 +141,9 @@
                 }
             }
         },
-        'FILTROS.comprobante'() {
-            switch (this.FILTROS.comprobante) {
-                case 'creditoFiscal':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A01';
-                    break;
-                case 'consumo':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A02';
-                    break;
-                case 'gubernamental':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A15';
-                    break;
-                case 'especial':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A14';
-                    break;
-                case 'exportaciones':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A17';
-                    break;
-            }
-        },
         'FILTROS.tipoReporte'() {
             switch (this.FILTROS.tipoReporte) {
-                case 'ventas':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A01';
-                    break;
                 case 'devoluciones':
-                    this.FILTROS.valorComprobanteAutocompletado = 'A04';
                     this.FILTROS.comprobante = 'consumo';
                     break;
             }
@@ -257,8 +249,10 @@
                     || this.FILTROS.tipoConsulta === 'RFA06')
                     filtro.valor = this.FILTROS.valor;
                 else if (this.FILTROS.tipoConsulta === 'RFA09') {
-                    filtro.valor = this.FILTROS.valorComprobanteAutocompletado + this.FILTROS.valor;
-                    filtro.comprobante = this.FILTROS.comprobante;
+                    if (this.FILTROS.valor.length > 0)
+                        filtro.valor = this.FILTROS.valor;
+                    else if (this.FILTROS.comprobante.length > 0)
+                        filtro.comprobante = this.FILTROS.comprobante;
                 }
 
                 if (this.FILTROS.tipoCorte === 'porFecha_Emision'
@@ -374,12 +368,13 @@
                     if (!this.FILTROS.mostrarDetallesProductosCorte) {
                         document.getElementById('divGraficosDatosAgrupados').setAttribute('hidden', true);
 
+                        debugger
                         let contadorDeLineas = 0;
                         for (let index = 0; index < result.length; index++) {
                             contadorDeLineas += this.GroupDATA[index].length + 1;
                             //  OBTENER LA POSICION DEL TOTAL DE CADA GRUPO PARA DARLE ESTILOS.
                             tableTotalPositionsRows.push(contadorDeLineas);
-                             
+
                             //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
                             for (let i = 0; i < this.GroupDATA.length; i++) {
                                 const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
@@ -461,7 +456,7 @@
 
                         //  REPORTE GRAFICO.
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#17a2b8');
+                        reporteGraficoBacground.fill('#73bfb8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();
@@ -539,10 +534,6 @@
             this.FILTROS.nombresBodegaSeleccionada = '';
             this.FILTROS.categoriasProductosSeleccionada = '';
 
-            const inputValor = document.getElementById('VDPorComprobanteReporte');
-            if (inputValor && 'input-group' in inputValor.classList)
-                inputValor.classList.remmove('input-group');
-
             //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
             if (this.FILTROS.tipoConsulta === 'RFA03')
                 monicaReportes.BuscarData('terminoDePago');
@@ -550,10 +541,6 @@
                 monicaReportes.BuscarData('nombresBodega');
             if (this.FILTROS.tipoConsulta === 'RFA08')
                 monicaReportes.BuscarData('categoriasProductos');
-            if (this.FILTROS.tipoConsulta === 'RFA09') {
-                if (inputValor)
-                    inputValor.classList.add('input-group');
-            }
         },
 
         async TipoCorteChanged() {

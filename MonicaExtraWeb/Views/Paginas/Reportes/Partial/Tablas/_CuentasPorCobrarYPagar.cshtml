@@ -1,7 +1,7 @@
 ﻿<div class="col-12" v-if="DATA.length > 0" style="width:99%">
     <table id="tablaEstadoCuentaCliente" class="table table-striped">
         <thead>
-            <tr>
+            <tr class="tableHeader">
                 <th v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
 
                 <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Número</th>
@@ -20,10 +20,10 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'color: #17a2b8' : element.nro_dcmto ? 'color: #f76876' : ''">
+            <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'color: #73bfb8' : element.nro_dcmto ? 'color: #f76876' : ''">
                 <td v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
 
-                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto }}</td>
+                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto | FilterRemoveLeftZeros }}</td>
                 <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo }}</td>
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_emision | FilterDateFormat }}</td>
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_vcmto | FilterDateFormat }}</td>

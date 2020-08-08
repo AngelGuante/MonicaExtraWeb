@@ -37,11 +37,11 @@
      class="col-12"
      v-if="TablaVisible === 'tablaGROUP'"
      style="width:99%">
-    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
+    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#73bfb8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
 
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
-            <tr>
+            <tr class="tableHeader">
                 <th v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
 
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Nro</th>
@@ -76,7 +76,7 @@
 
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.nombre_clte | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.clte_direccion1 | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaVendedor && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaComprobante && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.ncf | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaTermino && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
@@ -97,7 +97,7 @@
 <div class="col-12" v-if="TablaVisible === 'tablaRangoNroFactura'" style="width:99%">
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
-            <tr>
+            <tr class="tableHeader">
                 <th style="text-align:right;" scope="col">Nro.</th>
                 <th style="text-align:right;" scope="col">Fecha Emisión</th>
                 <th style="text-align:right;" scope="col">Vencimiento</th>

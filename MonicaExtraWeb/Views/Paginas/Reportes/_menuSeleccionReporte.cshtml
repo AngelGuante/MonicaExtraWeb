@@ -68,6 +68,9 @@
                         <li>
                             <a onclick="monicaReportes.OpcionMenuCeleccionado('CotizacionesYConducesFiltro')">Consultas y Reportes</a>
                         </li>
+                        <li>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_CotizacionesYConduces')">Cierres</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -88,10 +91,11 @@
             @*----VENTAS & DEVOLUCIONES----*@
             @*-----------------------------*@
             <div id="ventasYDevoluciones">
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_VentasYDevoluciones.cshtml")
                 <div>
                     @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_VentasYDevoluciones.cshtml")
 
-                    <div id="contenidosReportes" class="Tables">
+                    <div class="Tables">
                         <div class="row">
                             @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_VentasYDevoluciones.cshtml")
                         </div>
@@ -107,8 +111,7 @@
                 @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPorPagarFormatoTablas.cshtml")
                 <div>
                     @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_CuentasPorCobrarYPagar.cshtml")
-
-                    <div id="contenidosReportes" class="Tables">
+                    <div class="Tables">
                         <div class="row">
                             @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_CuentasPorCobrarYPagar.cshtml")
                         </div>
@@ -122,17 +125,17 @@
             <div id="cotizacionesYConduces">
                 <div>
                     @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_CotizacionesYConduces.cshtml")
-
-                    <div id="contenidosReportes" class="Tables">
+                    <div class="Tables">
                         <div class="row">
                             @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_CotizacionesYConduces.cshtml")
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/ManejoDeData/Cerrar/_CotizacionesYConduces.cshtml")
+            </div>
         </div>
     </div>
 </div>
-
-@*  MODALES  *@
-@Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_VentasYDevoluciones.cshtml")

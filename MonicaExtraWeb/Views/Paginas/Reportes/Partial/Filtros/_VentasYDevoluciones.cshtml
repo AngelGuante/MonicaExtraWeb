@@ -1,11 +1,11 @@
 ﻿<div id="VentasYDevolucionesCategoriaYVendedor" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
     <div v-if="FILTROS.tipoConsulta === 'RFA08'">
         <button class="btn btn-info"
-                style="float: right; border:none; background:none; display:flex; color:#17a2b8;"
+                style="float: right; border:none; background:none; display:flex; color:#73bfb8;"
                 title="Configuraciones avanzadas para los filtros"
                 v-on:click="AjustesAvanzadosFiltros()"
                 v-bind:disabled="FILTROS.mostrarDetallesProductosCorte">
-            Ajustes Avanzados <i class="material-icons" style="color:#17a2b8; margin-left:4px;">settings</i>
+            Ajustes Avanzados <i class="material-icons" style="color:#73bfb8; margin-left:4px;">settings</i>
         </button>
     </div>
 
@@ -35,7 +35,7 @@
                         <div class="card-body p-1">
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    <label class="font-weight-bold">Tipo de Corte</label>
+                                    <label class="font-weight-bold">Tipo de análisis</label>
                                     <select class="custom-select" v-model="FILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
                                         <option value="porCategoria">Por Categoria</option>
                                         <option value="porCliente">Por Cliente</option>
@@ -123,8 +123,8 @@
                     <option value="RFA05">Por Cliente sin registrar</option>
                     <option value="RFA06">Por Producto especifico</option>
                     <option value="RFA0">Por Almacén o Bodega</option>
-                    <option value="RFA08">Por Vendedor y Categoría de Productos</option>
                     <option value="RFA09">Por Comprobante</option>
+                    <option value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
                 </select>
             </div>
 
@@ -242,12 +242,7 @@
                                                         || FILTROS.tipoConsulta === 'RFA06'
                                                         || FILTROS.tipoConsulta === 'RFA09'">
                         <label class="font-weight-bold">Valor</label>
-                        <div class="input-group" id="VDPorComprobanteReporte">
-                            <div class="input-group-prepend" v-if="FILTROS.tipoConsulta === 'RFA09'">
-                                <div class="input-group-text">{{ FILTROS.valorComprobanteAutocompletado }}</div>
-                            </div>
-                            <input type="text" class="form-control" v-model="FILTROS.valor" />
-                        </div>
+                        <input type="text" class="form-control" v-model="FILTROS.valor" />
                     </div>
 
                     @*SELECT TERMINO PAGO*@
@@ -265,6 +260,7 @@
                          v-if="FILTROS.tipoConsulta === 'RFA09'">
                         <label class="font-weight-bold">Opción</label>
                         <select class="custom-select" v-model="FILTROS.comprobante" v-bind:disabled="FILTROS.tipoReporte === 'devoluciones'">
+                            <option value="" disabled>--Personalizado--</option>
                             <option value="consumo">Consumo</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="creditoFiscal">Crédito Fiscal</option>
                             <option v-if="FILTROS.tipoReporte === 'ventas'" value="gubernamental">Gubernamental</option>

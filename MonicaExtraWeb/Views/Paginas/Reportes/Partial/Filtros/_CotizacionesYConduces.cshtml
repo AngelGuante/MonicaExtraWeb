@@ -25,7 +25,7 @@
                         <div class="card-body p-1">
                             <div class="row">
                                 <div class="col-12 col-lg-6">
-                                    <label class="font-weight-bold">Tipo de Corte</label>
+                                    <label class="font-weight-bold">Tipo de análisis</label>
                                     <select class="custom-select" v-model="FILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
                                         <option value="porCategoria">Por Categoria</option>
                                         <option value="porCliente">Por Cliente</option>
@@ -113,9 +113,9 @@
                     <option value="RFA05">Por Cliente sin registrar</option>
                     <option value="RFA06">Por Producto especifico</option>
                     <option value="RFA0">Por Almacén o Bodega</option>
-                    <option value="RFA08">Por Vendedor y Categoría de Productos</option>
                     <option value="RFA09">Por Comprobante</option>
                     <option value="CCEstatusDocumento" disabled>Estatus del Documento</option>
+                    <option value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
                 </select>
             </div>
 
@@ -225,6 +225,15 @@
                             <input type="text" class="form-control" v-model="FILTROS.valor" />
                         </div>
                     </div>
+                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS (SELECT/COMBOBOX)*@
+                    <div class="col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA04'
+                                                        || FILTROS.tipoConsulta === 'RFA05'
+                                                        || FILTROS.tipoConsulta === 'RFA06'">
+                        <label class="font-weight-bold">Valor</label>
+                        <input type="text" class="form-control" v-model="FILTROS.valor" />
+                    </div>
+
 
                     @*SELECT TERMINO PAGO*@
                     <div class="col-12 col-lg-5"

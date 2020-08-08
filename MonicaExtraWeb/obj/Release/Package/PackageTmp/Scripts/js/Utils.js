@@ -181,9 +181,9 @@ const TablaEstiloTotalizacionFila = (tabla, cols) => {
     const lastRow = tabla.rows[tableSize].children;
 
     for (col of cols) {
-        lastRow[col].style.border = ".2px solid #17A2B8"
+        lastRow[col].style.border = ".2px solid #73bfb8"
         lastRow[col].style.fontWeight = "bolder"
-        lastRow[col].style.color = "#17A2B8"
+        lastRow[col].style.color = "#73bfb8"
     }
 }
 
@@ -200,7 +200,7 @@ const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows) => {
             for (col of cols) {
                 row[col].style.fontWeight = "bolder"
                 row[col].style.fontWeight = "900"
-                row[col].style.color = "#17A2B8"
+                row[col].style.color = "#73bfb8"
             }
         }
     }
@@ -211,7 +211,7 @@ const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows) => {
             for (col of cols) {
                 row[col].style.fontWeight = "bolder"
                 row[col].style.fontWeight = "900"
-                row[col].style.color = "#17A2B8"
+                row[col].style.color = "#73bfb8"
             }
         }
     }

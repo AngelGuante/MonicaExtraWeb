@@ -37,11 +37,11 @@
      class="col-12"
      v-if="TablaVisible === 'tablaGROUP'"
      style="width:99%">
-    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
+    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#73bfb8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
 
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
-            <tr>
+            <tr class="tableHeader">
                 <th v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
 
                 <th v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:right;" scope="col">Nro</th>
@@ -70,6 +70,7 @@
                 <th style="text-align:right;" scope="col">Valor</th>
                 <th style="text-align:right;" scope="col">ITBIS</th>
                 <th style="text-align:right;" scope="col">TOTAL</th>
+            </tr>
         </thead>
         <tbody>
             <tr v-for="element in DATA">
@@ -81,7 +82,7 @@
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaVendedor && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaComprobante && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.tipo_documento | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.Estatus | FilterUppercase }}</td>
-                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaTermino && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
+                <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaTermino && FILTROS.FormatoConsultas === 'completo'" style="        text-align: left;">{{ element.Descripcion_termino | FilterUppercase }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte && FILTROS.ConsultaTrajoColumnaMoneda && FILTROS.FormatoConsultas === 'completo'" style="text-align:left;">{{ element.moneda | FilterMoneda }}</td>
                 <td v-if="toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.descrip_producto | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.cantidad }}</td>
@@ -99,7 +100,7 @@
 <div class="col-12" v-if="TablaVisible === 'tablaRangoNroFactura'" style="width:99%">
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>
-            <tr>
+            <tr class="tableHeader">
                 <th style="text-align:right;" scope="col">Nro.</th>
                 <th style="text-align:right;" scope="col">Fecha Emisión</th>
                 <th style="text-align:right;" scope="col">Vencimiento</th>
@@ -118,6 +119,7 @@
         </thead>
         <tbody>
             <tr v-for="element in DATA">
+                @*<td style="text-align:right;"> <button v-if="element.nrodoc" type="button" class="btn btn-outline-info"> {{ element.nrodoc | FilterRemoveLeftZeros }} </button> </td>*@
                 <td style="text-align:right;">{{ element.nrodoc | FilterRemoveLeftZeros }}</td>
                 <td style="text-align:right;">{{ element.fecha_emision | FilterDateFormat }}</td>
                 <td style="text-align:right;">{{ element.fecha_vcmto | FilterDateFormat}}</td>
