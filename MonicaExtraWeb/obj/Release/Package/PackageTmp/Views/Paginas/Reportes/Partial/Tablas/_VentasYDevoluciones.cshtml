@@ -22,7 +22,7 @@
                 <div class="col-12">
                     <div class="card card-body border-info text-info text-center p-0">
                         <div class="card-header">
-                            <label class="font-weight-bold">Ventas Totales</label>
+                            <label class="font-weight-bold">Total</label>
                         </div>
                         <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
                     </div>
@@ -37,7 +37,7 @@
      class="col-12"
      v-if="TablaVisible === 'tablaGROUP'"
      style="width:99%">
-    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#73bfb8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
+    <label v-if="!FILTROS.mostrarDetallesProductosCorte" class="font-weight-bold font-italic" style="color:#17A2B8; float: right;">Parametros: {{ FILTROS.FormatoConsultas === 'simple' ? 'Formato Simple' : 'Formato Completo' }}</label>
 
     <table id="tablaRangoNroFactura" class="table table-striped">
         <thead>

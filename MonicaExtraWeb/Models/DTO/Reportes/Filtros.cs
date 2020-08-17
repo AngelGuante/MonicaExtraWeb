@@ -12,10 +12,20 @@
         public string opcion { get; set; }
         public string code { get; set; }
         public string name { get; set; }
+        public string agrupacionProductos { get; set; }
+        public string subCategoriaProductos { get; set; }
+        public string categoriaProductos { get; set; }
+        public string bodega { get; set; }
+        public string vendedorEspesifico { get; set; }
+        public string tipoNCF { get; set; }
         public bool SoloDocsVencidos { get; set; } = false;
         public bool descripcionSimplificada { get; set; } = true;
         //public bool IncluirFirmas { get; set; } = false;
         //public bool IncluirMoras { get; set; } = false;
+
+        //  **InventarioYLiquidaciones**
+        public string soloPrroductosConExistencia { get; set; }
+        public string agregarProductosInactivos { get; set; }
 
         //  **VentasDevolucionesCategoriaYVendedor**
         public string tipoReporte { get; set; }

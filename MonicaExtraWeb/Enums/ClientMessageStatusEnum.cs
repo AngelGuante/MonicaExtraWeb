@@ -17,5 +17,10 @@
         //ObtenerCotizacion = 12,
         ObtenerEstimado = 13,
         ActualizarEstimado = 14,
+
+        InventarioLiquidacion = 15,
+        subCategoriasProductos = 16,
+        ComprasDevolucionesCotizaciones = 17,
+        VendedoresList = 18,
     }
 }

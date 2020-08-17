@@ -1,0 +1,33 @@
+﻿<div class="modal fade bd-example-modal-lg" id="ILreporteModalFormato" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-5">
+                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#ILreporteModalFormato').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+
+                <div>
+                    <h1>Ajustes Avanzados Para las Consultas</h1>
+
+                    <hr />
+
+                    <div class="card border-info text-info">
+                        <div class="card-body p-4">
+                            <label class="font-weight-bold">Configuraciones de Consulta</label>
+                            <div class="row">
+                                @*  CONFIGURACION DE QUERY*@
+                                <div class="form-check col-12 col-lg-6">
+                                    <input id="ILchcksoloProdExistencia" type="checkbox" class="form-check-input" v-model="FILTROS.soloPrroductosConExistencia">
+                                    <label class="form-check-label" for="ILchcksoloProdExistencia">Solo Incluir Productos Con Existencia</label>
+                                </div>
+
+                                <div class="form-check col-12 col-lg-6">
+                                    <input id="ILchckAgreInactivos" type="checkbox" class="form-check-input" v-model="FILTROS.agregarProductosInactivos">
+                                    <label class="form-check-label" for="ILchckAgreInactivos">Agregar Productos Inactivos</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

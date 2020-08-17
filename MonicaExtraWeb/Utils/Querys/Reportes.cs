@@ -1,4 +1,5 @@
-﻿using MonicaExtraWeb.Models.DTO.Reportes;
+﻿using Microsoft.Ajax.Utilities;
+using MonicaExtraWeb.Models.DTO.Reportes;
 using MonicaExtraWeb.Utils.Querys;
 using System;
 using System.Text;
@@ -321,13 +322,6 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        /// <summary>
-        /// Ventas y Devoluciones.
-        /// Cotizaciones Y Conduces.
-        /// </summary>
-        /// <param name="filtro"></param>
-        /// <param name="DbName"></param>
-        /// <returns></returns>
         public static string VentasDevolucionesCategoriaYVendedor(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
@@ -380,7 +374,7 @@ namespace MonicaExtraWeb.Utils
 
             if (filtro.SUM)
             {
-                query.Append("   COUNT(*) count, ");
+                query.Append(" COUNT(*) count, ");
 
                 if (!filtro.GROUP)
                 {
@@ -414,8 +408,6 @@ namespace MonicaExtraWeb.Utils
                                 query.Append("  MAX(V.Nombre_vendedor) Nombre_vendedor ");
                                 break;
                             case "porComprobante":
-                                //if (string.IsNullOrEmpty(filtro.colComprobante))
-                                //query.Append($", TS.{TableSourceComprobante} ");
                                 query.Append($", Substring(Trim(TS.{TableSourceComprobante}), 1, 1) + Substring(Trim(TS.{TableSourceComprobante}), 10, 2) ncf ");
                                 break;
                             case "porMoneda":
@@ -539,7 +531,6 @@ namespace MonicaExtraWeb.Utils
                             query.Append(", TS.moneda ");
                             break;
                         case "porComprobante":
-                            //query.Append($", TS.{TableSourceComprobante} ");
                             query.Append($", Substring(Trim(ts.{TableSourceComprobante}), 1, 1) + Substring(Trim(ts.{TableSourceComprobante}), 10, 2) ncf ");
                             break;
                         case "porFecha_Emision":
@@ -957,6 +948,628 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
+
+        public static string InventarioYLiquidacion(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+            var whereQuery = new StringBuilder();
+
+            #region SELECT
+            query.Append("  SELECT ");
+
+            if (filtro.SUM)
+            {
+                query.Append("  COUNT(*) count ");
+                query.Append(", SUM(P.precio1) precio1 ");
+                query.Append(", SUM(P.precio2) precio2 ");
+                query.Append(", SUM(P.precio3) precio3 ");
+                query.Append(", SUM(P.precio4) precio4 ");
+
+                if (filtro.tipoConsulta == "RFA08")
+                {
+                    query.Append(", TRIM(MAX(codigo_producto)) codigo_producto ");
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porLos_Mas_Vendidos":
+                        case "porLos_Menos_Vendidos":
+                            query.Append(", MAX(TS.totalCantidadMonto) totalCantidadMonto ");
+                            query.Append(", TRIM(descrip_producto) descrip_producto ");
+                            break;
+                        case "porCategoria":
+                            query.Append(", TRIM(MAX(CP.descripcion_categ)) descripcion_categ ");
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                query.Append("  P.codigo_producto ");
+                query.Append(", P.producto_fisico ");
+                query.Append(", P.situacion_producto ");
+                query.Append(", P.Sub_categoria_id ");
+                query.Append(", P.descrip_producto ");
+                query.Append(", P.precio1 ");
+                query.Append(", P.precio2 ");
+                query.Append(", P.precio3 ");
+                query.Append(", P.precio4 ");
+                query.Append(", NB.Nombre_bodega ");
+                query.Append(", P.cant_total ");
+                query.Append(", P.ultima_venta ");
+                query.Append(", UN.descripcion_unidad ");
+                query.Append(", TRIM(CP.descripcion_categ) descripcion_categ ");
+                query.Append(", SCP.descripcion_sub_categ ");
+
+                if (filtro.tipoCorte == "porLos_Mas_Vendidos"
+                    || filtro.tipoCorte == "porLos_Menos_Vendidos")
+                    query.Append(", TS.totalCantidadMonto ");
+            }
+            #endregion
+
+            #region FROM
+            query.Append($" FROM ");
+
+            if (filtro.tipoCorte == "porLos_Mas_Vendidos"
+                   || filtro.tipoCorte == "porLos_Menos_Vendidos")
+            {
+                var ordern = filtro.tipoCorte == "porLos_Mas_Vendidos" ? "DESC" : "";
+                var unidadesOMontos = filtro.agrupacionProductos == "unidades" ? "SUM(cantidad)" : "SUM(cantidad * precio_factura)";
+
+                switch (filtro.agrupacionProductos)
+                {
+                    case "unidades":
+                    case "montos":
+                        query.Append("( ");
+                        query.Append(" SELECT ");
+                        query.Append($" TOP {filtro.take} producto_id ");
+                        query.Append($", {unidadesOMontos} totalCantidadMonto ");
+                        query.Append(" FROM ");
+                        query.Append($"{DbName}dbo.factura_detalle ");
+
+                        if (!string.IsNullOrEmpty(filtro.minFecha_emision)
+                            && !string.IsNullOrEmpty(filtro.maxFecha_emision))
+                        {
+                            query.Append(" WHERE ");
+                            query.Append($"fecha_emision >= '{filtro.minFecha_emision}' ");
+                            query.Append($" AND fecha_emision <= '{filtro.maxFecha_emision}' ");
+                        }
+
+                        query.Append(" GROUP BY producto_id ");
+                        query.Append($" ORDER BY {unidadesOMontos} {ordern} ");
+                        query.Append(" ) TS ");
+
+                        query.Append($" JOIN {DbName}dbo.productos P ON TS.producto_id = P.producto_id ");
+
+                        break;
+                }
+            }
+            else
+                query.Append($" {DbName}dbo.productos P ");
+
+            query.Append($" JOIN dbo.categoria_producto CP ON P.Categoria_id = CP.categoria_id ");
+            query.Append($" JOIN dbo.nombre_bodegas NB ON P.bodega_id = NB.bodega_id ");
+            query.Append($" JOIN dbo.sub_categoria_producto SCP ON p.Categoria_id = scp.categoria_id ");
+            query.Append($" JOIN dbo.unidades UN ON UN.unidad_id = P.unidad_en_venta ");
+            #endregion
+
+            #region WHERE
+            whereQuery.Append("WHERE ");
+
+            if (!string.IsNullOrEmpty(filtro.estatus))
+                whereQuery.Append($" P.producto_fisico = '{filtro.estatus}' ");
+            if (!string.IsNullOrEmpty(filtro.subCategoriaProductos))
+            {
+                if (whereQuery.Length > 6)
+                    whereQuery.Append("AND ");
+                whereQuery.Append($" P.Sub_categoria_id = '{filtro.subCategoriaProductos}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.categoriaProductos))
+            {
+                if (whereQuery.Length > 6)
+                    whereQuery.Append("AND ");
+                whereQuery.Append($" CP.categoria_id = '{filtro.categoriaProductos}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.bodega))
+            {
+                if (whereQuery.Length > 6)
+                    whereQuery.Append("AND ");
+                whereQuery.Append($" P.bodega_id = '{filtro.bodega}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.soloPrroductosConExistencia))
+            {
+                if (whereQuery.Length > 6)
+                    whereQuery.Append("AND ");
+                whereQuery.Append($" P.cant_total > 0 ");
+            }
+            if (string.IsNullOrEmpty(filtro.agregarProductosInactivos))
+            {
+                if (whereQuery.Length > 6)
+                    whereQuery.Append("AND ");
+                whereQuery.Append($" P.situacion_producto = 1 ");
+            }
+
+            switch (filtro.tipoConsulta)
+            {
+                case "porCodigo":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.codigo_producto LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porDescripcion":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.descrip_producto LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porPrecio":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.precio1 >= '{filtro.desde}' ");
+                    }
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.precio1 <= '{filtro.hasta}' ");
+                    }
+                    break;
+                case "porCantidad_En_Almacen":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.cant_total >= '{filtro.desde}' ");
+                    }
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.cant_total <= '{filtro.hasta}' ");
+                    }
+                    break;
+                case "porProveedor":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (whereQuery.Length > 6)
+                            whereQuery.Append("AND ");
+                        whereQuery.Append($" P.Sub_categoria_id = '{filtro.valor}' ");
+                    }
+                    break;
+                case "RFA08":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        switch (filtro.tipoCorte)
+                        {
+                            case "porCategoria":
+                                if (whereQuery.Length > 6)
+                                    whereQuery.Append("AND ");
+
+                                whereQuery.Append($" P.Sub_categoria_id = '{filtro.valor}' ");
+                                break;
+                        }
+                    break;
+            }
+
+            if (whereQuery.Length > 6)
+                query.Append(whereQuery.ToString());
+            #endregion
+
+            #region GROUP BY
+            if (filtro.SUM && filtro.GROUP)
+            {
+                query.Append("GROUP BY ");
+
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA08":
+                        if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                            switch (filtro.tipoCorte)
+                            {
+                                case "porLos_Mas_Vendidos":
+                                case "porLos_Menos_Vendidos":
+                                    query.Append(" P.descrip_producto ");
+                                    break;
+                                case "porCategoria":
+                                    query.Append(" CP.Descripcion_categ ");
+                                    break;
+                            }
+                        break;
+                }
+            }
+            #endregion
+
+            #region ORDER BY
+            if (!filtro.SUM)
+            {
+                query.Append("ORDER BY ");
+
+                switch (filtro.tipoConsulta)
+                {
+                    case "porCodigo":
+                        query.Append(" P.codigo_producto ");
+                        break;
+                    case "porDescripcion":
+                        query.Append(" P.descrip_producto ");
+                        break;
+                    case "porPrecio":
+                        query.Append(" P.precio1 DESC ");
+                        break;
+                    case "porCantidad_En_Almacen":
+                        query.Append(" P.cant_total ");
+                        break;
+                    case "porCategoria_Y_Sub_Categoria":
+                        query.Append(" SCP.descripcion_sub_categ ");
+                        break;
+                    case "RFA08":
+                        if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                            switch (filtro.tipoCorte)
+                            {
+                                case "porLos_Mas_Vendidos":
+                                case "porLos_Menos_Vendidos":
+                                    query.Append(" TS.totalCantidadMonto DESC ");
+                                    query.Append(", P.descrip_producto ");
+                                    break;
+                                case "porCategoria":
+                                    query.Append(" P.descrip_producto ");
+                                    break;
+                            }
+                        break;
+                }
+
+                if (!filtro.GROUP)
+                {
+                    query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                    query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                }
+            }
+            #endregion
+
+            return query.ToString();
+        }
+
+        public static string ComprasDevolucionesCotizaciones(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            var TableSource = "";
+            var TableSourceId = "";
+            var TableSourceDetails = "";
+
+            var ColumnNro = "";
+
+            switch (filtro.tipoReporte)
+            {
+                case "cotizaciones":
+                    TableSource = "Cotizacion";
+                    TableSourceId = "cotizacion_id";
+                    TableSourceDetails = "coti_detalle";
+                    ColumnNro = "nro_cotizacion";
+                    break;
+                case "devoluciones":
+                    TableSource = "devoluciones";
+                    TableSourceId = "devolucion_id";
+                    TableSourceDetails = "devolucion_Detalle";
+                    ColumnNro = "nro_devolucion";
+                    break;
+                case "compras":
+                    TableSource = "orden_compra";
+                    TableSourceId = "compra_id";
+                    TableSourceDetails = "compras_detalle";
+                    ColumnNro = "nro_compra";
+                    break;
+            }
+
+            #region SELECT
+            query.Append(" SELECT ");
+
+            if (filtro.SUM)
+            {
+                query.Append("  SUM(CAST(TS.subtotal AS INT)) subtotal ");
+                query.Append(", SUM(TS.impuesto_monto) impuesto_monto ");
+                query.Append(", SUM(TS.total) total");
+
+                if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                {
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porCategoria":
+                            query.Append($", MAX(TS.{ColumnNro}) nro ");
+                            query.Append(", CP.Descripcion_categ ");
+                            break;
+                        case "porVendedor":
+                            query.Append(", MAX(V.vendedor_id) vendedor_id ");
+                            query.Append(", V.Nombre_vendedor ");
+                            break;
+                        case "porMoneda":
+                            query.Append($", MAX(TS.{ColumnNro}) nro ");
+                            query.Append(",  TS.moneda ");
+                            break;
+                        case "porFecha_Emision":
+                            query.Append($", MAX(TS.{ColumnNro}) nro ");
+                            if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                query.Append(", CONCAT(MONTH(TS.fecha), '/', YEAR(TS.fecha)) fecha ");
+                            else
+                                query.Append(", TS.fecha ");
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                query.Append($" V.Nombre_vendedor ");
+                query.Append($",TS.{ColumnNro} nro ");
+                query.Append(", TS.moneda ");
+                query.Append(", TS.subtotal ");
+                query.Append(", TS.impuesto_monto ");
+                query.Append(", TS.total ");
+
+                if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                    query.Append($", CONCAT(MONTH(TS.fecha), '/', YEAR(TS.fecha)) fecha ");
+                else
+                    query.Append($", TS.fecha ");
+
+                if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                {
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porVendedor":
+                            query.Append(", V.vendedor_id ");
+                            break;
+                    }
+                }
+
+                if (filtro.tipoReporte == "cotizaciones")
+                    query.Append($", TS.nro_compra estatus ");
+                else if (filtro.tipoReporte == "devoluciones")
+                {
+                    query.Append($", TS.fecha_vcmto ");
+                    query.Append($", SUBSTRING(Rtrim(TS.comentario_detalle), 1, 19) ncf ");
+                    query.Append($", TS.pago ");
+                }
+
+                query.Append($", TS.dscto_monto ");
+                query.Append(",  TP.Descripcion_terminopv ");
+            }
+            #endregion
+
+            #region FROM
+            query.Append($" FROM ");
+
+            query.Append($" {DbName}dbo.{TableSource} TS ");
+            query.Append($" JOIN {DbName}dbo.{TableSourceDetails} TDS ON TS.{TableSourceId} = TDS.{TableSourceId} ");
+            query.Append($" JOIN {DbName}dbo.vendedores V ON TS.vendedor = V.vendedor_id ");
+            query.Append($" JOIN {DbName}dbo.terminos_pagopv TP ON TS.terminos_id = TP.termino_idpv ");
+
+            switch (filtro.tipoConsulta)
+            {
+                case "RFA06":
+                    query.Append($" JOIN {DbName}dbo.productos P ON TDS.producto_id = P.producto_id ");
+                    break;
+                case "RFA0":
+                    query.Append($" JOIN {DbName}dbo.nombre_bodegas NB ON TDS.bodega_id = NB.bodega_id ");
+                    break;
+                case "RFA08":
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porCategoria":
+                            query.Append($" JOIN {DbName}dbo.productos P ON TDS.producto_id = P.producto_id ");
+                            query.Append($" JOIN {DbName}dbo.categoria_producto CP ON P.Categoria_id = CP.categoria_id ");
+                            break;
+                    }
+                    break;
+            }
+            #endregion
+
+            #region WHERE
+            query.Append("WHERE ");
+
+            if (!string.IsNullOrEmpty(filtro.minFecha_emision))
+                query.Append($"TS.fecha >= '{filtro.minFecha_emision}' ");
+            if (!string.IsNullOrEmpty(filtro.maxFecha_emision))
+                query.Append($"AND TS.fecha <= '{filtro.maxFecha_emision}' ");
+            if (!string.IsNullOrEmpty(filtro.vendedorEspesifico))
+                query.Append($"AND TS.Nombre_vendedor LIKE '%{filtro.vendedorEspesifico}%' ");
+
+            if (!string.IsNullOrEmpty(filtro.estatus))
+            {
+                switch (filtro.tipoReporte)
+                {
+                    case "cotizaciones":
+                        switch (filtro.estatus)
+                        {
+                            case "abierto":
+                                query.Append($"AND TS.nro_compra = '0' ");
+                                break;
+                            case "cerrado":
+                                query.Append($"AND LEN(TS.nro_compra) > '0' ");
+                                break;
+                            case "cerradoSinFactura":
+                                query.Append($"AND LEN(TS.nro_compra) = '0' ");
+                                break;
+                        }
+                        break;
+                    case "devoluciones":
+                        switch (filtro.estatus)
+                        {
+                            case "aplicada":
+                                query.Append($"AND TS.pago = TS.total ");
+                                break;
+                            case "sinAplicar":
+                                query.Append($"AND TS.pago = '0' ");
+                                break;
+                            case "aplicadaParcial":
+                                query.Append($"AND TS.pago < TS.total ");
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(filtro.tipoNCF))
+            {
+                switch (filtro.tipoReporte)
+                {
+                    case "devoluciones":
+                        switch (filtro.tipoNCF)
+                        {
+                            case "normal":
+                                query.Append($"AND (LEN(TS.comentario_Detalle) = '11' OR LEN(TS.comentario_Detalle) = '19') ");
+                                break;
+                            case "electronico":
+                                query.Append($"AND LEN(TS.comentario_Detalle) = '13' ");
+                                break;
+                        }
+                        break;
+                }
+            }
+
+            switch (filtro.tipoConsulta)
+            {
+                case "RFA01":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                        query.Append($"AND TS.{ColumnNro} >= '{filtro.desde}' ");
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                        query.Append($"AND TS.{ColumnNro} <= '{filtro.hasta}' ");
+                    break;
+                case "RFA02":
+                    if (!string.IsNullOrEmpty(filtro.desde))
+                        query.Append($"AND TS.total >= '{filtro.desde}' ");
+                    if (!string.IsNullOrEmpty(filtro.hasta))
+                        query.Append($"AND TS.total <= '{filtro.hasta}' ");
+                    break;
+                case "RFA03":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        query.Append($"AND TP.termino_idpv = '{filtro.valor}' ");
+                    break;
+                case "RFA06":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        query.Append($"AND P.descrip_producto = '{filtro.valor}' ");
+                    break;
+                case "RFA0":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                        query.Append($"AND NB.bodega_id = '{filtro.valor}' ");
+                    break;
+                case "RFA08":
+                    switch (filtro.tipoCorte)
+                    {
+                        case "porCategoria":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND P.Categoria_id = '{filtro.valor}' ");
+                            break;
+                        case "porVendedor":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND V.vendedor_id = '{filtro.valor}' ");
+                            break;
+                        case "porMoneda":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                                query.Append($"AND TS.moneda = '{filtro.valor}' ");
+                            break;
+                        case "porFecha_Emision":
+                            if (!string.IsNullOrEmpty(filtro.desde))
+                                if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    query.Append($", CONCAT(MONTH(TS.fecha), '/', YEAR(TS.fecha)) fecha ");
+                                else
+                                    query.Append($"AND TS.fecha = '{filtro.desde}' ");
+                            break;
+                    }
+                    break;
+            }
+            #endregion
+
+            #region ORDER BY
+            if (!filtro.SUM)
+            {
+                query.Append("ORDER BY ");
+
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA01":
+                        query.Append($" TS.{ColumnNro} DESC ");
+                        break;
+                    case "RFA02":
+                        query.Append($" TS.total DESC ");
+                        break;
+                    case "RFA03":
+                        query.Append(" TP.descripcion_terminopv DESC ");
+                        break;
+                    case "RFA06":
+                        query.Append(" P.descrip_producto DESC ");
+                        break;
+                    case "RFA0":
+                        query.Append(" NB.Nombre_bodega DESC ");
+                        break;
+                    case "RFA08":
+                        switch (filtro.tipoCorte)
+                        {
+                            case "porCategoria":
+                                query.Append($" TS.{ColumnNro} DESC ");
+                                break;
+                            case "porVendedor":
+                                query.Append(" V.Nombre_vendedor ");
+                                break;
+                            case "porMoneda":
+                                query.Append(" TS.moneda ");
+                                break;
+                            case "porFecha_Emision":
+                                if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                    query.Append($" CONCAT(MONTH(TS.fecha), '/', YEAR(TS.fecha)) ");
+                                else
+                                    query.Append(" TS.fecha ");
+                                break;
+                        }
+                        break;
+                }
+            }
+            #endregion
+
+            #region GROUP BY
+            if (filtro.SUM && filtro.GROUP)
+            {
+                query.Append("GROUP BY ");
+
+                switch (filtro.tipoConsulta)
+                {
+                    case "RFA08":
+                        if (!string.IsNullOrEmpty(filtro.tipoCorte))
+                            switch (filtro.tipoCorte)
+                            {
+                                case "porCategoria":
+                                    query.Append(" CP.Descripcion_categ ");
+                                    break;
+                                case "porVendedor":
+                                    query.Append(" V.Nombre_vendedor ");
+                                    break;
+                                case "porMoneda":
+                                    query.Append(" TS.moneda ");
+                                    break;
+                                case "porFecha_Emision":
+                                    if (!string.IsNullOrEmpty(filtro.agruparPorMes))
+                                        query.Append($" CONCAT(MONTH(TS.fecha), '/', YEAR(TS.fecha)) ");
+                                    else
+                                        query.Append(" TS.fecha ");
+                                    break;
+                            }
+                        break;
+                }
+            }
+            #endregion
+
+            if (!filtro.SUM)
+            {
+                if (!filtro.GROUP)
+                {
+                    query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                    query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                }
+            }
+
+            return query.ToString();
+        }
         #endregion
 
         #region DATA SUELTA
@@ -1071,6 +1684,37 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
+        public static string VendedoresQuery(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+
+            if (filtro.SUM)
+                query.Append("COUNT(*) count ");
+            else
+            {
+                query.Append(" TRIM(Nombre_vendedor) nombre, ");
+                query.Append(" vendedor_id codigo ");
+            }
+
+            query.Append($"FROM {DbName}dbo.vendedores ");
+
+            if (!string.IsNullOrEmpty(filtro.code))
+                query.Append($"WHERE vendedor_id = '{filtro.code}'");
+            if (!string.IsNullOrEmpty(filtro.name))
+                query.Append($"WHERE Nombre_vendedor LIKE '%{filtro.name}%'");
+
+            if (!filtro.SUM)
+            {
+                query.Append($" ORDER BY Nombre_vendedor ");
+                query.Append($" OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($" FETCH NEXT {filtro.take} ROWS ONLY ");
+            }
+
+            return query.ToString();
+        }
+
         public static string TerminosPagosQuery(string DbName = "")
         {
             var query = new StringBuilder();
@@ -1105,6 +1749,18 @@ namespace MonicaExtraWeb.Utils
             query.Append("  categoria_id, ");
             query.Append("  TRIM(UPPER(Descripcion_categ)) Descripcion_categ ");
             query.Append($"FROM {DbName}dbo.categoria_producto ");
+
+            return query.ToString();
+        }
+
+        public static string SubCategoriasProductosQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  sub_categoria_id, ");
+            query.Append("  TRIM(descripcion_sub_categ) descripcion_sub_categ ");
+            query.Append($"FROM {DbName}dbo.sub_categoria_producto ");
 
             return query.ToString();
         }

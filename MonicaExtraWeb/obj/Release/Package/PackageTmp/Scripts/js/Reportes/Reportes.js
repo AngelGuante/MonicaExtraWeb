@@ -9,6 +9,7 @@
         vendedores: [],
         categoriasClientes: [],
         categoriasProveedores: [],
+        subCategoriasProductos: [],
         terminoDePago: [],
         nombresBodega: [],
         categoriasProductos: [],
@@ -32,29 +33,40 @@
         },
         categoriasProveedores: () => {
             reporte_clienteIndividualStatus.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
         },
         minFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
             reporte_cotizacionesYConduces.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
             reporte_clienteIndividualStatus.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
         },
         maxFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
             reporte_cotizacionesYConduces.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
             reporte_clienteIndividualStatus.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.maxFecha_emision = monicaReportes.maxFecha_emision;
         },
         terminoDePago: () => {
             reporte_ventasYDevoluciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_cotizacionesYConduces.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_clienteIndividualStatus.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
         },
         nombresBodega: () => {
             reporte_ventasYDevoluciones.FILTROS.nombresBodega = monicaReportes.nombresBodega;
             reporte_cotizacionesYConduces.FILTROS.nombresBodega = monicaReportes.nombresBodega;
+            reporte_inventarioYLiquidacion.FILTROS.nombresBodega = monicaReportes.nombresBodega;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.nombresBodega = monicaReportes.nombresBodega;
         },
         categoriasProductos: () => {
             reporte_ventasYDevoluciones.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
             reporte_cotizacionesYConduces.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
+            reporte_inventarioYLiquidacion.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
+            reporte_comprasDevolucionesYCotizaciones.FILTROS.categoriasProductos = monicaReportes.categoriasProductos;
+        },
+        subCategoriasProductos: () => {
+            reporte_inventarioYLiquidacion.FILTROS.subProductosCategorias = monicaReportes.subCategoriasProductos;
         },
     },
 
@@ -89,6 +101,12 @@
                 || opcionSeleccionada === 'CotizacionesYConducesFiltro') {
                 await this.BuscarData('vendedores');
                 await this.BuscarData('categoriasClientes');
+            } else if (opcionSeleccionada === 'inventarioYLiquidacionFiltro') {
+                await this.BuscarData('nombresBodega');
+                await this.BuscarData('subCategoriasProductos');
+                await this.BuscarData('categoriasProductos');
+            } else if (opcionSeleccionada === 'comprasDevolucionesYConducesFiltro') {
+                await this.BuscarData('categoriasProveedores');
             }
 
             //  PARA CADA REPORTE EN ESPECIFICO
@@ -159,10 +177,16 @@
                     if (this.categoriasProveedores.length === 0)
                         this.categoriasProveedores = await BuscarInformacionLocal('SendWebsocketServer/11', {});
                     break;
-                case 'clientes':
+                case 'subCategoriasProductos':
+                    if (this.subCategoriasProductos.length === 0)
+                        this.subCategoriasProductos = await BuscarInformacionLocal('SendWebsocketServer/16', {});
+                    break;
+                case 'clientesList':
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
-                case 'proveedores':
+                case 'proveedoresList':
                     return await BuscarInformacionLocal('SendWebsocketServer/10', filtro);
+                case 'vendedoresList':
+                    return await BuscarInformacionLocal('SendWebsocketServer/18', filtro);
 
                 //  ---------------
                 //  MANEJO DE DATA.
@@ -185,6 +209,8 @@
             reporte_cotizacionesYConduces.TablaVisible = '';
             reporte_ventasYDevoluciones.TablaVisible = '';
             reporte_clienteIndividualStatus.DATA = [];
+            reporte_inventarioYLiquidacion.DATA = [];
+            reporte_comprasDevolucionesYCotizaciones.DATA = [];
         },
     },
 
@@ -219,12 +245,23 @@
         FilterMoneda: value => {
             let returnValue;
 
-            if (value === 0)
+            if (value == 0)
                 returnValue = 'NACIONAL';
             else if (value === 1)
                 returnValue = 'EXTRANJERA';
 
             return returnValue;
+        },
+
+        FilterTipoProducto: value => {
+            switch (value) {
+                case 1:
+                    return 'FISICO';
+                case 2:
+                    return 'SERVICIO';
+                case 3:
+                    return 'OCACIONAL';
+            }
         }
     }
 });

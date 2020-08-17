@@ -407,7 +407,7 @@
 
                         //  REPORTE GRAFICO.
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#73bfb8');
+                        reporteGraficoBacground.fill('#17A2B8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();

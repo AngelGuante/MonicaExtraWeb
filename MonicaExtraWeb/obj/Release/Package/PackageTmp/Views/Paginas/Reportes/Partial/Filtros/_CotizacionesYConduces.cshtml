@@ -13,8 +13,8 @@
                                 </label>
                             </div>
                             <div class="form-check col-3">
-                                <input class="form-check-input" type="radio" id="devolucionesCheck" value="conduces" v-model="FILTROS.tipoReporte">
-                                <label class="form-check-label" for="devolucionesCheck">
+                                <input class="form-check-input" type="radio" id="conducesCheck" value="conduces" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="conducesCheck">
                                     Conduces
                                 </label>
                             </div>
@@ -63,7 +63,7 @@
             </div>
 
             <div class="col-12 col-md-4">
-                <div v-if="!(FILTROS.tipoReporte === 'devoluciones' && FILTROS.tipoConsulta)">
+                <div>
                     <label class="font-weight-bold mr-2">Estatus</label>
                     <div>
                         <div class="row">

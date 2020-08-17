@@ -368,7 +368,6 @@
                     if (!this.FILTROS.mostrarDetallesProductosCorte) {
                         document.getElementById('divGraficosDatosAgrupados').setAttribute('hidden', true);
 
-                        debugger
                         let contadorDeLineas = 0;
                         for (let index = 0; index < result.length; index++) {
                             contadorDeLineas += this.GroupDATA[index].length + 1;
@@ -456,7 +455,7 @@
 
                         //  REPORTE GRAFICO.
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#73bfb8');
+                        reporteGraficoBacground.fill('#17A2B8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();

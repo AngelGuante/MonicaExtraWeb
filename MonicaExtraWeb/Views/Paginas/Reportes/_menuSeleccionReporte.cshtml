@@ -36,8 +36,8 @@
                 </li>
 
                 <li>
-                    <a href="#demo3" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inventario y<br />Liquidación</a>
-                    <ul class="collapse list-unstyled" id="demo3">
+                    <a href="#demo5" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Clientes y<br />Proveedores</a>
+                    <ul class="collapse list-unstyled" id="demo5">
                         <li>
                             <a onclick="alert('No implementado')">Consultas y Reportes</a>
                         </li>
@@ -45,10 +45,19 @@
                 </li>
 
                 <li>
-                    <a href="#demo4" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Compras y<br />Devoluciones</a>
-                    <ul class="collapse list-unstyled" id="demo4">
+                    <a href="#inventarioYLiquidacionMenuOption" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Inventario y<br />Liquidación</a>
+                    <ul class="collapse list-unstyled" id="inventarioYLiquidacionMenuOption">
                         <li>
-                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('inventarioYLiquidacionFiltro')">Consultas y Reportes</a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#comprasDevolucionesYConducesMenuOption" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Compras,<br />Devoluciones y<br />Cotizaciones</a>
+                    <ul class="collapse list-unstyled" id="comprasDevolucionesYConducesMenuOption">
+                        <li>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('comprasDevolucionesYConducesFiltro')">Consultas y Reportes</a>
                         </li>
                     </ul>
                 </li>
@@ -114,6 +123,37 @@
                     <div class="Tables">
                         <div class="row">
                             @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_CuentasPorCobrarYPagar.cshtml")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*----------------------------------*@
+            @*-----INVENTARIO & LIQUIDACION-----*@
+            @*----------------------------------*@
+        <div id="inventarioYLiquidacion">
+            @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionCodigo.cshtml")
+            @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionFormatoTablas.cshtml")
+            <div>
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_InventarioYLiquidacion.cshtml")
+                <div class="Tables">
+                    <div class="row">
+                        @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_InventarioYLiquidacion.cshtml")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            @*----------------------------------------------*@
+            @*-----COMPRAS, DEVOLUCIONES & COTIZACIONES-----*@
+            @*----------------------------------------------*@
+            <div id="comprasDevolucionesYConduces">
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_ComprasDevolucionesYCotizacionesCodigo.cshtml")
+                <div>
+                    @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_ComprasDevolucionesYCotizaciones.cshtml")
+                    <div class="Tables">
+                        <div class="row">
+                            @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_ComprasDevolucionesYCotizaciones.cshtml")
                         </div>
                     </div>
                 </div>

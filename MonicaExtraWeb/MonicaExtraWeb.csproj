@@ -198,7 +198,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\assets\cash.png" />
-    <Content Include="Content\assets\dot.png" />
     <Content Include="Content\assets\down-arrow.png" />
     <Content Include="Content\assets\graphic.png" />
     <Content Include="Content\assets\loading.gif" />
@@ -263,7 +262,9 @@
     <Content Include="Scripts\js\Reportes\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_comprasDevolucionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reporte_cotizacionesYConduces.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_inventarioYLiquidacion.js" />
     <Content Include="Scripts\js\Reportes\Reporte_ventasYDevoluciones.js" />
     <Content Include="Scripts\js\SAP.js" />
     <Content Include="Scripts\js\Swal.js" />
@@ -388,6 +389,13 @@
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_CuentasPorCobrarYPagar.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_CuentasPorCobrarYPorPagarFormatoTablas.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\ManejoDeData\Cerrar\_CotizacionesYConduces.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_InventarioYLiquidacion.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_InventarioYLiquidacion.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_InventarioYLiquidacionCodigo.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_ComprasDevolucionesYCotizaciones.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_ComprasDevolucionesYCotizaciones.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_ComprasDevolucionesYCotizacionesCodigo.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_InventarioYLiquidacionFormatoTablas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

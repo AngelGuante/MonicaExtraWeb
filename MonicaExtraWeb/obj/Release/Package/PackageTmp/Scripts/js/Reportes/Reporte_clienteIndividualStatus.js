@@ -423,7 +423,7 @@
                         document.getElementById('CPCCPPdivGraficosDatosAgrupados').removeAttribute('hidden');
 
                         let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                        reporteGraficoBacground.fill('#73bfb8');
+                        reporteGraficoBacground.fill('#17A2B8');
 
                         if (this.FILTROS.chartAnalisisGrafico)
                             this.FILTROS.chartAnalisisGrafico.destroy();
@@ -495,14 +495,14 @@
                 filtros.name = this.modalData.nombreClienteABuscar;
 
             if (this.FILTROS.tipoReporte === 'porCobrar') {
-                this.modalData.clientes = await monicaReportes.BuscarData('clientes', filtros);
+                this.modalData.clientes = await monicaReportes.BuscarData('clientesList', filtros);
                 filtros.SUM = true;
-                this.modalData.PaginatorLastPage = Math.floor((await monicaReportes.BuscarData('clientes', filtros))[0].count / 20);
+                this.modalData.PaginatorLastPage = Math.floor((await monicaReportes.BuscarData('clientesList', filtros))[0].count / 20);
             }
             else if (this.FILTROS.tipoReporte === 'porPagar') {
-                this.modalData.clientes = await monicaReportes.BuscarData('proveedores', filtros);
+                this.modalData.clientes = await monicaReportes.BuscarData('proveedoresList', filtros);
                 filtros.SUM = true;
-                this.modalData.PaginatorLastPage = Math.floor((await monicaReportes.BuscarData('proveedores', filtros))[0].count / 20);
+                this.modalData.PaginatorLastPage = Math.floor((await monicaReportes.BuscarData('proveedoresList', filtros))[0].count / 20);
             }
 
             $('#buscarClienteModal').modal('show');

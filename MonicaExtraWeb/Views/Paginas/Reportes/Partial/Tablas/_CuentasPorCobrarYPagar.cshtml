@@ -20,7 +20,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'color: #73bfb8' : element.nro_dcmto ? 'color: #f76876' : ''">
+            <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'color: #f76876' : element.nro_dcmto ? 'color: #17A2B8' : ''">
                 <td v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
 
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto | FilterRemoveLeftZeros }}</td>
@@ -64,7 +64,7 @@
                 <div class="col-12">
                     <div class="card card-body border-info text-info text-center p-0">
                         <div class="card-header">
-                            <label class="font-weight-bold">Ventas Totales</label>
+                            <label class="font-weight-bold">Total</label>
                         </div>
                         <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
                     </div>

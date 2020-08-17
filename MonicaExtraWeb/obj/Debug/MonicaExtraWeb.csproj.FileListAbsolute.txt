@@ -293,3 +293,4 @@ D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\M
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csproj.CopyComplete
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.dll
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.pdb
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csprojAssemblyReference.cache

@@ -58,12 +58,24 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.CategoriasProveedoresInformacion:
                     query = CategoriasProveedoresQuery();
                     break;
-
                 case ClientMessageStatusEnum.ObtenerEstimado:
                     query = GetEstimadoQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.ActualizarEstimado:
                     query = CerrarCotizacionQuery(filtro);
+                    break;
+
+                case ClientMessageStatusEnum.InventarioLiquidacion:
+                    query = InventarioYLiquidacion(filtro);
+                    break;
+                case ClientMessageStatusEnum.subCategoriasProductos:
+                    query = SubCategoriasProductosQuery();
+                    break;
+                case ClientMessageStatusEnum.ComprasDevolucionesCotizaciones:
+                    query = ComprasDevolucionesCotizaciones(filtro);
+                    break;
+                case ClientMessageStatusEnum.VendedoresList:
+                    query = VendedoresQuery(filtro);
                     break;
             }
 

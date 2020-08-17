@@ -1,0 +1,476 @@
+﻿<div id="comprasDevolucionesYConducesFiltro" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
+    <div style="margin-top: 10px;">
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <div class="row pl-3">
+                    <div class="col-12 col-md-5 form-group">
+                        <label class="font-weight-bold">Módulos</label>
+                        <div class="row">
+                            <div class="form-check col-3">
+                                <input disabled class="form-check-input" type="radio" id="CDCcomprasCheck" value="compras" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="CDCcomprasCheck">
+                                    Compras
+                                </label>
+                            </div>
+                            <div class="form-check col-3">
+                                <input class="form-check-input" type="radio" id="CDCdevolucionesCheck" value="devoluciones" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="CDCdevolucionesCheck">
+                                    Devoluciones
+                                </label>
+                            </div>
+                            <div class="form-check col-3">
+                                <input class="form-check-input" type="radio" id="CDCcotizacionesCheck" value="cotizaciones" v-model="FILTROS.tipoReporte">
+                                <label class="form-check-label" for="CDCcotizacionesCheck">
+                                    Cotizaciones
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-info col-12 col-lg-4 form-group mb-0" v-if="FILTROS.tipoConsulta === 'RFA08'">
+                        <div class="card-body p-1">
+                            <div class="row">
+                                <div class="col-12 col-lg-6">
+                                    <label class="font-weight-bold">Tipo de análisis</label>
+                                    <select class="custom-select" v-model="FILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
+                                        <option value="porCategoria">Por Categoria</option>
+                                        <option disabled value="porCliente">Por Cliente</option>
+                                        <option value="porVendedor">Por Vendedor</option>
+                                        <option value="porMoneda">Por Moneda</option>
+                                        <option value="porFecha_Emision">Por Fecha Emisión</option>
+                                        @*<option value="porTermino_de_Pago">Por Término de Pago</option>
+                                        <option value="porCategorias_de_Clientes">Por Categoria de Clientes</option>*@
+                                    </select>
+                                </div>
+
+                                <div class="d-flex flex-column justify-content-end col-12 col-lg-6">
+                                    <div class="form-check" v-if="this.FILTROS.tipoCorte === 'porFecha_Emision'
+                                                                        || this.FILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                                        <input id="VDcheckboxPorMes" type="checkbox" class="form-check-input" v-model="FILTROS.agruparPorMes">
+                                        <label for="VDcheckboxPorMes" class="form-check-label font-italic">Por Mes</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input id="CDCcheckboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.mostrarDetallesProductosCorte">
+                                        <label for="CDCcheckboxMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
+                                    </div>
+
+                                    <div class="form-check">
+                                        <input id="CDCcheckboxAnalisisGrafico" type="checkbox" class="form-check-input" v-model="FILTROS.analisisGrafico">
+                                        <label for="CDCcheckboxAnalisisGrafico" class="form-check-label font-italic">Análisis Gráfico</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div>
+                    <div>
+                        <div class="row" v-if="FILTROS.tipoReporte === 'cotizaciones'">
+                            <label class="font-weight-bold col-12 col-lg-2">Estatus</label>
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCCotizacionesAbiertoCheck" value="abierto" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCCotizacionesAbiertoCheck">
+                                    Abierto
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCCotizacionescerradoCheck" value="cerrado" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCCotizacionescerradoCheck">
+                                    Cerrado
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-4">
+                                <input class="form-check-input" type="radio" id="CDCCotizacionescerradoSinFacturaCheck" value="cerradoSinFactura" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCCotizacionescerradoSinFacturaCheck">
+                                    Cerrado Sin Factura
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCCotizacionestodoCheck" value="" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCCotizacionestodoCheck">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row" v-if="FILTROS.tipoReporte === 'devoluciones'">
+                            <label class="font-weight-bold col-12 col-lg-2">Estatus</label>
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionesAbiertoCheck" value="aplicada" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCDevolucionesAbiertoCheck">
+                                    Aplicada
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-3">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionesSinAplicarCheck" value="sinAplicar" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCDevolucionesSinAplicarCheck">
+                                    Sin Aplicar
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-3">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionesAplicadaParcialCheck" value="aplicadaParcial" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCDevolucionesAplicadaParcialCheck">
+                                    Aplicada Parcial
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionestodoCheck" value="" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCDevolucionestodoCheck">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+
+
+                        <div class="row" v-if="FILTROS.tipoReporte === 'compras'">
+                            <label class="font-weight-bold col-12 col-lg-2">Estatus</label>
+                            <div class="form-check col-12 col-lg-2">
+                                <input disabled class="form-check-input" type="radio" id="CDCComprasAbiertoCheck" value="recibida" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCComprasAbiertoCheck">
+                                    Recibida
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-3">
+                                <input disabled class="form-check-input" type="radio" id="CDCComprasSinAplicarCheck" value="sinRecibir" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCComprasSinAplicarCheck">
+                                    Sin Recibir
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-3">
+                                <input disabled class="form-check-input" type="radio" id="CDCComprasAplicadaParcialCheck" value="RecibidaParcial" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCComprasAplicadaParcialCheck">
+                                    Recibida Parcial
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCComprastodoCheck" value="" v-model="FILTROS.estatus">
+                                <label class="form-check-label" for="CDCComprastodoCheck">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row" v-if="FILTROS.tipoReporte === 'devoluciones'">
+                            <label class="font-weight-bold col-12 col-lg-2">Tipo NCF</label>
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionesnormalCheck" value="normal" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCDevolucionesnormalCheck">
+                                    Normal
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCDevolucioneselectronicoCheck" value="electronico" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCDevolucioneselectronicoCheck">
+                                    Electrónico
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCDevolucionesncfTodoCheck" value="" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCDevolucionesncfTodoCheck">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="row" v-if="FILTROS.tipoReporte === 'compras'">
+                            <label class="font-weight-bold col-12 col-lg-2">Tipo NCF</label>
+                            <div class="form-check col-12 col-lg-2">
+                                <input disabled class="form-check-input" type="radio" id="CDCComprasformalesCheck" value="formales" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCComprasformalesCheck">
+                                    Formales
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input disabled class="form-check-input" type="radio" id="CDCCompraselectronicoCheck" value="compras" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCCompraselectronicoCheck">
+                                    Compras
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-4">
+                                <input disabled class="form-check-input" type="radio" id="CDCComprasGastoMenorCheck" value="gastoMenor" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCComprasGastoMenorCheck">
+                                    Gasto Menor
+                                </label>
+                            </div>
+
+                            <div class="form-check col-12 col-lg-2">
+                                <input class="form-check-input" type="radio" id="CDCComprasncfTodoCheck" value="" v-model="FILTROS.tipoNCF">
+                                <label class="form-check-label" for="CDCComprasncfTodoCheck">
+                                    Todos
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 10px;" />
+
+        <div class="row">
+            <div class="col-12 col-lg-4" data-toggle="tooltip" data-placement="bottom">
+                <label class="font-weight-bold">Tipo Consulta</label>
+                <select class="custom-select" v-model="FILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
+                    <option value="RFA01">Por Numero</option>
+                    <option value="RFA02">Por Monto Facturado</option>
+                    <option value="RFA03">Por Termino de Pago</option>
+                    <option disabled value="RFA04">Por Cliente registrado</option>
+                    <option disabled value="RFA05">Por Cliente sin registrar</option>
+                    <option value="RFA06">Por Producto especifico</option>
+                    <option value="RFA0">Por Almacén o Bodega</option>
+                    @*<option value="RFA09">Por Comprobante</option>*@
+                    <option disabled value="CCEstatusDocumento">Estatus del Documento</option>
+                    <option value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-lg-8">
+                <div class="row">
+                    @*SELECT BODEGA*@
+                    <div class="col-12 col-lg-4"
+                         v-if="FILTROS.tipoConsulta === 'RFA0'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col" v-model="FILTROS.nombresBodegaSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
+                        </select>
+                    </div>
+
+                    @*METODO DE AGRUPACION*@
+                    <div id="CDCagrupacionDiv" class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA08'">
+                        @* FILTRO AGRUPACION POR CATEGORIA*@
+                        <div v-if="FILTROS.tipoCorte === 'porCategoria'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select col" v-model="FILTROS.categoriasProductosSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in FILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{ item.Descripcion_categ }}</option>
+                            </select>
+                        </div>
+
+                        @*PROVEEDORES*@
+                        <div class="col-12" v-if="FILTROS.tipoCorte === 'porVendedor'">
+                            <label class="font-weight-bold">Código</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <button type="button" class="btn btn-info" style="padding:3px;" v-on:click="ModalBuscarCodigo()"><i class="material-icons">person_search</i></button>
+                                </div>
+                                <input type="text" class="form-control" v-model="FILTROS.valor" placeholder="Código">
+                            </div>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR MONEDA*@
+                        <div v-if="FILTROS.tipoCorte === 'porMoneda'">
+                            <label class="font-weight-bold">Opción</label>
+                            <select class="custom-select" v-model="FILTROS.monedaAgrupacionSeleccionada">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option value="0">NACIONAL</option>
+                                <option value="1">EXTRANJERA</option>
+                            </select>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR TERMINO PAGO*@
+                        @*<div v-if="FILTROS.tipoCorte === 'porTermino_de_Pago'">
+                                <label class="font-weight-bold">Opción</label>
+                                <select class="custom-select" v-model="FILTROS.terminoPagoAgrupacionSeleccionada">
+                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                                </select>
+                            </div>*@
+
+                        @* FILTRO AGRUPACION POR CATEGORIA DE CLIENTE*@
+                        @*<div v-if="FILTROS.tipoCorte === 'porCategorias_de_Clientes'">
+                                <label class="font-weight-bold">Opción</label>
+                                <select class="custom-select" v-model="FILTROS.categoriaClientesAgrupacionSeleccionada">
+                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.termino_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                                </select>
+                            </div>*@
+
+                        @* FILTRO AGRUPACION POR FECHA RANGO*@
+                        <div v-if="FILTROS.tipoCorte === 'porFecha_Emision'
+                                                        || FILTROS.tipoCorte === 'porFecha_Vencimiento'">
+                            <div class="row">
+                                <div class="form-group col-12 col-lg-2">
+                                    <label for="reporteFechaDesde">Elegir Fecha</label>
+                                    <select class="custom-select" v-model="FILTROS.desdeHastaRango">
+                                        <option value="" disabled>Personalizada</option>
+                                        <option value="0">Hoy</option>
+                                        <option value="1">Esta Semana</option>
+                                        <option value="2">Este Mes</option>
+                                        <option value="3">Mes Anterior</option>
+                                        <option value="4">Este Año</option>
+                                        <option value="5">2 Años</option>
+                                        <option value="6">3 Años</option>
+                                        <optgroup label="Meses">
+                                            <option value="7">Enero</option>
+                                            <option value="8">Febrero</option>
+                                            <option value="9">Marzo</option>
+                                            <option value="10">Abril</option>
+                                            <option value="11">Mayo</option>
+                                            <option value="12">Junio</option>
+                                            <option value="13">Julio</option>
+                                            <option value="14">Agosto</option>
+                                            <option value="15">Septiembre</option>
+                                            <option value="16">Octubre</option>
+                                            <option value="17">Noviembre</option>
+                                            <option value="18">Diciembre</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="reporteFechaDesde">Desde</label>
+                                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                                </div>
+
+                                <div class="form-group col">
+                                    <label for="reporteFechaHasta">Hasta</label>
+                                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
+                                </div>
+                            </div>
+                        </div>
+
+                        @* FILTRO AGRUPACION POR VALOR ESPECIFIVO*@
+                        @*<div v-if="FILTROS.tipoCorte === 'porCliente'
+                                                     || FILTROS.tipoCorte === 'porVendedor'
+                                                     || FILTROS.tipoCorte === 'porComprobante'">
+                                <label class="font-weight-bold">
+                                    {{ FILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Espesifico
+                                </label>
+                                <input type="text" class="form-control" v-model="FILTROS.valor" />
+                            </div>*@
+                    </div>
+
+                    @*REPORTES QUE SON CON VALORES PREDEFINIDOS*@
+                    <div class="col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA04'
+                                                            || FILTROS.tipoConsulta === 'RFA05'
+                                                            || FILTROS.tipoConsulta === 'RFA06'">
+                        <label class="font-weight-bold">Valor</label>
+                        <input type="text" class="form-control" v-model="FILTROS.valor" />
+                    </div>
+
+                    @*SELECT TERMINO PAGO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta === 'RFA03'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select" v-model="FILTROS.terminoDePagoSeleccionado">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
+                        </select>
+                    </div>
+
+                    @*DESDE Y HASTA*@
+                    <div class="col-12 col-lg-7" v-if="FILTROS.tipoConsulta !== 'RFA05'
+                         && FILTROS.tipoConsulta !== 'RFA09'
+                         && FILTROS.tipoCorte !== 'porFecha_Emision'
+                         && FILTROS.tipoCorte !== 'porCliente'
+                         && FILTROS.tipoCorte !== 'porVendedor'">
+                        <div class="row">
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Desde</label>
+                                <input type="text" class="form-control"
+                                       v-model="FILTROS.desde"
+                                       v-on:input="FILTROS.hasta = FILTROS.desde"
+                                       v-bind:disabled="FILTROS.tipoConsulta !== 'RFA01'
+                                                                                && FILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+
+                            <div class="col-12 col-lg-6">
+                                <label class="font-weight-bold">Hasta</label>
+                                <input type="text" class="form-control"
+                                       v-model="FILTROS.hasta"
+                                       v-bind:disabled="FILTROS.tipoConsulta !== 'RFA01'
+                                                                                && FILTROS.tipoConsulta !== 'RFA02'" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr style="margin: 10px;" />
+    </div>
+
+    <div class="card border-info">
+        <div class="card-body" style="padding: 15px;">
+            <div class="row">
+                <div class="form-group col-12 col-lg-2" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                             && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesde">Elegir Fecha</label>
+                    <select class="custom-select" v-model="FILTROS.desdeHastaRango">
+                        <option value="" disabled>Personalizada</option>
+                        <option value="0">Hoy</option>
+                        <option value="1">Esta Semana</option>
+                        <option value="2">Este Mes</option>
+                        <option value="3">Mes Anterior</option>
+                        <option value="4">Este Año</option>
+                        <option value="5">2 Años</option>
+                        <option value="6">3 Años</option>
+                        <optgroup label="Meses">
+                            <option value="7">Enero</option>
+                            <option value="8">Febrero</option>
+                            <option value="9">Marzo</option>
+                            <option value="10">Abril</option>
+                            <option value="11">Mayo</option>
+                            <option value="12">Junio</option>
+                            <option value="13">Julio</option>
+                            <option value="14">Agosto</option>
+                            <option value="15">Septiembre</option>
+                            <option value="16">Octubre</option>
+                            <option value="17">Noviembre</option>
+                            <option value="18">Diciembre</option>
+                        </optgroup>
+                    </select>
+                </div>
+
+                <div class="form-group col" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaDesde">Desde</label>
+                    <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                </div>
+
+                <div class="form-group col" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
+                                                                        && FILTROS.tipoCorte !== 'porFecha_Vencimiento'">
+                    <label for="reporteFechaHasta">Hasta</label>
+                    <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
+                </div>
+
+                <div class="form-group col">
+                    <label class="font-weight-bold">Vendedor</label>
+                    <input type="text" class="form-control" v-model="FILTROS.vendedorEspesifico" />
+                </div>
+
+                <div>
+                    <div class="form-group col">
+                        <label>Categoria Proveedores</label>
+                        <select disabled class="custom-select col" v-model="FILTROS.categoriasProveedoresSeleccionada">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.categoriasProveedores" v-bind:value="item.Categoria_idpv">{{ item.descripcion_categpv | FilterUppercase }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <a class="btn btn-light" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Pagination()"><i class="material-icons" style="margin-top:80%;">search</i></a>
+            </div>
+        </div>
+    </div>
+</div>
