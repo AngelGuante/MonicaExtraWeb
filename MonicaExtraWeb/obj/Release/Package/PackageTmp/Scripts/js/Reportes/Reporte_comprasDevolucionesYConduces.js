@@ -21,7 +21,7 @@
             minFecha_emision: '',
             maxfecha_emision: '',
             tipoReporteBuscado: '',
-            tipoReporte: 'devoluciones',
+            tipoReporte: 'compras',
             tipoCorte: '',
             tipoConsulta: 'RFA01',
             desdeHastaRango: 0,
@@ -133,8 +133,8 @@
             monicaReportes.LimpiarTablas();
 
             this.FILTROS.tipoReporteBuscado = this.FILTROS.tipoReporte;
-            this.toggleTableColumns_byMostrarDetallesProductosCorte = !this.FILTROS.mostrarDetallesProductosCorte;
             this.FILTROS.toggleData_tablaCorteYReporteGrafico = this.FILTROS.analisisGrafico;
+            this.toggleTableColumns_byMostrarDetallesProductosCorte = !this.FILTROS.mostrarDetallesProductosCorte;
 
             if (monicaReportes.sourceResportes === 'web')
                 alert('Por el momento esta busqueda solo se ha planteado para la parte Local');
@@ -145,7 +145,6 @@
 
                 const filtro = {
                     minFecha_emision: this.FILTROS.minFecha_emision,
-                    //maxFecha_emision: this.FILTROS.maxFecha_emision,
                     tipoConsulta: this.FILTROS.tipoConsulta,
                     tipoReporte: this.FILTROS.tipoReporte,
                     skip: skip
@@ -196,16 +195,28 @@
                     for (item of result)
                         this.DATA.push(item);
 
-                    if (this.FILTROS.tipoReporte === 'devoluciones'
-                        && this.DATA)
-                        for (let i = 0; i < this.DATA.length; i++) {
-                            if (this.DATA[i].pago === 0)
-                                this.DATA[i].estatus = 'SIN APLICAR';
-                            else if (this.DATA[i].pago === this.DATA[i].total)
-                                this.DATA[i].estatus = 'APLICADA';
-                            else if (this.DATA[index].pago < this.DATA[i].total)
-                                this.DATA[i].estatus = 'APLICADA PARCIAL';
-                        }
+                    switch (this.FILTROS.tipoReporte) {
+                        case "devoluciones":
+                            for (let i = 0; i < this.DATA.length; i++) {
+                                if (this.DATA[i].pago === 0)
+                                    this.DATA[i].estatus = 'SIN APLICAR';
+                                else if (this.DATA[i].pago === this.DATA[i].total)
+                                    this.DATA[i].estatus = 'APLICADA';
+                                else if (this.DATA[index].pago < this.DATA[i].total)
+                                    this.DATA[i].estatus = 'APLICADA PARCIAL';
+                            }
+                            break;
+                        case "compras":
+                            for (let i = 0; i < this.DATA.length; i++) {
+                                if (this.DATA[i].recibida === 'T')
+                                    this.DATA[i].estatus = 'RECIBIDA';
+                                else if (this.DATA[i].recibida === 'S')
+                                    this.DATA[i].estatus = 'SIN RECIBIR';
+                                else if (this.DATA[i].recibida === 'P')
+                                    this.DATA[i].estatus = 'PARCIALMENTE RECIBIDA';
+                            }
+                            break;
+                    }
 
                     //  SI ES UNA DATA AGRUPADA, SE ASIGNA EL CAMPO POR EL QUE SE VA A AGRUPAR.
                     if (filtro.GROUP) {
@@ -226,11 +237,11 @@
                     }
                 }
 
-                //
                 let tableName = 'tablaComprasVentasCotizaciones';
                 let camposArray = [8, 9, 10];
 
-                if (this.FILTROS.tipoReporte === 'devoluciones') {
+                if (this.FILTROS.tipoReporte === 'devoluciones'
+                    || this.FILTROS.tipoReporte === 'compras') {
                     let colsagregadas = 2;
 
                     for (let i = 0; i < camposArray.length; i++)
@@ -280,10 +291,10 @@
                             //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
                             for (let i = 0; i < this.GroupDATA.length; i++) {
                                 const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
-
+                                
                                 if (this.GroupDATA[i][0][campo] === result[index][campo]) {
                                     this.GroupDATA[i].push({
-                                        'descripcionGrupo': `${valorAgrupadoPor} => `,
+                                        'Nombre_vendedor': `${valorAgrupadoPor} => `,
                                         'subtotal': result[index].subtotal,
                                         'impuesto_monto': result[index].impuesto_monto,
                                         'total': result[index].total,

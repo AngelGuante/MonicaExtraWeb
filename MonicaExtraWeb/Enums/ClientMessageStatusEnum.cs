@@ -22,5 +22,6 @@
         subCategoriasProductos = 16,
         ComprasDevolucionesCotizaciones = 17,
         VendedoresList = 18,
+        ClientesProveedores = 19,
     }
 }

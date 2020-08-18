@@ -36,10 +36,10 @@
                 </li>
 
                 <li>
-                    <a href="#demo5" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Clientes y<br />Proveedores</a>
-                    <ul class="collapse list-unstyled" id="demo5">
+                    <a href="#clientesYProveedoresMenuOption" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Clientes y<br />Proveedores</a>
+                    <ul class="collapse list-unstyled" id="clientesYProveedoresMenuOption">
                         <li>
-                            <a onclick="alert('No implementado')">Consultas y Reportes</a>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('clientesYProveedoresFiltro')">Consultas y Reportes</a>
                         </li>
                     </ul>
                 </li>
@@ -128,21 +128,35 @@
                 </div>
             </div>
 
-            @*----------------------------------*@
-            @*-----INVENTARIO & LIQUIDACION-----*@
-            @*----------------------------------*@
-        <div id="inventarioYLiquidacion">
-            @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionCodigo.cshtml")
-            @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionFormatoTablas.cshtml")
-            <div>
-                @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_InventarioYLiquidacion.cshtml")
-                <div class="Tables">
-                    <div class="row">
-                        @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_InventarioYLiquidacion.cshtml")
+            @*--------------------------------*@
+            @*-----CLIENTES & PROVEEDORES-----*@
+            @*--------------------------------*@
+            <div id="clientesYProveedores">
+                <div>
+                    @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_ClientesYProveedores.cshtml")
+                    <div class="Tables">
+                        <div class="row">
+                            @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_ClientesYProveedores.cshtml")
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+            @*----------------------------------*@
+            @*-----INVENTARIO & LIQUIDACION-----*@
+            @*----------------------------------*@
+            <div id="inventarioYLiquidacion">
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionCodigo.cshtml")
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionFormatoTablas.cshtml")
+                <div>
+                    @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_InventarioYLiquidacion.cshtml")
+                    <div class="Tables">
+                        <div class="row">
+                            @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_InventarioYLiquidacion.cshtml")
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             @*----------------------------------------------*@
             @*-----COMPRAS, DEVOLUCIONES & COTIZACIONES-----*@

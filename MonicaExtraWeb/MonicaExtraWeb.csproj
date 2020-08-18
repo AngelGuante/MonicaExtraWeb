@@ -262,6 +262,7 @@
     <Content Include="Scripts\js\Reportes\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
+    <Content Include="Scripts\js\Reportes\Reporte_clientesYProveedores.js" />
     <Content Include="Scripts\js\Reportes\Reporte_comprasDevolucionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reporte_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reporte_inventarioYLiquidacion.js" />
@@ -396,6 +397,8 @@
     <Content Include="Views\Paginas\Reportes\Partial\Tablas\_ComprasDevolucionesYCotizaciones.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_ComprasDevolucionesYCotizacionesCodigo.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_InventarioYLiquidacionFormatoTablas.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Filtros\_ClientesYProveedores.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Tablas\_ClientesYProveedores.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

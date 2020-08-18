@@ -1,0 +1,93 @@
+﻿<div id="divTablaClientesYProveedores" class="col-12" v-if="DATA.length > 0" style="width:99%">
+    <table id="tablaClientesYProveedores" class="table table-striped">
+        <thead>
+            <tr class="tableHeader">
+                <th style="text-align:left;" v-if="!FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
+
+                <th style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Código</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Nombre</th>
+                <th style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Contacto</th>
+                <th style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Telefono</th>
+                <th style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">RNC</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Tipo Empresa</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Vendedor</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Categoría</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Giro de la Empresa</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Ultima Transaccion</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Ciudad</th>
+                <th style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte" scope="col">Provincia</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="element in DATA">
+                <td style="text-align:left;" v-if="!FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.categorizacionSinDetalles }}</td>
+
+                <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.codigo }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nombre | FilterUppercase }}</td>
+                <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.contacto | FilterUppercase }}</td>
+                <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.telefono1 }}</td>
+                <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.rnc | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo_empresa | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.Nombre_Vendedor | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.categoriaDesc | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.giroDesc | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_ult_transac | FilterDateFormat }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.ciudad | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.provincia | FilterUppercase }}</td>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                <a class="page-link" v-on:click="Pagination(0)"><<</a>
+            </li>
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                <a class="page-link" v-on:click="Pagination(-1)"><</a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link">{{ FILTROS.PaginatorIndex + 1 }}</a>
+            </li>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                <a class="page-link" v-on:click="Pagination(+1)">></a>
+            </li>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                <a class="page-link" v-on:click="Pagination('MAX')">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+@*  GRAFICOS*@
+<div id="CPdivGraficosDatosAgrupados"
+     class="col-12"
+     hidden>
+    <div class="row">
+        <div class="col-12 col-lg-8">
+            <canvas id="CPreportesGraficos"></canvas>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="row">
+                <div class="col-12 mb-2">
+                    <div class="card card-body border-info text-info text-center p-0">
+                        <div class="card-header">
+                            <label class="font-weight-bold">Parámetros de Análisis Gráfico</label>
+                        </div>
+                        <label class="font-weight-bold">Desde {{ FILTROS.fechaMinReporteBuscado | FilterDateFormat }} Hasta {{ FILTROS.fechaMaxReporteBuscado  | FilterDateFormat }}</label>
+                        <label class="font-weight-bold">Categoria Clientes {{ FILTROS.categoriaClientesBuscada | FilterUppercase }}</label>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="card card-body border-info text-info text-center p-0">
+                        <div class="card-header">
+                            <label class="font-weight-bold">Total</label>
+                        </div>
+                        <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado | FilterStringToMoneyFormat }}</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

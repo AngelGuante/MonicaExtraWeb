@@ -423,9 +423,6 @@
 
             //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
             switch (this.FILTROS.tipoConsulta) {
-                //case 'porCategoria_Y_Sub_Categoria':
-                //    await monicaReportes.BuscarData('subCategoriasProductos');
-                //    break;
                 case 'RFA08':
                     this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
                     this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
@@ -447,7 +444,6 @@
         AjustesAvanzadosFiltros() {
             $('#ILreporteModalFormato').modal('show');
             $('#ILreporteModalFormato').collapse('hide');
-            //this.LlenarDatosCoockies();
         },
     },
 
@@ -463,14 +459,6 @@
         FilterStringToMoneyFormat: value => {
             return monicaReportes.$options.filters.FilterStringToMoneyFormat(value);
         },
-
-        //    FilterRemoveLeftZeros: value => {
-        //        return monicaReportes.$options.filters.FilterRemoveLeftZeros(value);
-        //    },
-
-        //    FilterMoneda: value => {
-        //        return monicaReportes.$options.filters.FilterMoneda(value);
-        //    }
 
         FilterTipoProducto: value => {
             return monicaReportes.$options.filters.FilterTipoProducto(value);
