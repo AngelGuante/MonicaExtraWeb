@@ -27,7 +27,7 @@
                 <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.contacto | FilterUppercase }}</td>
                 <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.telefono1 }}</td>
                 <td style="text-align:right;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.rnc | FilterUppercase }}</td>
-                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo_empresa | FilterUppercase }}</td>
+                <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo_empresa | FilterTipoEmpresa }}</td>
                 <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.Nombre_Vendedor | FilterUppercase }}</td>
                 <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.categoriaDesc | FilterUppercase }}</td>
                 <td style="text-align:left;" v-if="FILTROS.toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.giroDesc | FilterUppercase }}</td>

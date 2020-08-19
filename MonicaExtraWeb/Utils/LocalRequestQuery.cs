@@ -80,6 +80,18 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.ClientesProveedores:
                     query = ClientesProveedores(filtro);
                     break;
+                case ClientMessageStatusEnum.TerminosPagosPv:
+                    query = TerminosPagosPvQuery();
+                    break;
+                case ClientMessageStatusEnum.Impuestos:
+                    query = ImpuestosQuery();
+                    break;
+                case ClientMessageStatusEnum.GiroNecogios:
+                    query = GiroNegociosQuery();
+                    break;
+                case ClientMessageStatusEnum.GiroNecogiosPv:
+                    query = GiroNegociosPvQuery();
+                    break;
             }
 
             var obj = new WebSocketDTO

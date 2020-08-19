@@ -23,5 +23,9 @@
         ComprasDevolucionesCotizaciones = 17,
         VendedoresList = 18,
         ClientesProveedores = 19,
+        TerminosPagosPv = 20,
+        Impuestos = 21,
+        GiroNecogios = 22,
+        GiroNecogiosPv = 23,
     }
 }

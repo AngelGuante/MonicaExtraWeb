@@ -63,7 +63,6 @@
                     <div>
                         <div class="row">
                             <div class="form-check col">
-                                @*tipoDeProducto*@
                                 <input disabled class="form-check-input" type="radio" id="CPActivosCheck" value="activo" v-model="FILTROS.estatus">
                                 <label class="form-check-label" for="CPActivosCheck">
                                     Activos
@@ -103,17 +102,17 @@
                 <label class="font-weight-bold">Tipo Consulta</label>
                 <select class="custom-select" v-model="FILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
                     <option value="porCodigo">Por Código</option>
-                    <option disabled value="porNombre">Por Nombre</option>
-                    <option disabled value="porRegistro_Tributario">Por Registro Tributario</option>
-                    <option disabled value="porTelefono">Por Teléfono</option>
-                    <option disabled value="porContacto">Por Contacto</option>
-                    <option disabled value="porDireccion">Por Dirección</option>
-                    <option disabled value="porTermino">Por Termino</option>
-                    <option disabled value="porPais">Por País</option>
-                    <option disabled value="porCiudad">Por Ciudad</option>
-                    <option disabled value="porProvincia">Por Provincia</option>
-                    <option disabled value="porTipo_de_Impuesto">Por Típo de Impuesto</option>
-                    <option disabled value="porMaximo_Credito">Por Máximo Crédito</option>
+                    <option value="porNombre">Por Nombre</option>
+                    <option value="porRegistro_Tributario">Por Registro Tributario</option>
+                    <option value="porTelefono">Por Teléfono</option>
+                    <option value="porContacto">Por Contacto</option>
+                    <option value="porDireccion">Por Dirección</option>
+                    <option value="porTermino">Por Termino</option>
+                    <option value="porPais">Por País</option>
+                    <option value="porCiudad">Por Ciudad</option>
+                    <option value="porProvincia">Por Provincia</option>
+                    <option value="porTipo_de_Impuesto">Por Típo de Impuesto</option>
+                    <option value="porMaximo_Credito">Por Máximo Crédito</option>
                     <option disabled value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
                 </select>
             </div>
@@ -150,7 +149,6 @@
 
             <div class="col-12 col-lg">
                 <div class="row">
-                    @*METODO DE AGRUPACION*@
                     <div id="agrupacionDiv" class="col-12 row"
                          @*v-if="FILTROS.tipoConsulta === 'RFA08'"*@>
                         @* FILTRO AGRUPACION POR CATEGORIA*@
@@ -205,12 +203,6 @@
                                     </div>
                                 </div>
                             </div>*@
-
-                        @* FILTRO AGRUPACION POR VALOR ESPECIFIVO*@
-                        <div>
-                            <label class="font-weight-bold">Valor</label>
-                            <input type="text" class="form-control" v-model="FILTROS.valor" />
-                        </div>
                     </div>
 
                     @*SELECT BODEGA*@
@@ -270,6 +262,50 @@
                                 </div>
                             </div>
                         </div>*@
+
+                    @* FILTRO POR VALOR ESPECIFIVO*@
+                    <div class="col-12 col-lg-5"
+                         v-if="FILTROS.tipoConsulta !== 'porTermino'">
+                        <label class="font-weight-bold">Valor</label>
+                        <input type="text" class="form-control" v-model="FILTROS.valor" />
+                    </div>
+
+                    @*  TERMINOS DE PAGO: CLIENTES Y PROVEEDORES*@
+                    <div class="col-12 col-lg-4"
+                         v-if="FILTROS.tipoReporte === 'clientes'
+                           && FILTROS.tipoConsulta === 'porTermino'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col"
+                                v-model="FILTROS.terminoDePagoSeleccionado"
+                                v-on:focus="LlenarSelect('terminoDePago')">
+                            <option value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino | FilterUppercase}}</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12 col-lg-4"
+                         v-if="FILTROS.tipoReporte === 'proveedores'
+                           && FILTROS.tipoConsulta === 'porTermino'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col"
+                                v-model="FILTROS.terminoDePagoPvSeleccionado"
+                                v-on:focus="LlenarSelect('terminoDePagoPv')">
+                            <option value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.terminoDePagoPv" v-bind:value="item.termino_idpv">{{item.Descripcion_terminopv | FilterUppercase}}</option>
+                        </select>
+                    </div>
+
+                    @*  IMPUESTOS*@
+                    <div class="col-12 col-lg-4"
+                         v-if="FILTROS.tipoConsulta === 'porTipo_de_Impuesto'">
+                        <label class="font-weight-bold">Opción</label>
+                        <select class="custom-select col"
+                                v-model="FILTROS.impuestoSeleccionadoSeleccionado"
+                                v-on:focus="LlenarSelect('impuestos')">
+                            <option value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.impuestos" v-bind:value="item.impuesto_id">{{item.Descripcion_impto | FilterUppercase}}</option>
+                        </select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -280,44 +316,74 @@
     <div class="card border-info">
         <div class="card-body" style="padding: 15px;">
             <div class="row">
-                @*SELECT GIRO NEGOCIO*@
-                <div class="col-12 col-lg-3">
+                @*  SELECT GIRO NEGOCIO: CLIENTES, PROVEEDORES*@
+                <div class="col-12 col-lg-3"
+                     v-if="FILTROS.tipoReporte === 'clientes'">
                     <label class="font-weight-bold">Giro del Negocio</label>
-                    <select class="custom-select col" v-model="FILTROS.giroNegocioSeleccionada">
+                    <select class="custom-select col"
+                            v-model="FILTROS.giroNegocioSeleccionada"
+                            v-on:focus="LlenarSelect('giroNegocios')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                         <option v-for="item in FILTROS.giroNegocios" v-bind:value="item.giro_id">{{item.giro_negocio | FilterUppercase }}</option>
                     </select>
                 </div>
 
-                @*SELECT TIPO DE EMPRESA*@
+                <div class="col-12 col-lg-3"
+                     v-if="FILTROS.tipoReporte === 'proveedores'">
+                    <label class="font-weight-bold">Giro del Negocio</label>
+                    <select class="custom-select col"
+                            v-model="FILTROS.giroNegocioPvSeleccionada"
+                            v-on:focus="LlenarSelect('giroNegociosPv')">
+                        <option selected value="">--SELECCIONE UNA OPCION--</option>
+                        <option v-for="item in FILTROS.giroNegociosPv" v-bind:value="item.giro_idpv">{{item.giro_negociopv | FilterUppercase }}</option>
+                    </select>
+                </div>
+
+                @*  SELECT TIPO DE EMPRESA*@
                 <div class="col-12 col-lg-3">
                     <label class="font-weight-bold">TIPO DE EMPRESA</label>
                     <select class="custom-select col" v-model="FILTROS.tipoEmpresaSeleccionada">
-                        <option selected value="">--SELECCIONE UNA OPCION--</option>
-                        <option disabled value="">Credito Fiscal</option>
-                        <option disabled value="">De Consumo</option>
-                        <option disabled value="">Gubernamental</option>
-                        <option disabled value="">Especial</option>
-                        <option disabled value="">Exportaciones</option>
+                        <option value="">--SELECCIONE UNA OPCION--</option>
+                        <option value="1">Credito Fiscal</option>
+                        <option value="2">De Consumo</option>
+                        <option value="3">Gubernamental</option>
+                        <option value="4">Especial</option>
+                        <option value="5">Exportaciones</option>
                     </select>
                 </div>
 
-                @*SELECT VENDEDOR*@
+                @*  SELECT VENDEDOR*@
                 <div class="form-group col">
-                    <label>Vendedor</label>
-                    <select class="custom-select col" v-model="FILTROS.vendedorSeleccionado">
+                    <label class="font-weight-bold">Vendedor</label>
+                    <select class="custom-select col"
+                            v-model="FILTROS.vendedorSeleccionado"
+                            v-on:focus="LlenarSelect('vendedores')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
-                        <option v-for="item in FILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{ item.Nombre_vendedor | FilterUppercase }}</option>
+                        <option v-for="item in FILTROS.vendedores" v-bind:value="item.vendedor_id">{{ item.Nombre_vendedor | FilterUppercase }}</option>
                     </select>
                 </div>
 
-                @*SELECT CATEGORIA CLIENTE*@
-                <div v-if="FILTROS.tipoCorte !== 'porCategorias_de_Clientes'">
+                @*  SELECT CATEGORIA: CLIENTES , PROVEEDORES*@
+                <div v-if="FILTROS.tipoReporte === 'clientes'">
                     <div class="form-group col">
-                        <label>Categoria Cliente</label>
-                        <select class="custom-select col" v-model="FILTROS.categoriaClientesSeleccionada">
+                        <label class="font-weight-bold">Categoria Cliente</label>
+                        <select class="custom-select col"
+                                v-model="FILTROS.categoriaClientesSeleccionada"
+                                v-on:focus="LlenarSelect('categoriasClientes')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.categoria_clte_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div v-if="FILTROS.tipoReporte === 'proveedores'">
+                    <div class="form-group col">
+                        <label class="font-weight-bold">Categoria Vendedor</label>
+                        <select class="custom-select col"
+                                v-model="FILTROS.categoriaProveedoresSeleccionada"
+                                v-on:focus="LlenarSelect('categoriasProveedores')">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.categoriasProveedores" v-bind:value="item.Categoria_idpv">{{ item.descripcion_categpv | FilterUppercase }}</option>
                         </select>
                     </div>
                 </div>

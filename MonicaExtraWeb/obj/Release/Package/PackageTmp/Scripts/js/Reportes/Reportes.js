@@ -11,8 +11,12 @@
         categoriasProveedores: [],
         subCategoriasProductos: [],
         terminoDePago: [],
+        terminoDePagoPv: [],
         nombresBodega: [],
         categoriasProductos: [],
+        impuestos: [],
+        giroNegocios: [],
+        giroNegociosPv: [],
         minFecha_emision: '',
         maxFecha_emision: '',
     },
@@ -25,15 +29,18 @@
         vendedores: () => {
             reporte_ventasYDevoluciones.FILTROS.vendedores = monicaReportes.vendedores;
             reporte_cotizacionesYConduces.FILTROS.vendedores = monicaReportes.vendedores;
+            reporte_clientesYProveedores.FILTROS.vendedores = monicaReportes.vendedores;
         },
         categoriasClientes: () => {
             reporte_ventasYDevoluciones.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
             reporte_cotizacionesYConduces.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
             reporte_clienteIndividualStatus.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
+            reporte_clientesYProveedores.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
         },
         categoriasProveedores: () => {
             reporte_clienteIndividualStatus.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
             reporte_comprasDevolucionesYCotizaciones.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
+            reporte_clientesYProveedores.FILTROS.categoriasProveedores = monicaReportes.categoriasProveedores;
         },
         minFecha_emision: () => {
             reporte_ventasYDevoluciones.FILTROS.minFecha_emision = monicaReportes.minFecha_emision;
@@ -52,6 +59,19 @@
             reporte_cotizacionesYConduces.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_clienteIndividualStatus.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_comprasDevolucionesYCotizaciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            reporte_clientesYProveedores.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+        },
+        terminoDePagoPv: () => {
+            reporte_clientesYProveedores.FILTROS.terminoDePagoPv = monicaReportes.terminoDePagoPv;
+        },
+        impuestos: () => {
+            reporte_clientesYProveedores.FILTROS.impuestos = monicaReportes.impuestos;
+        },
+        giroNegocios: () => {
+            reporte_clientesYProveedores.FILTROS.giroNegocios = monicaReportes.giroNegocios;
+        },
+        giroNegociosPv: () => {
+            reporte_clientesYProveedores.FILTROS.giroNegociosPv = monicaReportes.giroNegociosPv;
         },
         nombresBodega: () => {
             reporte_ventasYDevoluciones.FILTROS.nombresBodega = monicaReportes.nombresBodega;
@@ -110,18 +130,18 @@
             }
 
             //  PARA CADA REPORTE EN ESPECIFICO
-            switch (opcionSeleccionada) {
-                case 'VentasYDevolucionesCategoriaYVendedor':
-                    reporte_ventasYDevoluciones.DATA = [];
-                    reporte_ventasYDevoluciones.GroupDATA = [];
-                    reporte_ventasYDevoluciones.DATA = [];
-                    break;
-                case 'CotizacionesYConducesFiltro':
-                    reporte_cotizacionesYConduces.DATA = [];
-                    reporte_cotizacionesYConduces.GroupDATA = [];
-                    reporte_cotizacionesYConduces.DATA = [];
-                    break;
-            }
+            //switch (opcionSeleccionada) {
+            //    case 'VentasYDevolucionesCategoriaYVendedor':
+            //        reporte_ventasYDevoluciones.DATA = [];
+            //        reporte_ventasYDevoluciones.GroupDATA = [];
+            //        reporte_ventasYDevoluciones.DATA = [];
+            //        break;
+            //    case 'CotizacionesYConducesFiltro':
+            //        reporte_cotizacionesYConduces.DATA = [];
+            //        reporte_cotizacionesYConduces.GroupDATA = [];
+            //        reporte_cotizacionesYConduces.DATA = [];
+            //        break;
+            //}
 
             //  MOSTRAR EL FILTRO SELECCONADO Y OCULTAR EL QUE ESTABA VISIBLE
             if (this.opcionReporteSeleccionado)
@@ -157,6 +177,10 @@
                     if (this.terminoDePago.length === 0)
                         this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});
                     break;
+                case 'terminoDePagoPv':
+                    if (this.terminoDePagoPv.length === 0)
+                        this.terminoDePagoPv = await BuscarInformacionLocal('SendWebsocketServer/20', {});
+                    break;
                 case 'nombresBodega':
                     if (this.nombresBodega.length === 0)
                         this.nombresBodega = await BuscarInformacionLocal('SendWebsocketServer/8', {});
@@ -180,6 +204,18 @@
                 case 'subCategoriasProductos':
                     if (this.subCategoriasProductos.length === 0)
                         this.subCategoriasProductos = await BuscarInformacionLocal('SendWebsocketServer/16', {});
+                    break;
+                case 'impuestos':
+                    if (this.impuestos.length === 0)
+                        this.impuestos = await BuscarInformacionLocal('SendWebsocketServer/21', {});
+                    break;
+                case 'giroNegocios':
+                    if (this.giroNegocios.length === 0)
+                        this.giroNegocios = await BuscarInformacionLocal('SendWebsocketServer/22', {});
+                    break;
+                case 'giroNegociosPv':
+                    if (this.giroNegociosPv.length === 0)
+                        this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
                 case 'clientesList':
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
@@ -206,11 +242,38 @@
         },
 
         LimpiarTablas() {
-            reporte_cotizacionesYConduces.TablaVisible = '';
-            reporte_ventasYDevoluciones.TablaVisible = '';
-            reporte_clienteIndividualStatus.DATA = [];
-            reporte_inventarioYLiquidacion.DATA = [];
-            reporte_comprasDevolucionesYCotizaciones.DATA = [];
+            let divGrafico;
+            //  PARA CADA REPORTE EN ESPECIFICO
+            switch (this.opcionReporteSeleccionado) {
+                case 'VentasYDevolucionesCategoriaYVendedor':
+                    reporte_ventasYDevoluciones.TablaVisible = '';
+                    reporte_ventasYDevoluciones.DATA = [];
+                    reporte_ventasYDevoluciones.GroupDATA = [];
+                    break;
+                case 'filtrosClienteIndividualStatus':
+                    reporte_clienteIndividualStatus.DATA = [];
+                    divGrafico = document.getElementById('CPCCPPdivGraficosDatosAgrupados');
+                    break;
+                case 'clientesYProveedoresFiltro':
+                    reporte_clientesYProveedores.DATA = [];
+                    divGrafico = document.getElementById('CPdivGraficosDatosAgrupados');
+                    break;
+                case 'inventarioYLiquidacion':
+                    reporte_inventarioYLiquidacion.DATA = [];
+                    divGrafico = document.getElementById('ILdivGraficosDatosAgrupados');
+                    break;
+                case 'comprasDevolucionesYConducesFiltro':
+                    reporte_comprasDevolucionesYCotizaciones.DATA = [];
+                    divGrafico = document.getElementById('divTablaComprasVentasCotizaciones');
+                    break;
+                case 'CotizacionesYConducesFiltro':
+                    reporte_cotizacionesYConduces.TablaVisible = '';
+                    reporte_cotizacionesYConduces.DATA = [];
+                    reporte_cotizacionesYConduces.GroupDATA = [];
+                    break;
+            }
+            if (divGrafico)
+                divGrafico.setAttribute('hidden', true);
         },
     },
 

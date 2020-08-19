@@ -10,11 +10,21 @@
             tipoConsulta: 'porCodigo',
             giroNegocioSeleccionada: '',
             giroNegocios: [],
+            giroNegocioPvSeleccionada: '',
+            giroNegociosPv: [],
             tipoEmpresaSeleccionada: '',
             vendedorSeleccionado: '',
             vendedores: [],
             categoriaClientesSeleccionada: '',
             categoriasClientes: [],
+            categoriaProveedoresSeleccionada: '',
+            categoriasProveedores: [],
+            terminoDePagoSeleccionado: '',
+            terminoDePago: [],
+            terminoDePagoPvSeleccionado: '',
+            terminoDePagoPv: [],
+            impuestoSeleccionadoSeleccionado: '',
+            impuestos: [],
             //minFecha_emision: '',
             //maxFecha_emision: '',
             estatus: '',
@@ -57,7 +67,7 @@
 
     watch: {
         'FILTROS.tipoReporte'() {
-            this.FILTROS.valor = '';
+            this.Limpiar();
         },
         'FILTROS.analisisGrafico'() {
             //if (this.FILTROS.analisisGrafico) {
@@ -146,31 +156,45 @@
                 const filtro = {
                     tipoConsulta: this.FILTROS.tipoConsulta,
                     tipoReporte: this.FILTROS.tipoReporte,
-                    valor: this.FILTROS.valor,
                     skip: skip
                 }
 
-                //if (this.FILTROS.tipoDeProducto)
-                //    filtro.estatus = this.FILTROS.tipoDeProducto;
-                //if (this.FILTROS.subProductoCategoriaSeleccionada.toString().length > 0)
-                //    filtro.subCategoriaProductos = this.FILTROS.subProductoCategoriaSeleccionada;
-                //if (this.FILTROS.categoriaProductosSeleccionada.toString().length > 0)
-                //    filtro.categoriaProductos = this.FILTROS.categoriaProductosSeleccionada;
-                //if (this.FILTROS.nombresBodegaSeleccionada.toString().length > 0)
-                //    filtro.bodega = this.FILTROS.nombresBodegaSeleccionada;
-                //if (this.FILTROS.soloPrroductosConExistencia)
-                //    filtro.soloPrroductosConExistencia = true;
-                //if (this.FILTROS.agregarProductosInactivos)
-                //    filtro.agregarProductosInactivos = true;
+                switch (this.FILTROS.tipoReporte) {
+                    case 'clientes':
+                        if (this.FILTROS.giroNegocioSeleccionada)
+                            filtro.id_giro = this.FILTROS.giroNegocioSeleccionada;
+                        if (this.FILTROS.categoriaClientesSeleccionada)
+                            filtro.categoriaP = this.FILTROS.categoriaClientesSeleccionada;
+                        break;
+                    case 'proveedores':
+                        if (this.FILTROS.giroNegocioPvSeleccionada)
+                            filtro.id_giro = this.FILTROS.giroNegocioPvSeleccionada;
+                        if (this.FILTROS.categoriaProveedoresSeleccionada)
+                            filtro.categoriaP = this.FILTROS.categoriaProveedoresSeleccionada;
+                        break;
+                }
+                if (this.FILTROS.tipoEmpresaSeleccionada)
+                    filtro.empresa = this.FILTROS.tipoEmpresaSeleccionada;
+                if (this.FILTROS.vendedorSeleccionado)
+                    filtro.Codigo_vendedor = this.FILTROS.vendedorSeleccionado;
 
                 //  AGREGAR VALORES
                 if (this.FILTROS.tipoConsulta !== 'RFA08') {
-                    //if (this.FILTROS.tipoConsulta === 'porCodigo'
-                    //    || this.FILTROS.tipoConsulta === 'porDescripcion'
-                    //    || this.FILTROS.tipoConsulta === 'porProveedor')
-                    //    filtro.valor = this.FILTROS.valor;
-                    //else if (this.FILTROS.tipoConsulta === 'porCantidad_En_Almacen'
-                    //    || this.FILTROS.tipoConsulta === 'porPrecio') {
+                    if (this.FILTROS.tipoConsulta !== 'porTermino')
+                        filtro.valor = (this.FILTROS.valor).trim();
+                    else if (this.FILTROS.tipoConsulta === 'porTermino') {
+                        switch (this.FILTROS.tipoReporte) {
+                            case 'clientes':
+                                filtro.valor = this.FILTROS.terminoDePagoSeleccionado;
+                                break;
+                            case 'proveedores':
+                                filtro.valor = this.FILTROS.terminoDePagoPvSeleccionado;
+                                break;
+                        }
+                    }
+                    else if (this.FILTROS.tipoConsulta === 'porTipo_de_Impuesto')
+                        filtro.valor = this.FILTROS.impuestoSeleccionadoSeleccionado;
+                    //else if (this.FILTROS.tipoConsulta === 'porTermino') {
                     //    filtro.desde = this.FILTROS.desde;
                     //    filtro.hasta = this.FILTROS.hasta;
                     //}
@@ -372,52 +396,62 @@
                     //    setTimeout(() => document.getElementById('divTablaInventarioYLiquidacion').setAttribute('hidden', true), 2);
                     //else
                     //    setTimeout(() => document.getElementById('ILdivGraficosDatosAgrupados').setAttribute('hidden', true), 2);
+                    //}
                 }
             }
+            //    //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
+            //    //localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
+        },
+
+        PonerDescripcionDatosAgrupados(tipoCorte, index) {
+            //switch (tipoCorte) {
+            //    case 'porLos_Mas_Vendidos':
+            //    case 'porLos_Menos_Vendidos':
+            //        return `${result[index].descrip_producto.toUpperCase()} - (${result[index].codigo_producto.toUpperCase()})`
+            //    case 'porCategoria':
+            //        return result[index].descripcion_categ.toUpperCase();
+            //}
+        },
+
+        TipoConsultaSelectChanged() {
+            this.Limpiar();
+            //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
+            //switch (this.FILTROS.tipoConsulta) {
+            //    case 'RFA08':
+            //        this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
+            //        this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
+            //        this.FILTROS.tipoCorte = 'porLos_Mas_Vendidos';
+            //        break;
+            //}
+        },
+
+        TipoCorteChanged() {
+            this.Limpiar();
+        },
+
+        Limpiar() {
+            monicaReportes.LimpiarTablas();
+            this.FILTROS.valor = '';
+            //this.FILTROS.desde = '';
+            //this.FILTROS.hasta = '';
+            this.FILTROS.giroNegocioSeleccionada = '';
+            this.FILTROS.giroNegocioPvSeleccionada = '';
+            this.FILTROS.terminoDePagoSeleccionado = '';
+            this.FILTROS.terminoDePagoPvSeleccionado = '';
+            this.FILTROS.impuestoSeleccionadoSeleccionado = '';
+            this.FILTROS.categoriaProveedoresSeleccionada = '';
+            this.FILTROS.categoriaClientesSeleccionada = '';
+            this.FILTROS.vendedorSeleccionado = '';
+            this.FILTROS.tipoEmpresaSeleccionada = '';
+            //this.FILTROS.subProductoCategoriaSeleccionada = '';
+            //this.FILTROS.categoriaProductosSeleccionada = '';
+            //this.FILTROS.cantidadAgrupacionProductos = 10;
+            //this.FILTROS.nombresBodegaSeleccionada = '';
+        },
+
+        LlenarSelect(value) {
+            monicaReportes.BuscarData(value);
         }
-        //    //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
-        //    //localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
-    },
-
-    PonerDescripcionDatosAgrupados(tipoCorte, index) {
-        //switch (tipoCorte) {
-        //    case 'porLos_Mas_Vendidos':
-        //    case 'porLos_Menos_Vendidos':
-        //        return `${result[index].descrip_producto.toUpperCase()} - (${result[index].codigo_producto.toUpperCase()})`
-        //    case 'porCategoria':
-        //        return result[index].descripcion_categ.toUpperCase();
-        //}
-    },
-
-    async TipoConsultaSelectChanged() {
-        //  LIMPIAR TODOS LOS CAMPOS.
-        //this.FILTROS.desde = '';
-        //this.FILTROS.hasta = '';
-        //this.FILTROS.valor = '';
-        //this.FILTROS.tipoCorte = '';
-        //this.FILTROS.subProductoCategoriaSeleccionada = '';
-        //this.FILTROS.categoriaProductosSeleccionada = '';
-        //this.FILTROS.cantidadAgrupacionProductos = 10;
-        //this.FILTROS.nombresBodegaSeleccionada = '';
-
-        //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
-        //switch (this.FILTROS.tipoConsulta) {
-        //    case 'RFA08':
-        //        this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
-        //        this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
-        //        this.FILTROS.tipoCorte = 'porLos_Mas_Vendidos';
-        //        break;
-        //}
-    },
-
-    async TipoCorteChanged() {
-        this.FILTROS.desde = '';
-        this.FILTROS.hasta = '';
-        this.FILTROS.valor = '';
-        this.FILTROS.subProductoCategoriaSeleccionada = '';
-        this.FILTROS.categoriaProductosSeleccionada = '';
-        this.FILTROS.cantidadAgrupacionProductos = 10;
-        this.FILTROS.nombresBodegaSeleccionada = '';
     },
 
     filters: {
@@ -435,6 +469,21 @@
 
         FilterTipoProducto: value => {
             return monicaReportes.$options.filters.FilterTipoProducto(value);
+        },
+
+        FilterTipoEmpresa: value => {
+            switch (value) {
+                case 1:
+                    return "CREDITO FISCAL";
+                case 2:
+                    return "DE CONSUMO";
+                case 3:
+                    return "GUBERNAMENTAL";
+                case 4:
+                    return "ESPECIAL";
+                case 5:
+                    return "EXPORTACIONES";
+            }
         }
     },
 });

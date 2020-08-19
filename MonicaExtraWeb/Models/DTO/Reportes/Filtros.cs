@@ -27,6 +27,11 @@
         public string soloPrroductosConExistencia { get; set; }
         public string agregarProductosInactivos { get; set; }
 
+        //  **ClientesTProveedores**
+        public string id_giro { get; set; }
+        public string empresa { get; set; }
+        public string categoriaP { get; set; }
+
         //  **VentasDevolucionesCategoriaYVendedor**
         public string tipoReporte { get; set; }
         public string tipoCorte { get; set; }

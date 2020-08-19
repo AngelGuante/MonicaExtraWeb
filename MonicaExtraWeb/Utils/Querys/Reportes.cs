@@ -1597,6 +1597,7 @@ namespace MonicaExtraWeb.Utils
         public static string ClientesProveedores(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
+            var queryWhere = new StringBuilder();
 
             string TableSource = "";
             string TableSourceColCodigo = "";
@@ -1608,6 +1609,7 @@ namespace MonicaExtraWeb.Utils
             string TableSourceNegocio = "";
             string TableSourceNegocioColId = "";
             string TableSourceNegocioColDesc = "";
+            string TableSourceTermino = "";
 
             switch (filtro.tipoReporte)
             {
@@ -1622,6 +1624,7 @@ namespace MonicaExtraWeb.Utils
                     TableSourceNegocio = "giro_negocios";
                     TableSourceNegocioColId = "giro_id";
                     TableSourceNegocioColDesc = "giro_negocio";
+                    TableSourceTermino = "termino_id";
                     break;
                 case "proveedores":
                     TableSource = "proveedores";
@@ -1634,6 +1637,7 @@ namespace MonicaExtraWeb.Utils
                     TableSourceNegocio = "giro_negociospv";
                     TableSourceNegocioColId = "giro_idpv";
                     TableSourceNegocioColDesc = "giro_negociopv";
+                    TableSourceTermino = "termino_idpv";
                     break;
             }
 
@@ -1671,105 +1675,134 @@ namespace MonicaExtraWeb.Utils
             #endregion
 
             #region WHERE
-            //query.Append("  WHERE TDS.Estado_registro = '0' ");
-            //query.Append("  AND TDS.balance > 0 ");
-            //query.Append("  AND TDS.tipo = 'D' ");
+            queryWhere.Append("WHERE ");
 
-            if (!string.IsNullOrEmpty(filtro.valor))
+            if (!string.IsNullOrEmpty(filtro.id_giro))
+                queryWhere.Append($" TS.{TableSourceNegocioColId} = '{filtro.id_giro}' ");
+            if (!string.IsNullOrEmpty(filtro.empresa))
             {
-                query.Append(" WHERE ");
-                query.Append($" TS.{TableSourceColCodigo} = '{filtro.valor}' ");
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.tipo_empresa = '{filtro.empresa}' ");
             }
-            //if (!string.IsNullOrEmpty(filtro.maxFecha_emision))
-            //    query.Append($"AND TDS.fecha_emision <= '{filtro.maxFecha_emision}' ");
-            //if (!string.IsNullOrEmpty(filtro.code))
-            //    query.Append($" AND TS.{TableSourceCodigo} = '{filtro.code}' ");
-            //else
-            //    query.Append($" AND TS.{TableSourceID} = TDS.{TableSourceID} ");
-            //if (filtro.SoloDocsVencidos)
-            //{
-            //    var dateNow = DateTime.Now;
-            //    query.Append($" AND TDS.fecha_vcmto <= '{dateNow.Year}-{dateNow.Month}-{dateNow.Day}'  ");
-            //}
-
-            //switch (filtro.tipoConsulta)
-            //{
-            //    case "RFA01":
-            //        if (!string.IsNullOrEmpty(filtro.opcion))
-            //        {
-            //            switch (filtro.opcion)
-            //            {
-            //                case "documento":
-            //                    if (!string.IsNullOrEmpty(filtro.desde))
-            //                        query.Append($"AND SUBSTRING(STR(TDS.nro_dcmto), Patindex('%[^0 ]%', STR(TDS.nro_dcmto) + ' '), LEN(TDS.nro_dcmto)) >= CAST('{filtro.desde}' AS FLOAT) ");
-            //                    if (!string.IsNullOrEmpty(filtro.hasta))
-            //                        query.Append($"AND SUBSTRING(STR(TDS.nro_dcmto), Patindex('%[^0 ]%', STR(TDS.nro_dcmto) + ' '), LEN(TDS.nro_dcmto)) <= CAST('{filtro.hasta}' AS FLOAT) ");
-            //                    break;
-            //                case "factura":
-            //                    if (!string.IsNullOrEmpty(filtro.desde))
-            //                        query.Append($"AND F.{TablaTipoFacturaCampoRef} >= '{filtro.desde}' ");
-            //                    if (!string.IsNullOrEmpty(filtro.hasta))
-            //                        query.Append($"AND F.{TablaTipoFacturaCampoRef} <= '{filtro.hasta}' ");
-            //                    break;
-            //            }
-            //        }
-            //        break;
-            //    case "RFA02":
-            //        if (!string.IsNullOrEmpty(filtro.desde))
-            //            query.Append($"AND TDS.Monto_dcmto >= '{filtro.desde}' ");
-            //        if (!string.IsNullOrEmpty(filtro.hasta))
-            //            query.Append($"AND TDS.Monto_dcmto <= '{filtro.hasta}' ");
-            //        break;
-            //    case "RFA03":
-            //        if (!string.IsNullOrEmpty(filtro.valor))
-            //            query.Append($"AND TP.termino_id = '{filtro.valor}' ");
-            //        break;
-            //    case "RFA09":
-            //        if (!string.IsNullOrEmpty(filtro.comprobante))
-            //        {
-            //            if (filtro.soloNCFFormatoElectronico == null
-            //                || string.IsNullOrEmpty(filtro.soloNCFFormatoElectronico))
-            //            {
-            //                query.Append($"AND SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
-            //                query.Append($"OR SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 1) + SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 10, 2) = 'A{ComprobanteDictionary(filtro.comprobante)}' ");
-            //            }
-            //            if (!string.IsNullOrEmpty(filtro.tipoReporte))
-            //                if (filtro.tipoReporte == "porPagar")
-            //                    query.Append($" OR SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 1, 1) + SUBSTRING(TRIM(TDS.{TableDetailsNro_fiscal}), 10, 2) = 'E{ComprobanteDictionary(filtro.comprobante)}' ");
-            //        }
-            //        break;
-            //    case "analisis_Grafico":
-            //        switch (filtro.tipoCorte)
-            //        {
-            //            case "porCliente":
-            //                if (!string.IsNullOrEmpty(filtro.valor))
-            //                    query.Append($"AND TS.{TableSourceName.Replace(" nombre", "")} LIKE '%{filtro.valor}%' ");
-            //                break;
-            //            case "porVendedor":
-            //                if (!string.IsNullOrEmpty(filtro.valor))
-            //                    query.Append($"AND V.Nombre_vendedor LIKE '%{filtro.valor}%' ");
-            //                break;
-            //            case "porCategorias_de_Clientes":
-            //                if (!string.IsNullOrEmpty(filtro.valor))
-            //                    query.Append($"AND CCP.categoria_clte_id = '%{filtro.valor}%' ");
-            //                break;
-            //        }
-
-            //        break;
-            //}
-            #endregion
-
-            #region ORDER BY
-            if (!filtro.SUM)
+            if (!string.IsNullOrEmpty(filtro.Codigo_vendedor))
             {
-                query.Append("ORDER BY ");
-                switch (filtro.tipoConsulta)
-                {
-                    case "porCodigo":
-                        query.Append($" TS.{TableSourceColCodigo} ");
-                        break;
-                }
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.{TableSourceColVendedor} = '{filtro.Codigo_vendedor}' ");
             }
+            if (!string.IsNullOrEmpty(filtro.categoriaP))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.{TableSourceCategoriaId} = '{filtro.categoriaP}' ");
+            }
+
+            switch (filtro.tipoConsulta)
+            {
+                case "porCodigo":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.{TableSourceColCodigo} = '{filtro.valor}' ");
+                    }
+                    break;
+                case "porNombre":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.{TableSourceColNombre} LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porRegistro_Tributario":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.registro_tributario = '{filtro.valor}' ");
+                    }
+                    break;
+                case "porTelefono":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.telefono1 LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porContacto":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.Contacto LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porDireccion":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($"( ");
+                        queryWhere.Append($"   TS.direccion1 LIKE '%{filtro.valor}%' ");
+                        queryWhere.Append($"OR TS.direccion2 LIKE '%{filtro.valor}%' ");
+                        queryWhere.Append($"OR TS.direccion3 LIKE '%{filtro.valor}%' ");
+                        queryWhere.Append($") ");
+                    }
+                    break;
+                case "porTermino":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.{TableSourceTermino} = '{filtro.valor}' ");
+                    }
+                    break;
+                case "porPais":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.pais LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porCiudad":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.ciudad LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porProvincia":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.Provincia LIKE '%{filtro.valor}%' ");
+                    }
+                    break;
+                case "porTipo_de_Impuesto":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.impto = '{filtro.valor}' ");
+                    }
+                    break;
+                case "porMaximo_Credito":
+                    if (!string.IsNullOrEmpty(filtro.valor))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($" TS.maximo_Credito = '{filtro.valor}' ");
+                    }
+                    break;
+            }
+            if (queryWhere.Length > 6)
+                query.Append(queryWhere.ToString());
             #endregion
 
             #region GROUP BY
@@ -1803,6 +1836,60 @@ namespace MonicaExtraWeb.Utils
             //    }
             //}
             #endregion
+
+            #region ORDER BY
+            if (!filtro.SUM)
+            {
+                query.Append("ORDER BY ");
+                switch (filtro.tipoConsulta)
+                {
+                    case "porCodigo":
+                        query.Append($" TS.{TableSourceColCodigo} ");
+                        break;
+                    case "porNombre":
+                        query.Append($" TS.{TableSourceColNombre} ");
+                        break;
+                    case "porRegistro_Tributario":
+                        query.Append($" TS.registro_tributario ");
+                        break;
+                    case "porTelefono":
+                        query.Append($" TS.telefono1 ");
+                        break;
+                    case "porContacto":
+                        query.Append($" TS.Contacto ");
+                        break;
+                    case "porDireccion":
+                        query.Append($"  TS.direccion1 ");
+                        query.Append($", TS.direccion2 ");
+                        query.Append($", TS.direccion3 ");
+                        break;
+                    case "porTermino":
+                        query.Append($" TS.{TableSourceTermino} ");
+                        break;
+                    case "porPais":
+                        query.Append($" TS.pais ");
+                        break;
+                    case "porCiudad":
+                        query.Append($" TS.ciudad ");
+                        break;
+                    case "porProvincia":
+                        query.Append($" TS.Provincia ");
+                        break;
+                    case "porTipo_de_Impuesto":
+                        query.Append($" TS.impto ");
+                        break;
+                    case "porMaximo_Credito":
+                        query.Append($" TS.maximo_Credito DESC ");
+                        break;
+                }
+            }
+            #endregion
+
+            if (!filtro.GROUP)
+            {
+                query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+            }
 
             return query.ToString();
         }
@@ -1850,6 +1937,7 @@ namespace MonicaExtraWeb.Utils
             var query = new StringBuilder();
 
             query.Append("SELECT ");
+            query.Append("  vendedor_id, ");
             query.Append("  TRIM(Nombre_vendedor) Nombre_vendedor, ");
             query.Append("  TRIM(Codigo_vendedor) Codigo_vendedor ");
             query.Append($"FROM {DbName}dbo.vendedores ");
@@ -1964,6 +2052,19 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
+        public static string TerminosPagosPvQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  termino_idpv, ");
+            query.Append("  TRIM(UPPER(Descripcion_terminopv)) Descripcion_terminopv ");
+            query.Append($"FROM {DbName}dbo.terminos_pagopv ");
+            query.Append("ORDER BY Descripcion_terminopv ");
+
+            return query.ToString();
+        }
+
         public static string BodegasQuery(string DbName = "")
         {
             var query = new StringBuilder();
@@ -1997,6 +2098,30 @@ namespace MonicaExtraWeb.Utils
             query.Append("  sub_categoria_id, ");
             query.Append("  TRIM(descripcion_sub_categ) descripcion_sub_categ ");
             query.Append($"FROM {DbName}dbo.sub_categoria_producto ");
+
+            return query.ToString();
+        }
+
+        public static string GiroNegociosQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  giro_id, ");
+            query.Append("  TRIM(giro_negocio) giro_negocio ");
+            query.Append($"FROM {DbName}dbo.giro_negocios ");
+
+            return query.ToString();
+        }
+
+        public static string GiroNegociosPvQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  giro_idpv, ");
+            query.Append("  TRIM(giro_negociopv) giro_negociopv ");
+            query.Append($"FROM {DbName}dbo.giro_negociospv ");
 
             return query.ToString();
         }
@@ -2062,6 +2187,18 @@ namespace MonicaExtraWeb.Utils
 
             if (!string.IsNullOrEmpty(filtro.NroCotizacion))
                 query.Append($"WHERE nro_estimado = '{filtro.NroCotizacion}' ");
+
+            return query.ToString();
+        }
+
+        public static string ImpuestosQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  impuesto_id, ");
+            query.Append("  TRIM(Descripcion_impto) Descripcion_impto ");
+            query.Append($"FROM {DbName}dbo.impuestos ");
 
             return query.ToString();
         }
