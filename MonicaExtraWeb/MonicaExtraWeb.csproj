@@ -399,6 +399,7 @@
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_InventarioYLiquidacionFormatoTablas.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Filtros\_ClientesYProveedores.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\Tablas\_ClientesYProveedores.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\Modals\_ClientesYProveedoresFormatoTablas.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

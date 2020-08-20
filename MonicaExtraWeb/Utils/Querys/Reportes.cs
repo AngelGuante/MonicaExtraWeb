@@ -1610,6 +1610,7 @@ namespace MonicaExtraWeb.Utils
             string TableSourceNegocioColId = "";
             string TableSourceNegocioColDesc = "";
             string TableSourceTermino = "";
+            string TableSourceColActivo = "";
 
             switch (filtro.tipoReporte)
             {
@@ -1625,6 +1626,7 @@ namespace MonicaExtraWeb.Utils
                     TableSourceNegocioColId = "giro_id";
                     TableSourceNegocioColDesc = "giro_negocio";
                     TableSourceTermino = "termino_id";
+                    TableSourceColActivo = "clte_Activo";
                     break;
                 case "proveedores":
                     TableSource = "proveedores";
@@ -1638,6 +1640,7 @@ namespace MonicaExtraWeb.Utils
                     TableSourceNegocioColId = "giro_idpv";
                     TableSourceNegocioColDesc = "giro_negociopv";
                     TableSourceTermino = "termino_idpv";
+                    TableSourceColActivo = "proveedor_Activo";
                     break;
             }
 
@@ -1696,6 +1699,30 @@ namespace MonicaExtraWeb.Utils
                 if (queryWhere.Length > 6)
                     queryWhere.Append("AND ");
                 queryWhere.Append($" TS.{TableSourceCategoriaId} = '{filtro.categoriaP}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.activo))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.{TableSourceColActivo} = 'A' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.conBalance))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.Balance > 0 ");
+            }
+            if (!string.IsNullOrEmpty(filtro.sinImpt))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.aplica_impto > 'SI' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.sinRnc))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($" TS.registro_tributario = '' ");
             }
 
             switch (filtro.tipoConsulta)
@@ -1800,6 +1827,43 @@ namespace MonicaExtraWeb.Utils
                         queryWhere.Append($" TS.maximo_Credito = '{filtro.valor}' ");
                     }
                     break;
+                case "RFA08":
+                    switch (filtro.tipoCorte)
+                    {
+                        case "Sin_Actividad":
+                            if (!string.IsNullOrEmpty(filtro.desde) && !string.IsNullOrEmpty(filtro.hasta))
+                            {
+                                if (queryWhere.Length > 6)
+                                    queryWhere.Append("AND ");
+                                queryWhere.Append($" TS.fecha_ult_transac NOT BETWEEN '{filtro.desde}' AND '{filtro.hasta}'");
+                            }
+                            break;
+                        case "Por_Categoria":
+                            if (!string.IsNullOrEmpty(filtro.valor))
+                            {
+                                if (queryWhere.Length > 6)
+                                    queryWhere.Append("AND ");
+                                queryWhere.Append($" TSC.{TableSourceCategoriaColDescripcion} = '{filtro.valor}'");
+                            }
+                            break;
+                        //case "Por_Vendedor":
+                        //    if (!string.IsNullOrEmpty(filtro.valor))
+                        //    {
+                        //        if (queryWhere.Length > 6)
+                        //            queryWhere.Append("AND ");
+                        //        queryWhere.Append($" V.vendedor_id = '{filtro.valor}'");
+                        //    }
+                        //    break;
+                        //case "Por_Tipo":
+                        //    if (!string.IsNullOrEmpty(filtro.valor))
+                        //    {
+                        //        if (queryWhere.Length > 6)
+                        //            queryWhere.Append("AND ");
+                        //        queryWhere.Append($" V.tipo_empresa = '{filtro.valor}'");
+                        //    }
+                        //    break;
+                    }
+                    break;
             }
             if (queryWhere.Length > 6)
                 query.Append(queryWhere.ToString());
@@ -1881,11 +1945,41 @@ namespace MonicaExtraWeb.Utils
                     case "porMaximo_Credito":
                         query.Append($" TS.maximo_Credito DESC ");
                         break;
+                    case "RFA08":
+                        switch (filtro.tipoCorte)
+                        {
+                            case "porLos_Mas_Recientes":
+                                query.Append($" TS.creado DESC ");
+                                break;
+                            case "porLos_Mas_Antiguos":
+                                query.Append($" TS.creado ");
+                                break;
+                            case "Sin_Actividad":
+                                query.Append($" TS.fecha_ult_transac DESC ");
+                                break;
+                            case "Por_Categoria":
+                                query.Append($" TSC.{TableSourceCategoriaColDescripcion} ");
+                                break;
+                            case "Por_Giro":
+                                query.Append($" TSN.{TableSourceNegocioColDesc} ");
+                                break;
+                            case "Por_Vendedor":
+                                query.Append($" V.nombre_vendedor ");
+                                break;
+                            case "Por_Tipo":
+                                query.Append($" TS.tipo_empresa ");
+                                break;
+                        }
+                        break;
                 }
             }
             #endregion
 
-            if (!filtro.GROUP)
+            if (filtro.GROUP
+                && filtro.tipoCorte != "Por_Categori"
+                && filtro.tipoCorte != "Por_Giro"
+                && filtro.tipoCorte != "Por_Vendedor"
+                && filtro.tipoCorte != "Por_Tipo")
             {
                 query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
                 query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");

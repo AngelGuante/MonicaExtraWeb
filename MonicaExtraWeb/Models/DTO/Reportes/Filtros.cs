@@ -31,6 +31,10 @@
         public string id_giro { get; set; }
         public string empresa { get; set; }
         public string categoriaP { get; set; }
+        public string activo { get; set; }
+        public string conBalance { get; set; }
+        public string sinImpt { get; set; }
+        public string sinRnc { get; set; }
 
         //  **VentasDevolucionesCategoriaYVendedor**
         public string tipoReporte { get; set; }

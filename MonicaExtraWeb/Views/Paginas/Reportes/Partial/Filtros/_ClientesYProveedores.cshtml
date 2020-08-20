@@ -1,4 +1,13 @@
 ﻿<div id="clientesYProveedoresFiltro" class="card border-info mb-3 Sombra card-body text-info" style="padding: 0px 6px 10px 6px;" hidden>
+    <div>
+        <button class="btn btn-info"
+                style="float: right; border:none; background:none; display:flex; color:#17A2B8;"
+                title="Configuraciones avanzadas para los filtros"
+                v-on:click="AjustesAvanzadosFiltros()">
+            Ajustes Avanzados <i class="material-icons" style="color:#17A2B8; margin-left:4px;">settings</i>
+        </button>
+    </div>
+
     <div style="margin-top: 10px;">
         <div class="row">
             <div class="col-12 col-md-8">
@@ -28,71 +37,75 @@
                                 <div class="col-12 col-lg">
                                     <label class="font-weight-bold">Tipo de análisis</label>
                                     <select class="custom-select" v-model="FILTROS.tipoCorte" v-on:change="TipoCorteChanged()">
-                                        <option disabled value="porLos_Mas_Recientes">Por Los Más Recientes</option>
-                                        <option disabled value="porLos_Mas_Antiguos">Por Los Más Antiguos</option>
+                                        <option value="porLos_Mas_Recientes">Por Los Más Recientes</option>
+                                        <option value="porLos_Mas_Antiguos">Por Los Más Antiguos</option>
                                         <option disabled value="porLos_Mejores_Pagadores">Por Los Mejores Pagadores</option>
-                                        <option disabled value="Sin_Actividad">Sin Actividad</option>
+                                        <option value="Sin_Actividad">Sin Actividad</option>
                                         <option disabled value="Con_Deudas_En_Atraso">Con Deudad En Atraso</option>
-                                        <option disabled value="Por_Categoria">Por Categoria</option>
-                                        <option disabled value="Por_Giro">Por Giro</option>
-                                        <option disabled value="Por_Vendedor">Por Vendedor</option>
-                                        <option disabled value="Por_Vendedor">Por Tipo</option>
+                                        <option value="Por_Categoria">Por Categoria</option>
+                                        <option value="Por_Giro">Por Giro</option>
+                                        <option value="Por_Vendedor">Por Vendedor</option>
+                                        <option value="Por_Tipo">Por Tipo</option>
                                     </select>
                                 </div>
 
-                                <div class="d-flex flex-column justify-content-end col-12 col-lg-6">
-                                    <div class="form-check">
-                                        <input disabled id="CPcheckboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.mostrarDetallesProductosCorte">
-                                        <label for="CPcheckboxMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
-                                    </div>
+                                @*<div class="d-flex flex-column justify-content-end col-12 col-lg-6"
+                                         v-if="FILTROS.tipoCorte !== 'porLos_Mas_Recientes'
+                                                &&  FILTROS.tipoCorte !== 'porLos_Mas_Antiguos'
+                                                &&  FILTROS.tipoCorte !== 'Sin_Actividad'
+                                                &&  FILTROS.tipoCorte !== 'Por_Categoria'">
+                                        <div class="form-check">
+                                            <input disabled id="CPcheckboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.mostrarDetallesProductosCorte">
+                                            <label for="CPcheckboxMostrarDetalles" class="form-check-label font-italic">Sin Detalles</label>
+                                        </div>
 
-                                    <div class="form-check">
-                                        <input disabled id="CPcheckboxAnalisisGrafico" type="checkbox" class="form-check-input" v-model="FILTROS.analisisGrafico">
-                                        <label for="CPcheckboxAnalisisGrafico" class="form-check-label font-italic">Análisis Gráfico</label>
-                                    </div>
+                                        <div class="form-check">
+                                            <input disabled id="CPcheckboxAnalisisGrafico" type="checkbox" class="form-check-input" v-model="FILTROS.analisisGrafico">
+                                            <label for="CPcheckboxAnalisisGrafico" class="form-check-label font-italic">Análisis Gráfico</label>
+                                        </div>
+                                    </div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @*<div class="col-12 col-md-4">
+                    <div>
+                        <label class="font-weight-bold mr-2">Tipo de Producto</label>
+                        <div>
+                            <div class="row">
+                                <div class="form-check col">
+                                    <input disabled class="form-check-input" type="radio" id="CPActivosCheck" value="activo" v-model="FILTROS.estatus">
+                                    <label class="form-check-label" for="CPActivosCheck">
+                                        Activos
+                                    </label>
+                                </div>
+
+                                <div class="form-check col">
+                                    <input disabled class="form-check-input" type="radio" id="CPBalanceMayor0Check" value="bMayor0" v-model="FILTROS.estatus">
+                                    <label class="form-check-label" for="CPBalanceMayor0Check">
+                                        Balance > 0
+                                    </label>
+                                </div>
+
+                                <div class="form-check col">
+                                    <input disabled class="form-check-input" type="radio" id="CPSinImpuestosCheck" value="sinImpt" v-model="FILTROS.estatus">
+                                    <label class="form-check-label" for="CPSinImpuestosCheck">
+                                        Sin Impuestos
+                                    </label>
+                                </div>
+
+                                <div class="form-check col">
+                                    <input disabled class="form-check-input" type="radio" id="CPSinRncCheck" value="sinRnc" v-model="FILTROS.estatus">
+                                    <label class="form-check-label" for="CPSinRncCheck">
+                                        Sin RNC
+                                    </label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-4">
-                <div>
-                    <label class="font-weight-bold mr-2">Tipo de Producto</label>
-                    <div>
-                        <div class="row">
-                            <div class="form-check col">
-                                <input disabled class="form-check-input" type="radio" id="CPActivosCheck" value="activo" v-model="FILTROS.estatus">
-                                <label class="form-check-label" for="CPActivosCheck">
-                                    Activos
-                                </label>
-                            </div>
-
-                            <div class="form-check col">
-                                <input disabled class="form-check-input" type="radio" id="CPBalanceMayor0Check" value="bMayor0" v-model="FILTROS.estatus">
-                                <label class="form-check-label" for="CPBalanceMayor0Check">
-                                    Balance > 0
-                                </label>
-                            </div>
-
-                            <div class="form-check col">
-                                <input disabled class="form-check-input" type="radio" id="CPSinImpuestosCheck" value="sinImpt" v-model="FILTROS.estatus">
-                                <label class="form-check-label" for="CPSinImpuestosCheck">
-                                    Sin Impuestos
-                                </label>
-                            </div>
-
-                            <div class="form-check col">
-                                <input disabled class="form-check-input" type="radio" id="CPSinRncCheck" value="sinRnc" v-model="FILTROS.estatus">
-                                <label class="form-check-label" for="CPSinRncCheck">
-                                    Sin RNC
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                </div>*@
         </div>
 
         <hr style="margin: 10px;" />
@@ -113,7 +126,7 @@
                     <option value="porProvincia">Por Provincia</option>
                     <option value="porTipo_de_Impuesto">Por Típo de Impuesto</option>
                     <option value="porMaximo_Credito">Por Máximo Crédito</option>
-                    <option disabled value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
+                    <option value="RFA08">Análisis Gráfico y Estadísticas Avanzadas</option>
                 </select>
             </div>
 
@@ -149,8 +162,94 @@
 
             <div class="col-12 col-lg">
                 <div class="row">
-                    <div id="agrupacionDiv" class="col-12 row"
-                         @*v-if="FILTROS.tipoConsulta === 'RFA08'"*@>
+                    <div id="agrupacionDiv" class="col-12 row" v-if="FILTROS.tipoConsulta === 'RFA08'">
+                        @*  CANTIDAD DE REGISTROS*@
+                        <div class="col-12 col-lg-1"
+                             v-if="FILTROS.tipoCorte === 'porLos_Mas_Recientes'
+                                    || FILTROS.tipoCorte === 'porLos_Mas_Antiguos'">
+                            <label class="font-weight-bold">Cantidad</label>
+                            <input type="number" class="form-control"
+                                   v-model="FILTROS.registros" />
+                        </div>
+
+                        @* SELECT CATEGORIA: CLIENTES , PROVEEDORES*@
+                        <div v-if="FILTROS.tipoReporte === 'clientes'
+                        && FILTROS.tipoCorte === 'Por_Categoria'">
+                            <div class="form-group col">
+                                <label class="font-weight-bold">Categoria Cliente</label>
+                                <select class="custom-select col"
+                                        v-model="FILTROS.categoriaClientesSeleccionada"
+                                        v-on:focus="LlenarSelect('categoriasClientes')">
+                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.categoria_clte_id">{{ item.descripcion_categ | FilterUppercase }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div v-if="FILTROS.tipoReporte === 'proveedores'
+                        && FILTROS.tipoCorte === 'Por_Categoria'">
+                            <div class="form-group col">
+                                <label class="font-weight-bold">Categoria Vendedor</label>
+                                <select class="custom-select col"
+                                        v-model="FILTROS.categoriaProveedoresSeleccionada"
+                                        v-on:focus="LlenarSelect('categoriasProveedores')">
+                                    <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="item in FILTROS.categoriasProveedores" v-bind:value="item.Categoria_idpv">{{ item.descripcion_categpv | FilterUppercase }}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        @*  SELECT GIRO NEGOCIO: CLIENTES, PROVEEDORES*@
+                        <div class="col-12 col-lg-3"
+                             v-if="FILTROS.tipoReporte === 'clientes'
+                                && FILTROS.tipoCorte === 'Por_Giro'">
+                            <label class="font-weight-bold">Giro del Negocio</label>
+                            <select class="custom-select col"
+                                    v-model="FILTROS.giroNegocioSeleccionada"
+                                    v-on:focus="LlenarSelect('giroNegocios')">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in FILTROS.giroNegocios" v-bind:value="item.giro_id">{{item.giro_negocio | FilterUppercase }}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 col-lg-3"
+                             v-if="FILTROS.tipoReporte === 'proveedores'
+                                && FILTROS.tipoCorte === 'Por_Giro'">
+                            <label class="font-weight-bold">Giro del Negocio</label>
+                            <select class="custom-select col"
+                                    v-model="FILTROS.giroNegocioPvSeleccionada"
+                                    v-on:focus="LlenarSelect('giroNegociosPv')">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in FILTROS.giroNegociosPv" v-bind:value="item.giro_idpv">{{item.giro_negociopv | FilterUppercase }}</option>
+                            </select>
+                        </div>
+
+                        @*  SELECT TIPO DE EMPRESA*@
+                        <div class="col-12 col-lg-3"
+                             v-if="FILTROS.tipoCorte === 'Por_Tipo'">
+                            <label class="font-weight-bold">TIPO DE EMPRESA</label>
+                            <select class="custom-select col" v-model="FILTROS.tipoEmpresaSeleccionada">
+                                <option value="">--SELECCIONE UNA OPCION--</option>
+                                <option value="1">Credito Fiscal</option>
+                                <option value="2">De Consumo</option>
+                                <option value="3">Gubernamental</option>
+                                <option value="4">Especial</option>
+                                <option value="5">Exportaciones</option>
+                            </select>
+                        </div>
+
+                        @*  SELECT VENDEDOR*@
+                        <div class="form-group col-lg-3"
+                             v-if="FILTROS.tipoCorte === 'Por_Vendedor'">
+                            <label class="font-weight-bold">Vendedor</label>
+                            <select class="custom-select col"
+                                    v-model="FILTROS.vendedorSeleccionado"
+                                    v-on:focus="LlenarSelect('vendedores')">
+                                <option selected value="">--SELECCIONE UNA OPCION--</option>
+                                <option v-for="item in FILTROS.vendedores" v-bind:value="item.vendedor_id">{{ item.Nombre_vendedor | FilterUppercase }}</option>
+                            </select>
+                        </div>
+
                         @* FILTRO AGRUPACION POR CATEGORIA*@
                         @*<div v-if="FILTROS.tipoCorte === 'porCategoria'">
                                 <label class="font-weight-bold">Opción</label>
@@ -160,49 +259,48 @@
                                 </select>
                             </div>*@
 
-                        @* FILTRO AGRUPACION POR FECHA RANGO*@
-                        @*<div class="col-12 col-lg-12" v-if="FILTROS.tipoCorte === 'porLos_Mas_Vendidos'
-                                       || FILTROS.tipoCorte === 'porLos_Menos_Vendidos'">
-                                <div class="row">
-                                    <div class="form-group col-12 col-lg-2">
-                                        <label for="reporteFechaDesde">Elegir Fecha</label>
-                                        <select class="custom-select" v-model="FILTROS.desdeHastaRango">
-                                            <option value="" disabled>Personalizada</option>
-                                            <option value="0">Hoy</option>
-                                            <option value="1">Esta Semana</option>
-                                            <option value="2">Este Mes</option>
-                                            <option value="3">Mes Anterior</option>
-                                            <option value="4">Este Año</option>
-                                            <option value="5">2 Años</option>
-                                            <option value="6">3 Años</option>
-                                            <optgroup label="Meses">
-                                                <option value="7">Enero</option>
-                                                <option value="8">Febrero</option>
-                                                <option value="9">Marzo</option>
-                                                <option value="10">Abril</option>
-                                                <option value="11">Mayo</option>
-                                                <option value="12">Junio</option>
-                                                <option value="13">Julio</option>
-                                                <option value="14">Agosto</option>
-                                                <option value="15">Septiembre</option>
-                                                <option value="16">Octubre</option>
-                                                <option value="17">Noviembre</option>
-                                                <option value="18">Diciembre</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-
-                                    <div class="form-group col-12 col-lg">
-                                        <label for="reporteFechaDesde">Desde</label>
-                                        <input id="reporteFechaDesde" class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
-                                    </div>
-
-                                    <div class="form-group col-12 col-lg">
-                                        <label for="reporteFechaHasta">Hasta</label>
-                                        <input id="reporteFechaHasta" class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
-                                    </div>
+                        @*  FILTRO AGRUPACION POR FECHA RANGO*@
+                        <div class="col-12 col-lg-12" v-if="FILTROS.tipoCorte === 'Sin_Actividad'">
+                            <div class="row">
+                                <div class="form-group col-12 col-lg-2">
+                                    <label for="reporteFechaDesde" class="font-weight-bold">Elegir Fecha</label>
+                                    <select class="custom-select" v-model="FILTROS.desdeHastaRango">
+                                        <option value="" disabled>Personalizada</option>
+                                        <option value="0">Hoy</option>
+                                        <option value="1">Esta Semana</option>
+                                        <option value="2">Este Mes</option>
+                                        <option value="3">Mes Anterior</option>
+                                        <option value="4">Este Año</option>
+                                        <option value="5">2 Años</option>
+                                        <option value="6">3 Años</option>
+                                        <optgroup label="Meses">
+                                            <option value="7">Enero</option>
+                                            <option value="8">Febrero</option>
+                                            <option value="9">Marzo</option>
+                                            <option value="10">Abril</option>
+                                            <option value="11">Mayo</option>
+                                            <option value="12">Junio</option>
+                                            <option value="13">Julio</option>
+                                            <option value="14">Agosto</option>
+                                            <option value="15">Septiembre</option>
+                                            <option value="16">Octubre</option>
+                                            <option value="17">Noviembre</option>
+                                            <option value="18">Diciembre</option>
+                                        </optgroup>
+                                    </select>
                                 </div>
-                            </div>*@
+
+                                <div class="form-group col-12 col-lg">
+                                    <label class="font-weight-bold">Desde</label>
+                                    <input class="form-control col-md" type="date" v-model="FILTROS.minFecha_emision" />
+                                </div>
+
+                                <div class="form-group col-12 col-lg">
+                                    <label class="font-weight-bold">Hasta</label>
+                                    <input class="form-control col-md" type="date" v-model="FILTROS.maxFecha_emision" />
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     @*SELECT BODEGA*@
@@ -265,7 +363,9 @@
 
                     @* FILTRO POR VALOR ESPECIFIVO*@
                     <div class="col-12 col-lg-5"
-                         v-if="FILTROS.tipoConsulta !== 'porTermino'">
+                         v-if="FILTROS.tipoConsulta !== 'porTermino'
+                            && FILTROS.tipoConsulta !== 'porTipo_de_Impuesto'
+                            && FILTROS.tipoConsulta !== 'RFA08'">
                         <label class="font-weight-bold">Valor</label>
                         <input type="text" class="form-control" v-model="FILTROS.valor" />
                     </div>
@@ -318,7 +418,8 @@
             <div class="row">
                 @*  SELECT GIRO NEGOCIO: CLIENTES, PROVEEDORES*@
                 <div class="col-12 col-lg-3"
-                     v-if="FILTROS.tipoReporte === 'clientes'">
+                     v-if="FILTROS.tipoReporte === 'clientes'
+                        && FILTROS.tipoCorte !== 'Por_Giro'">
                     <label class="font-weight-bold">Giro del Negocio</label>
                     <select class="custom-select col"
                             v-model="FILTROS.giroNegocioSeleccionada"
@@ -329,7 +430,8 @@
                 </div>
 
                 <div class="col-12 col-lg-3"
-                     v-if="FILTROS.tipoReporte === 'proveedores'">
+                     v-if="FILTROS.tipoReporte === 'proveedores'
+                        && FILTROS.tipoCorte !== 'Por_Giro'">
                     <label class="font-weight-bold">Giro del Negocio</label>
                     <select class="custom-select col"
                             v-model="FILTROS.giroNegocioPvSeleccionada"
@@ -340,7 +442,8 @@
                 </div>
 
                 @*  SELECT TIPO DE EMPRESA*@
-                <div class="col-12 col-lg-3">
+                <div class="col-12 col-lg-3"
+                     v-if="FILTROS.tipoCorte !== 'Por_Tipo'">
                     <label class="font-weight-bold">TIPO DE EMPRESA</label>
                     <select class="custom-select col" v-model="FILTROS.tipoEmpresaSeleccionada">
                         <option value="">--SELECCIONE UNA OPCION--</option>
@@ -353,7 +456,8 @@
                 </div>
 
                 @*  SELECT VENDEDOR*@
-                <div class="form-group col">
+                <div class="form-group col"
+                     v-if="FILTROS.tipoCorte !== 'Por_Vendedor'">
                     <label class="font-weight-bold">Vendedor</label>
                     <select class="custom-select col"
                             v-model="FILTROS.vendedorSeleccionado"
@@ -364,7 +468,8 @@
                 </div>
 
                 @*  SELECT CATEGORIA: CLIENTES , PROVEEDORES*@
-                <div v-if="FILTROS.tipoReporte === 'clientes'">
+                <div v-if="FILTROS.tipoReporte === 'clientes'
+                        && FILTROS.tipoCorte !== 'Por_Categoria'">
                     <div class="form-group col">
                         <label class="font-weight-bold">Categoria Cliente</label>
                         <select class="custom-select col"
@@ -376,7 +481,8 @@
                     </div>
                 </div>
 
-                <div v-if="FILTROS.tipoReporte === 'proveedores'">
+                <div v-if="FILTROS.tipoReporte === 'proveedores'
+                        && FILTROS.tipoCorte !== 'Por_Categoria'">
                     <div class="form-group col">
                         <label class="font-weight-bold">Categoria Vendedor</label>
                         <select class="custom-select col"

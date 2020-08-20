@@ -1,0 +1,43 @@
+﻿<div class="modal fade bd-example-modal-lg" id="CPreporteModalFormato" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="p-5">
+                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#CPreporteModalFormato').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+
+                <div>
+                    <h1>Ajustes Avanzados Para las Consultas</h1>
+
+                    <hr />
+
+                    <div class="card border-info text-info">
+                        <div class="card-body p-4">
+                            <label class="font-weight-bold">Configuraciones de Consulta</label>
+                            <div class="row">
+                                @*  CONFIGURACION DE QUERY*@
+                                <div class="form-check col-12 col-lg-3">
+                                    <input id="CPActivosCheck" type="checkbox" class="form-check-input" v-model="FILTROS.Activos">
+                                    <label class="form-check-label" for="CPActivosCheck">Activos</label>
+                                </div>
+
+                                <div class="form-check col-12 col-lg-3">
+                                    <input id="CPBalanceMayor0Check" type="checkbox" class="form-check-input" v-model="FILTROS.ConBalance">
+                                    <label class="form-check-label" for="CPBalanceMayor0Check">Balance > 0</label>
+                                </div>
+
+                                <div class="form-check col-12 col-lg-3">
+                                    <input id="CPSinImpuestosCheck" type="checkbox" class="form-check-input" v-model="FILTROS.SinImpt">
+                                    <label class="form-check-label" for="CPSinImpuestosCheck">Sin Impuestos</label>
+                                </div>
+
+                                <div class="form-check col-12 col-lg-3">
+                                    <input id="CPSinRncCheck" type="checkbox" class="form-check-input" v-model="FILTROS.SinRnc">
+                                    <label class="form-check-label" for="CPSinRncCheck">Sin RNC</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

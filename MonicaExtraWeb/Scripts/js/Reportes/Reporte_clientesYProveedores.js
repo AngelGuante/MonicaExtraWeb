@@ -25,16 +25,21 @@
             terminoDePagoPv: [],
             impuestoSeleccionadoSeleccionado: '',
             impuestos: [],
-            //minFecha_emision: '',
-            //maxFecha_emision: '',
+            minFecha_emision: '',
+            maxFecha_emision: '',
+            desdeHastaRango: 0,
             estatus: '',
             //tipoDeProductoSeleccionado: '1',
-            //desdeHastaRango: 0,
             //desde: '',
             //hasta: '',
             valor: '',
             //agrupacionProductos: 'unidades',
-            //cantidadAgrupacionProductos: 10,
+            registros: 10,
+
+            Activos: false,
+            ConBalance: false,
+            SinImpt: false,
+            SinRnc: false,
 
             mostrarDetallesProductosCorte: false,
             toggleTableColumns_byMostrarDetallesProductosCorte: true,
@@ -96,13 +101,13 @@
         },
 
         'FILTROS.desdeHastaRango'() {
-            //if (this.FILTROS.desdeHastaRango === '-1')
-            //    return;
+            if (this.FILTROS.desdeHastaRango === '-1')
+                return;
 
-            //const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
+            const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
 
-            //this.FILTROS.minFecha_emision = rango.firstday;
-            //this.FILTROS.maxFecha_emision = rango.lastday;
+            this.FILTROS.minFecha_emision = rango.firstday;
+            this.FILTROS.maxFecha_emision = rango.lastday;
         },
     },
 
@@ -177,10 +182,19 @@
                     filtro.empresa = this.FILTROS.tipoEmpresaSeleccionada;
                 if (this.FILTROS.vendedorSeleccionado)
                     filtro.Codigo_vendedor = this.FILTROS.vendedorSeleccionado;
+                if (this.FILTROS.Activos)
+                    filtro.activo = this.FILTROS.Activos;
+                if (this.FILTROS.ConBalance)
+                    filtro.conBalance = this.FILTROS.ConBalance;
+                if (this.FILTROS.SinImpt)
+                    filtro.sinImpt = this.FILTROS.SinImpt;
+                if (this.FILTROS.SinRnc)
+                    filtro.sinRnc = this.FILTROS.SinRnc;
 
                 //  AGREGAR VALORES
                 if (this.FILTROS.tipoConsulta !== 'RFA08') {
-                    if (this.FILTROS.tipoConsulta !== 'porTermino')
+                    if (this.FILTROS.tipoConsulta !== 'porTermino'
+                        && this.FILTROS.tipoConsulta !== 'porTipo_de_Impuesto')
                         filtro.valor = (this.FILTROS.valor).trim();
                     else if (this.FILTROS.tipoConsulta === 'porTermino') {
                         switch (this.FILTROS.tipoReporte) {
@@ -194,36 +208,43 @@
                     }
                     else if (this.FILTROS.tipoConsulta === 'porTipo_de_Impuesto')
                         filtro.valor = this.FILTROS.impuestoSeleccionadoSeleccionado;
-                    //else if (this.FILTROS.tipoConsulta === 'porTermino') {
-                    //    filtro.desde = this.FILTROS.desde;
-                    //    filtro.hasta = this.FILTROS.hasta;
-                    //}
                 }
                 else {
+                    //  DATOS AGRUPADOS
                     filtro.GROUP = true;
                     filtro.tipoCorte = this.FILTROS.tipoCorte;
 
-                    //  DATOS AGRUPADOS
-                    //if (this.FILTROS.tipoCorte === 'porLos_Mas_Vendidos'
-                    //    || this.FILTROS.tipoCorte === 'porLos_Menos_Vendidos') {
-                    //    this.FILTROS.buscadoPorFechaCorte = true;
+                    if (this.FILTROS.tipoCorte === 'porLos_Mas_Recientes'
+                        || this.FILTROS.tipoCorte === 'porLos_Mas_Antiguos') {
 
-                    //    if (!this.FILTROS.cantidadAgrupacionProductos) {
-                    //        await MostrarMensage({
-                    //            title: 'Falta Información',
-                    //            message: `Débe ingresar una cantidad de los productos a buscar.`,
-                    //            icon: 'error'
-                    //        });
-                    //        return;
-                    //    }
+                        if (!this.FILTROS.registros) {
+                            await MostrarMensage({
+                                title: 'Falta Información',
+                                message: `Débe ingresar una cantidad a buscar.`,
+                                icon: 'error'
+                            });
+                            return;
+                        }
 
-                    //    filtro.agrupacionProductos = this.FILTROS.agrupacionProductos;
-                    //    filtro.minFecha_emision = this.FILTROS.minFecha_emision;
-                    //    filtro.maxFecha_emision = this.FILTROS.maxFecha_emision;
-                    //    filtro.take = this.FILTROS.cantidadAgrupacionProductos;
-                    //}
-                    //else if (this.FILTROS.tipoCorte === 'porCategoria')
-                    //    filtro.valor = this.FILTROS.subProductoCategoriaSeleccionada;
+                        filtro.take = this.FILTROS.registros;
+                    }
+                    else if (this.FILTROS.tipoCorte === 'Sin_Actividad') {
+                        filtro.desde = this.FILTROS.minFecha_emision;
+                        filtro.hasta = this.FILTROS.maxFecha_emision;
+                    }
+                    else if (this.FILTROS.tipoCorte === 'Por_Categoria')
+                        switch (this.FILTROS.tipoReporte) {
+                            case 'clientes':
+                                filtro.valor = this.FILTROS.categoriaClientesSeleccionada;
+                                break;
+                            case 'proveedores':
+                                filtro.valor = this.FILTROS.categoriaProveedoresSeleccionada;
+                                break;
+                        }
+                    else if (this.FILTROS.tipoCorte === 'Por_Vendedor')
+                        filtro.valor = this.FILTROS.vendedorSeleccionado;
+                    else if (this.FILTROS.tipoCorte === 'Por_Tipo')
+                        filtro.valor = this.FILTROS.tipoEmpresaSeleccionada;
                 }
 
                 //  SI this.FILTROS.mostrarDetallesProductosCorte ES FALSO, NO SE BUSCAN LOS DETALLES DE LOS PRODUCTOS, PARA SOLO TRAER LA SUMATORIA DE CADA CATEGORIA.
@@ -233,170 +254,187 @@
                     for (item of result)
                         this.DATA.push(item);
 
+                    //  EXEPTUANDO AQUELLOS REPORTES QUE NO SE VAN A AGRUPAR.
+                    if (filtro.GROUP
+                        && (this.FILTROS.tipoCorte === 'porLos_Mas_Recientes'
+                            || this.FILTROS.tipoCorte === 'porLos_Mas_Antiguos'
+                            || this.FILTROS.tipoCorte === 'Sin_Actividad'))
+                        return;
+
                     //  SI ES UNA DATA AGRUPADA, SE ASIGNA EL CAMPO POR EL QUE SE VA A AGRUPAR.
                     if (filtro.GROUP) {
-                        //if (this.FILTROS.tipoCorte === 'porLos_Mas_Vendidos'
-                        //    || this.FILTROS.tipoCorte === 'porLos_Menos_Vendidos')
-                        //    campo = 'codigo_producto';
-                        //else if (this.FILTROS.tipoCorte === 'porCategoria')
-                        //    campo = 'descripcion_categ';
+                        if (this.FILTROS.tipoCorte === 'Por_Categoria')
+                            campo = 'categoriaDesc';
+                        else if (this.FILTROS.tipoCorte === 'Por_Giro')
+                            campo = 'giroDesc';
+                        else if (this.FILTROS.tipoCorte === 'Por_Vendedor')
+                            campo = 'Nombre_vendedor';
+                        else if (this.FILTROS.tipoCorte === 'Por_Tipo')
+                            campo = 'tipo_empresa';
 
-                        //for (let item of [... new Set(this.DATA.map(data => data[campo]))]) {
-                        //    this.GroupDATA.push(
-                        //        this.DATA.filter(el => el[campo] === item)
-                        //    );
-                        //}
+                        for (let item of [... new Set(this.DATA.map(data => data[campo]))]) {
+                            this.GroupDATA.push(
+                                this.DATA.filter(el => el[campo] === item)
+                            );
+                        }
                     }
                 }
 
-                //
-                const tableName = 'tablaInventarioYLiquidacion';
-                let camposArray = [2, 10, 11, 12];
+                const tableName = 'tablaClientesYProveedores';
+                let camposArray = [1];
 
                 //  SI NO TRAE DATA TERMINA EL PROCESO
-                if (!this.FILTROS.mostrarDetallesProductosCorte)
+                if (!this.FILTROS.mostrarDetallesProductosCorte) {
                     if (this.DATA.length === 0)
                         return;
+                }
 
                 // TOTALIZACIONES.
                 //filtro.SUM = true;
                 //result = await BuscarInformacionLocal('SendWebsocketServer/19', filtro);
 
-                //if (!filtro.GROUP) {
-                //    this.FILTROS.PaginatorLastPage = Math.floor(result[0].count / 20);
-                //    const jsonTotalizacion = { 'precio1': result[0].precio1, 'precio2': result[0].precio2, 'precio3': result[0].precio3, 'precio4': result[0].precio4 };
-                //    this.DATA.push(jsonTotalizacion);
+                if (!filtro.GROUP) {
+                    //this.FILTROS.PaginatorLastPage = Math.floor(result[0].count / 20);
+                    //const jsonTotalizacion = { 'precio1': result[0].precio1, 'precio2': result[0].precio2, 'precio3': result[0].precio3, 'precio4': result[0].precio4 };
+                    //this.DATA.push(jsonTotalizacion);
 
-                //    let interval = setInterval(() => {
-                //        let tabla = document.getElementById(tableName);
+                    //let interval = setInerval(() => {
+                    //    let tabla = document.getElementById(tableName);
 
-                //        if (tabla) {
-                //            TablaEstiloTotalizacionFila(tabla, camposArray)
+                    //    if (tabla) {
+                    //        TablaEstiloTotalizacionFila(tabla, camposArray)
 
-                //            clearInterval(interval);
-                //        }
-                //    }, 0);
-            }
-            else {
-                //SI LA DATA ESTA AGRUPADA:
-                //let totalPrecio1 = 0;
-                //let totalPrecio2 = 0;
-                //let totalPrecio3 = 0;
-                //let totalPrecio4 = 0;
-                //let totalCantidadMonto = 0;
-
-                //let tableTotalPositionsRows = [];
-
-                //  CON DETALLES DE PRODUCTOS
-                if (!this.FILTROS.mostrarDetallesProductosCorte) {
-                    //let contadorDeLineas = 0;
-                    //for (let index = 0; index < result.length; index++) {
-                    //    contadorDeLineas += this.GroupDATA[index].length + 1;
-                    //    //  OBTENER LA POSICION DEL TOTAL DE CADA GRUPO PARA DARLE ESTILOS.
-                    //    tableTotalPositionsRows.push(contadorDeLineas);
-
-                    //    //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
-                    //    for (let i = 0; i < this.GroupDATA.length; i++) {
-                    //        const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
-
-                    //        if (this.GroupDATA[i][0][campo] === result[index][campo]) {
-                    //            this.GroupDATA[i].push({
-                    //                'descrip_producto': `${valorAgrupadoPor} => `,
-                    //                'precio1': result[index].precio1,
-                    //                'precio2': result[index].precio2,
-                    //                'precio3': result[index].precio3,
-                    //                'precio4': result[index].precio4
-                    //            });
-                    //        }
+                    //        clearInterval(interval);
                     //    }
-                    //    totalPrecio1 += result[index].precio1;
-                    //    totalPrecio2 += result[index].precio2;
-                    //    totalPrecio3 += result[index].precio3;
-                    //    totalPrecio4 += result[index].precio4;
-                    //    totalCantidadMonto += result[index].totalCantidadMonto;
-                    //}
-
-                    //this.GroupDATA.push({ 'precio1': `${totalPrecio1}`, 'precio2': `${totalPrecio2}`, 'precio3': `${totalPrecio3}`, 'precio4': `${totalPrecio4}` });
-                    //this.DATA = this.GroupDATA.flat();
-
-                    //setTimeout(() => {
-                    //    if (this.FILTROS.tipoCorte !== 'porLos_Mas_Vendidos'
-                    //        && this.FILTROS.tipoCorte !== 'porLos_Menos_Vendidos')
-                    //        TablaEstiloTotalizacionFilaAgrupadas('tablaInventarioYLiquidacion', [1, 2, ...camposArray], tableTotalPositionsRows);
-                    //    TablaEstiloTotalizacionFila(document.getElementById('tablaInventarioYLiquidacion'), camposArray);
-                    //}, 1);
+                    //}, 0);
                 }
                 else {
-                    //  SIN DETALLES DE PRODUCTOS
-                    //let reporteGraficoLabels = [];
-                    //let reporteGraficoTotales = [];
+                    //SI LA DATA ESTA AGRUPADA:
+                    let tableTotalPositionsRows = [];
 
-                    //for (let index = 0; index < result.length; index++) {
-                    //    const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
+                    //  SI LOS DATOS POR LOS QUE SE VAN A AGRUPAR, NO TIENEN SUMATORIA Y SOLO SE AGRUPAN EL CAMPO POR EL QUE SE AGRUPAN
+                    //  SE SACA APARTIR DEL PRIMER result.
+                    if (filtro.GROUP
+                        && (this.FILTROS.tipoCorte === 'Por_Categoria'
+                            || this.FILTROS.tipoCorte === 'Por_Giro'
+                            || this.FILTROS.tipoCorte === 'Por_Vendedor'
+                            || this.FILTROS.tipoCorte === 'Por_Tipo')) {
+                        result = [];
+                        for (item of this.GroupDATA)
+                            result.push(item[0][campo]);
+                    }
+                    debugger
+                    //  CON DETALLES DE PRODUCTOS
+                    if (!this.FILTROS.mostrarDetallesProductosCorte) {
+                        let contadorDeLineas = 0;
 
-                    //    this.GroupDATA.push([]);
-                    //    this.GroupDATA[index].push({
-                    //        'categorizacionSinDetalles': `${valorAgrupadoPor} => `,
-                    //        'precio1': result[index].precio1,
-                    //        'precio2': result[index].precio2,
-                    //        'precio3': result[index].precio3,
-                    //        'precio4': result[index].precio4,
-                    //        'totalCantidadMonto': result[index].totalCantidadMonto
-                    //    });
+                        for (let index = 0; index < result.length; index++) {
+                            contadorDeLineas += this.GroupDATA[index].length + 1;
+                            //  OBTENER LA POSICION DEL TOTAL DE CADA GRUPO PARA DARLE ESTILOS.
+                            tableTotalPositionsRows.push(contadorDeLineas);
 
-                    //    totalPrecio1 += result[index].precio1;
-                    //    totalPrecio2 += result[index].precio2;
-                    //    totalPrecio3 += result[index].precio3;
-                    //    totalPrecio4 += result[index].precio4;
-                    //    totalCantidadMonto += result[index].totalCantidadMonto;
+                            //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
+                            for (let i = 0; i < this.GroupDATA.length; i++) {
+                                const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
 
-                    //    reporteGraficoLabels.push(valorAgrupadoPor.toString().trim().toUpperCase());
-                    //    reporteGraficoTotales.push(result[index].totalCantidadMonto)
-                    //}
 
-                    //this.FILTROS.totalReporteBuscado = totalCantidadMonto;
-                    //this.GroupDATA.push({ 'precio1': `${totalPrecio1}`, 'precio2': `${totalPrecio2}`, 'precio3': `${totalPrecio3}`, 'precio4': `${totalPrecio4}`, 'totalCantidadMonto': `${totalCantidadMonto}` });
-                    //this.DATA = this.GroupDATA.flat();
-                    //setTimeout(() => {
-                    //    let estilosCamposAgrupados = [0, 1, 2, 3, 4];
-                    //    let estilosCamposTotal = [1, 2, 3, 4];
-                    //    if (this.FILTROS.tipoCorte === 'porLos_Mas_Vendidos'
-                    //        || this.FILTROS.tipoCorte === 'porLos_Menos_Vendidos') {
-                    //        estilosCamposAgrupados = [...estilosCamposAgrupados, 5];
-                    //        estilosCamposTotal = [...estilosCamposTotal, 5];
-                    //    }
+                                //  SI LOS DATOS POR LOS QUE SE VAN A AGRUPAR, NO TIENEN SUMATORIA Y SOLO SE AGRUPAN EL CAMPO POR EL QUE SE COMPARA
+                                //  SE SACA DE MANERA DIFERENTE.
+                                let valorAComparar = '';
+                                if (this.FILTROS.tipoCorte === 'Por_Categoria'
+                                    || this.FILTROS.tipoCorte === 'Por_Giro'
+                                    || this.FILTROS.tipoCorte === 'Por_Vendedor'
+                                    || this.FILTROS.tipoCorte === 'Por_Tipo')
+                                    valorAComparar = result[index];
+                                else
+                                    valorAComparar = result[index][0];
 
-                    //    TablaEstiloTotalizacionFilaAgrupadas(tableName, estilosCamposAgrupados)
-                    //    TablaEstiloTotalizacionFila(document.getElementById(tableName), estilosCamposTotal);
-                    //}, 1);
+                                if (this.GroupDATA[i][0][campo] === valorAComparar) {
+                                    this.GroupDATA[i].push({
+                                        'nombre': `${valorAgrupadoPor}`,
+                                    });
+                                }
+                            }
+                        }
 
-                    ////  REPORTE GRAFICO.
-                    //let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
-                    //reporteGraficoBacground.fill('#17A2B8');
+                        this.DATA = this.GroupDATA.flat();
 
-                    //if (this.FILTROS.chartAnalisisGrafico)
-                    //    this.FILTROS.chartAnalisisGrafico.destroy();
+                        setTimeout(() => {
+                            TablaEstiloTotalizacionFilaAgrupadas(tableName, camposArray, tableTotalPositionsRows, false);
+                            //TablaEstiloTotalizacionFila(document.getElementById(tableName), camposArray);
+                        }, 1);
+                    }
+                    else {
+                        //  SIN DETALLES DE PRODUCTOS
+                        //let reporteGraficoLabels = [];
+                        //let reporteGraficoTotales = [];
 
-                    //let ctx = document.getElementById('ILreportesGraficos').getContext('2d');
+                        //for (let index = 0; index < result.length; index++) {
+                        //    const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
 
-                    //this.FILTROS.chartAnalisisGrafico = new Chart(ctx, {
-                    //    type: 'horizontalBar',
-                    //    data: {
-                    //        labels: reporteGraficoLabels,
-                    //        datasets: [{
-                    //            label: `Análisis de ${this.FILTROS.tipoReporte[0].toUpperCase() + this.FILTROS.tipoReporte.substr(1)} por ${(this.FILTROS.tipoCorte).replace('por', '')}`,
-                    //            backgroundColor: reporteGraficoBacground,
-                    //            data: reporteGraficoTotales
-                    //        }]
-                    //    },
-                    //});
+                        //    this.GroupDATA.push([]);
+                        //    this.GroupDATA[index].push({
+                        //        'categorizacionSinDetalles': `${valorAgrupadoPor} => `,
+                        //        'precio1': result[index].precio1,
+                        //        'precio2': result[index].precio2,
+                        //        'precio3': result[index].precio3,
+                        //        'precio4': result[index].precio4,
+                        //        'totalCantidadMonto': result[index].totalCantidadMonto
+                        //    });
 
-                    ////  OCULTAR EL DIV CORRESPONDIENTE. SI SE QUIERE VER LA DATA COMO TABLA SE OCULTA EL DIV DE GRAFICOS Y VICEVERSA.
-                    //if (this.FILTROS.toggleData_tablaCorteYReporteGrafico)
-                    //    setTimeout(() => document.getElementById('divTablaInventarioYLiquidacion').setAttribute('hidden', true), 2);
-                    //else
-                    //    setTimeout(() => document.getElementById('ILdivGraficosDatosAgrupados').setAttribute('hidden', true), 2);
-                    //}
+                        //    totalPrecio1 += result[index].precio1;
+                        //    totalPrecio2 += result[index].precio2;
+                        //    totalPrecio3 += result[index].precio3;
+                        //    totalPrecio4 += result[index].precio4;
+                        //    totalCantidadMonto += result[index].totalCantidadMonto;
+
+                        //    reporteGraficoLabels.push(valorAgrupadoPor.toString().trim().toUpperCase());
+                        //    reporteGraficoTotales.push(result[index].totalCantidadMonto)
+                        //}
+
+                        //this.FILTROS.totalReporteBuscado = totalCantidadMonto;
+                        //this.GroupDATA.push({ 'precio1': `${totalPrecio1}`, 'precio2': `${totalPrecio2}`, 'precio3': `${totalPrecio3}`, 'precio4': `${totalPrecio4}`, 'totalCantidadMonto': `${totalCantidadMonto}` });
+                        //this.DATA = this.GroupDATA.flat();
+                        //setTimeout(() => {
+                        //    let estilosCamposAgrupados = [0, 1, 2, 3, 4];
+                        //    let estilosCamposTotal = [1, 2, 3, 4];
+                        //    if (this.FILTROS.tipoCorte === 'porLos_Mas_Vendidos'
+                        //        || this.FILTROS.tipoCorte === 'porLos_Menos_Vendidos') {
+                        //        estilosCamposAgrupados = [...estilosCamposAgrupados, 5];
+                        //        estilosCamposTotal = [...estilosCamposTotal, 5];
+                        //    }
+
+                        //    TablaEstiloTotalizacionFilaAgrupadas(tableName, estilosCamposAgrupados)
+                        //    TablaEstiloTotalizacionFila(document.getElementById(tableName), estilosCamposTotal);
+                        //}, 1);
+
+                        ////  REPORTE GRAFICO.
+                        //let reporteGraficoBacground = new Array(reporteGraficoLabels.length);
+                        //reporteGraficoBacground.fill('#17A2B8');
+
+                        //if (this.FILTROS.chartAnalisisGrafico)
+                        //    this.FILTROS.chartAnalisisGrafico.destroy();
+
+                        //let ctx = document.getElementById('ILreportesGraficos').getContext('2d');
+
+                        //this.FILTROS.chartAnalisisGrafico = new Chart(ctx, {
+                        //    type: 'horizontalBar',
+                        //    data: {
+                        //        labels: reporteGraficoLabels,
+                        //        datasets: [{
+                        //            label: `Análisis de ${this.FILTROS.tipoReporte[0].toUpperCase() + this.FILTROS.tipoReporte.substr(1)} por ${(this.FILTROS.tipoCorte).replace('por', '')}`,
+                        //            backgroundColor: reporteGraficoBacground,
+                        //            data: reporteGraficoTotales
+                        //        }]
+                        //    },
+                        //});
+
+                        ////  OCULTAR EL DIV CORRESPONDIENTE. SI SE QUIERE VER LA DATA COMO TABLA SE OCULTA EL DIV DE GRAFICOS Y VICEVERSA.
+                        //if (this.FILTROS.toggleData_tablaCorteYReporteGrafico)
+                        //    setTimeout(() => document.getElementById('divTablaInventarioYLiquidacion').setAttribute('hidden', true), 2);
+                        //else
+                        //    setTimeout(() => document.getElementById('ILdivGraficosDatosAgrupados').setAttribute('hidden', true), 2);
+                    }
                 }
             }
             //    //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
@@ -404,25 +442,26 @@
         },
 
         PonerDescripcionDatosAgrupados(tipoCorte, index) {
-            //switch (tipoCorte) {
-            //    case 'porLos_Mas_Vendidos':
-            //    case 'porLos_Menos_Vendidos':
-            //        return `${result[index].descrip_producto.toUpperCase()} - (${result[index].codigo_producto.toUpperCase()})`
-            //    case 'porCategoria':
-            //        return result[index].descripcion_categ.toUpperCase();
-            //}
+            switch (tipoCorte) {
+                case 'Por_Categoria':
+                case 'Por_Giro':
+                case 'Por_Vendedor':
+                    return result[index].toUpperCase();
+                case 'Por_Tipo':
+                    return this.$options.filters.FilterTipoEmpresa(result[index]);
+            }
         },
 
         TipoConsultaSelectChanged() {
             this.Limpiar();
-            //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
-            //switch (this.FILTROS.tipoConsulta) {
-            //    case 'RFA08':
-            //        this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
-            //        this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
-            //        this.FILTROS.tipoCorte = 'porLos_Mas_Vendidos';
-            //        break;
-            //}
+
+            switch (this.FILTROS.tipoConsulta) {
+                case 'RFA08':
+                    this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
+                    this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
+                    this.FILTROS.tipoCorte = 'porLos_Mas_Recientes';
+                    break;
+            }
         },
 
         TipoCorteChanged() {
@@ -432,8 +471,6 @@
         Limpiar() {
             monicaReportes.LimpiarTablas();
             this.FILTROS.valor = '';
-            //this.FILTROS.desde = '';
-            //this.FILTROS.hasta = '';
             this.FILTROS.giroNegocioSeleccionada = '';
             this.FILTROS.giroNegocioPvSeleccionada = '';
             this.FILTROS.terminoDePagoSeleccionado = '';
@@ -443,15 +480,17 @@
             this.FILTROS.categoriaClientesSeleccionada = '';
             this.FILTROS.vendedorSeleccionado = '';
             this.FILTROS.tipoEmpresaSeleccionada = '';
-            //this.FILTROS.subProductoCategoriaSeleccionada = '';
-            //this.FILTROS.categoriaProductosSeleccionada = '';
-            //this.FILTROS.cantidadAgrupacionProductos = 10;
-            //this.FILTROS.nombresBodegaSeleccionada = '';
+            this.FILTROS.registros = 10;
         },
 
         LlenarSelect(value) {
             monicaReportes.BuscarData(value);
-        }
+        },
+
+        AjustesAvanzadosFiltros() {
+            $('#CPreporteModalFormato').modal('show');
+            $('#CPreporteModalFormato').collapse('hide');
+        },
     },
 
     filters: {
@@ -474,14 +513,18 @@
         FilterTipoEmpresa: value => {
             switch (value) {
                 case 1:
+                case "1":
                     return "CREDITO FISCAL";
                 case 2:
+                case "2":
                     return "DE CONSUMO";
                 case 3:
+                case "3":
                     return "GUBERNAMENTAL";
                 case 4:
                     return "ESPECIAL";
                 case 5:
+                case "5":
                     return "EXPORTACIONES";
             }
         }

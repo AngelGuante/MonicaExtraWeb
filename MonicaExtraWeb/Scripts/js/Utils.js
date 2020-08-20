@@ -188,11 +188,12 @@ const TablaEstiloTotalizacionFila = (tabla, cols) => {
 }
 
 //  AGREGAR ESTILOS A LAS CELDAS QUE VAN A SER LOS TOTALES DE LAS COLUMNAS DE LA TABLA AGRUPADAS.
-const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows) => {
+const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows, restarleValorAlUltimoRegistro) => {
     const tabla = document.getElementById(tableName);
 
     if (rows) {
-        rows[rows.length - 1] = (tabla.rows.length - 2);
+        if (restarleValorAlUltimoRegistro === undefined)
+            rows[rows.length - 1] = (tabla.rows.length - 2);
         for (item of rows) {
 
             let row = tabla.rows[item].children;
