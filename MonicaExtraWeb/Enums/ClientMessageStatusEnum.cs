@@ -27,5 +27,6 @@
         Impuestos = 21,
         GiroNecogios = 22,
         GiroNecogiosPv = 23,
+        ContabilidadBanco = 24,
     }
 }

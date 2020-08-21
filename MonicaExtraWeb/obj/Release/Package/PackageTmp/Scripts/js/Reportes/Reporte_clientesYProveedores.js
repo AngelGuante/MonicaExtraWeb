@@ -145,11 +145,6 @@
                 skip = 0;
                 this.FILTROS.PaginatorIndex = 0;
             }
-            //monicaReportes.LimpiarTablas();
-            //this.FILTROS.buscadoPorFechaCorte = false;
-            //this.FILTROS.toggleData_tablaCorteYReporteGrafico = this.FILTROS.analisisGrafico;
-            //this.toggleTableColumns_byMostrarDetallesProductosCorte = !this.FILTROS.mostrarDetallesProductosCorte;
-            //this.FILTROS.labelUnidadesMontosBuscados = this.FILTROS.agrupacionProductos === 'unidades' ? 'Unidades' : 'Montos';
 
             if (monicaReportes.sourceResportes === 'web')
                 alert('Por el momento esta busqueda solo se ha planteado para la parte Local');
@@ -323,7 +318,7 @@
                         for (item of this.GroupDATA)
                             result.push(item[0][campo]);
                     }
-                    debugger
+                    
                     //  CON DETALLES DE PRODUCTOS
                     if (!this.FILTROS.mostrarDetallesProductosCorte) {
                         let contadorDeLineas = 0;

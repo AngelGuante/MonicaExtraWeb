@@ -1846,22 +1846,22 @@ namespace MonicaExtraWeb.Utils
                                 queryWhere.Append($" TSC.{TableSourceCategoriaColDescripcion} = '{filtro.valor}'");
                             }
                             break;
-                        //case "Por_Vendedor":
-                        //    if (!string.IsNullOrEmpty(filtro.valor))
-                        //    {
-                        //        if (queryWhere.Length > 6)
-                        //            queryWhere.Append("AND ");
-                        //        queryWhere.Append($" V.vendedor_id = '{filtro.valor}'");
-                        //    }
-                        //    break;
-                        //case "Por_Tipo":
-                        //    if (!string.IsNullOrEmpty(filtro.valor))
-                        //    {
-                        //        if (queryWhere.Length > 6)
-                        //            queryWhere.Append("AND ");
-                        //        queryWhere.Append($" V.tipo_empresa = '{filtro.valor}'");
-                        //    }
-                        //    break;
+                            //case "Por_Vendedor":
+                            //    if (!string.IsNullOrEmpty(filtro.valor))
+                            //    {
+                            //        if (queryWhere.Length > 6)
+                            //            queryWhere.Append("AND ");
+                            //        queryWhere.Append($" V.vendedor_id = '{filtro.valor}'");
+                            //    }
+                            //    break;
+                            //case "Por_Tipo":
+                            //    if (!string.IsNullOrEmpty(filtro.valor))
+                            //    {
+                            //        if (queryWhere.Length > 6)
+                            //            queryWhere.Append("AND ");
+                            //        queryWhere.Append($" V.tipo_empresa = '{filtro.valor}'");
+                            //    }
+                            //    break;
                     }
                     break;
             }
@@ -1980,6 +1980,90 @@ namespace MonicaExtraWeb.Utils
                 && filtro.tipoCorte != "Por_Giro"
                 && filtro.tipoCorte != "Por_Vendedor"
                 && filtro.tipoCorte != "Por_Tipo")
+            {
+                query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+            }
+
+            return query.ToString();
+        }
+
+        public static string ContabilidadBanco(Filtros filtro, string DbName = "")
+        {
+            var query = new StringBuilder();
+            var queryWhere = new StringBuilder();
+
+            #region SELECT
+            query.Append("  SELECT ");
+
+            if (filtro.SUM)
+            {
+                //query.Append(" SUM(TDS.monto_dcmto) sumatoriaMontos, ");
+                //query.Append(" SUM(TDS.balance) sumatoriaBalance, ");
+                //query.Append(" SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
+            }
+            else
+            {
+                query.Append($"  TS.cuenta_contable ");
+                query.Append($", TS.nivel_cuenta ");
+                query.Append($", TS.nombre_cuenta ");
+                query.Append($", TS.balance ");
+                query.Append($", TS.tipo_cuenta ");
+                query.Append($", TS.centro_costos ");
+                query.Append($", TS.ultima_transac ");
+            }
+            #endregion
+
+            #region FROM
+            query.Append($" FROM {DbName}cuentas TS ");
+            #endregion
+
+            #region WHERE
+            queryWhere.Append("WHERE ");
+
+            if (!string.IsNullOrEmpty(filtro.code))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"TS.cuenta_contable = '{filtro.code}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.descripcion))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"TS.nombre_cuenta LIKE '%{filtro.descripcion}%' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.clasificacion))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"TS.tipo_cuenta = '{filtro.clasificacion}' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.conBalance))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"TS.Balance > 0 ");
+            }
+
+            if (queryWhere.Length > 6)
+                query.Append(queryWhere.ToString());
+            #endregion
+
+            #region ORDER BY
+            //if (!filtro.SUM)
+            //{
+            query.Append("ORDER BY ");
+            switch (filtro.tipoConsulta)
+            {
+                case "Plan_de_Cuentas":
+                    query.Append($" TS.cuenta_contable ");
+                    break;
+            }
+            //}
+            #endregion
+
+            if (filtro.GROUP)
             {
                 query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
                 query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
@@ -2220,10 +2304,6 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        //  --------------
-        //  MANEJO DE DATA
-        //  --------------
-
         public static string GetEstimadoQuery(Filtros filtro, string DbName = "")
         {
             var query = new StringBuilder();
@@ -2257,6 +2337,18 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
+
+        public static string ImpuestosQuery(string DbName = "")
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  impuesto_id, ");
+            query.Append("  TRIM(Descripcion_impto) Descripcion_impto ");
+            query.Append($"FROM {DbName}dbo.impuestos ");
+
+            return query.ToString();
+        }
         #endregion
 
         public static string CerrarCotizacionQuery(Filtros filtro, string DbName = "")
@@ -2281,18 +2373,6 @@ namespace MonicaExtraWeb.Utils
 
             if (!string.IsNullOrEmpty(filtro.NroCotizacion))
                 query.Append($"WHERE nro_estimado = '{filtro.NroCotizacion}' ");
-
-            return query.ToString();
-        }
-
-        public static string ImpuestosQuery(string DbName = "")
-        {
-            var query = new StringBuilder();
-
-            query.Append("SELECT ");
-            query.Append("  impuesto_id, ");
-            query.Append("  TRIM(Descripcion_impto) Descripcion_impto ");
-            query.Append($"FROM {DbName}dbo.impuestos ");
 
             return query.ToString();
         }

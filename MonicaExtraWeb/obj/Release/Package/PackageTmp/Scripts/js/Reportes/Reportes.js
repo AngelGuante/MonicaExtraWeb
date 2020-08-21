@@ -256,7 +256,7 @@
                     break;
                 case 'clientesYProveedoresFiltro':
                     reporte_clientesYProveedores.DATA = [];
-                    divGrafico = document.getElementById('CPdivGraficosDatosAgrupados');
+                    //divGrafico = document.getElementById('CPdivGraficosDatosAgrupados');
                     break;
                 case 'inventarioYLiquidacion':
                     reporte_inventarioYLiquidacion.DATA = [];
@@ -265,6 +265,9 @@
                 case 'comprasDevolucionesYConducesFiltro':
                     reporte_comprasDevolucionesYCotizaciones.DATA = [];
                     divGrafico = document.getElementById('divTablaComprasVentasCotizaciones');
+                    break;
+                case 'contabilidadYBancoFiltro':
+                    reporte_clientesYProveedores.DATA = [];
                     break;
                 case 'CotizacionesYConducesFiltro':
                     reporte_cotizacionesYConduces.TablaVisible = '';

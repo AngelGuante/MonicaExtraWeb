@@ -1,0 +1,79 @@
+﻿<div id="divTablaContabilidadYBanco" class="col-12" v-if="DATA.length > 0" style="width:99%">
+    <table id="tablaContabilidadYBanco" class="table table-striped">
+        <thead>
+            <tr class="tableHeader">
+                <th style="text-align:right;" scope="col">Código</th>
+                <th style="text-align:left;" scope="col">Nombre</th>
+                <th style="text-align:right;" scope="col">Balance</th>
+                <th style="text-align:left;" scope="col">Clasificación</th>
+                <th style="text-align:left;" scope="col">Nivel de Cuenta</th>
+                <th style="text-align:left;" scope="col">Aplica Centro de Costo</th>
+                <th style="text-align:right;" scope="col">Ultima Transacción</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="element in DATA">
+                <td style="text-align:right;">{{ element.cuenta_contable }}</td>
+                <td style="text-align:left;">{{ element.nombre_cuenta | FilterUppercase }}</td>
+                <td style="text-align:right;">{{ element.balance | FilterStringToMoneyFormat }}</td>
+                <td style="text-align:left;">{{ element.tipo_cuenta | FilterClasificacion }}</td>
+                <td style="text-align:left;">{{ element.nivel_cuenta | FilterNivelCuenta }}</td>
+                <td style="text-align:left;">{{ element.centro_costos | FilterCentroCostos }}</td>
+                <td style="text-align:right;">{{ element.ultima_transac | FilterDateFormat }}</td>
+        </tbody>
+    </table>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center">
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
+                <a class="page-link" v-on:click="Pagination(0)"><<</a>
+            </li>
+            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
+                <a class="page-link" v-on:click="Pagination(-1)"><</a>
+            </li>
+            <li class="page-item active">
+                <a class="page-link">{{ FILTROS.PaginatorIndex + 1 }}</a>
+            </li>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
+                <a class="page-link" v-on:click="Pagination(+1)">></a>
+            </li>
+            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
+                <a class="page-link" v-on:click="Pagination('MAX')">>></a>
+            </li>
+        </ul>
+    </nav>
+</div>
+
+@*  GRAFICOS*@
+@*<div id="CPdivGraficosDatosAgrupados"
+         class="col-12"
+         hidden>
+        <div class="row">
+            <div class="col-12 col-lg-8">
+                <canvas id="CPreportesGraficos"></canvas>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="row">
+                    <div class="col-12 mb-2">
+                        <div class="card card-body border-info text-info text-center p-0">
+                            <div class="card-header">
+                                <label class="font-weight-bold">Parámetros de Análisis Gráfico</label>
+                            </div>
+                            <label class="font-weight-bold">Desde {{ FILTROS.fechaMinReporteBuscado }}</label>
+                            <label class="font-weight-bold">Categoria Clientes {{ FILTROS.categoriaClientesBuscada }}</label>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="card card-body border-info text-info text-center p-0">
+                            <div class="card-header">
+                                <label class="font-weight-bold">Total</label>
+                            </div>
+                            <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado }}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@

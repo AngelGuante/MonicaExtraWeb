@@ -59,6 +59,10 @@
         //  **CotizacionesYConduces**
         public string estatus { get; set; }
 
+        //  **ContabilidadYBanco**
+        public string descripcion { get; set; }
+        public string clasificacion { get; set; }
+
         //  MANEJO DE DATA COTIZACIONES
         public string NroCotizacion { get; set; }
         public string NroFactura { get; set; }
