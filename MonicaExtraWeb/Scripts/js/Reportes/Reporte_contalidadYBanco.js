@@ -3,7 +3,6 @@
 
     data: {
         DATA: [],
-        //GroupDATA: [],
         FILTROS: {
             tipoReporte: 'contabilidad',
             tipoConsulta: 'Plan_de_Cuentas',
@@ -11,6 +10,14 @@
             clasificacion: 'A',
             valor: '',
             ConBalance: false,
+
+            periodoMesSeleccionado: '01',
+            periodoAnioSeleccionado: new Date().getFullYear(),
+            periodoAnios: [],
+            erroresNCF: 0,
+
+            periodoMesSeleccionadoBuscado: '',
+            periodoAnioSeleccionadoBuscado: 0,
 
             PaginatorIndex: 0,
             PaginatorLastPage: 0,
@@ -67,6 +74,10 @@
                 this.FILTROS.PaginatorIndex = 0;
             }
 
+            this.FILTROS.periodoMesSeleccionadoBuscado = this.FILTROS.periodoMesSeleccionado;
+            this.FILTROS.periodoAnioSeleccionadoBuscado = this.FILTROS.periodoAnioSeleccionado;
+            this.FILTROS.erroresNCF = 0;
+
             if (monicaReportes.sourceResportes === 'web')
                 alert('Por el momento esta busqueda solo se ha planteado para la parte Local');
             else if (monicaReportes.sourceResportes === 'local') {
@@ -75,33 +86,45 @@
                 const filtro = {
                     tipoConsulta: this.FILTROS.tipoConsulta,
                     tipoReporte: this.FILTROS.tipoReporte,
-                    skip: skip,
-
-                    clasificacion: this.FILTROS.clasificacion
+                    skip: skip
                 }
 
-                if (this.FILTROS.ConBalance)
-                    filtro.conBalance = this.FILTROS.ConBalance;
+                switch (this.FILTROS.tipoConsulta) {
+                    case 'Plan_de_Cuentas':
+                        filtro.clasificacion = this.FILTROS.clasificacion;
 
-                if (this.FILTROS.tipoConsulta === 'Plan_de_Cuentas')
-                    if (this.FILTROS.valor)
-                        switch (this.FILTROS.tipoBusqueda) {
-                            case "codigo":
-                                filtro.code = this.FILTROS.valor;
-                                break;
-                            case "descripcion":
-                                filtro.descripcion = this.FILTROS.valor;
-                                break;
-                        }
+                        if (this.FILTROS.ConBalance)
+                            filtro.conBalance = this.FILTROS.ConBalance;
 
-                //  SI this.FILTROS.mostrarDetallesProductosCorte ES FALSO, NO SE BUSCAN LOS DETALLES DE LOS PRODUCTOS,
-                //  PARA SOLO TRAER LA SUMATORIA DE CADA CATEGORIA.
-                if (!this.FILTROS.mostrarDetallesProductosCorte) {
-                    let result = await BuscarInformacionLocal('SendWebsocketServer/24', filtro);
-
-                    for (item of result)
-                        this.DATA.push(item);
+                        if (this.FILTROS.valor)
+                            switch (this.FILTROS.tipoBusqueda) {
+                                case "codigo":
+                                    filtro.code = this.FILTROS.valor;
+                                    break;
+                                case "descripcion":
+                                    filtro.descripcion = this.FILTROS.valor;
+                                    break;
+                            }
+                        break;
+                    case 'Informe_608':
+                        filtro.mes = this.FILTROS.periodoMesSeleccionado;
+                        filtro.anio = this.FILTROS.periodoAnioSeleccionado;
+                        break;
                 }
+
+                ////  SI this.FILTROS.mostrarDetallesProductosCorte ES FALSO, NO SE BUSCAN LOS DETALLES DE LOS PRODUCTOS,
+                ////  PARA SOLO TRAER LA SUMATORIA DE CADA CATEGORIA.
+                //if (!this.FILTROS.mostrarDetallesProductosCorte) {
+                let result = await BuscarInformacionLocal('SendWebsocketServer/24', filtro);
+
+                for (item of result) {
+                    this.DATA.push(item);
+
+                    if (this.FILTROS.tipoConsulta === 'Informe_608')
+                        if (this.$options.filters.FilterValidacionesNCF(item.ncf) !== undefined)
+                            this.FILTROS.erroresNCF++;
+                }
+                //}
             }
             //    //  GUARDARLO EN EL NAVEGADOR PARA CUANDO EL CLIENTE LE DE A IMPRIMIR.
             //    //localStorage.setItem('sumatoriasEstadoCuentaCliente', JSON.stringify(result[0]));
@@ -109,17 +132,26 @@
 
         TipoConsultaSelectChanged() {
             this.Limpiar();
+
+            switch (this.FILTROS.tipoConsulta) {
+                case "Informe_608":
+                    for (let i = 2000; i <= this.FILTROS.periodoAnioSeleccionado; i++)
+                        this.FILTROS.periodoAnios.unshift(i);
+                    break;
+            }
         },
 
         Limpiar() {
             monicaReportes.LimpiarTablas();
             this.FILTROS.valor = '';
             this.FILTROS.clasificacion = 'A';
+            this.FILTROS.periodoMesSeleccionado = '01';
+            this.FILTROS.periodoAnioSeleccionado = new Date().getFullYear();
         },
 
         AjustesAvanzadosFiltros() {
             $('#CBreporteModalFormato').modal('show');
-        },
+        }
     },
 
     filters: {
@@ -136,6 +168,9 @@
         },
 
         FilterNivelCuenta: value => {
+            if (value === undefined)
+                return;
+
             switch (value) {
                 case "S":
                     return 'CUENTA CONTROL';
@@ -145,6 +180,9 @@
         },
 
         FilterCentroCostos: value => {
+            if (value === undefined)
+                return;
+
             switch (value) {
                 case "S":
                     return 'SI';
@@ -154,6 +192,9 @@
         },
 
         FilterClasificacion: value => {
+            if (value === undefined)
+                return;
+
             value = value.replace(/ /g, '');
 
             switch (value) {
@@ -173,6 +214,41 @@
                     return 'DEUDAS';
                 case "R":
                     return 'ACREEDORA';
+            }
+        },
+
+        FilterValidacionesNCF: value => {
+            if (value.length !== 11
+                && value.length !== 13
+                && value.length !== 19) {
+                return "Loingitud de NCF Incorrecta.";
+            }
+            if (value[0] !== 'A'
+                && value[0] !== 'B'
+                && value[0] !== 'E') {
+                return "Error de Letra en NCF.";
+            }
+            if (value[value.length - 1] === "0") {
+                return "NCF Invalido.";
+            }
+            if (value.length === 11
+                || value.length === 13) {
+                const caracteres = `${value[1]}${value[2]}`
+                if (caracteres !== "01"
+                    && caracteres !== "02"
+                    && caracteres !== "14"
+                    && caracteres !== "15"
+                    && caracteres !== "16")
+                    return "Error de Tipo de NCF.";
+            }
+            if (value.length === 19) {
+                const caracteres = `${value[9]}${value[10]}`
+                if (caracteres !== "01"
+                    && caracteres !== "02"
+                    && caracteres !== "14"
+                    && caracteres !== "15"
+                    && caracteres !== "16")
+                    return "Error de Tipo de NCF.";
             }
         }
     },

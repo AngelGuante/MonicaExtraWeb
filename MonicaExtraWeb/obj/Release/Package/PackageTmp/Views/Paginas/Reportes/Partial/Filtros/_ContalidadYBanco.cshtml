@@ -54,14 +54,15 @@
                     <optgroup label="Reportes Fiscales">
                         <option disabled value="Informe_606">Informe 606</option>
                         <option disabled value="Informe_607">Informe 607</option>
-                        <option disabled value="Informe_608">Informe 608</option>
+                        <option value="Informe_608">Informe 608</option>
                         <option disabled value="Pre_Informe_IT1">Pre Informe IT1</option>
                     </optgroup>
                 </select>
             </div>
 
             @*  SELECT TIPO DE BUSQUEDA*@
-            <div class="col-12 col-lg-1">
+            <div class="col-12 col-lg-1"
+                 v-if="FILTROS.tipoConsulta === 'Plan_de_Cuentas'">
                 <label class="font-weight-bold">Buscar Por</label>
                 <select class="custom-select col"
                         v-model="FILTROS.tipoBusqueda"
@@ -72,9 +73,37 @@
             </div>
 
             @* FILTRO POR VALOR ESPECIFIVO*@
-            <div class="col-12 col-lg-2">
+            <div class="col-12 col-lg-2"
+                 v-if="FILTROS.tipoConsulta === 'Plan_de_Cuentas'">
                 <label class="font-weight-bold">Valor</label>
                 <input type="text" class="form-control" v-model="FILTROS.valor" />
+            </div>
+
+            @*  SELECCIONAR PERIODO*@
+            <div class="col-12 col-lg-2"
+                 v-if="FILTROS.tipoConsulta === 'Informe_608'">
+                <label class="font-weight-bold">Seleccionar Periodo</label>
+                <div class="input-group">
+                    <select class="custom-select"
+                            v-model="FILTROS.periodoMesSeleccionado">
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select class="custom-select"
+                            v-model="FILTROS.periodoAnioSeleccionado">
+                        <option v-for="item in FILTROS.periodoAnios" v-bind:value=item>{{item}}</option>
+                    </select>
+                </div>
             </div>
 
             @*CATEGORIA PRODUCTO AGRUPADA*@
@@ -394,7 +423,8 @@
                         </div>*@
 
                     @*  SELECT CLASIFICACION*@
-                    <div class="col-12 col-lg-3">
+                    <div class="col-12 col-lg-3"
+                         v-if="FILTROS.tipoConsulta === 'Plan_de_Cuentas'">
                         <label class="font-weight-bold">Clasificación</label>
                         <select class="custom-select col" v-model="FILTROS.clasificacion">
                             <option value="A">Activo</option>

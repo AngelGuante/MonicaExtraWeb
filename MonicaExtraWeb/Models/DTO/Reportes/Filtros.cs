@@ -62,6 +62,8 @@
         //  **ContabilidadYBanco**
         public string descripcion { get; set; }
         public string clasificacion { get; set; }
+        public string anio { get; set; }
+        public string mes { get; set; }
 
         //  MANEJO DE DATA COTIZACIONES
         public string NroCotizacion { get; set; }

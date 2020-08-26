@@ -1993,80 +1993,91 @@ namespace MonicaExtraWeb.Utils
             var query = new StringBuilder();
             var queryWhere = new StringBuilder();
 
-            #region SELECT
-            query.Append("  SELECT ");
-
-            if (filtro.SUM)
-            {
-                //query.Append(" SUM(TDS.monto_dcmto) sumatoriaMontos, ");
-                //query.Append(" SUM(TDS.balance) sumatoriaBalance, ");
-                //query.Append(" SUM(TDS.monto_dcmto - TDS.balance) sumatoriaPagosAcumulados ");
-            }
-            else
-            {
-                query.Append($"  TS.cuenta_contable ");
-                query.Append($", TS.nivel_cuenta ");
-                query.Append($", TS.nombre_cuenta ");
-                query.Append($", TS.balance ");
-                query.Append($", TS.tipo_cuenta ");
-                query.Append($", TS.centro_costos ");
-                query.Append($", TS.ultima_transac ");
-            }
-            #endregion
-
-            #region FROM
-            query.Append($" FROM {DbName}cuentas TS ");
-            #endregion
-
-            #region WHERE
-            queryWhere.Append("WHERE ");
-
-            if (!string.IsNullOrEmpty(filtro.code))
-            {
-                if (queryWhere.Length > 6)
-                    queryWhere.Append("AND ");
-                queryWhere.Append($"TS.cuenta_contable = '{filtro.code}' ");
-            }
-            if (!string.IsNullOrEmpty(filtro.descripcion))
-            {
-                if (queryWhere.Length > 6)
-                    queryWhere.Append("AND ");
-                queryWhere.Append($"TS.nombre_cuenta LIKE '%{filtro.descripcion}%' ");
-            }
-            if (!string.IsNullOrEmpty(filtro.clasificacion))
-            {
-                if (queryWhere.Length > 6)
-                    queryWhere.Append("AND ");
-                queryWhere.Append($"TS.tipo_cuenta = '{filtro.clasificacion}' ");
-            }
-            if (!string.IsNullOrEmpty(filtro.conBalance))
-            {
-                if (queryWhere.Length > 6)
-                    queryWhere.Append("AND ");
-                queryWhere.Append($"TS.Balance > 0 ");
-            }
-
-            if (queryWhere.Length > 6)
-                query.Append(queryWhere.ToString());
-            #endregion
-
-            #region ORDER BY
-            //if (!filtro.SUM)
-            //{
-            query.Append("ORDER BY ");
             switch (filtro.tipoConsulta)
             {
                 case "Plan_de_Cuentas":
-                    query.Append($" TS.cuenta_contable ");
-                    break;
-            }
-            //}
-            #endregion
+                    #region SELECT
+                    query.Append("  SELECT ");
+                    query.Append($"  TS.cuenta_contable ");
+                    query.Append($", TS.nivel_cuenta ");
+                    query.Append($", TS.nombre_cuenta ");
+                    query.Append($", TS.balance ");
+                    query.Append($", TS.tipo_cuenta ");
+                    query.Append($", TS.centro_costos ");
+                    query.Append($", TS.ultima_transac ");
+                    #endregion
 
-            if (filtro.GROUP)
-            {
-                query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
-                query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                    #region FROM
+                    query.Append($" FROM {DbName}.dbo.cuentas TS ");
+                    #endregion
+
+                    #region WHERE
+                    queryWhere.Append("WHERE ");
+
+                    if (!string.IsNullOrEmpty(filtro.code))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($"TS.cuenta_contable = '{filtro.code}' ");
+                    }
+                    if (!string.IsNullOrEmpty(filtro.descripcion))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($"TS.nombre_cuenta LIKE '%{filtro.descripcion}%' ");
+                    }
+                    if (!string.IsNullOrEmpty(filtro.clasificacion))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($"TS.tipo_cuenta = '{filtro.clasificacion}' ");
+                    }
+                    if (!string.IsNullOrEmpty(filtro.conBalance))
+                    {
+                        if (queryWhere.Length > 6)
+                            queryWhere.Append("AND ");
+                        queryWhere.Append($"TS.Balance > 0 ");
+                    }
+
+                    if (queryWhere.Length > 6)
+                        query.Append(queryWhere.ToString());
+                    #endregion
+
+                    #region ORDER BY
+                    query.Append("ORDER BY ");
+                    query.Append($" TS.cuenta_contable ");
+                    #endregion
+
+                    query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                    query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                    break;
+                case "Informe_608":
+                    #region SELECT
+                    query.Append("  SELECT ");
+                    query.Append($"  SUBSTRING(TRIM(TS.ncf), 1, 19) ncf ");
+                    query.Append($", REPLACE(TS.fecha_emision, '-', '') fecha_emision ");
+                    query.Append($", TS.causa_anulacion ");
+                    #endregion
+
+                    #region FROM
+                    query.Append($" FROM {DbName}.dbo.factura TS ");
+                    #endregion
+
+                    #region WHERE
+                    query.Append("WHERE ");
+                    query.Append($"TS.anulada = 1 ");
+
+                    if (!string.IsNullOrEmpty(filtro.anio))
+                        query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
+                    if (!string.IsNullOrEmpty(filtro.mes))
+                        query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
+                    #endregion
+
+                    #region ORDER BY
+                    query.Append("ORDER BY ");
+                    query.Append($" TS.fecha_emision ");
+                    #endregion
+                    break;
             }
 
             return query.ToString();

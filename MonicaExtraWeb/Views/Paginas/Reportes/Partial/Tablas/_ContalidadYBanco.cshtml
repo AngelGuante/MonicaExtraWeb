@@ -1,5 +1,14 @@
-﻿<div id="divTablaContabilidadYBanco" class="col-12" v-if="DATA.length > 0" style="width:99%">
-    <table id="tablaContabilidadYBanco" class="table table-striped">
+﻿<div id="divTablaContabilidadYBanco"
+     class="col-12"
+     v-if="DATA.length > 0"
+     style="width:99%">
+
+    @*---------------------------------------*@
+    @*----TABLA Plan de Cuentas(Catalogo)----*@
+    @*---------------------------------------*@
+    <table id="tablaContabilidadYBanco"
+           class="table table-striped"
+           v-if="FILTROS.tipoConsulta === 'Plan_de_Cuentas'">
         <thead>
             <tr class="tableHeader">
                 <th style="text-align:right;" scope="col">Código</th>
@@ -23,7 +32,65 @@
         </tbody>
     </table>
 
-    <nav aria-label="Page navigation example">
+    @*---------------------------*@
+    @*----CLIENTE Informe 608----*@
+    @*---------------------------*@
+    <hr />
+    <button v-if="FILTROS.tipoConsulta === 'Informe_608'" type="button" class="btn btn-outline-info" disabled>Exportar a DGII (TXT)</button>
+    <hr />
+
+    <table id="tablaContabilidadYBanco"
+           class="table table-striped"
+           v-if="FILTROS.tipoConsulta === 'Informe_608'">
+        <thead>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader">RNC o Cédula</th>
+                <th style="text-align:center;" class="tableHeader">Periodo</th>
+                <th style="text-align:center;" class="tableHeader">Cantidad de Registros</th>
+                <th style="text-align:center;" class="tableHeader">Total de Errores</th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;">< No Implementado por el Momento ></th>
+                <th style="text-align:center;">{{FILTROS.periodoAnioSeleccionadoBuscado}}{{FILTROS.periodoMesSeleccionadoBuscado}}</th>
+                <th style="text-align:center;">{{DATA.length}}</th>
+                <th style="text-align:center;">{{FILTROS.erroresNCF}}</th>
+            </tr>
+            <tr>
+                <th style="border:none;" scope="col"></th>
+                <th style="text-align:center;" class="tableHeader" colspan="4">DETALLE</th>
+                <th style="border:none;" scope="col"></th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader">1</th>
+                <th style="text-align:center;" class="tableHeader">2</th>
+                <th style="text-align:center;" class="tableHeader" colspan="2">3</th>
+                <th style="border:none;"></th>
+            </tr>
+            <tr class="tableHeader">
+                <th style="text-align:center;" scope="col">Línea</th>
+                <th style="text-align:center;" scope="col">Número de Comprobante Discal</th>
+                <th style="text-align:center;" scope="col">Fecha de Comprobante</th>
+                <th style="text-align:center;" colspan="2">Tipo de Anulación</th>
+                <th style="text-align:center;" scope="col"></th>
+                <th style="text-align:center;" scope="col">Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(element, index) in DATA">
+                <td style="text-align:center;">{{ index + 1 }}</td>
+                <td style="text-align:center;">{{ element.ncf }}</td>
+                <td style="text-align:center;">{{ element.fecha_emision }}</td>
+                <td style="text-align:center;" colspan="2">{{ element.causa_anulacion | FilterUppercase }}</td>
+                <th style="text-align:center;" scope="col"></th>
+                <td style="text-align:center;">{{ element.ncf | FilterValidacionesNCF }}</td>
+</tbody>
+    </table>
+
+    <nav aria-label="Page navigation example"
+         v-if="FILTROS.tipoConsulta !== 'Informe_608'">
         <ul class="pagination justify-content-center">
             <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
                 <a class="page-link" v-on:click="Pagination(0)"><<</a>
