@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using MonicaExtraWeb.Utils.Token;
 using System.Web.Http;
 
 namespace MonicaExtraWeb
@@ -10,6 +8,8 @@ namespace MonicaExtraWeb
         public static void Register(HttpConfiguration config)
         {
             config.MapHttpAttributeRoutes();
+
+            config.MessageHandlers.Add(new TokenValidationHandler());
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",

@@ -294,3 +294,11 @@ D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\M
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.dll
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.pdb
 D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\obj\Debug\MonicaExtraWeb.csprojAssemblyReference.cache
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.JsonWebTokens.dll
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.Logging.dll
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.Tokens.dll
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\System.IdentityModel.Tokens.Jwt.dll
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.JsonWebTokens.xml
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.Logging.xml
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\Microsoft.IdentityModel.Tokens.xml
+D:\Mis cosas\I\Proyectos\.Net\.Net Framework\Web\MonicaExtraWeb\MonicaExtraWeb\MonicaExtraWeb\bin\System.IdentityModel.Tokens.Jwt.xml

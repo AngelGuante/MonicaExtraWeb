@@ -12,7 +12,7 @@ namespace MonicaExtraWeb
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "SAP", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "Acceso", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

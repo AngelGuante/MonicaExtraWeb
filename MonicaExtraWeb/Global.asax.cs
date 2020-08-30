@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -7,8 +8,6 @@ namespace MonicaExtraWeb
 {
     public class MvcApplication : System.Web.HttpApplication
     {
-        public static int demo { get; set; }
-
         protected void Application_Start()
         {
             GlobalConfiguration.Configure(WebApiConfig.Register);
@@ -16,6 +15,15 @@ namespace MonicaExtraWeb
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+        }
+
+        protected void Application_EndRequest(object sender, EventArgs e)
+        {
+            if (Response.StatusCode == 401)
+            {
+                //Response.Redirect("")
+                //var ds = Request.Headers.Get("Authorization");
+            }
         }
     }
 }
