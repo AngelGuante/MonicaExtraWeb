@@ -1,4 +1,4 @@
-﻿namespace MonicaExtraWeb.Models.DTO
+﻿namespace MonicaExtraWeb.Models
 {
     public class LoginRequest
     {

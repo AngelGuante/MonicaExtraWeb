@@ -3,7 +3,7 @@ using static MonicaExtraWeb.Utils.Token.TokenValidatorController;
 
 namespace MonicaExtraWeb.Controllers
 {
-    public class ReportesController : Controller
+    public class MoniExtraController : Controller
     {
         public ActionResult Index()
         {

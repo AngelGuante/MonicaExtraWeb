@@ -7,11 +7,5 @@ namespace MonicaExtraWeb.Controllers
     {
         public ActionResult Index() =>
             View();
-
-        public ActionResult Acceder()
-        {
-            return RedirectToAction("Index");
-        }
-
     }
 }

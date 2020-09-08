@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using MonicaExtraWeb.Models.DTO.Impresion.LocalReports;
 using System.Collections.Generic;
+using static MonicaExtraWeb.Utils.Token.TokenValidatorController;
 
 namespace MonicaExtraWeb.Controllers
 {
@@ -23,67 +24,87 @@ namespace MonicaExtraWeb.Controllers
         /// <returns></returns>
         public ActionResult Imprimir(string type, string paremetros)
         {
-            switch (type)
+            if (Validate(this))
             {
-                case "movimiento":
-                    return RedirectToAction("Movimiento", new { parametros = paremetros });
-                case "cierre":
-                    return RedirectToAction("Cierre", new { parametros = paremetros });
-                case "reporteEstadoCuentaCliente":
-                    return RedirectToAction("ReporteEstadoCuentaCliente", new { parametros = paremetros });
-            }
+                switch (type)
+                {
+                    case "movimiento":
+                        return RedirectToAction("Movimiento", new { parametros = paremetros });
+                    case "cierre":
+                        return RedirectToAction("Cierre", new { parametros = paremetros });
+                    case "reporteEstadoCuentaCliente":
+                        return RedirectToAction("ReporteEstadoCuentaCliente", new { parametros = paremetros });
+                }
 
-            return null;
+                return null;
+            }
+            else
+                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
         }
 
         public ActionResult Movimiento(string parametros)
         {
-            var obj = JsonConvert.DeserializeObject<MovimientoDTO>(parametros);
-            var movimiento = Conn.Query<MovimientosCajas>(MovimientoCaja(), new { id = obj.NumeroTransacion }).FirstOrDefault();
-            return View(movimiento);
+            if (Validate(this))
+            {
+                var obj = JsonConvert.DeserializeObject<MovimientoDTO>(parametros);
+                var movimiento = Conn.Query<MovimientosCajas>(MovimientoCaja(), new { id = obj.NumeroTransacion }).FirstOrDefault();
+                return View(movimiento);
+            }
+            else
+                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
         }
 
         public ActionResult Cierre(string parametros)
         {
-            var obj = JsonConvert.DeserializeObject<CierreDTO>(parametros);
-            var cierreCaja = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(obj.NumeroCierre));
-            return View(cierreCaja);
+            if (Validate(this))
+            {
+                var obj = JsonConvert.DeserializeObject<CierreDTO>(parametros);
+                var cierreCaja = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(obj.NumeroCierre));
+                return View(cierreCaja);
+            }
+            else
+                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
         }
 
         public async Task<ActionResult> ReporteEstadoCuentaCliente(string parametros)
         {
-            var obj = JsonConvert.DeserializeObject<LocalQueryClientDTO>(parametros);
-            _ = await SendQueryToClient(obj.status, obj.filtro);
-            string resultset;
-            string resultsetCliente;
-
-            do
+            if (Validate(this))
             {
-                RequestClientData(out resultset);
-                Thread.Sleep(1000);
+                var obj = JsonConvert.DeserializeObject<LocalQueryClientDTO>(parametros);
+                _ = await SendQueryToClient(obj.status, obj.filtro);
+                string resultset;
+                string resultsetCliente;
+
+                do
+                {
+                    RequestClientData(out resultset);
+                    Thread.Sleep(1000);
+                }
+                while (resultset == null);
+
+                // BUSCAR LOS DATOS DEL CLIENTE
+                _ = await SendQueryToClient(Enums.ClientMessageStatusEnum.ClienteInformacion, obj.filtro);
+
+                do
+                {
+                    RequestClientData(out resultsetCliente);
+                    Thread.Sleep(1000);
+                }
+                while (resultsetCliente == null);
+
+                var AnonymousData = JsonConvert.DeserializeAnonymousType(resultset, new { data = "" });
+                var AnonymousDataClient = JsonConvert.DeserializeAnonymousType(resultsetCliente, new { data = "" });
+
+                var model = new EstadoCuentaclienteDTO
+                {
+                    Reportes = JsonConvert.DeserializeObject<List<ReporteEstadoCuentaClienteDTO>>(AnonymousData.data) ?? new List<ReporteEstadoCuentaClienteDTO>(),
+                    Client = JsonConvert.DeserializeObject<List<clientes>>(AnonymousDataClient.data).FirstOrDefault() ?? new clientes()
+                };
+
+                return View(model);
             }
-            while (resultset == null);
-
-            // BUSCAR LOS DATOS DEL CLIENTE
-            _ = await SendQueryToClient(Enums.ClientMessageStatusEnum.ClienteInformacion, obj.filtro);
-
-            do
-            {
-                RequestClientData(out resultsetCliente);
-                Thread.Sleep(1000);
-            }
-            while (resultsetCliente == null);
-
-            var AnonymousData = JsonConvert.DeserializeAnonymousType(resultset, new { data = "" });
-            var AnonymousDataClient = JsonConvert.DeserializeAnonymousType(resultsetCliente, new { data = "" });
-
-            var model = new EstadoCuentaclienteDTO
-            {
-                Reportes = JsonConvert.DeserializeObject<List<ReporteEstadoCuentaClienteDTO>>(AnonymousData.data) ?? new List<ReporteEstadoCuentaClienteDTO>(),
-                Client = JsonConvert.DeserializeObject<List<clientes>>(AnonymousDataClient.data).FirstOrDefault() ?? new clientes()
-            };
-
-            return View(model);
+            else
+                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
         }
     }
 }

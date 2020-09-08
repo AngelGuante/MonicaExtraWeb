@@ -98,13 +98,6 @@
             document.getElementById('cargando').setAttribute('hidden', true);
 
             this.sourceResportes = source;
-            if (this.sourceResportes === 'web') {
-                if (this.codsClientes.length === 0) {
-                    $.get(`..${this.ApiClientes}GetCodes`, {}, response => {
-                        this.codsClientes = response.codes;
-                    });
-                }
-            }
         },
 
         //  OPCIONES DEL MENU

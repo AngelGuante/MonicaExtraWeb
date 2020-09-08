@@ -3,16 +3,9 @@
 
     data: {
         ApiRuta: '/API/ASPISAP/',
-        ApiClientes: '/API/Clientes/',
 
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
-
-        // DIV LOG
-        DivLog: {
-            remember: true,
-            pass: ''
-        },
 
         // DIV EMPRESA
         Empresas: [],
@@ -64,56 +57,7 @@
         }
     },
 
-    created: function () {
-        CoockiesIniciales();
-        let rememberPasswordCookie = GetCookieElement('rememberPass=');
-
-        this.DivLog.remember = rememberPasswordCookie === 'true' ? true : false;
-        if (this.DivLog.remember) {
-            this.DivLog.pass = rememberPasswordCookie = document.cookie.split('; ')
-                .find(item => item.startsWith('password='))
-                .replace('password=', '')
-                .replace(';', '');
-        }
-    },
-
     methods: {
-        //  DIV PARA LOGEARSE
-        //----------------------------------------------------------
-        Log() {
-            if (this.DivLog.remember) {
-                SetCoockie(`password=${this.DivLog.pass};`);
-                SetCoockie(`rememberPass=true;`);
-            }
-            else {
-                SetCoockie(`password=;`);
-                SetCoockie(`rememberPass=false;`);
-            }
-
-            let fecha = new Date();
-
-            if (this.DivLog.pass == fecha.getFullYear() + fecha.getMonth() + 1) {
-                document.getElementById('cargando').removeAttribute('hidden');
-
-                document.getElementById('divLog').setAttribute('hidden', true);
-                //document.getElementById('SeleccionarEmpresa').removeAttribute('hidden');
-
-                //$.get(`..${this.ApiRuta}GetEmpresas`).done(response => {
-                //    this.Empresas = response.Empresas;
-                //    document.getElementById('cargando').setAttribute('hidden', true);
-                //});
-
-                //---
-                document.getElementById('menu').removeAttribute('hidden');
-                document.getElementById('cargando').setAttribute('hidden', true);
-
-            }
-            else {
-                this.DivLog.pass = '';
-                document.getElementById('badPass').removeAttribute('hidden');
-            }
-        },
-
         //  DIV DONDE SE SELECCIONAN LAS EMPRESAS
         //----------------------------------------------------------
         EmpresaSeleccionada(idEmpresa) {

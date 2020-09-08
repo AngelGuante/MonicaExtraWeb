@@ -14,6 +14,7 @@ using static MonicaExtraWeb.Utils.Querys.Data;
 
 namespace MonicaExtraWeb.Controllers.API
 {
+    [Authorize]
     [RoutePrefix("API/ASPISAP")]
     public class APISAPController : ApiController
     {

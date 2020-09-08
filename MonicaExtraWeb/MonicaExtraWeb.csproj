@@ -175,6 +175,7 @@
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
+    <Compile Include="Controllers\MoniExtraController.cs" />
     <Compile Include="Controllers\ReportesController.cs" />
     <Compile Include="Controllers\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
@@ -190,7 +191,7 @@
     <Compile Include="Models\DTO\Impresion\LocalReports\EstadoCuentaclienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\LocalReports\ReporteEstadoCuentaClienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\MovimientoDTO.cs" />
-    <Compile Include="Models\DTO\LoginRequest.cs" />
+    <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\DTO\Reportes\Filtros.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
     <Compile Include="Models\DTO\WebSocketDTO.cs" />
@@ -203,6 +204,7 @@
     <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Token\TokenValidatorController.cs" />
     <Compile Include="Utils\GlobalVariables.cs" />
     <Compile Include="Utils\Helper.cs" />
     <Compile Include="Utils\LocalRequestQuery.cs" />
@@ -276,6 +278,7 @@
     <Content Include="Scripts\js\Acceso.js" />
     <Content Include="Scripts\js\Chart.js" />
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
+    <Content Include="Scripts\js\Menu.js" />
     <Content Include="Scripts\js\Reportes\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
@@ -421,6 +424,7 @@
     <Content Include="Views\Paginas\Reportes\Partial\Modals\_ContalidadYBancoFormatoTablas.cshtml" />
     <Content Include="Views\Acceso\Index.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
+    <Content Include="Views\MoniExtra\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

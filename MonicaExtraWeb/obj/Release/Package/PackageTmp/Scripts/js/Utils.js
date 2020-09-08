@@ -234,8 +234,10 @@ const NavigationBehaviour = (actual, inicial) => {
 
     let divActualVisible = Navegacion[Navegacion.length - 1].actual;
 
-    if (actual === 0)
-        window.location.href = '/';
+    if (actual === 0) {
+        document.getElementById('cargando').removeAttribute('hidden');
+        window.location.href = '../Menu';
+    }
     else if (actual === -1) {
         document.getElementById(divActualVisible).setAttribute('hidden', true);
         document.getElementById(Navegacion[Navegacion.length - 2].actual).removeAttribute('hidden');
@@ -286,7 +288,8 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                 method: 'POST',
                 body: JSON.stringify(filtro),
                 headers: {
-                    'content-type': 'application/json'
+                    'content-type': 'application/json',
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
             });
 
@@ -304,7 +307,11 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
             }
             else if (content.value === 'true') {
                 interval = setInterval(async () => {
-                    const innerResponse = await fetch(`..${ApiReportesLocales}GetWebsocketResponseFile`);
+                    const innerResponse = await fetch(`..${ApiReportesLocales}GetWebsocketResponseFile`, {
+                        headers: {
+                            'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                        }
+                    });
                     const innerContent = await innerResponse.json();
                     const parsedContent = JSON.parse(innerContent.resultset);
 

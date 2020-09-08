@@ -1,0 +1,29 @@
+﻿<div id="moduloReportes">
+    @Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
+
+    @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+    @*  DIV QUE MUESTRA LA SELECCION DE EL SOURCE PARA HACER LOS REPORTES *@
+    @Html.Partial("~/Views/Paginas/Reportes/_menuSeleccionSourceReportes.cshtml")
+</div>
+
+@*  DIV QUE MUESTRA LA SELECCION DE EL LOS REPORTES *@
+@Html.Partial("~/Views/Paginas/Reportes/_menuSeleccionReporte.cshtml")
+
+@section scripts{
+    <script>
+        window.addEventListener('load',
+            () => document.getElementById('cargando').setAttribute('hidden', true));
+    </script>
+
+    <script src="~/Scripts/js/Reportes/Reportes.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_ventasYDevoluciones.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_clienteIndividualStatus.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_cotizacionesYConduces.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_inventarioYLiquidacion.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_comprasDevolucionesYConduces.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_clientesYProveedores.js"></script>
+    <script src="~/Scripts/js/Reportes/Reporte_contalidadYBanco.js"></script>
+
+    <script src="~/Scripts/js/ManejoDeData/ManejoDeData_cotizacionesYConduces.js"></script>
+}

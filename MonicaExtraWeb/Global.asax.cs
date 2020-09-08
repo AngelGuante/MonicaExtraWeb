@@ -20,10 +20,7 @@ namespace MonicaExtraWeb
         protected void Application_EndRequest(object sender, EventArgs e)
         {
             if (Response.StatusCode == 401)
-            {
-                //Response.Redirect("")
-                //var ds = Request.Headers.Get("Authorization");
-            }
+                Response.Redirect("~/Acceso?tokenStatus=invalid");
         }
     }
 }

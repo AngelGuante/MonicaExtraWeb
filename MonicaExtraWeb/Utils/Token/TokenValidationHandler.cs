@@ -18,9 +18,7 @@ namespace MonicaExtraWeb.Utils.Token
             token = null;
             IEnumerable<string> authzHeaders;
             if (!request.Headers.TryGetValues("Authorization", out authzHeaders) || authzHeaders.Count() > 1)
-            {
                 return false;
-            }
             var bearerToken = authzHeaders.ElementAt(0);
             token = bearerToken.StartsWith("Bearer ") ? bearerToken.Substring(7) : bearerToken;
             return true;
@@ -65,7 +63,7 @@ namespace MonicaExtraWeb.Utils.Token
             {
                 statusCode = HttpStatusCode.Unauthorized;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 statusCode = HttpStatusCode.InternalServerError;
             }
