@@ -1,0 +1,49 @@
+﻿<div id="manejoUsuarios" class="card border-secondary Sombra mt-5">
+    <div class="card-body">
+        <h5 class="card-title">Nuevo Usuario</h5>
+
+        <hr />
+
+        <div class="alert alert-info" role="alert">
+            <p>La Contraseña por defecto del usuario será: 123456abc!</p>
+            <p>Esta se cambiará obligatoriamente al momento del primer acceso del usuario a su cuenta.</p>
+        </div>
+
+        <form>
+            <div class="row">
+                <div class="form-group col-12 col-lg-6">
+                    <label>Nombre</label>
+                    <input id="inptNombreNuevoUsuario" type="email" class="form-control" placeholder="Nombre" v-model="nombre">
+                </div>
+                <div class="form-group col-12 col-lg-6">
+                    <label>Apellidos</label>
+                    <input id="inptApellidosNuevoUsuario" type="email" class="form-control" placeholder="Apellidos" v-model="apellidos">
+                </div>
+
+                <div class="form-group col-10">
+                    <label>Nombre de Acceso</label>
+                    <input type="email" class="form-control" placeholder="--" disabled v-model="nombreUsuario">
+                </div>
+
+                <div class="col-2 d-flex align-items-center">
+                    <button id="btnGenerarUserName" v-on:click="GenerarUserName()" type="button" class="btn btn-info" style="width:100%" disabled>Generar Nombre de Acceso</button>
+                </div>
+
+                <div class=" col-12">
+                    <label>Rol del Usuario</label>
+                    <select class="custom-select custom-select-lg" disabled>
+                        <option selected disabled>Seleccione el Rol (Permisos)</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr />
+
+            <button id="btnAgregarNuevoUsuario" onclick="alert('Funcionalidad Solo funcionará hasta que se pase la DB a Azure')" type="button" class="btn btn-info" style="width:100%" disabled><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+        </form>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/js/Administracion/Usuarios.js"></script>
+}

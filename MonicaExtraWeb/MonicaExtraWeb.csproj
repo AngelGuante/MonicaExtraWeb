@@ -171,14 +171,16 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccesoController.cs" />
+    <Compile Include="Controllers\AdministracionRecursos\AdministracionController.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MoniExtraController.cs" />
     <Compile Include="Controllers\ReportesController.cs" />
-    <Compile Include="Controllers\ReportesLocalesController.cs" />
+    <Compile Include="Controllers\API\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
+    <Compile Include="Controllers\AdministracionRecursos\UsuariosController.cs" />
     <Compile Include="Enums\ClientMessageStatusEnum.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -221,10 +223,12 @@
     <Content Include="Content\assets\logoHeaderMonica.png" />
     <Content Include="Content\assets\graphic.png" />
     <Content Include="Content\assets\management.png" />
+    <Content Include="Content\assets\permissions.png" />
     <Content Include="Content\assets\sell.png" />
     <Content Include="Content\assets\server.png" />
     <Content Include="Content\assets\tower-pc.png" />
     <Content Include="Content\assets\transaction.png" />
+    <Content Include="Content\assets\users.png" />
     <Content Include="Content\bootstrap-grid.css" />
     <Content Include="Content\bootstrap-grid.min.css" />
     <Content Include="Content\bootstrap-reboot.css" />
@@ -276,10 +280,10 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\js\Acceso.js" />
+    <Content Include="Scripts\js\Administracion\Usuarios.js" />
     <Content Include="Scripts\js\Chart.js" />
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Menu.js" />
-    <Content Include="Scripts\js\Reportes\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clientesYProveedores.js" />
@@ -425,10 +429,11 @@
     <Content Include="Views\Acceso\Index.cshtml" />
     <Content Include="Views\Menu\Index.cshtml" />
     <Content Include="Views\MoniExtra\Index.cshtml" />
+    <Content Include="Views\Administracion\Index.cshtml" />
+    <Content Include="Views\Usuarios\Crear.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Views\Customer\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -7,7 +7,6 @@ using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.LocalRequestQuery;
 
-
 namespace MonicaExtraWeb.Controllers
 {
     [RoutePrefix("API/ReportesLocales")]
