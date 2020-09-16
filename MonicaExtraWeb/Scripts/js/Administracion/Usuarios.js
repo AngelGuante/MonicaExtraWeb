@@ -5,6 +5,28 @@
         nombre: '',
         apellidos: '',
         nombreUsuario: '',
+
+        usuarios: []
+    },
+
+    created: function () {
+        document.getElementById('btnHome').removeAttribute('hidden');
+        document.getElementById('btnBack').removeAttribute('hidden');
+
+        fetch('../../API/USUARIOS/GET', {
+            headers: {
+                'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+            }
+        })
+            .then(response => { return response.json(); })
+            .then(json => {
+                this.usuarios = json.usuarios;
+                document.getElementById('cargando').setAttribute('hidden', true);
+            })
+            .catch(err => {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                console.log(err);
+            });
     },
 
     watch: {
@@ -49,6 +71,8 @@
             document.getElementById('btnAgregarNuevoUsuario').removeAttribute('disabled');
         }
     },
+
+
 
     //filters: {
     //    FilterUppercase: value => {

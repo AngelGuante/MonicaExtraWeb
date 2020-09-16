@@ -13,6 +13,11 @@
         ModuloReportes: () => {
             document.getElementById('cargando').removeAttribute('hidden');
             window.location.href = '../MoniExtra/';
+        },
+
+        ModuloAdministracion: () => {
+            document.getElementById('cargando').removeAttribute('hidden');
+            window.location.href = '../Administracion/';
         }
     },
 });

@@ -1,4 +1,6 @@
-﻿namespace MonicaExtraWeb.Utils
+﻿using System.Linq;
+
+namespace MonicaExtraWeb.Utils
 {
     public class Helper
     {
@@ -6,7 +8,6 @@
         {
             if (!type)
             {
-
                 switch (value)
                 {
                     case "creditoFiscal":
@@ -46,6 +47,37 @@
                 }
             }
             return "";
+        }
+
+        /// <summary>
+        /// Comprueba si alguna de las propiedades de un objeto tiene valor.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static bool AlgunaPropiedadConValor(object obj)
+        {
+            try
+            {
+                var Properties = obj.GetType().GetProperties();
+
+                //var values = Properties.Skip(1).Select(item => (string)item.GetValue(obj))
+                //                       .ToList();
+
+                //var values = Properties
+                //    .ToList()
+                //    .Select(item => (string)item.GetValue(obj));
+
+                //var has = values.Any(el => !string.IsNullOrEmpty(el));
+
+                var has = Properties.Any(el => el != default);
+
+
+                return has;
+            }
+            catch (System.Exception)
+            {
+                return false;
+            }
         }
     }
 }

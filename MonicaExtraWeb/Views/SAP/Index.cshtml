@@ -31,6 +31,7 @@
 
 @section scripts{
     <script>
+        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
         window.addEventListener('load',
             () => document.getElementById('cargando').setAttribute('hidden', true));
     </script>

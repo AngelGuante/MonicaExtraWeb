@@ -1,8 +1,12 @@
-﻿using MonicaExtraWeb.Models;
+﻿using Dapper;
+using MonicaExtraWeb.Models;
+using MonicaExtraWeb.Models.DTO.Control;
 using MonicaExtraWeb.Utils.Token;
-using System;
+using System.Linq;
 using System.Net;
 using System.Web.Http;
+using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Utils.Querys.Usuarios;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -17,10 +21,16 @@ namespace MonicaExtraWeb.Controllers.API
             if (login == null)
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
 
-            if (login.Password == (DateTime.Now.Year + DateTime.Now.Month).ToString())
+            var usuario = Conn.Query<Usuario>(Select(new Usuario
+            {
+                NombreUsuario = login.Username
+            })).FirstOrDefault();
+
+            if (usuario != default &&
+                login.Password == usuario.Clave)
             {
                 var token = TokenGenerator.GenerateTokenJwt(login.Username);
-                return Ok(token);
+                return Json(new { token, usuario.NombreUsuario, usuario.Estatus });
             }
             else
                 return Unauthorized();

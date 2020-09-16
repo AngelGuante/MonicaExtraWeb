@@ -6,7 +6,7 @@ namespace MonicaExtraWeb.Utils
 {
     public abstract class GlobalVariables
     {
-        private static string _connectionString = ConfigurationManager.ConnectionStrings["monica10_global"].ConnectionString;
+        private static string _connectionString = ConfigurationManager.ConnectionStrings["Control"].ConnectionString;
         private static SqlConnection _conn = null;
 
         public static SqlConnection Conn
@@ -21,6 +21,7 @@ namespace MonicaExtraWeb.Utils
 
         public static string DbName { get; } = "DB_A5E94C_monica10global.";
         public static string monica10_global { get; } = "monica10_global.";
+        public static string Control { get; } = "Control.";
 
         public static Dictionary<string, string> DataWebsocketPerClient = new Dictionary<string, string>();
     }

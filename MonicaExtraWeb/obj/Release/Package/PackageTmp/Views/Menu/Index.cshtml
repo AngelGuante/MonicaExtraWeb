@@ -1,5 +1,9 @@
 ﻿@Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
 
+@Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+<hr />
+
 <div id="menu">
     <div class="row" style="height:90vh; display:flex; justify-content:space-evenly; align-items:center">
         @*  MODULO DE CAJA*@
@@ -36,5 +40,8 @@
 </div>
 
 @section scripts{
+    <script>
+        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+    </script>
     <script src="~/Scripts/js/Menu.js"></script>
 } 

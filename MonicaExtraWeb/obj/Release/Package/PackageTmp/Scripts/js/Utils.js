@@ -80,6 +80,7 @@ const CoockiesIniciales = () => {
     let rememberPasswordCookie = GetCookieElement('rememberPass=');
 
     if (!rememberPasswordCookie) {
+        SetCoockie('user=;');
         SetCoockie('password=;');
         SetCoockie('rememberPass=true;');
     }
@@ -102,6 +103,11 @@ const GetCookieElement = element => {
     }
 
     return '';
+}
+
+const CloseUserSession = () => {
+    window.localStorage.removeItem('NombreUsuario');
+
 }
 
 //  MUESTRA ALERTAS.

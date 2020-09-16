@@ -4,6 +4,7 @@
     data: {
         DivLog: {
             remember: true,
+            user: '',
             pass: ''
         },
     },
@@ -14,6 +15,10 @@
 
         this.DivLog.remember = rememberPasswordCookie === 'true' ? true : false;
         if (this.DivLog.remember) {
+            this.DivLog.user = rememberPasswordCookie = document.cookie.split('; ')
+                .find(item => item.startsWith('user='))
+                .replace('user=', '')
+                .replace(';', '');
             this.DivLog.pass = rememberPasswordCookie = document.cookie.split('; ')
                 .find(item => item.startsWith('password='))
                 .replace('password=', '')
@@ -31,10 +36,12 @@
     methods: {
         Log() {
             if (this.DivLog.remember) {
+                SetCoockie(`user=${this.DivLog.user};`);
                 SetCoockie(`password=${this.DivLog.pass};`);
                 SetCoockie(`rememberPass=true;`);
             }
             else {
+                SetCoockie(`user=;`);
                 SetCoockie(`password=;`);
                 SetCoockie(`rememberPass=false;`);
             }
@@ -44,7 +51,7 @@
             fetch('../API/Login/authenticate', {
                 method: 'POST',
                 body: JSON.stringify({
-                    Username: 'default',
+                    Username: this.DivLog.user,
                     Password: this.DivLog.pass
                 }),
                 headers: {
@@ -69,7 +76,8 @@
                     }
 
                     let json = await content.json();
-                    SetCoockie(`Authorization=${json}`);
+                    SetCoockie(`Authorization=${json.token}`);
+                    window.localStorage.setItem('NombreUsuario', json.NombreUsuario); 
                     window.location.href = `../Menu`;
                 });
             document.getElementById('cargando').setAttribute('hidden', true);

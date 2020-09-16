@@ -80,6 +80,7 @@ const CoockiesIniciales = () => {
     let rememberPasswordCookie = GetCookieElement('rememberPass=');
 
     if (!rememberPasswordCookie) {
+        SetCoockie('user=;');
         SetCoockie('password=;');
         SetCoockie('rememberPass=true;');
     }
@@ -102,6 +103,18 @@ const GetCookieElement = element => {
     }
 
     return '';
+}
+
+//  REMOVER UN ELEMENTO DE LA COOCKIE
+const RemoveCookieElement = element => {
+    document.cookie = `${element}=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/;`;
+}
+
+//  CERRAR SECCION DE UN USUARIO.
+const CloseUserSession = () => {
+    RemoveCookieElement('Authorization');
+    window.localStorage.removeItem('NombreUsuario');
+    window.location.href = '/'
 }
 
 //  MUESTRA ALERTAS.
@@ -236,9 +249,13 @@ const NavigationBehaviour = (actual, inicial) => {
 
     if (actual === 0) {
         document.getElementById('cargando').removeAttribute('hidden');
-        window.location.href = '../Menu';
+        window.location.href = '/Menu';
     }
     else if (actual === -1) {
+        if (!divActualVisible) {
+            Navegacion.pop();
+            window.history.back();
+        }
         document.getElementById(divActualVisible).setAttribute('hidden', true);
         document.getElementById(Navegacion[Navegacion.length - 2].actual).removeAttribute('hidden');
         Navegacion.pop();

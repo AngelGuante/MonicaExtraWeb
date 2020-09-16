@@ -5,6 +5,18 @@
         nombre: '',
         apellidos: '',
         nombreUsuario: '',
+
+        usuarios: []
+    },
+
+    created: function() {
+        fetch('~/API/USUARIOS/GET', {
+            headers: {
+                'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+            }
+        })
+            .then(response => { return response.json(); })
+            .then(json => { this.usuarios = json.usuarios; });
     },
 
     watch: {
@@ -49,6 +61,8 @@
             document.getElementById('btnAgregarNuevoUsuario').removeAttribute('disabled');
         }
     },
+
+
 
     //filters: {
     //    FilterUppercase: value => {

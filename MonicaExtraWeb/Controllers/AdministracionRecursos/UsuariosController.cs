@@ -6,8 +6,8 @@ namespace MonicaExtraWeb.Controllers
     [RoutePrefix("Administracion/Usuarios")]
     public class UsuariosController : Controller
     {
-        [Route("Crear")]
-        public ActionResult Crear()
+        [Route("Gestion")]
+        public ActionResult Gestion()
         {
             if (Validate(this))
                 return View();
