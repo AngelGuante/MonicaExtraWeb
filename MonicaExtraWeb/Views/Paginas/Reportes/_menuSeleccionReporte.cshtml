@@ -95,6 +95,8 @@
         </nav>
 
         <div style="display:flex; flex-direction:column; width:100%; padding: 0 20px">
+            @Html.Partial("~/Views/Paginas/Reportes/Partial/_sinPermisoAModulos.cshtml")
+
             @*-----------------------------*@
             @*----VENTAS & DEVOLUCIONES----*@
             @*-----------------------------*@
@@ -177,17 +179,17 @@
             @*------------------------------*@
             @*-----CONTABILIDAD Y BANCO-----*@
             @*------------------------------*@
-        <div id="contabilidadYBanco">
-            @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_ContalidadYBancoFormatoTablas.cshtml")
-            <div>
-                @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_ContalidadYBanco.cshtml")
-                <div class="Tables">
-                    <div class="row">
-                        @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_ContalidadYBanco.cshtml")
+            <div id="contabilidadYBanco">
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_ContalidadYBancoFormatoTablas.cshtml")
+                <div>
+                    @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_ContalidadYBanco.cshtml")
+                    <div class="Tables">
+                        <div class="row">
+                            @Html.Partial("~/Views/Paginas/Reportes/Partial/Tablas/_ContalidadYBanco.cshtml")
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
             @*---------------------------------*@
             @*-----COTIZACIONES & CONDUCES-----*@

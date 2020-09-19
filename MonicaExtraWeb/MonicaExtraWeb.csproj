@@ -175,7 +175,9 @@
     <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
+    <Compile Include="Controllers\API\PermisosUsuarioController.cs" />
     <Compile Include="Controllers\API\UsuariosController.cs" />
+    <Compile Include="Controllers\ControlController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MoniExtraController.cs" />
@@ -189,6 +191,7 @@
     </Compile>
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
     <Compile Include="Models\DTO\Control\Modulos.cs" />
+    <Compile Include="Models\DTO\Control\PermisosUsuario.cs" />
     <Compile Include="Models\DTO\Control\Usuario.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
@@ -197,6 +200,8 @@
     <Compile Include="Models\DTO\Impresion\LocalReports\EstadoCuentaclienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\LocalReports\ReporteEstadoCuentaClienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\MovimientoDTO.cs" />
+    <Compile Include="Models\DTO\NuevoUsuario.cs" />
+    <Compile Include="Models\DTO\QueryConfigDTO.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\DTO\Reportes\Filtros.cs" />
     <Compile Include="Models\DTO\Reportes\IndividualClientStatusDTO.cs" />
@@ -211,6 +216,7 @@
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utils\Querys\Control\Modulos.cs" />
+    <Compile Include="Utils\Querys\Control\PermisosUsuarios.cs" />
     <Compile Include="Utils\Querys\Control\Usuarios.cs" />
     <Compile Include="Utils\Token\TokenValidatorController.cs" />
     <Compile Include="Utils\GlobalVariables.cs" />
@@ -437,6 +443,8 @@
     <Content Include="Views\MoniExtra\Index.cshtml" />
     <Content Include="Views\Administracion\Index.cshtml" />
     <Content Include="Views\Usuarios\Gestion.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\_sinPermisoAModulos.cshtml" />
+    <Content Include="Views\Control\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

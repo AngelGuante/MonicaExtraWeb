@@ -36,7 +36,7 @@
         </div>
 
         @*  MODULO DE ADMIMISTRACION*@
-        <div class="col-lg-3 card border-secondary Sombra">
+        <div class="col-lg-3 card border-secondary Sombra" id="moduloAdministracion">
             <div style="display:flex; justify-content:center;">
                 <img class="card-img-top CentrarImage" src="~/Content/assets/management.png" alt="Reportes_Icon" style="width:40%">
             </div>
@@ -55,6 +55,9 @@
 @section scripts{
     <script>
         document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+
+        if (window.localStorage.getItem('Nivel') == 2)
+            document.getElementById('moduloAdministracion').setAttribute('hidden', true);
     </script>
     <script src="~/Scripts/js/Menu.js"></script>
 } 

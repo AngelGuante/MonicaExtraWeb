@@ -6,31 +6,62 @@
     </div>
 </div>
 
-<div id="divLog" style="height:90vh; display:flex; justify-content:center; align-items:center">
-    <div class="col-lg-3 card border-secondary Sombra" style="background-color:white; padding:0">
-        <div class="card-header">
-            <h5>
-                <b>
-                    Acceso
-                </b>
-            </h5>
+<div id="cuentaDeshabilitada" class="alert alert-danger" role="alert" hidden>
+    SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA.
+</div>
+
+
+<div id="divLog">
+    @* FORM PARA CAMBIAR LA CONTRASEñA *@
+    <div id="divCambiarContrasenia" style="height:90vh; display:flex; justify-content:center; align-items:center" hidden>
+        <div class="col-lg-3 card border-secondary Sombra" style="background-color:white; padding:0">
+            <div class="card-header">
+                <h5>
+                    <b>
+                        Nueva Contraseña
+                    </b>
+                </h5>
+            </div>
+
+            <div style="padding: 20px;">
+                <div class="form-group">
+                    <label>Nueva Contraseña</label>
+                    <input type="password" class="form-control" v-model="newPass" v-on:keyup.enter="CambiarContrasenia()" placeholder="Nueva Contraseña">
+                </div>
+
+                <button v-on:click="CambiarContrasenia()" class="btn btn-info" style="width:100%;">Cambiar</button>
+            </div>
         </div>
+    </div>
 
-        <div style="padding: 20px;">
-            <div class="form-group">
-                <label for="inputPass">Nombre de Usuario</label>
-                <input type="text" class="form-control" v-model="DivLog.user" placeholder="Nombre">
-                <label for="inputPass">Contraseña</label>
-                <input type="password" class="form-control" id="inputPass" v-model="DivLog.pass" v-on:keyup.enter="Log" placeholder="Contraseña">
-                <small id="badPass" class="form-text" style="color:red;" hidden>Datos Incorrectos.</small>
+
+    @* FORM PARA LOGUEARSE *@
+    <div id="log" style="height:90vh; display:flex; justify-content:center; align-items:center">
+        <div class="col-lg-3 card border-secondary Sombra" style="background-color:white; padding:0">
+            <div class="card-header">
+                <h5>
+                    <b>
+                        Acceso
+                    </b>
+                </h5>
             </div>
 
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="chkRememberPass" v-model="DivLog.remember" checked>
-                <label class="form-check-label" for="chkRememberPass">Recordar</label>
-            </div>
+            <div style="padding: 20px;">
+                <div class="form-group">
+                    <label for="inputPass">Nombre de Usuario</label>
+                    <input type="text" class="form-control" v-model="DivLog.user" placeholder="Nombre">
+                    <label for="inputPass">Contraseña</label>
+                    <input type="password" class="form-control" id="inputPass" v-model="DivLog.pass" v-on:keyup.enter="Log" placeholder="Contraseña">
+                    <small id="badPass" class="form-text" style="color:red;" hidden>Datos Incorrectos.</small>
+                </div>
 
-            <button v-on:click="Log" class="btn btn-info" style="width:100%;">Submit</button>
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="chkRememberPass" v-model="DivLog.remember" checked>
+                    <label class="form-check-label" for="chkRememberPass">Recordar</label>
+                </div>
+
+                <button v-on:click="Log" class="btn btn-info" style="width:100%;">Submit</button>
+            </div>
         </div>
     </div>
 </div>

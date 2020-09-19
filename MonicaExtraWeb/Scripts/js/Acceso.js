@@ -7,6 +7,9 @@
             user: '',
             pass: ''
         },
+
+        newPass: '',
+        provitional: ''
     },
 
     created: function () {
@@ -75,12 +78,50 @@
                         return;
                     }
 
-                    let json = await content.json();
+                    const json = await content.json();
+
+                    if (json.Estatus == 0) {
+                        document.getElementById('cuentaDeshabilitada').removeAttribute('hidden')
+                        return;
+                    }
+                    if (json.initialPass === this.DivLog.pass) {
+                        document.getElementById('log').setAttribute('hidden', true);
+                        document.getElementById('divCambiarContrasenia').removeAttribute('hidden');
+                        window.localStorage.setItem('Number', json.IdUsuario);
+                        this.provitional = json.token;
+                        return;
+                    }
+                    window.localStorage.setItem('Number', json.IdUsuario);
                     SetCoockie(`Authorization=${json.token}`);
-                    window.localStorage.setItem('NombreUsuario', json.NombreUsuario); 
-                    window.location.href = `../Menu`;
+                    window.localStorage.setItem('NombreUsuario', json.NombreUsuario);
+                    window.localStorage.setItem('Nivel', json.Nivel);
+
+                    if (json.Nivel === 0)
+                        window.location.href = `../Control`;
+                    else
+                        window.location.href = `../Menu`;
                 });
             document.getElementById('cargando').setAttribute('hidden', true);
+        },
+
+        CambiarContrasenia: async function () {
+            const usuario = {
+                IdUsuario: window.localStorage.getItem('Number'),
+                Clave: this.newPass
+            };
+            //  ACTUALIZAR LAS CONTRASEñAS
+            await fetch('../API/USUARIOS/PUT', {
+                method: 'PUT',
+                body: JSON.stringify(usuario),
+                headers: {
+                    'Authorization': 'Bearer ' + this.provitional,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    this.provitional = '';
+                    window.location.href = `../Menu`;
+                });
         }
     },
 });

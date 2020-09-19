@@ -114,6 +114,8 @@ const RemoveCookieElement = element => {
 const CloseUserSession = () => {
     RemoveCookieElement('Authorization');
     window.localStorage.removeItem('NombreUsuario');
+    window.localStorage.removeItem('Number');
+    window.localStorage.removeItem('Nivel');
     window.location.href = '/'
 }
 

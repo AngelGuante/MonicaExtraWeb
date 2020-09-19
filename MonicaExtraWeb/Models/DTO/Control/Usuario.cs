@@ -2,11 +2,12 @@
 {
     public class Usuario
     {
-        public long IdUsuario { get; set; }
+        public long? IdUsuario { get; set; } = null;
         public long IdEmpresa { get; set; }
         public string Login { get; set; }
         public string NombreUsuario { get; set; }
         public string Clave { get; set; }
-        public int Estatus { get; set; }
+        public int? Nivel { get; set; }
+        public int? Estatus { get; set; } = null;
     }
 }
