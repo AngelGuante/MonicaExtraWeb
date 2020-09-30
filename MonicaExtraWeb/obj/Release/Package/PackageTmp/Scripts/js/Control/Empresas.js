@@ -23,7 +23,6 @@
     },
 
     created: async function () {
-        document.getElementById('btnHome').removeAttribute('hidden');
         document.getElementById('btnBack').removeAttribute('hidden');
 
         this.fechaInicio = GetCurrentDate();
@@ -53,7 +52,6 @@
             document.getElementById('cargando').removeAttribute('hidden');
 
             this.Limpiar(false);
-            debugger
             this.empresasLocales = await BuscarInformacionLocal('SendWebsocketServer/4', {});
 
             //  SI ES UNA EMPRESA NUEVA
@@ -84,8 +82,11 @@
                             const empresasM = json.empresas[0].idEmpresasM.split(',');
                             this.nroEmpresasSeleccionadas = empresasM.length;
 
-                            for (item of empresasM)
-                                document.getElementById(`check_${item}`).checked = true;
+                            for (item of empresasM) {
+                                const ele = document.getElementById(`check_${item}`);
+                                if (ele != undefined)
+                                    ele.checked = true;
+                            }
                         }
 
                         document.getElementById('cargando').setAttribute('hidden', true);
