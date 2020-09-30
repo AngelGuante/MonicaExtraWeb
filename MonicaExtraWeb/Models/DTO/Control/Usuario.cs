@@ -9,5 +9,6 @@
         public string Clave { get; set; }
         public int? Nivel { get; set; }
         public int? Estatus { get; set; } = null;
+        public string idEmpresasM { get; set; } = null;
     }
 }

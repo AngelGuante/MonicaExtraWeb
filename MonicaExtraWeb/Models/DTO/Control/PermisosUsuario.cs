@@ -3,7 +3,7 @@
     public class PermisosUsuario
     {
         public int idPermiso { get; set; }
-        public int idEmpresa { get; set; }
+        public long? idEmpresa { get; set; }
         public long idUsuario { get; set; }
         public string idModulo { get; set; }
     }

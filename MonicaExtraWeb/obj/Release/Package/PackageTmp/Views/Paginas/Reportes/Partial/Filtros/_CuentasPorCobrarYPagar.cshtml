@@ -78,7 +78,6 @@
                 <select class="custom-select" v-model="FILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
                     <option value="RFA01">Por Numero</option>
                     <option value="RFA02">Por Monto</option>
-                    <option value="RFA04" disabled>Por Cliente</option>
                     <option value="RFA03">Por Termino de Pago</option>
                     <option value="tipo_de_Documento">Por Tipo de Documento</option>
                     <option value="RFA09">Por Comprobante</option>
@@ -315,7 +314,7 @@
                            class="form-control col-md"
                            type="date"
                            v-model="FILTROS.minFecha_emision"
-                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'"/>
+                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'" />
                 </div>
 
                 <div class="form-group col-12 col-lg-2" v-if="FILTROS.tipoCorte !== 'porFecha_Emision'
@@ -325,7 +324,7 @@
                            class="form-control col-md"
                            type="date"
                            v-model="FILTROS.maxFecha_emision"
-                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'"/>
+                           v-bind:disabled="FILTROS.desdeHastaRango === '-1'" />
                 </div>
 
                 <a class="btn btn-light col" style="text-align:center; vertical-align:central; border-left: 1px solid;" v-on:click="Buscar()"><i class="material-icons" style="margin-top:3%;" id="CPCCPPIconBottonBuscar">search</i></a>

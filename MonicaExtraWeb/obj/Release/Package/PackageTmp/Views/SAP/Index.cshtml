@@ -15,9 +15,6 @@
     @*  DIV PARA LOGUEARSE *@
     @Html.Partial("~/Views/Paginas/_inicioSeccion.cshtml")
 
-    @*  DIV PARA SELECCIONAR UNA EMPRESA *@
-    @Html.Partial("~/Views/Paginas/_Empresas.cshtml")
-
     @*-------------------------------------------------------------------*@
     @*  MODULO - CAJA *@
     @*-------------------------------------------------------------------*@
@@ -31,7 +28,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
         window.addEventListener('load',
             () => document.getElementById('cargando').setAttribute('hidden', true));
     </script>

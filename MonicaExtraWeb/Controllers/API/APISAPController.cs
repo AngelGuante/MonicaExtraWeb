@@ -28,27 +28,27 @@ namespace MonicaExtraWeb.Controllers.API
         /// Retorna todas las empresas almacenadas en la base de datos.
         /// </summary>
         /// <returns></returns>
-        [HttpGet]
-        [Route("GetEmpresas")]
-        public IHttpActionResult GetEmpresas() =>
-             Json(new { Empresas = Conn.Query<Empresas>($"SELECT empresa_id, Nombre_empresa FROM {DbName}dbo.empresas").ToList() });
+        //[HttpGet]
+        //[Route("GetEmpresas")]
+        //public IHttpActionResult GetEmpresas() =>
+        //     Json(new { Empresas = Conn.Query<Empresas>($"SELECT empresa_id, Nombre_empresa FROM {DbName}dbo.empresas").ToList() });
 
         /// <summary>
         /// Guardar los datos del id de la empresa seleccionada.
         /// </summary>
         /// <param name="idEmpresa"></param>
         /// <returns></returns>
-        [HttpGet]
-        [Route("EmpresaSeleccionada")]
-        public IHttpActionResult EmpresaSeleccionada(int idEmpresa)
-        {
-            Empresa = Conn.Query<Empresas>($"SELECT * FROM {DbName}dbo.empresas WHERE empresa_id = @idEmpresa", new { idEmpresa }).FirstOrDefault();
+        //[HttpGet]
+        //[Route("EmpresaSeleccionada")]
+        //public IHttpActionResult EmpresaSeleccionada(int idEmpresa)
+        //{
+        //    Empresa = Conn.Query<Empresas>($"SELECT * FROM {monica10_global}dbo.empresas WHERE empresa_id = '{idEmpresa}'").FirstOrDefault();
 
-            if (Empresa == null)
-                return Content(HttpStatusCode.NoContent, "");
+        //    if (Empresa == null)
+        //        return Content(HttpStatusCode.NoContent, "");
 
-            return Json(new { Empresa });
-        }
+        //    return Json(new { Empresa });
+        //}
         #endregion
 
         #region MOVIMIENTOS

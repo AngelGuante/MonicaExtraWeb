@@ -3,7 +3,7 @@
 
     data: {
         fechaHoy: new Date().toISOString().slice(0, 10),
-        sourceResportes: '',
+        sourceResportes: 'local',
         codsClientes: [],
         opcionReporteSeleccionado: '',
         vendedores: [],
@@ -19,10 +19,30 @@
         giroNegociosPv: [],
         minFecha_emision: '',
         maxFecha_emision: '',
+        modulos: []
     },
 
-    created: () => {
+    created: function () {
         document.getElementById('btnHome').removeAttribute('hidden');
+
+        fetch(`../../API/PERMISOSUSUARIO/GET/${localStorage.getItem('Number')}`, {
+            headers: {
+                'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+            }
+        })
+            .then(response => { return response.json(); })
+            .then(json => {
+                this.modulos = json.permisosUsuario;
+
+                document.getElementById('cargando').setAttribute('hidden', true);
+            })
+            .catch(err => {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                console.log(err);
+            });
+        document.getElementById('cargando').setAttribute('hidden', true);
+
+            document.getElementById('divMaster').classList.remove('container');
     },
 
     watch: {
@@ -91,14 +111,14 @@
     },
 
     methods: {
-        DivSeleccionarReporte(source) {
-            this.LimpiarTablas();
+        //DivSeleccionarReporte(source) {
+        //    this.LimpiarTablas();
 
-            NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
-            document.getElementById('cargando').setAttribute('hidden', true);
+        //    NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
+        //    document.getElementById('cargando').setAttribute('hidden', true);
 
-            this.sourceResportes = source;
-        },
+        //    this.sourceResportes = source;
+        //},
 
         //  OPCIONES DEL MENU
         async OpcionMenuCeleccionado(opcionSeleccionada) {
@@ -122,26 +142,120 @@
                 await this.BuscarData('categoriasProveedores');
             }
 
-            //  PARA CADA REPORTE EN ESPECIFICO
-            //switch (opcionSeleccionada) {
-            //    case 'VentasYDevolucionesCategoriaYVendedor':
-            //        reporte_ventasYDevoluciones.DATA = [];
-            //        reporte_ventasYDevoluciones.GroupDATA = [];
-            //        reporte_ventasYDevoluciones.DATA = [];
-            //        break;
-            //    case 'CotizacionesYConducesFiltro':
-            //        reporte_cotizacionesYConduces.DATA = [];
-            //        reporte_cotizacionesYConduces.GroupDATA = [];
-            //        reporte_cotizacionesYConduces.DATA = [];
-            //        break;
-            //}
-
             //  MOSTRAR EL FILTRO SELECCONADO Y OCULTAR EL QUE ESTABA VISIBLE
             if (this.opcionReporteSeleccionado)
                 document.getElementById(this.opcionReporteSeleccionado).setAttribute('hidden', true);
 
             document.getElementById(opcionSeleccionada).removeAttribute('hidden');
             this.opcionReporteSeleccionado = opcionSeleccionada;
+
+            //  MODULO ACCESIBLE POR EL USUARIO
+            document.getElementById('sinPermisosAModulos').setAttribute('hidden', true);
+
+            switch (opcionSeleccionada) {
+                case 'VentasYDevolucionesCategoriaYVendedor':
+                    if (!this.modulos.includes('FAC')) {
+                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'devoluciones';
+                        document.getElementById('ventasCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('DVC')) {
+                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'ventas';
+                        document.getElementById('devolucionesCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('FAC') && !this.modulos.includes('DVC')) {
+                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = '';
+                        document.getElementById('VentasYDevolucionesCategoriaYVendedor').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'filtrosClienteIndividualStatus':
+                    if (!this.modulos.includes('CXC')) {
+                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porPagar';
+                        document.getElementById('CPCCPPporCobrarCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('CXP')) {
+                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porCobrar';
+                        document.getElementById('CPCCPPporPagar').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('CXC') && !this.modulos.includes('CXP')) {
+                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = '';
+                        document.getElementById('filtrosClienteIndividualStatus').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'clientesYProveedoresFiltro':
+                    if (!this.modulos.includes('CLI')) {
+                        reporte_clientesYProveedores.FILTROS.tipoReporte = 'proveedores';
+                        document.getElementById('CPClientesCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('PRO')) {
+                        reporte_clientesYProveedores.FILTROS.tipoReporte = 'clientes';
+                        document.getElementById('CPProveedoresCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('CLI') && !this.modulos.includes('PRO')) {
+                        reporte_clientesYProveedores.FILTROS.tipoReporte = '';
+                        document.getElementById('clientesYProveedoresFiltro').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'inventarioYLiquidacionFiltro':
+                    if (!this.modulos.includes('INV')) {
+                        reporte_inventarioYLiquidacion.FILTROS.tipoReporte = '';
+                        document.getElementById('inventarioYLiquidacionFiltro').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'comprasDevolucionesYConducesFiltro':
+                    if (!this.modulos.includes('COM')) {
+                        document.getElementById('CDCcomprasCheck').setAttribute('disabled', true);
+                        if (this.modulos.includes('COP'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                        if (this.modulos.includes('DVP'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
+                    }
+                    if (!this.modulos.includes('DVP')) {
+                        document.getElementById('CDCdevolucionesCheck').setAttribute('disabled', true);
+                        if (this.modulos.includes('COP'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                        if (this.modulos.includes('COM'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'compras';
+                    }
+                    if (!this.modulos.includes('COP')) {
+                        document.getElementById('CDCcotizacionesCheck').setAttribute('disabled', true);
+                        if (this.modulos.includes('COP'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                        if (this.modulos.includes('DVP'))
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
+                    }
+                    if (!this.modulos.includes('COM') && !this.modulos.includes('DVP') && !this.modulos.includes('COP')) {
+                        reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = '';
+                        document.getElementById('comprasDevolucionesYConducesFiltro').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'contabilidadYBancoFiltro':
+                    if (!this.modulos.includes('CON')) {
+                        reporte_contabilidadYBanco.FILTROS.tipoReporte = '';
+                        document.getElementById('contabilidadYBancoFiltro').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+                case 'CotizacionesYConducesFiltro':
+                    if (!this.modulos.includes('COC')) {
+                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'conduces';
+                        document.getElementById('cotizacionesCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('COD')) {
+                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'cotizaciones';
+                        document.getElementById('conducesCheck').setAttribute('disabled', true);
+                    }
+                    if (!this.modulos.includes('COC') && !this.modulos.includes('COD')) {
+                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = '';
+                        document.getElementById('CotizacionesYConducesFiltro').setAttribute('hidden', true);
+                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                    }
+                    break;
+            }
         },
 
         //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js

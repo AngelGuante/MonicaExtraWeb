@@ -1,0 +1,12 @@
+﻿@Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
+
+@Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+@Html.Partial("~/Views/Paginas/_Empresas.cshtml")
+
+@section scripts{
+    <script>
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+    </script>
+    <script src="~/Scripts/js/SeleccionarEmpresa.js"></script>
+}

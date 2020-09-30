@@ -24,16 +24,16 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             var query = new StringBuilder();
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.PermisosUsuario ");
-            query.Append("(IdEmpresa, IdUsuario, IdModulo) ");
+            query.Append("(IdUsuario, IdModulo) ");
             query.Append("VALUES ");
-            query.Append("(@IdEmpresa, ");
-            query.Append("@IdUsuario, ");
+            //query.Append("(@IdEmpresa, ");
+            query.Append("(@IdUsuario, ");
             query.Append("@IdModulo) ");
             query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) ");
 
             var rslt = Conn.Query<int>(query.ToString(), new
             {
-                permisosUsuario.idEmpresa,
+                //permisosUsuario.idEmpresa,
                 permisosUsuario.idUsuario,
                 permisosUsuario.idModulo,
             }).FirstOrDefault();
@@ -50,6 +50,5 @@ namespace MonicaExtraWeb.Utils.Querys.Control
 
             Conn.Query<int>(query.ToString());
         }
-
     }
 }

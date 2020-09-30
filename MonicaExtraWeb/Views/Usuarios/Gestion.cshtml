@@ -11,7 +11,11 @@
 
     <button type="button" class="btn btn-success" v-on:click="AbrirModalUsuario()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
 
-    <div class="Tables mt-5" v-if="usuarios.length > 0">
+    <div class="alert alert-info mt-3" role="alert" v-if="tipoModalStatus">
+        <p>Número único de la empresa: <strong>{{numeroUnicoEmpresa}}</strong></p>
+    </div>
+
+    <div class="Tables mt-2" v-if="usuarios.length > 0">
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -32,7 +36,7 @@
                             <i class="material-icons" style="margin-right:10px; vertical-align:bottom">check</i> Habilitado
                         </div>
                         <div class="alert alert-danger" v-else role="alert">
-                            <i class="material-icons"  style="margin-right:10px; vertical-align:bottom">close</i> Inhabilitado
+                            <i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i> Inhabilitado
                         </div>
                     </td>
                     <td>
@@ -159,7 +163,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
     </script>
     <script src="~/Scripts/js/Administracion/Usuarios.js"></script>
 }

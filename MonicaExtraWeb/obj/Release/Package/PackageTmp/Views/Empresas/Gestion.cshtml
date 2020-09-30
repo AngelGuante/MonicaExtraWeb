@@ -1,0 +1,164 @@
+﻿@Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
+
+@Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+<hr />
+
+<div id="gestionEmpresas" class="mt-5">
+    <h2>Empresas Registradas</h2>
+
+    <hr />
+
+    <button type="button" class="btn btn-success" v-on:click="AbrirModalEmpresa()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nueva Empresa</button>
+
+    <div class="Tables mt-5" v-if="empresas.length > 0">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Nro. Empresas</th>
+                    <th scope="col">Nro. Usuarios</th>
+                    <th scope="col">Fecha Inicio</th>
+                    <th scope="col">Fecha Vencimiento</th>
+                    <th scope="col">Estatus</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="item in empresas">
+                    <td>{{item.IdEmpresa}}</td>
+                    <td>{{item.NombreEmpresa}}</td>
+                    <td>{{item.Correo}}</td>
+                    <td>{{item.CantidadEmpresas}}</td>
+                    <td>{{item.CantidadUsuariosPagados}}</td>
+                    <td>{{item.FechaInicio | FilterDateFormat}}</td>
+                    <td>{{item.Vencimiento | FilterDateFormat}}</td>
+                    <td>
+                        <div class="alert alert-success" v-if="item.Estatus" role="alert">
+                            Habilitado
+                        </div>
+                        <div class="alert alert-danger" v-else role="alert">
+                            Inhabilitado
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalEmpresa({IdEmpresa: item.IdEmpresa, NombreEmpresa: item.NombreEmpresa, Correo: item.Correo, CantidadEmpresas: item.CantidadEmpresas, CantidadUsuariosPagados: item.CantidadUsuariosPagados, FechaInicio: item.FechaInicio, Vencimiento: item.Vencimiento})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
+                    </td>
+                </tr>
+        </table>
+    </div>
+
+    @*  MODAL PARA CREAR UNA EMPRESA*@
+    <div class="modal fade bd-example-modal-lg" id="modalNuevaEmpresa" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="p-5">
+
+                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalNuevaEmpresa').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+
+                    <h1 v-if="tipoModalStatus">NUEVA EMPRESA</h1>
+                    <h1 v-else>MODIFICAR EMPRESA</h1>
+
+                    <hr />
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-12" v-if="!tipoModalStatus">
+                                <label>Número Unico de Empresa</label>
+                                <input type="text" class="form-control" v-model="IdEmpresa" disabled>
+                            </div>
+
+                            <div class="form-group col-12">
+                                <label>Nombre Empresa</label>
+                                <input type="email" class="form-control" placeholder="Nombre Empresa" v-model="nombre" maxlength="60">
+                            </div>
+
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Contacto</label>
+                                <input type="number" class="form-control" placeholder="Contacto" v-model="contacto" maxlength="60" disabled>
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label>Teléfono</label>
+                                <input type="number" class="form-control" placeholder="Teléfono" v-model="telefono" maxlength="20">
+                            </div>
+
+                            <div class="form-group col-6">
+                                <label>Correo</label>
+                                <input type="email" class="form-control" placeholder="Correo" v-model="correo" maxlength="40">
+                            </div>
+
+                            <div class="form-group col-12 col-lg-3">
+                                <label># Empresas</label>
+                                <input type="number" class="form-control" v-model="nro_empresas">
+                            </div>
+
+                            <div class="form-group col-12 col-lg-3">
+                                <label># Usuarios</label>
+                                <input type="number" class="form-control" v-model="nro_usuarios">
+                            </div>
+
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Fecha Inicio</label>
+                                <input type="date" class="form-control" v-model="fechaInicio" disabled>
+                            </div>
+
+                            <div class="form-group col-12 col-lg-6">
+                                <label>Vencimiento</label>
+                                <input type="date" class="form-control" v-model="vencimiento">
+                            </div>
+
+                            <div v-if="!tipoModalStatus" class="col-12 form-group">
+                                <div class="row">
+                                    @*<button type="button" class="btn btn-outline-danger col-6" v-if="EstadoUsuarioSeleccionado === 1" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">person_add_disabled</i>Deshabilitar Usuario</button>*@
+                                    @*<button type="button" class="btn btn-outline-info col-6" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">verified_user</i>Habilitar Usuario</button>*@
+                                </div>
+                            </div>
+
+                            <div class=" col-12">
+                                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" style="width:100%">Seleccionar Empresas</button>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="collapse multi-collapse">
+                                            <div class="card card-body">
+                                                <div class="card">
+                                                    @* LISTADO DE EMPRESAS LOCALES *@
+                                                    <div v-for="item in empresasLocales">
+                                                        <div class="card-header">
+                                                            <h5 class="mb-0">
+                                                                <input v-bind:id="'check_' + item.empresa_id" type="checkbox" v-on:click="empresaCheckChanged('check_' + item.empresa_id)">
+                                                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                                    {{item.Nombre_empresa | FilterUppercase}} - {{item.empresa_id}}
+                                                                </button>
+                                                            </h5>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <button v-on:click="ValidarDatosEmpresa()" v-if="tipoModalStatus" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+                        <button v-on:click="ValidarDatosEmpresa()" v-else type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+    </script>
+    <script src="~/Scripts/js/Control/Empresas.js"></script>
+}

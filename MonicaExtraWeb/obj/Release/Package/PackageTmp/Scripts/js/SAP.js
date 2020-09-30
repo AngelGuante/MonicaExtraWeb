@@ -7,9 +7,6 @@
         PaginatorIndex: 1,
         PaginatorLastPage: 0,
 
-        // DIV EMPRESA
-        Empresas: [],
-
         //  DIV CRUD MOVIMIENTOS
         VentanaCrudMovimientos: {
             FormularioTitle: 'Crear Movimiento de Caja',
@@ -58,28 +55,6 @@
     },
 
     methods: {
-        //  DIV DONDE SE SELECCIONAN LAS EMPRESAS
-        //----------------------------------------------------------
-        EmpresaSeleccionada(idEmpresa) {
-            document.getElementById('cargando').removeAttribute('hidden');
-            $.get(`..${this.ApiRuta}EmpresaSeleccionada`, { idEmpresa }).done((respWonse, statusText, xhr) => {
-                if (xhr.status == 200) {
-
-                    localStorage.setItem('Nombre_empresa', respWonse.Empresa.Nombre_empresa);
-                    localStorage.setItem('direccionEmpresa1', respWonse.Empresa.direccion1);
-                    localStorage.setItem('direccionEmpresa2', respWonse.Empresa.direccion2);
-                    localStorage.setItem('direccionEmpresa3', respWonse.Empresa.direccion3);
-                    localStorage.setItem('TelefonoEmpresa1', respWonse.Empresa.Telefono1);
-
-                    document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
-                    document.getElementById('menu').removeAttribute('hidden');
-                }
-                else if (xhr.status == 204)
-                    alert("EMPRESA SELECCIONADA, NO ENCONTRADA.");
-                document.getElementById('cargando').setAttribute('hidden', true);
-            });
-        },
-
         //  DIV CRUD MOVIMIENTOS
         //----------------------------------------------------------
         MovimientosCRUD() {

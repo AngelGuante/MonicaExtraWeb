@@ -30,6 +30,8 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("PUT")]
         public IHttpActionResult PUT(NuevoUsuario param)
         {
+            Delete_todoExepto(string.Join("', '", param.modulos), param.usuario.IdUsuario.Value);
+
             for (int i = 0; i < param.modulos.Length; i++)
                 Insert(new PermisosUsuario
                 {
@@ -38,7 +40,6 @@ namespace MonicaExtraWeb.Controllers.API
                     idModulo = param.modulos[i]
                 });
 
-            Delete_todoExepto(string.Join("', '", param.modulos), param.usuario.IdUsuario.Value);
 
             return Ok();
         }

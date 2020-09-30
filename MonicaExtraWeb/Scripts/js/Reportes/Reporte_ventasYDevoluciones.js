@@ -156,7 +156,6 @@
                 case -1:
                     this.FILTROS.PaginatorIndex--;
                     break;
-                    break;
                 case +1:
                     this.FILTROS.PaginatorIndex++;
                     break;

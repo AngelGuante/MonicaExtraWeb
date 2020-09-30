@@ -8,6 +8,8 @@
         nombreCompleto: '',
         nivelUsuarioSeleccionado: 2,
 
+        numeroUnicoEmpresa: '',
+
         usuarios: [],
         modulos: [],
 
@@ -21,6 +23,7 @@
         document.getElementById('btnHome').removeAttribute('hidden');
         document.getElementById('btnBack').removeAttribute('hidden');
 
+        this.numeroUnicoEmpresa = localStorage.getItem('NumeroUnicoEmpresa');
         this.BuscarUsuarios();
     },
 
@@ -58,7 +61,11 @@
 
     methods: {
         BuscarUsuarios: function () {
-            fetch('../../API/USUARIOS/GET', {
+            const usuario = {
+                IdEmpresa: localStorage.getItem('NumeroUnicoEmpresa')
+            };
+
+            fetch(`../../API/USUARIOS/GET?usuario=${JSON.stringify(usuario)}`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
@@ -170,7 +177,8 @@
                 usuario: {
                     Login: this.nombreUsuario,
                     NombreUsuario: `${this.nombre} ${this.apellidos}`,
-                    Nivel: this.nivelUsuarioSeleccionado
+                    Nivel: this.nivelUsuarioSeleccionado,
+                    IdEmpresa: localStorage.getItem('NumeroUnicoEmpresa')
                 },
                 modulos
             };
@@ -297,14 +305,5 @@
 
             this.BuscarUsuarios();
         }
-    },
-
-
-
-    //filters: {
-    //    FilterUppercase: value => {
-    //        return value ? value.toString().toUpperCase() : value;
-    //    },
-    //}
-
+    }
 });

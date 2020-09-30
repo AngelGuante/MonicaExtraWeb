@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using MonicaExtraWeb.Models.DTO;
 using MonicaExtraWeb.Models.DTO.Control;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
@@ -14,9 +15,10 @@ namespace MonicaExtraWeb.Controllers.API
     {
         [HttpGet]
         [Route("GET")]
-        public IHttpActionResult Get()
+        public IHttpActionResult Get(string usuario = default)
         {
-            var query = Select(new Usuario(), new QueryConfigDTO { ExcluirUsuariosControl = true });
+            var usuarioDeserialized = usuario != default ? JsonConvert.DeserializeObject<Usuario>(usuario) : new Usuario();
+            var query = Select(usuarioDeserialized, new QueryConfigDTO { ExcluirUsuariosControl = true });
             var usuarios = Conn.Query<Usuario>(query.ToString()).ToList();
 
             return Json(new

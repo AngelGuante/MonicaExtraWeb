@@ -150,7 +150,7 @@ namespace MonicaExtraWeb.Utils
             #endregion
 
             #region FROM
-            query.Append($" FROM {DbName}{TableSource} ");
+            query.Append($" FROM {filtro.conn}.dbo.{TableSource} ");
             query.Append($" JOIN {TableDetilsSource} ON TS.{TableSourceID} = TDS.{TableSourceID} ");
             query.Append($" JOIN vendedores V ON V.vendedor_id = TS.{TablaSourceProveedorVendedor} ");
 
@@ -160,16 +160,16 @@ namespace MonicaExtraWeb.Utils
                 {
                     case "RFA01":
                         if (!string.IsNullOrEmpty(filtro.opcion))
-                            query.Append($" JOIN {DbName}{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
+                            query.Append($" JOIN {filtro.conn}.dbo.{TablaTipoFactua} F ON TDS.{TableSourceEntryId} = F.{TableSourceDocumentoId} ");
                         break;
                     case "RFA03":
-                        query.Append($" JOIN {DbName}terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
+                        query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON TDS.termino_idpv = TP.termino_id ");
                         break;
                     case "analisis_Grafico":
                         switch (filtro.tipoCorte)
                         {
                             case "porCategorias_de_Clientes":
-                                query.Append($" JOIN {DbName}{TableCategoriaClienteProveedor} CCP ON TS.{TableClienteProveedorId} = REPLACE(CCP.{TableClienteProveedorId}, '\"', '') ");
+                                query.Append($" JOIN {filtro.conn}.dbo.{TableCategoriaClienteProveedor} CCP ON TS.{TableClienteProveedorId} = REPLACE(CCP.{TableClienteProveedorId}, '\"', '') ");
                                 break;
                         }
                         break;
@@ -560,35 +560,35 @@ namespace MonicaExtraWeb.Utils
 
             #region FROM
             query.Append("FROM ");
-            query.Append($" {DbName}{TableSource} ");
-            query.Append($", {DbName}vendedores V ");
-            query.Append($", {DbName}clientes C ");
+            query.Append($" {filtro.conn}.dbo.{TableSource} ");
+            query.Append($", {filtro.conn}.dbo.vendedores V ");
+            query.Append($", {filtro.conn}.dbo.clientes C ");
 
             if (!filtro.GROUP
                 || !string.IsNullOrEmpty(filtro.colTermino)
                 || filtro.tipoCorte == "porTermino_de_Pago")
-                query.Append($",  {DbName}terminos_pago TP ");
+                query.Append($",  {filtro.conn}.dbo.terminos_pago TP ");
 
             if (!string.IsNullOrEmpty(filtro.tipoConsulta))
                 switch (filtro.tipoConsulta)
                 {
                     case "RFA0":
-                        query.Append($", {DbName}nombre_bodegas NB ");
+                        query.Append($", {filtro.conn}.dbo.nombre_bodegas NB ");
                         break;
                     case "RFA06":
-                        query.Append($", {DbName}{TableDetilsSource} ");
-                        query.Append($", {DbName}productos P ");
+                        query.Append($", {filtro.conn}.dbo.{TableDetilsSource} ");
+                        query.Append($", {filtro.conn}.dbo.productos P ");
                         break;
                     case "RFA08":
-                        query.Append($", {DbName}productos P ");
-                        query.Append($", {DbName}{TableDetilsSource} ");
-                        query.Append($", {DbName}categoria_producto CP ");
+                        query.Append($", {filtro.conn}.dbo.productos P ");
+                        query.Append($", {filtro.conn}.dbo.{TableDetilsSource} ");
+                        query.Append($", {filtro.conn}.dbo.categoria_producto CP ");
 
                         if (!string.IsNullOrEmpty(filtro.tipoCorte))
                             switch (filtro.tipoCorte)
                             {
                                 case "porCategorias_de_Clientes":
-                                    query.Append($", {DbName}dbo.Categorias_clte CC ");
+                                    query.Append($", {filtro.conn}.dbo.Categorias_clte CC ");
                                     break;
                             }
                         break;
@@ -724,7 +724,7 @@ namespace MonicaExtraWeb.Utils
                         {
                             query.Append($"AND ts.{TableSourceEntryNro} IN ( ");
                             query.Append($"SELECT {TableSourceEntryNro} ");
-                            query.Append($"FROM {TableSource} ");
+                            query.Append($"FROM {filtro.conn}.dbo.{TableSource} ");
                             query.Append($"WHERE SUBSTRING(TRIM(TS.{TableSourceComprobante}), 1, 3) = 'B{ComprobanteDictionary(filtro.comprobante)}' ");
                             query.Append($"OR SUBSTRING(TRIM(TS.{TableSourceComprobante}), 1, 1) + SUBSTRING(TRIM(TS.{TableSourceComprobante}), 10, 2) = 'A{ComprobanteDictionary(filtro.comprobante)}') ");
                         }
@@ -1023,7 +1023,7 @@ namespace MonicaExtraWeb.Utils
                         query.Append($" TOP {filtro.take} producto_id ");
                         query.Append($", {unidadesOMontos} totalCantidadMonto ");
                         query.Append(" FROM ");
-                        query.Append($"{DbName}dbo.factura_detalle ");
+                        query.Append($"{filtro.conn}.dbo.factura_detalle ");
 
                         if (!string.IsNullOrEmpty(filtro.minFecha_emision)
                             && !string.IsNullOrEmpty(filtro.maxFecha_emision))
@@ -1037,13 +1037,13 @@ namespace MonicaExtraWeb.Utils
                         query.Append($" ORDER BY {unidadesOMontos} {ordern} ");
                         query.Append(" ) TS ");
 
-                        query.Append($" JOIN {DbName}dbo.productos P ON TS.producto_id = P.producto_id ");
+                        query.Append($" JOIN {filtro.conn}.dbo.productos P ON TS.producto_id = P.producto_id ");
 
                         break;
                 }
             }
             else
-                query.Append($" {DbName}dbo.productos P ");
+                query.Append($" {filtro.conn}.dbo.productos P ");
 
             query.Append($" JOIN dbo.categoria_producto CP ON P.Categoria_id = CP.categoria_id ");
             query.Append($" JOIN dbo.nombre_bodegas NB ON P.bodega_id = NB.bodega_id ");
@@ -1349,25 +1349,25 @@ namespace MonicaExtraWeb.Utils
             #region FROM
             query.Append($" FROM ");
 
-            query.Append($" {DbName}dbo.{TableSource} TS ");
-            query.Append($" JOIN {DbName}dbo.{TableSourceDetails} TDS ON TS.{TableSourceId} = TDS.{TableSourceId} ");
-            query.Append($" JOIN {DbName}dbo.vendedores V ON TS.vendedor = V.vendedor_id ");
-            query.Append($" JOIN {DbName}dbo.terminos_pagopv TP ON TS.terminos_id = TP.termino_idpv ");
+            query.Append($" {filtro.conn}.dbo.{TableSource} TS ");
+            query.Append($" JOIN {filtro.conn}.dbo.{TableSourceDetails} TDS ON TS.{TableSourceId} = TDS.{TableSourceId} ");
+            query.Append($" JOIN {filtro.conn}.dbo.vendedores V ON TS.vendedor = V.vendedor_id ");
+            query.Append($" JOIN {filtro.conn}.dbo.terminos_pagopv TP ON TS.terminos_id = TP.termino_idpv ");
 
             switch (filtro.tipoConsulta)
             {
                 case "RFA06":
-                    query.Append($" JOIN {DbName}dbo.productos P ON TDS.producto_id = P.producto_id ");
+                    query.Append($" JOIN {filtro.conn}.dbo.productos P ON TDS.producto_id = P.producto_id ");
                     break;
                 case "RFA0":
-                    query.Append($" JOIN {DbName}dbo.nombre_bodegas NB ON TDS.bodega_id = NB.bodega_id ");
+                    query.Append($" JOIN {filtro.conn}.dbo.nombre_bodegas NB ON TDS.bodega_id = NB.bodega_id ");
                     break;
                 case "RFA08":
                     switch (filtro.tipoCorte)
                     {
                         case "porCategoria":
-                            query.Append($" JOIN {DbName}dbo.productos P ON TDS.producto_id = P.producto_id ");
-                            query.Append($" JOIN {DbName}dbo.categoria_producto CP ON P.Categoria_id = CP.categoria_id ");
+                            query.Append($" JOIN {filtro.conn}.dbo.productos P ON TDS.producto_id = P.producto_id ");
+                            query.Append($" JOIN {filtro.conn}.dbo.categoria_producto CP ON P.Categoria_id = CP.categoria_id ");
                             break;
                     }
                     break;
@@ -1671,10 +1671,10 @@ namespace MonicaExtraWeb.Utils
             #endregion
 
             #region FROM
-            query.Append($" FROM {DbName}{TableSource} TS ");
-            query.Append($" JOIN {DbName}dbo.vendedores V ON TS.{TableSourceColVendedor} = V.vendedor_id ");
-            query.Append($" JOIN {DbName}dbo.{TableSourceCategoria} TSC ON TS.{TableSourceCategoriaId} = REPLACE(TSC.{TableSourceCategoriaId}, '\"', '') ");
-            query.Append($" JOIN {DbName}dbo.{TableSourceNegocio} TSN ON TS.{TableSourceNegocioColId} = TSN.{TableSourceNegocioColId} ");
+            query.Append($" FROM {filtro.conn}.dbo.{TableSource} TS ");
+            query.Append($" JOIN {filtro.conn}.dbo.vendedores V ON TS.{TableSourceColVendedor} = V.vendedor_id ");
+            query.Append($" JOIN {filtro.conn}.dbo.{TableSourceCategoria} TSC ON TS.{TableSourceCategoriaId} = REPLACE(TSC.{TableSourceCategoriaId}, '\"', '') ");
+            query.Append($" JOIN {filtro.conn}.dbo.{TableSourceNegocio} TSN ON TS.{TableSourceNegocioColId} = TSN.{TableSourceNegocioColId} ");
             #endregion
 
             #region WHERE
@@ -2008,7 +2008,7 @@ namespace MonicaExtraWeb.Utils
                     #endregion
 
                     #region FROM
-                    query.Append($" FROM {DbName}.dbo.cuentas TS ");
+                    query.Append($" FROM {filtro.conn}.dbo.cuentas TS ");
                     #endregion
 
                     #region WHERE
@@ -2060,7 +2060,7 @@ namespace MonicaExtraWeb.Utils
                     #endregion
 
                     #region FROM
-                    query.Append($" FROM {DbName}.dbo.factura TS ");
+                    query.Append($" FROM {filtro.conn}.dbo.factura TS ");
                     #endregion
 
                     #region WHERE
@@ -2085,43 +2085,51 @@ namespace MonicaExtraWeb.Utils
         #endregion
 
         #region DATA SUELTA
-        public static string EmpresaInformacionQuery(string DbName = "")
+        public static string EmpresaInformacionQuery(Filtros filter, string DbName = "")
         {
             var query = new StringBuilder();
 
-            query.Append("SELECT * ");
+            query.Append("SELECT ");
+            if (!string.IsNullOrEmpty(filter.SELECT))
+                query.Append($"{filter.SELECT} ");
+            else
+                query.Append("empresa_id, TRIM(Nombre_empresa) Nombre_empresa, TRIM(base_de_datos) base_de_datos ");
+
             query.Append($"FROM {DbName}dbo.empresas ");
+
+            if (!string.IsNullOrEmpty(filter?.WHRER_IN))
+                query.Append($"WHERE empresa_id IN ({filter.WHRER_IN}) ");
 
             return query.ToString();
         }
 
-        public static string CategoriasClientesQuery(string DbName = "")
+        public static string CategoriasClientesQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  categoria_clte_id, ");
             query.Append("  descripcion_categ ");
-            query.Append($"FROM {DbName}dbo.Categorias_clte ");
+            query.Append($"FROM {filter.conn}.dbo.Categorias_clte ");
             query.Append("ORDER BY descripcion_categ ");
 
             return query.ToString();
         }
 
-        public static string CategoriasProveedoresQuery(string DbName = "")
+        public static string CategoriasProveedoresQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  Categoria_idpv, ");
             query.Append("  descripcion_categpv ");
-            query.Append($"FROM {DbName}dbo.categorias_pv ");
+            query.Append($"FROM {filter.conn}.dbo.categorias_pv ");
             query.Append("ORDER BY descripcion_categpv ");
 
             return query.ToString();
         }
 
-        public static string VendedoresInformacionQuery(string DbName = "")
+        public static string VendedoresInformacionQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
@@ -2129,13 +2137,13 @@ namespace MonicaExtraWeb.Utils
             query.Append("  vendedor_id, ");
             query.Append("  TRIM(Nombre_vendedor) Nombre_vendedor, ");
             query.Append("  TRIM(Codigo_vendedor) Codigo_vendedor ");
-            query.Append($"FROM {DbName}dbo.vendedores ");
+            query.Append($"FROM {filter.conn}.dbo.vendedores ");
             query.Append($"ORDER BY Nombre_vendedor ");
 
             return query.ToString();
         }
 
-        public static string ClienteQuery(Filtros filtro, string DbName = "")
+        public static string ClienteQuery(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -2149,7 +2157,7 @@ namespace MonicaExtraWeb.Utils
                 query.Append("  codigo_clte codigo ");
             }
 
-            query.Append($"FROM {DbName}dbo.clientes ");
+            query.Append($"FROM {filtro.conn}.dbo.clientes ");
 
             if (!string.IsNullOrEmpty(filtro.code))
                 query.Append($"WHERE codigo_clte = '{filtro.code}'");
@@ -2166,7 +2174,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ProveedoresQuery(Filtros filtro, string DbName = "")
+        public static string ProveedoresQuery(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -2180,7 +2188,7 @@ namespace MonicaExtraWeb.Utils
                 query.Append("  codigo_proveedor codigo ");
             }
 
-            query.Append($"FROM {DbName}dbo.proveedores ");
+            query.Append($"FROM {filtro.conn}.dbo.proveedores ");
 
             if (!string.IsNullOrEmpty(filtro.code))
                 query.Append($"WHERE codigo_proveedor = '{filtro.code}'");
@@ -2197,7 +2205,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string VendedoresQuery(Filtros filtro, string DbName = "")
+        public static string VendedoresQuery(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -2211,7 +2219,7 @@ namespace MonicaExtraWeb.Utils
                 query.Append(" vendedor_id codigo ");
             }
 
-            query.Append($"FROM {DbName}dbo.vendedores ");
+            query.Append($"FROM {filtro.conn}.dbo.vendedores ");
 
             if (!string.IsNullOrEmpty(filtro.code))
                 query.Append($"WHERE vendedor_id = '{filtro.code}'");
@@ -2228,89 +2236,89 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string TerminosPagosQuery(string DbName = "")
+        public static string TerminosPagosQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  termino_id, ");
             query.Append("  TRIM(UPPER(Descripcion_termino)) Descripcion_termino ");
-            query.Append($"FROM {DbName}dbo.terminos_pago ");
+            query.Append($"FROM {filter.conn}.dbo.terminos_pago ");
             query.Append("ORDER BY Descripcion_termino ");
 
             return query.ToString();
         }
 
-        public static string TerminosPagosPvQuery(string DbName = "")
+        public static string TerminosPagosPvQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  termino_idpv, ");
             query.Append("  TRIM(UPPER(Descripcion_terminopv)) Descripcion_terminopv ");
-            query.Append($"FROM {DbName}dbo.terminos_pagopv ");
+            query.Append($"FROM {filter.conn}.dbo.terminos_pagopv ");
             query.Append("ORDER BY Descripcion_terminopv ");
 
             return query.ToString();
         }
 
-        public static string BodegasQuery(string DbName = "")
+        public static string BodegasQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  bodega_id, ");
             query.Append("  TRIM(UPPER(Nombre_bodega)) Nombre_bodega ");
-            query.Append($"FROM {DbName}dbo.nombre_bodegas ");
+            query.Append($"FROM {filter.conn}.dbo.nombre_bodegas ");
             query.Append("ORDER BY Nombre_bodega ");
 
             return query.ToString();
         }
 
-        public static string CategoriasProductosQuery(string DbName = "")
+        public static string CategoriasProductosQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  categoria_id, ");
             query.Append("  TRIM(UPPER(Descripcion_categ)) Descripcion_categ ");
-            query.Append($"FROM {DbName}dbo.categoria_producto ");
+            query.Append($"FROM {filter.conn}.dbo.categoria_producto ");
 
             return query.ToString();
         }
 
-        public static string SubCategoriasProductosQuery(string DbName = "")
+        public static string SubCategoriasProductosQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  sub_categoria_id, ");
             query.Append("  TRIM(descripcion_sub_categ) descripcion_sub_categ ");
-            query.Append($"FROM {DbName}dbo.sub_categoria_producto ");
+            query.Append($"FROM {filter.conn}.dbo.sub_categoria_producto ");
 
             return query.ToString();
         }
 
-        public static string GiroNegociosQuery(string DbName = "")
+        public static string GiroNegociosQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  giro_id, ");
             query.Append("  TRIM(giro_negocio) giro_negocio ");
-            query.Append($"FROM {DbName}dbo.giro_negocios ");
+            query.Append($"FROM {filter.conn}.dbo.giro_negocios ");
 
             return query.ToString();
         }
 
-        public static string GiroNegociosPvQuery(string DbName = "")
+        public static string GiroNegociosPvQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  giro_idpv, ");
             query.Append("  TRIM(giro_negociopv) giro_negociopv ");
-            query.Append($"FROM {DbName}dbo.giro_negociospv ");
+            query.Append($"FROM {filter.conn}.dbo.giro_negociospv ");
 
             return query.ToString();
         }
@@ -2324,7 +2332,7 @@ namespace MonicaExtraWeb.Utils
             query.Append("COUNT(*) count ");
 
             query.Append("FROM ");
-            query.Append($"{DbName}dbo.estimado E ");
+            query.Append($"{filtro.conn}.dbo.estimado E ");
 
             #region WHERE
             queryWhere.Append("WHERE ");
@@ -2349,26 +2357,26 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ImpuestosQuery(string DbName = "")
+        public static string ImpuestosQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
             query.Append("SELECT ");
             query.Append("  impuesto_id, ");
             query.Append("  TRIM(Descripcion_impto) Descripcion_impto ");
-            query.Append($"FROM {DbName}dbo.impuestos ");
+            query.Append($"FROM {filter.conn}.dbo.impuestos ");
 
             return query.ToString();
         }
         #endregion
 
-        public static string CerrarCotizacionQuery(Filtros filtro, string DbName = "")
+        public static string CerrarCotizacionQuery(Filtros filtro)
         {
             var query = new StringBuilder();
             var setQuery = new StringBuilder();
 
             query.Append("UPDATE ");
-            query.Append($"{DbName}dbo.estimado ");
+            query.Append($"{filtro.conn}.dbo.estimado ");
 
             query.Append("SET ");
             if (!string.IsNullOrEmpty(filtro.NroFactura))

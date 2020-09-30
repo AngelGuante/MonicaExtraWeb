@@ -6,7 +6,6 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-using static MonicaExtraWeb.Utils.Helper;
 
 namespace MonicaExtraWeb.Utils.Querys
 {
@@ -15,47 +14,46 @@ namespace MonicaExtraWeb.Utils.Querys
         public static string Select(Usuario user = default, QueryConfigDTO config = default)
         {
             var query = new StringBuilder();
-            var queryWhere = new StringBuilder();
 
-            query.Append($"SELECT * FROM {GlobalVariables.Control}dbo.Usuario ");
+            #region SELECT
+            query.Append($"SELECT ");
+            query.Append($" IdUsuario ");
+            query.Append($",NombreUsuario ");
+            query.Append($",U.Estatus ");
+            query.Append($",Clave ");
+            query.Append($",Nivel ");
 
-            if (user != default &&
-                AlgunaPropiedadConValor(user))
-            {
-                queryWhere.Append("WHERE ");
+            if (config.Usuario_Join_IdEmpresaM)
+                query.Append($",idEmpresasM ");
+            #endregion
 
-                if (user.IdUsuario != default)
-                    queryWhere.Append($"idUsuario = '{user.IdUsuario}' ");
-                if (user.NombreUsuario != default)
-                {
-                    if (queryWhere.Length > 6)
-                        queryWhere.Append("AND ");
-                    queryWhere.Append($"Login = '{user.NombreUsuario}' ");
-                }
-                if (user.Estatus != default)
-                {
-                    if (queryWhere.Length > 6)
-                        queryWhere.Append("AND ");
-                    queryWhere.Append($"Estatus = '{user.Estatus}' ");
-                }
-            }
+            #region FROM
+            query.Append($"FROM {GlobalVariables.Control}dbo.Usuario U ");
+
+            if (config.Usuario_Join_IdEmpresaM)
+                query.Append($"JOIN Control.dbo.EmpresaRegistrada E ON U.idEmpresa = E.idEmpresa ");
+            #endregion
+
+            query.Append("WHERE ");
+            query.Append($"U.IdEmpresa = '{user.IdEmpresa}'");
+
+            if (user.IdUsuario != default)
+                query.Append($"idUsuario = '{user.IdUsuario}' ");
+            if (user.NombreUsuario != default)
+                query.Append($"AND Login = '{user.NombreUsuario}' ");
+            if (user.IdEmpresa != default)
+                query.Append($"AND U.IdEmpresa = '{user.IdEmpresa}' ");
+            if (user.Estatus != default)
+                query.Append($"AND U.Estatus = '{user.Estatus}' ");
             if (config != null
                 && config.ExcluirUsuariosControl)
-            {
-                if (queryWhere.Length > 6)
-                    queryWhere.Append("AND ");
-                queryWhere.Append($"Nivel != '0' ");
-            }
-
-            if (queryWhere.Length > 6)
-                query.Append(queryWhere.ToString());
+                query.Append($"AND Nivel != '0' ");
 
             return query.ToString();
         }
 
         public static bool Insert(Usuario user, string[] modulos)
         {
-            var idEmpresa = 2;
             var query = new StringBuilder();
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
@@ -69,7 +67,7 @@ namespace MonicaExtraWeb.Utils.Querys
 
             var rslt = Conn.Query<int>(query.ToString(), new
             {
-                idEmpresa,
+                user.IdEmpresa,
                 user.Login,
                 user.Nivel,
                 user.NombreUsuario,
@@ -79,7 +77,7 @@ namespace MonicaExtraWeb.Utils.Querys
                 for (int i = 0; i < modulos.Length; i++)
                     PermisosUsuarios.Insert(new PermisosUsuario
                     {
-                        idEmpresa = idEmpresa,
+                        idEmpresa = user.IdUsuario,
                         idUsuario = rslt,
                         idModulo = modulos[i]
                     });
@@ -95,7 +93,7 @@ namespace MonicaExtraWeb.Utils.Querys
             var querySet = new StringBuilder();
             var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
 
-            query.Append($"UPDATE dbo.Usuario Set  ");
+            query.Append($"UPDATE dbo.Usuario SET  ");
 
             if (user.Estatus != default)
                 querySet.Append($"Estatus = '{user.Estatus}' ");

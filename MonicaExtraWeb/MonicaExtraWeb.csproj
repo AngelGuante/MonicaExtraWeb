@@ -171,13 +171,15 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccesoController.cs" />
+    <Compile Include="Controllers\AdministracionControl\EmpresasController.cs" />
     <Compile Include="Controllers\AdministracionRecursos\AdministracionController.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
+    <Compile Include="Controllers\API\EmpresasController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
     <Compile Include="Controllers\API\PermisosUsuarioController.cs" />
     <Compile Include="Controllers\API\UsuariosController.cs" />
-    <Compile Include="Controllers\ControlController.cs" />
+    <Compile Include="Controllers\AdministracionControl\ControlController.cs" />
     <Compile Include="Controllers\ImpresionController.cs" />
     <Compile Include="Controllers\MenuController.cs" />
     <Compile Include="Controllers\MoniExtraController.cs" />
@@ -185,11 +187,13 @@
     <Compile Include="Controllers\API\ReportesLocalesController.cs" />
     <Compile Include="Controllers\SAPController.cs" />
     <Compile Include="Controllers\AdministracionRecursos\UsuariosController.cs" />
+    <Compile Include="Controllers\SeleccionarEmpresaController.cs" />
     <Compile Include="Enums\ClientMessageStatusEnum.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\DTO\BuscarMovimientosDTO.cs" />
+    <Compile Include="Models\DTO\Control\Empresa.cs" />
     <Compile Include="Models\DTO\Control\Modulos.cs" />
     <Compile Include="Models\DTO\Control\PermisosUsuario.cs" />
     <Compile Include="Models\DTO\Control\Usuario.cs" />
@@ -215,6 +219,7 @@
     <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Querys\Control\Empresas.cs" />
     <Compile Include="Utils\Querys\Control\Modulos.cs" />
     <Compile Include="Utils\Querys\Control\PermisosUsuarios.cs" />
     <Compile Include="Utils\Querys\Control\Usuarios.cs" />
@@ -294,6 +299,7 @@
     <Content Include="Scripts\js\Acceso.js" />
     <Content Include="Scripts\js\Administracion\Usuarios.js" />
     <Content Include="Scripts\js\Chart.js" />
+    <Content Include="Scripts\js\Control\Empresas.js" />
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Menu.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
@@ -305,6 +311,7 @@
     <Content Include="Scripts\js\Reportes\Reporte_inventarioYLiquidacion.js" />
     <Content Include="Scripts\js\Reportes\Reporte_ventasYDevoluciones.js" />
     <Content Include="Scripts\js\SAP.js" />
+    <Content Include="Scripts\js\SeleccionarEmpresa.js" />
     <Content Include="Scripts\js\Swal.js" />
     <Content Include="Scripts\js\Utils.js" />
     <Content Include="Scripts\js\Vue.js" />
@@ -445,6 +452,8 @@
     <Content Include="Views\Usuarios\Gestion.cshtml" />
     <Content Include="Views\Paginas\Reportes\Partial\_sinPermisoAModulos.cshtml" />
     <Content Include="Views\Control\Index.cshtml" />
+    <Content Include="Views\Empresas\Gestion.cshtml" />
+    <Content Include="Views\SeleccionarEmpresa\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

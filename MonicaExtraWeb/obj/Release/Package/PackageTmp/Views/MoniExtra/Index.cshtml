@@ -4,7 +4,7 @@
     @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
 
     @*  DIV QUE MUESTRA LA SELECCION DE EL SOURCE PARA HACER LOS REPORTES *@
-    @Html.Partial("~/Views/Paginas/Reportes/_menuSeleccionSourceReportes.cshtml")
+    @*@Html.Partial("~/Views/Paginas/Reportes/_menuSeleccionSourceReportes.cshtml")*@
 </div>
 
 @*  DIV QUE MUESTRA LA SELECCION DE EL LOS REPORTES *@
@@ -12,7 +12,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
         window.addEventListener('load',
             () => document.getElementById('cargando').setAttribute('hidden', true));
     </script>

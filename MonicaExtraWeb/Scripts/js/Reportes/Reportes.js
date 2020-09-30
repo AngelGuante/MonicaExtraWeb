@@ -3,7 +3,7 @@
 
     data: {
         fechaHoy: new Date().toISOString().slice(0, 10),
-        sourceResportes: '',
+        sourceResportes: 'local',
         codsClientes: [],
         opcionReporteSeleccionado: '',
         vendedores: [],
@@ -41,6 +41,8 @@
                 console.log(err);
             });
         document.getElementById('cargando').setAttribute('hidden', true);
+
+            document.getElementById('divMaster').classList.remove('container');
     },
 
     watch: {
@@ -109,14 +111,14 @@
     },
 
     methods: {
-        DivSeleccionarReporte(source) {
-            this.LimpiarTablas();
+        //DivSeleccionarReporte(source) {
+        //    this.LimpiarTablas();
 
-            NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
-            document.getElementById('cargando').setAttribute('hidden', true);
+        //    NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
+        //    document.getElementById('cargando').setAttribute('hidden', true);
 
-            this.sourceResportes = source;
-        },
+        //    this.sourceResportes = source;
+        //},
 
         //  OPCIONES DEL MENU
         async OpcionMenuCeleccionado(opcionSeleccionada) {

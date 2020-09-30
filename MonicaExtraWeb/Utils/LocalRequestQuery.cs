@@ -32,31 +32,31 @@ namespace MonicaExtraWeb.Utils
                     query = VentasDevolucionesCategoriaYVendedor(filtro);
                     break;
                 case ClientMessageStatusEnum.VendedoresInformacion:
-                    query = VendedoresInformacionQuery();
+                    query = VendedoresInformacionQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.EmpresaInformacion:
-                    query = EmpresaInformacionQuery(monica10_global);
+                    query = EmpresaInformacionQuery(filtro, monica10_global);
                     break;
                 case ClientMessageStatusEnum.CategoriasClientesInformacion:
-                    query = CategoriasClientesQuery();
+                    query = CategoriasClientesQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.ClienteInformacion:
                     query = ClienteQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.TerminosPagos:
-                    query = TerminosPagosQuery();
+                    query = TerminosPagosQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.Bodegas:
-                    query = BodegasQuery();
+                    query = BodegasQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.CategoriasProductos:
-                    query = CategoriasProductosQuery();
+                    query = CategoriasProductosQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.Proveedores:
                     query = ProveedoresQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.CategoriasProveedoresInformacion:
-                    query = CategoriasProveedoresQuery();
+                    query = CategoriasProveedoresQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.ObtenerEstimado:
                     query = GetEstimadoQuery(filtro);
@@ -69,7 +69,7 @@ namespace MonicaExtraWeb.Utils
                     query = InventarioYLiquidacion(filtro);
                     break;
                 case ClientMessageStatusEnum.subCategoriasProductos:
-                    query = SubCategoriasProductosQuery();
+                    query = SubCategoriasProductosQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.ComprasDevolucionesCotizaciones:
                     query = ComprasDevolucionesCotizaciones(filtro);
@@ -81,16 +81,16 @@ namespace MonicaExtraWeb.Utils
                     query = ClientesProveedores(filtro);
                     break;
                 case ClientMessageStatusEnum.TerminosPagosPv:
-                    query = TerminosPagosPvQuery();
+                    query = TerminosPagosPvQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.Impuestos:
-                    query = ImpuestosQuery();
+                    query = ImpuestosQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.GiroNecogios:
-                    query = GiroNegociosQuery();
+                    query = GiroNegociosQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.GiroNecogiosPv:
-                    query = GiroNegociosPvQuery();
+                    query = GiroNegociosPvQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.ContabilidadBanco:
                     query = ContabilidadBanco(filtro);

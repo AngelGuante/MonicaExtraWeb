@@ -4,9 +4,12 @@
     {
         private int _take;
 
+        public string SELECT { get; set; }
         public bool SUM { get; set; } = false;
         public bool COUNT { get; set; } = false;
         public bool GROUP { get; set; } = false;
+        public string WHRER_IN { get; set; }
+        public string conn { get; set; }
 
         //  **GetIndividualClientStatus**
         public string opcion { get; set; }

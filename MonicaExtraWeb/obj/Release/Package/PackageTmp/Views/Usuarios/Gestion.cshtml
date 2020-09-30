@@ -1,55 +1,84 @@
-﻿<div id="manejoUsuarios" class="mt-5">
+﻿@Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
+
+@Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+
+<hr />
+
+<div id="manejoUsuarios" class="mt-5">
     <h2>Usuarios</h2>
 
     <hr />
 
-    <button type="button" class="btn btn-success" onclick="$('#NuevoUsuario').modal('show');" data-toggle="modal" data-target=".bd-example-modal-lg"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
+    <button type="button" class="btn btn-success" v-on:click="AbrirModalUsuario()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
 
-    <div class="Tables mt-5" v-if="usuarios.length > 0">
+    <div class="alert alert-info mt-3" role="alert" v-if="tipoModalStatus">
+        <p>Número único de la empresa: <strong>{{numeroUnicoEmpresa}}</strong></p>
+    </div>
+
+    <div class="Tables mt-2" v-if="usuarios.length > 0">
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th scope="col">ID</th>
+                    <th scope="col">Login</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Estatus</th>
+                    <th scope="col"></th>
                 </tr>
             </thead>
             <tbody>
                 <tr v-for="item in usuarios">
                     <td>{{item.IdUsuario}}</td>
+                    <td>{{item.Login}}</td>
                     <td>{{item.NombreUsuario}}</td>
-                    <td>{{item.Estatus}}</td>
+                    <td>
+                        <div class="alert alert-success" v-if="item.Estatus" role="alert">
+                            <i class="material-icons" style="margin-right:10px; vertical-align:bottom">check</i> Habilitado
+                        </div>
+                        <div class="alert alert-danger" v-else role="alert">
+                            <i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i> Inhabilitado
+                        </div>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalUsuario({IdUsuario: item.IdUsuario, Login: item.Login, NombreUsuario: item.NombreUsuario, Estatus: item.Estatus, Nivel: item.Nivel})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
+                    </td>
                 </tr>
         </table>
     </div>
 
     @*  MODAL PARA HACER CREAR UN USUARIO*@
-    <div class="modal fade bd-example-modal-lg" id="NuevoUsuario" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal fade bd-example-modal-lg" id="modalNuevoUsuario" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="p-5">
 
-                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#NuevoUsuario').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalNuevoUsuario').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
 
-                    <h1>NUEVO USUARIO</h1>
+                    <h1 v-if="tipoModalStatus">NUEVO USUARIO</h1>
+                    <h1 v-else>MODIFICAR USUARIO</h1>
 
                     <hr />
 
                     <div class="card-body">
-                        <div class="alert alert-info" role="alert">
-                            <p>La Contraseña por defecto del usuario será: 123456abc!</p>
+                        <div class="alert alert-info" role="alert" v-if="tipoModalStatus">
+                            <p>La Contraseña por defecto del usuario será: @System.Configuration.ConfigurationManager.AppSettings["ContraseniaInicialUsuario"]</p>
                             <p>Esta se cambiará obligatoriamente al momento del primer acceso del usuario a su cuenta.</p>
                         </div>
 
                         <form>
                             <div class="row">
-                                <div class="form-group col-12 col-lg-6">
-                                    <label>Nombre</label>
-                                    <input id="inptNombreNuevoUsuario" type="email" class="form-control" placeholder="Nombre" v-model="nombre">
+                                <div class="form-group col-12" v-if="!tipoModalStatus">
+                                    <label>Nombre Usuario</label>
+                                    <input type="text" class="form-control" v-model="nombreCompleto" disabled>
                                 </div>
-                                <div class="form-group col-12 col-lg-6">
+
+                                <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
+                                    <label>Nombre</label>
+                                    <input id="inptNombreNuevoUsuario" type="email" class="form-control" placeholder="Nombre" v-model="nombre" maxlength="10">
+                                </div>
+                                <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
                                     <label>Apellidos</label>
-                                    <input id="inptApellidosNuevoUsuario" type="email" class="form-control" placeholder="Apellidos" v-model="apellidos">
+                                    <input id="inptApellidosNuevoUsuario" type="email" class="form-control" placeholder="Apellidos" v-model="apellidos" maxlength="10">
                                 </div>
 
                                 <div class="form-group col-8">
@@ -57,21 +86,72 @@
                                     <input type="email" class="form-control" placeholder="--" disabled v-model="nombreUsuario">
                                 </div>
 
-                                <div class="col-4 d-flex align-items-center">
+                                <div class="col-4 d-flex align-items-center" v-if="tipoModalStatus">
                                     <button id="btnGenerarUserName" v-on:click="GenerarUserName()" type="button" class="btn btn-info" style="width:100%" disabled>Generar Nombre de Acceso</button>
                                 </div>
 
+                                <div class="form-group col-8">
+                                    <div class="form-group">
+                                        <label>Nivel</label>
+                                        <select class="form-control" v-model="nivelUsuarioSeleccionado">
+                                            <option value="2">Regular</option>
+                                            <option value="1">Maestro</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div v-if="!tipoModalStatus" class="col-12 form-group">
+                                    <div class="row">
+                                        <button type="button" class="btn btn-outline-info col-6" v-on:click="ResetearContrasenia()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">not_started</i>Resetear Contraseña</button>
+                                        <button type="button" class="btn btn-outline-danger col-6" v-if="EstadoUsuarioSeleccionado === 1" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">person_add_disabled</i>Deshabilitar Usuario</button>
+                                        <button type="button" class="btn btn-outline-info col-6" v-else v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">verified_user</i>Habilitar Usuario</button>
+                                    </div>
+                                </div>
+
                                 <div class=" col-12">
-                                    <label>Rol del Usuario</label>
-                                    <select class="custom-select custom-select-lg" disabled>
-                                        <option selected disabled>Seleccione el Rol (Permisos)</option>
-                                    </select>
+                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="seleccionarAccesosUsuarioDiv" style="width:100%">Accesos del usuario</button>
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="collapse multi-collapse" id="seleccionarAccesosUsuarioDiv">
+                                                <div class="card card-body">
+                                                    <div id="accordion">
+                                                        <div class="card">
+                                                            <div class="row">
+                                                                <button class="btn btn-info col-6" type="button" v-on:click="ToggleTodosLosModulos(true)">Seleccionar Todos</button>
+                                                                <button class="btn btn-danger col-6" type="button" v-on:click="ToggleTodosLosModulos(false)">Deseleccionar Todos</button>
+                                                            </div>
+
+                                                            @* LISTADO DE PERMISOS *@
+                                                            <div v-for="item in modulos">
+                                                                <div class="card-header">
+                                                                    <h5 class="mb-0">
+                                                                        <input v-bind:id="'check_' + item.IdModulo" type="checkbox">
+                                                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                                            {{item.Descripcion}} - {{item.IdModulo}}
+                                                                        </button>
+                                                                    </h5>
+                                                                </div>
+                                                                <div v-bind:id="'modulo_' + item.IdModulo" class="collapse" data-parent="#accordion">
+                                                                    <div class="card-body">
+                                                                        Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </div>
 
                             <hr />
 
-                            <button id="btnAgregarNuevoUsuario" onclick="alert('Funcionalidad Solo funcionará hasta que se pase la DB a Azure')" type="button" class="btn btn-info" style="width:100%" disabled><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+                            <button id="btnAgregarNuevoUsuario" v-on:click="NuevoUsuario()" v-if="tipoModalStatus" type="button" class="btn btn-info" style="width:100%" disabled><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+                            <button v-on:click="ModificarUsuario()" v-else type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
                         </form>
                     </div>
 
@@ -82,5 +162,8 @@
 </div>
 
 @section scripts{
+    <script>
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+    </script>
     <script src="~/Scripts/js/Administracion/Usuarios.js"></script>
 }

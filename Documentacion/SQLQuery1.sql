@@ -14,7 +14,7 @@ CREATE TABLE EmpresaRegistrada(
 	NombreEmpresa VARCHAR(60) NOT NULL,
 	Contacto VARCHAR(60),
 	Telefono VARCHAR(20),
-	Correo VARCHAR(20) NOT NULL,
+	Correo VARCHAR(40) NOT NULL,
 	CantidadEmpresas INT DEFAULT 1,
 	CantidadUsuariosPagados INT DEFAULT 1,
 	FechaInicio DATETIME DEFAULT GETDATE(),
@@ -26,23 +26,32 @@ CREATE TABLE EmpresaRegistrada(
 	--IdToken
 	ESTATUS INT FOREIGN KEY REFERENCES EmpresaRegistradaEstatus(Id) DEFAULT 1
 )
+INSERT INTO EmpresaRegistrada(NombreEmpresa, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento)
+VALUES
+('Almonte_MoniExtra', 'almonte@computadorasengrande.com', 1, 1, GETDATE()),
+('Empresa Demo', 'demo@domain.com', 1, 1, GETDATE())
+
 
 CREATE TABLE Usuario(
 	IdUsuario BIGINT IDENTITY PRIMARY KEY,
 	IdEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(idEmpresa),
 	[Login] VARCHAR(15) NOT NULL,
-	NombreUsuario VARCHAR(20) NOT NULL,
-	Clave VARCHAR(10) NOT NULL,
+	NombreUsuario VARCHAR(40) NOT NULL,
+	Clave VARCHAR(10) DEFAULT '123456abc!',
 	--IdToken
 	--DispositivosRegistrados
 	Estatus SMALLINT DEFAULT 1,
-	--Nivel SMALLINT,
+	Nivel SMALLINT DEFAULT 2,
 	--LoginMonica VARCHAR(15)
 	--EnlaceMonica VARCHAR(15)
 	--Remoto SMALLINT DEFAULT 0
 	--ConexionServidor VARCHAR(60)
 	--CampoCompuesto VARCHAR(60)
 )
+INSERT INTO Usuario(IdEmpresa, Login, NombreUsuario, Nivel, Clave)
+VALUES
+('1', 'Admin', 'Administrador', 0, 'Adm@5452!'),
+('2', 'Administrador', 'Usuario Administrador', 1, '123456@!')
 
 CREATE TABLE Modulo(
 	IdModulo VARCHAR(4) NOT NULL UNIQUE,

@@ -22,6 +22,15 @@ const DaysDiff = (minDate, maxDate) => {
     return (Math.round(millisecondsBetweenDates / millisecondsInADay)) - 1;
 }
 
+//  RETORNA LA FECHA ACTUAL.
+const GetCurrentDate = () => `${new Date().getFullYear()}-${new Date().getMonth().toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`;
+
+//  RETORNA LA FECHA EN FORMATO YYYY/MM/DD.
+const GetFormatedDate = date => {
+    date = new Date(date);
+    return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+};
+
 //  RETORNA EL INTERVALO DE DOS FECHAS SEGUN EL PARAMETRO ESTABLECIDO
 const getIntervalDate = param => {
     const curr = new Date();
@@ -81,7 +90,6 @@ const CoockiesIniciales = () => {
 
     if (!rememberPasswordCookie) {
         SetCoockie('user=;');
-        SetCoockie('password=;');
         SetCoockie('rememberPass=true;');
     }
 }
@@ -105,9 +113,26 @@ const GetCookieElement = element => {
     return '';
 }
 
-const CloseUserSession = () => {
-    window.localStorage.removeItem('NombreUsuario');
+//  REMOVER UN ELEMENTO DE LA COOCKIE
+const RemoveCookieElement = element => {
+    document.cookie = `${element}=; expires=Thu, 01 Jan 2020 00:00:00 UTC; path=/;`;
+}
 
+//  CERRAR SECCION DE UN USUARIO.
+const CloseUserSession = () => {
+    RemoveCookieElement('Authorization');
+    //window.localStorage.removeItem('NumeroUnicoEmpresa');
+    window.localStorage.removeItem('NombreUsuario');
+    window.localStorage.removeItem('conn');
+    window.localStorage.removeItem('Empresas');
+    window.localStorage.removeItem('Number');
+    window.localStorage.removeItem('Nivel');
+    window.localStorage.removeItem('Nombre_empresa');
+    window.localStorage.removeItem('direccionEmpresa1');
+    window.localStorage.removeItem('direccionEmpresa2');
+    window.localStorage.removeItem('direccionEmpresa3');
+    window.localStorage.removeItem('TelefonoEmpresa1');
+    window.location.href = '/'
 }
 
 //  MUESTRA ALERTAS.
@@ -231,20 +256,24 @@ const Navegacion = [
 
 //  SISTEMA DE NAVEGACION.
 const NavigationBehaviour = (actual, inicial) => {
-    if (actual === 'SeleccionarReporte' || actual === 'SeleccionarManejoDeData')
-        document.getElementById('divMaster').classList.remove('container');
-    else {
-        if (!document.getElementById('divMaster').classList.contains('container'))
-            document.getElementById('divMaster').classList.add('container');
-    }
+    //if (actual === 'SeleccionarReporte' || actual === 'SeleccionarManejoDeData')
+    //    document.getElementById('divMaster').classList.remove('container');
+    //else {
+    //    if (!document.getElementById('divMaster').classList.contains('container'))
+    //        document.getElementById('divMaster').classList.add('container');
+    //}
 
     let divActualVisible = Navegacion[Navegacion.length - 1].actual;
 
     if (actual === 0) {
         document.getElementById('cargando').removeAttribute('hidden');
-        window.location.href = '../Menu';
+        window.location.href = '/Menu';
     }
     else if (actual === -1) {
+        if (!divActualVisible) {
+            Navegacion.pop();
+            window.history.back();
+        }
         document.getElementById(divActualVisible).setAttribute('hidden', true);
         document.getElementById(Navegacion[Navegacion.length - 2].actual).removeAttribute('hidden');
         Navegacion.pop();
@@ -283,6 +312,7 @@ const Print = (type, paramsa) => {
 const ApiReportesLocales = '/API/ReportesLocales/';
 const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     let cargando = document.getElementById('cargando');
+    filtro.conn = localStorage.getItem('conn');
 
     if (cargando)
         cargando.removeAttribute('hidden');
@@ -290,7 +320,7 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     return new Promise(async (resolve, reject) => {
         let interval;
         try {
-            const response = await fetch(`..${ApiReportesLocales}${ruta}`, {
+            const response = await fetch(`../..${ApiReportesLocales}${ruta}`, {
                 method: 'POST',
                 body: JSON.stringify(filtro),
                 headers: {
@@ -313,7 +343,7 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
             }
             else if (content.value === 'true') {
                 interval = setInterval(async () => {
-                    const innerResponse = await fetch(`..${ApiReportesLocales}GetWebsocketResponseFile`, {
+                    const innerResponse = await fetch(`../..${ApiReportesLocales}GetWebsocketResponseFile`, {
                         headers: {
                             'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                         }

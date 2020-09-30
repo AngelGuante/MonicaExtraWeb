@@ -1,9 +1,11 @@
 ﻿@Html.Partial("~/Views/Componentes/_LoadingPage.cshtml")
 
-@Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
-
 <div id="menu">
     <div class="row" style="height:60vh; display:flex; justify-content:space-evenly; align-items:center">
+        <div class="col-12">
+            @Html.Partial("~/Views/Componentes/_BotonesNavegacion.cshtml")
+        </div>
+
         @*  MODULO DE CAJA*@
         <div class="col-lg-3 card border-secondary Sombra">
             <div style="display:flex; justify-content:center;">
@@ -54,7 +56,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = window.localStorage.getItem('NombreUsuario');
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
 
         if (window.localStorage.getItem('Nivel') == 2)
             document.getElementById('moduloAdministracion').setAttribute('hidden', true);
