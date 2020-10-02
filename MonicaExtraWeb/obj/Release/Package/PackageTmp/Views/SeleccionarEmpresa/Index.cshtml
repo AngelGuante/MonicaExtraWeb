@@ -4,9 +4,13 @@
 
 @Html.Partial("~/Views/Paginas/_Empresas.cshtml")
 
+<div class="alert alert-danger" role="alert" id="sinEmpresasATrabajar" hidden>
+    Ninguna empresa disponible para acceder, comuniquese con el administrador para solucionar el problema.
+</div>
+
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}`;
     </script>
     <script src="~/Scripts/js/SeleccionarEmpresa.js"></script>
 }

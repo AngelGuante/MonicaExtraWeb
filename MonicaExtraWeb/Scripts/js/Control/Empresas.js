@@ -13,8 +13,6 @@
         vencimiento: '',
 
         empresas: [],
-        empresasLocales: [],
-        nroEmpresasSeleccionadas: 0,
 
         IdEmpresaSleccionada: '',
         EstadoEmpresaSeleccionada: '',
@@ -52,7 +50,6 @@
             document.getElementById('cargando').removeAttribute('hidden');
 
             this.Limpiar(false);
-            this.empresasLocales = await BuscarInformacionLocal('SendWebsocketServer/4', {});
 
             //  SI ES UNA EMPRESA NUEVA
             if (!config)
@@ -76,11 +73,9 @@
                     .then(response => { return response.json(); })
                     .then(json => {
                         this.telefono = json.empresas[0].Telefono;
-                        this.nroEmpresasSeleccionadas = 0;
 
                         if (json.empresas[0].idEmpresasM !== null && json.empresas[0].idEmpresasM !== '') {
                             const empresasM = json.empresas[0].idEmpresasM.split(',');
-                            this.nroEmpresasSeleccionadas = empresasM.length;
 
                             for (item of empresasM) {
                                 const ele = document.getElementById(`check_${item}`);
@@ -139,13 +134,6 @@
                 });
                 return;
             }
-            else if (this.nroEmpresasSeleccionadas > this.nro_empresas) {
-                MostrarMensage({
-                    title: '',
-                    message: `Solo Puede seleccionar ${this.nro_empresas}`,
-                    icon: 'warning'
-                });
-            }
 
             if (this.tipoModalStatus)
                 this.NuevaEmpresa();
@@ -156,12 +144,6 @@
         NuevaEmpresa: function () {
             document.getElementById('cargando').removeAttribute('hidden');
 
-            const empresasLocales = []
-
-            for (item of document.querySelectorAll('*[id^="check_"]'))
-                if (document.getElementById(item.id).checked)
-                    empresasLocales.push(item.id.replace(/check_/g, ''));
-
             const json = {
                 NombreEmpresa: this.nombre,
                 Contacto: this.contacto,
@@ -169,8 +151,7 @@
                 Correo: this.correo,
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
-                Vencimiento: this.vencimiento,
-                idEmpresasM: empresasLocales.join()
+                Vencimiento: this.vencimiento
             };
 
             fetch('../../API/EMPRESAS/POST', {
@@ -196,11 +177,7 @@
         ModificarEmrpresa: async function () {
             document.getElementById('cargando').removeAttribute('hidden');
 
-            const empresasLocales = []
 
-            for (item of document.querySelectorAll('*[id^="check_"]'))
-                if (document.getElementById(item.id).checked)
-                    empresasLocales.push(item.id.replace(/check_/g, ''));
 
             const empresa = {
                 IdEmpresa: this.IdEmpresa,
@@ -210,8 +187,7 @@
                 Correo: this.correo,
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
-                Vencimiento: this.vencimiento,
-                idEmpresasM: empresasLocales.join()
+                Vencimiento: this.vencimiento
             };
 
             //  ACTUALIZAR LOS DATOS DE LA EMPRESA
@@ -228,42 +204,19 @@
             this.Limpiar();
         },
 
-        empresaCheckChanged: function (check) {
-            const element = document.getElementById(check);
-            const value = element.checked;
-
-            if (value)
-                this.nroEmpresasSeleccionadas++;
-            else
-                this.nroEmpresasSeleccionadas;
-
-            if (this.nroEmpresasSeleccionadas > this.nro_empresas) {
-                this.nroEmpresasSeleccionadas--;
-                element.checked = false;
-                MostrarMensage({
-                    title: 'No Puede Seleccionar más empresas',
-                    message: `Solo Puede seleccionar ${this.nro_empresas}`,
-                    icon: 'warning'
-                });
-            }
-        },
-
         Limpiar: function (soloLimpiar) {
             this.tipoModalStatus = true;
             this.IdEmpresaSleccionada =
 
-                this.IdEmpresa = '';
+            this.IdEmpresa = '';
             this.nombre = '';
             this.contacto = '';
             this.telefono = '';
             this.correo = '';
             this.nro_empresas = 0;
             this.nro_usuarios = 0;
-            this.nroEmpresasSeleccionadas = 0;
             this.fechaInicio = GetCurrentDate();
             this.vencimiento = '';
-
-            this.empresasLocales = [];
 
             if (soloLimpiar !== false) {
                 $('#modalNuevaEmpresa').modal('hide');
@@ -283,10 +236,6 @@
                 return fecha;
             else
                 return value;
-        },
-
-        FilterUppercase: value => {
-            return value.toUpperCase();
         },
     }
 });

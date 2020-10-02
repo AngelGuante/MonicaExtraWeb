@@ -10,6 +10,7 @@
     <hr />
 
     <button type="button" class="btn btn-success" v-on:click="AbrirModalUsuario()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
+    <button type="button" class="btn btn-primary" v-on:click="AbrirModalEmpresas()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">business</i>Empresas</button>
 
     <div class="alert alert-info mt-3" role="alert" v-if="tipoModalStatus">
         <p>Número único de la empresa: <strong>{{numeroUnicoEmpresa}}</strong></p>
@@ -46,7 +47,7 @@
         </table>
     </div>
 
-    @*  MODAL PARA HACER CREAR UN USUARIO*@
+    @*  MODAL PARA CREAR UN USUARIO*@
     <div class="modal fade bd-example-modal-lg" id="modalNuevoUsuario" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -158,12 +159,42 @@
                 </div>
             </div>
         </div>
+    </div>.
+
+    @*  MODAL PARA VER LAS EMPRESAS LOCALES*@
+    <div class="modal fade bd-example-modal-lg" id="modalEmpresas" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="p-5">
+
+                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalEmpresas').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+
+                    <h1>EMPRESAS LOCALES</h1>
+
+                    <hr />
+
+                    <div class="card-body">
+                        <div v-for="item in empresasLocales">
+                            <div class="card-header">
+                                <h5 class="mb-0">
+                                    <input v-bind:id="'check_' + item.empresa_id" type="checkbox" v-on:click="empresaCheckChanged('check_' + item.empresa_id)">
+                                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                        {{item.Nombre_empresa | FilterUppercase}} - {{item.empresa_id}}
+                                    </button>
+                                </h5>
+                            </div>
+                        </div>
+                        <button v-on:click="ModificarEmpresa()" type="button" class="btn btn-info mt-4" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">check</i>Listo</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')} ${window.localStorage.getItem('Nombre_empresa') !== null ? `- ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}` : ''}`;
     </script>
     <script src="~/Scripts/js/Administracion/Usuarios.js"></script>
 }

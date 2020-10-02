@@ -283,6 +283,9 @@
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <None Include="Properties\PublishProfiles\MoniExtratest - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\MoniExtratest - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\MoniExtratest - Web Deploy.pubxml" />
     <None Include="Properties\PublishProfiles\WebMonica - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\WebMonica - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\WebMonica - Web Deploy.pubxml" />

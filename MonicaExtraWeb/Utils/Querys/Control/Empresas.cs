@@ -91,13 +91,44 @@ namespace MonicaExtraWeb.Utils.Querys.Control
 
             query.Append($"UPDATE dbo.EmpresaRegistrada SET ");
 
-            querySet.Append($"NombreEmpresa = '{empresa.NombreEmpresa}' ");
-            querySet.Append($",Telefono = '{empresa.Telefono}' ");
-            querySet.Append($",Correo = '{empresa.Correo}' ");
-            querySet.Append($",CantidadEmpresas = '{empresa.CantidadEmpresas}' ");
-            querySet.Append($",CantidadUsuariosPagados = '{empresa.CantidadUsuariosPagados}' ");
-            querySet.Append($",Vencimiento = '{empresa.Vencimiento}' ");
-            querySet.Append($",idEmpresasM = '{empresa.idEmpresasM}' ");
+            if (!string.IsNullOrWhiteSpace(empresa.NombreEmpresa))
+                querySet.Append($"NombreEmpresa = '{empresa.NombreEmpresa}' ");
+            if (!string.IsNullOrWhiteSpace(empresa.Telefono))
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"Telefono = '{empresa.Telefono}' ");
+            }
+            if (!string.IsNullOrWhiteSpace(empresa.Correo))
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"Correo = '{empresa.Correo}' ");
+            }
+            if (!string.IsNullOrWhiteSpace(empresa.CantidadEmpresas))
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"CantidadEmpresas = '{empresa.CantidadEmpresas}' ");
+            }
+            if (!string.IsNullOrWhiteSpace(empresa.CantidadUsuariosPagados))
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"CantidadUsuariosPagados = '{empresa.CantidadUsuariosPagados}' ");
+            }
+            if (empresa.Vencimiento != default)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"Vencimiento = '{empresa.Vencimiento}' ");
+            }
+            if (!string.IsNullOrWhiteSpace(empresa.idEmpresasM))
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
+            }
 
             query.Append(querySet.ToString());
             query.Append($"WHERE IdEmpresa = {empresa.IdEmpresa} ");

@@ -25,7 +25,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')} ${window.localStorage.getItem('Nombre_empresa') !== null ? `- ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}` : ''}`;
         document.getElementById('btnHome').removeAttribute('hidden');
         window.addEventListener('load',
             () => document.getElementById('cargando').setAttribute('hidden', true));

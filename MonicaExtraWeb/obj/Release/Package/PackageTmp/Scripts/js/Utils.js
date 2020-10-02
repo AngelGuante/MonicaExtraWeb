@@ -337,7 +337,7 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
 
                 MostrarMensage({
                     title: 'No se pudo conectar a su Base de Datos..',
-                    message: `Su equipo no tiene monicaWebsocketClient.dll en ejecucion...`,
+                    message: `Asegurese de que el servicio ExtraService se encuentra en ejecución.`,
                     icon: 'error'
                 });
             }

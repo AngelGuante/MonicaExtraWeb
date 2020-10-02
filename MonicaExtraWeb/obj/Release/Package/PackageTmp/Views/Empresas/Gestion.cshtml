@@ -116,32 +116,6 @@
                                     @*<button type="button" class="btn btn-outline-info col-6" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">verified_user</i>Habilitar Usuario</button>*@
                                 </div>
                             </div>
-
-                            <div class=" col-12">
-                                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" style="width:100%">Seleccionar Empresas</button>
-
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="collapse multi-collapse">
-                                            <div class="card card-body">
-                                                <div class="card">
-                                                    @* LISTADO DE EMPRESAS LOCALES *@
-                                                    <div v-for="item in empresasLocales">
-                                                        <div class="card-header">
-                                                            <h5 class="mb-0">
-                                                                <input v-bind:id="'check_' + item.empresa_id" type="checkbox" v-on:click="empresaCheckChanged('check_' + item.empresa_id)">
-                                                                <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                                    {{item.Nombre_empresa | FilterUppercase}} - {{item.empresa_id}}
-                                                                </button>
-                                                            </h5>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
 
                         <hr />

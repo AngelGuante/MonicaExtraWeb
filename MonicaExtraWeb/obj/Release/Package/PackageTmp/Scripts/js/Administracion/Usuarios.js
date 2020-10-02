@@ -8,10 +8,14 @@
         nombreCompleto: '',
         nivelUsuarioSeleccionado: 2,
 
-        numeroUnicoEmpresa: '',
+        nro_empresas: 0,
 
         usuarios: [],
         modulos: [],
+
+        empresasLocales: [],
+        nroEmpresasSeleccionadas: 0,
+        numeroUnicoEmpresa: '',
 
         IdUsuarioSeleccionado: '',
         EstadoUsuarioSeleccionado: '',
@@ -155,6 +159,84 @@
             }
 
             $('#modalNuevoUsuario').modal('show');
+        },
+
+        AbrirModalEmpresas: async function () {
+            if (this.empresasLocales.length === 0)
+                this.empresasLocales = await BuscarInformacionLocal('SendWebsocketServer/4', {});
+
+            const empresaParams = JSON.stringify({
+                IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa')
+            });
+
+            await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`,)
+                .then(response => { return response.json(); })
+                .then(json => {
+                    this.nroEmpresasSeleccionadas = 0;
+                    this.nro_empresas = json.empresas[0].CantidadEmpresas;
+
+                    if (json.empresas[0].idEmpresasM !== null && json.empresas[0].idEmpresasM !== '') {
+                        const empresasM = json.empresas[0].idEmpresasM.split(',');
+                        this.nroEmpresasSeleccionadas = empresasM.length;
+
+                        for (item of empresasM) {
+                            const ele = document.getElementById(`check_${item}`);
+                            if (ele != undefined)
+                                ele.checked = true;
+                        }
+                    }
+
+                    document.getElementById('cargando').setAttribute('hidden', true);
+                });
+
+            $('#modalEmpresas').modal('show');
+        },
+
+        ModificarEmpresa: async function () {
+            const empresasLocales = []
+
+            for (item of document.querySelectorAll('*[id^="check_"]'))
+                if (document.getElementById(item.id).checked)
+                    empresasLocales.push(item.id.replace(/check_/g, ''));
+
+            const empresa = {
+                IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa'),
+                idEmpresasM: empresasLocales.join()
+            };
+
+            //  ACTUALIZAR LOS DATOS DE LA EMPRESA
+            await fetch('../../API/EMPRESAS/PUT', {
+                method: 'PUT',
+                body: JSON.stringify(empresa),
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    this.Limpiar();
+                    $('#modalEmpresas').modal('hide');
+                });
+        },
+
+        empresaCheckChanged: function (check) {
+            const element = document.getElementById(check);
+            const value = element.checked;
+
+            if (value)
+                this.nroEmpresasSeleccionadas++;
+            else
+                this.nroEmpresasSeleccionadas--;
+
+            if (this.nroEmpresasSeleccionadas > this.nro_empresas) {
+                this.nroEmpresasSeleccionadas--;
+                element.checked = false;
+                MostrarMensage({
+                    title: 'No Puede Seleccionar más empresas',
+                    message: `Solo Puede seleccionar ${this.nro_empresas}`,
+                    icon: 'warning'
+                });
+            }
         },
 
         ToggleTodosLosModulos: (value) => {
@@ -301,9 +383,25 @@
             this.EstadoUsuarioSeleccionado = '';
             this.nivelUsuarioSeleccionado = 2;
             this.usuarios = [];
+            this.nroEmpresasSeleccionadas = 0;
             //this.modulos = [];
 
             this.BuscarUsuarios();
         }
+    },
+
+    filters: {
+        FilterUppercase: value => {
+            return value.toUpperCase();
+        }
     }
 });
+
+
+//else if (this.nroEmpresasSeleccionadas > this.nro_empresas) {
+//    MostrarMensage({
+//        title: '',
+//        message: `Solo Puede seleccionar ${this.nro_empresas}`,
+//        icon: 'warning'
+//    });
+//}

@@ -11,6 +11,17 @@
             WHRER_IN: window.localStorage.getItem('Empresas')
         };
         this.Empresas = await BuscarInformacionLocal('SendWebsocketServer/4', filtro);
+
+        if (this.Empresas.length === 0)
+            switch (window.localStorage.getItem('Nivel')) {
+                case '1':
+                    window.location.href = `../Administracion`;
+                    document.getElementById('cargando').removeAttribute('hidden');
+                    break;
+                case '2':
+                    document.getElementById('SeleccionarEmpresa').setAttribute('hidden', true);
+                    document.getElementById('sinEmpresasATrabajar').removeAttribute('hidden');
+            }
     },
 
     methods: {
