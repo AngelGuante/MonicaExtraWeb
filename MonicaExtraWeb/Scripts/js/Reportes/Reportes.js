@@ -129,19 +129,6 @@
             this.minFecha_emision = this.fechaHoy;
             this.maxFecha_emision = this.fechaHoy;
 
-            //CARGAR LA DATA CORRESPONDIENTE PARA CADA FILTRO
-            if (opcionSeleccionada === 'VentasYDevolucionesCategoriaYVendedor'
-                || opcionSeleccionada === 'CotizacionesYConducesFiltro') {
-                await this.BuscarData('vendedores');
-                await this.BuscarData('categoriasClientes');
-            } else if (opcionSeleccionada === 'inventarioYLiquidacionFiltro') {
-                await this.BuscarData('nombresBodega');
-                await this.BuscarData('subCategoriasProductos');
-                await this.BuscarData('categoriasProductos');
-            } else if (opcionSeleccionada === 'comprasDevolucionesYConducesFiltro') {
-                await this.BuscarData('categoriasProveedores');
-            }
-
             //  MOSTRAR EL FILTRO SELECCONADO Y OCULTAR EL QUE ESTABA VISIBLE
             if (this.opcionReporteSeleccionado)
                 document.getElementById(this.opcionReporteSeleccionado).setAttribute('hidden', true);
@@ -277,9 +264,6 @@
         //  BUSCAR INFORMACION SI ES NECESARIA.
         async BuscarData(data, filtro) {
             switch (data) {
-                //  ---------
-                //  REPORTES.
-                //  ---------
                 case 'terminoDePago':
                     if (this.terminoDePago.length === 0)
                         this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});

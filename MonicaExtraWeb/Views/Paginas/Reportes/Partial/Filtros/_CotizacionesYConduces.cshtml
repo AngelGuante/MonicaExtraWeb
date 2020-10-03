@@ -336,7 +336,9 @@
 
                 <div class="form-group col">
                     <label>Vendedor</label>
-                    <select class="custom-select col" v-model="FILTROS.vendedorSeleccionado">
+                    <select class="custom-select col"
+                            v-model="FILTROS.vendedorSeleccionado"
+                            v-on:focus="LlenarSelect('vendedores')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                         <option v-for="item in FILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{ item.Nombre_vendedor | FilterUppercase }}</option>
                     </select>
@@ -345,7 +347,9 @@
                 <div v-if="FILTROS.tipoCorte !== 'porCategorias_de_Clientes'">
                     <div class="form-group col">
                         <label>Categoria Cliente</label>
-                        <select class="custom-select col" v-model="FILTROS.categoriaClientesSeleccionada">
+                        <select class="custom-select col"
+                                v-model="FILTROS.categoriaClientesSeleccionada"
+                                v-on:focus="LlenarSelect('categoriasClientes')">>
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.categoriasClientes" v-bind:value="item.categoria_clte_id">{{ item.descripcion_categ | FilterUppercase }}</option>
                         </select>

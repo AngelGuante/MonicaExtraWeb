@@ -462,7 +462,9 @@
                 <div>
                     <div class="form-group col">
                         <label>Categoria Proveedores</label>
-                        <select disabled class="custom-select col" v-model="FILTROS.categoriasProveedoresSeleccionada">
+                        <select disabled class="custom-select col"
+                                v-model="FILTROS.categoriasProveedoresSeleccionada"
+                                v-on:focus="LlenarSelect('categoriasProveedores')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.categoriasProveedores" v-bind:value="item.Categoria_idpv">{{ item.descripcion_categpv | FilterUppercase }}</option>
                         </select>

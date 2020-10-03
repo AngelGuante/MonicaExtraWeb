@@ -501,6 +501,10 @@
             }
         },
 
+        LlenarSelect(value) {
+            monicaReportes.BuscarData(value);
+        },
+
         async TipoCorteChanged() {
             if (!('col-lg-5' in document.getElementById('agrupacionDiv').classList))
                 document.getElementById('agrupacionDiv').classList.add('col-lg-5');

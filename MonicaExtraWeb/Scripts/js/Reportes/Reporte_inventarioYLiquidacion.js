@@ -441,6 +441,10 @@
             this.FILTROS.nombresBodegaSeleccionada = '';
         },
 
+        LlenarSelect(value) {
+            monicaReportes.BuscarData(value);
+        },
+
         AjustesAvanzadosFiltros() {
             $('#ILreporteModalFormato').modal('show');
             $('#ILreporteModalFormato').collapse('hide');

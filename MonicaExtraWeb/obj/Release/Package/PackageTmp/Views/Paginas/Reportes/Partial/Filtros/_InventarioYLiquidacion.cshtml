@@ -279,7 +279,9 @@
                 @*SELECT BODEGA*@
                 <div class="col-12 col-lg-3">
                     <label class="font-weight-bold">Almacen o Bodega</label>
-                    <select class="custom-select col" v-model="FILTROS.nombresBodegaSeleccionada">
+                    <select class="custom-select col"
+                            v-model="FILTROS.nombresBodegaSeleccionada"
+                            v-on:focus="LlenarSelect('nombresBodega')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                         <option v-for="item in FILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega | FilterUppercase }}</option>
                     </select>
@@ -289,7 +291,9 @@
                 <div class="col-12 col-lg-3"
                      v-if="FILTROS.tipoCorte !== 'porCategoria'">
                     <label class="font-weight-bold">Categoría Producto</label>
-                    <select class="custom-select col" v-model="FILTROS.categoriaProductosSeleccionada">
+                    <select class="custom-select col"
+                            v-model="FILTROS.categoriaProductosSeleccionada"
+                            v-on:focus="LlenarSelect('categoriasProductos')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                         <option v-for="item in FILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{item.Descripcion_categ | FilterUppercase }}</option>
                     </select>
@@ -299,7 +303,9 @@
                 <div class="col-12 col-lg-3"
                      v-if="FILTROS.tipoCorte !== 'porCategoria'">
                     <label class="font-weight-bold">Sub Categoría Producto</label>
-                    <select class="custom-select col" v-model="FILTROS.subProductoCategoriaSeleccionada">
+                    <select class="custom-select col"
+                            v-model="FILTROS.subProductoCategoriaSeleccionada"
+                            v-on:focus="LlenarSelect('subCategoriasProductos')">
                         <option selected value="">--SELECCIONE UNA OPCION--</option>
                         <option v-for="item in FILTROS.subProductosCategorias" v-bind:value="item.sub_categoria_id">{{item.descripcion_sub_categ | FilterUppercase }}</option>
                     </select>

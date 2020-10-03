@@ -448,6 +448,10 @@
             }
         },
 
+        LlenarSelect(value) {
+            monicaReportes.BuscarData(value);
+        },
+
         async TipoCorteChanged() {
             this.FILTROS.desde = '';
             this.FILTROS.hasta = '';
