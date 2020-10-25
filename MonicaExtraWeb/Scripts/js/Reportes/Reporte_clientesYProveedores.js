@@ -7,7 +7,7 @@
         FILTROS: {
             tipoReporte: 'clientes',
             tipoCorte: 'porLos_Mas_Recientes',
-            tipoConsulta: 'porCodigo',
+            tipoConsulta: 'porNombre',
             giroNegocioSeleccionada: '',
             giroNegocios: [],
             giroNegocioPvSeleccionada: '',

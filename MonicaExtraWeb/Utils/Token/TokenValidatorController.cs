@@ -1,6 +1,9 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Configuration;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Mvc;
@@ -23,7 +26,7 @@ namespace MonicaExtraWeb.Utils.Token
                 var issuerToken = ConfigurationManager.AppSettings["JWT_ISSUER_TOKEN"];
                 var securityKey = new SymmetricSecurityKey(System.Text.Encoding.Default.GetBytes(secretKey));
                 SecurityToken securityToken;
-                var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+                var tokenHandler = new JwtSecurityTokenHandler();
                 TokenValidationParameters validationParameters = new TokenValidationParameters()
                 {
                     ValidAudience = audienceToken,
@@ -31,7 +34,7 @@ namespace MonicaExtraWeb.Utils.Token
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
                     LifetimeValidator = LifetimeValidator,
-                    IssuerSigningKey = securityKey
+                    IssuerSigningKey = securityKey,
                 };
 
                 // COMPRUEBA LA VALIDEZ DEL TOKEN
@@ -44,10 +47,12 @@ namespace MonicaExtraWeb.Utils.Token
             }
             catch (SecurityTokenValidationException)
             {
+                param.Response.StatusCode = 401;
                 return false;
             }
             catch (Exception)
             {
+                param.Response.StatusCode = 401;
                 return false;
             }
             return true;
@@ -65,6 +70,20 @@ namespace MonicaExtraWeb.Utils.Token
             { valid = true; }
 
             return valid;
+        }
+
+        public static void GetTokenClaims(out SecurityToken validatedToken, string jwtToken, bool validateLifetime = true)
+        {
+            IdentityModelEventSource.ShowPII = true;
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateLifetime = validateLifetime,
+                ValidAudience = ConfigurationManager.AppSettings["JWT_AUDIENCE_TOKEN"],
+                ValidIssuer = ConfigurationManager.AppSettings["JWT_ISSUER_TOKEN"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(ConfigurationManager.AppSettings["JWT_SECRET_KEY"]))
+            };
+
+            _ = new JwtSecurityTokenHandler().ValidateToken(jwtToken, validationParameters, out validatedToken);
         }
     }
 }

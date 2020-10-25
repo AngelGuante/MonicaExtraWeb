@@ -10,8 +10,9 @@ namespace MonicaExtraWeb.Controllers
         {
             if (Validate(this))
                 return View();
-            else
-                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
+
+            Response.StatusCode = 401;
+            return null;
         }
     }
 }

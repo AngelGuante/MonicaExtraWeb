@@ -23,6 +23,9 @@ namespace MonicaExtraWeb.Utils.Querys
             query.Append($",Clave ");
             query.Append($",Nivel ");
 
+            if (!string.IsNullOrEmpty(config.Select))
+                query.Append($",{config.Select}");
+
             if (config.Usuario_Join_IdEmpresaM)
                 query.Append($",idEmpresasM ");
             #endregion

@@ -17,7 +17,7 @@
             tipoCorte: '',
             tipoDeProducto: '1',
             tipoDeProductoSeleccionado: '1',
-            tipoConsulta: 'porCodigo',
+            tipoConsulta: 'porDescripcion',
             desdeHastaRango: 0,
             desde: '',
             hasta: '',

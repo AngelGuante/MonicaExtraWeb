@@ -4,7 +4,7 @@
     <button id="btnUsuario" class="btn btn-info" onclick="$('#modalUsuarioLogeado').modal('show');" style="float:right;"></button>
 </div>
 
-@*  MODAL PARA HACER CREAR UN USUARIO*@
+@*  MODAL PARA CERRAR SECCION*@
 <div class="modal fade bd-example-modal-lg" id="modalUsuarioLogeado" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -13,8 +13,7 @@
                 <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalUsuarioLogeado').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
 
                 <div class="card-body">
-                    @*<button onclick="alert('Funcionalidad Solo funcionará hasta que se pase la DB a Azure')" type="button" class="btn btn-info mt-5" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">supervised_user_circle</i>Ver Perfil</button>*@
-                    <button onclick="CloseUserSession()" type="button" class="btn btn-danger mt-2" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i>Cessar Sección</button>
+                    <button onclick="CloseUserSession()" type="button" class="btn btn-danger mt-2" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i>Cerrar Sección</button>
                 </div>
             </div>
         </div>

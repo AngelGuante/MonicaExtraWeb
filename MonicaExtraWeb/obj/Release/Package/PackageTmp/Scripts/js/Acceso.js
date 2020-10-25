@@ -77,8 +77,9 @@
 
                     const json = await content.json();
 
-                    if (json.Estatus == 0) {
-                        document.getElementById('cuentaDeshabilitada').removeAttribute('hidden')
+                    if ('message' in json) {
+                        document.getElementById('ServerMessageDiv').removeAttribute('hidden')
+                        document.getElementById('serverLoginMessage').innerHTML = json.message;
                         return;
                     }
                     if (json.initialPass === this.DivLog.pass) {

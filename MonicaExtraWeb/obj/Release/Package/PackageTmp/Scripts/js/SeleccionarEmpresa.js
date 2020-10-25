@@ -8,7 +8,7 @@
 
     created: async function () {
         const filtro = {
-            WHRER_IN: window.localStorage.getItem('Empresas')
+            WHRER_IN: window.localStorage.getItem('Empresas') ? window.localStorage.getItem('Empresas') : '-1'
         };
         this.Empresas = await BuscarInformacionLocal('SendWebsocketServer/4', filtro);
 
@@ -28,9 +28,9 @@
         async EmpresaSeleccionada(idEmpresa, conn) {
             localStorage.setItem('conn', conn);
             document.getElementById('cargando').removeAttribute('hidden');
-
+            
             const filtro = {
-                SELECT: 'Nombre_empresa, direccion1, direccion2, direccion3, Telefono1',
+                SELECT: 'Nombre_empresa, direccion1, direccion2, direccion3, Telefono1, Registro_Tributario_empresa',
                 WHRER_IN: idEmpresa
             };
 
@@ -41,6 +41,7 @@
             localStorage.setItem('direccionEmpresa2', data[0].direccion2);
             localStorage.setItem('direccionEmpresa3', data[0].direccion3);
             localStorage.setItem('TelefonoEmpresa1', data[0].Telefono1);
+            localStorage.setItem('Registro_Tributario_empresa', data[0].Registro_Tributario_empresa);
 
             window.location.href = `../Menu`;
         },

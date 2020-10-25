@@ -103,3 +103,9 @@ CREATE TABLE PermisosUsuario(
 	IdUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario),
 	IdModulo VARCHAR(4) FOREIGN KEY REFERENCES Modulo(IdModulo)
 )
+
+CREATE TABLE Concurrencia(
+	id BIGINT PRIMARY KEY IDENTITY,
+	idEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(idEmpresa),
+	IdUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario)
+)

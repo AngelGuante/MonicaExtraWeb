@@ -36,7 +36,7 @@
     @*----CLIENTE Informe 608----*@
     @*---------------------------*@
     <hr />
-    <button v-if="FILTROS.tipoConsulta === 'Informe_608'" type="button" class="btn btn-outline-info" disabled>Exportar a DGII (TXT)</button>
+    <button v-if="FILTROS.tipoConsulta === 'Informe_608'" type="button" v-on:click="ExportarAExcel()" class="btn btn-outline-info">Exportar a DGII (TXT)</button>
     <hr />
 
     <table id="tablaContabilidadYBanco"
@@ -52,7 +52,7 @@
             </tr>
             <tr>
                 <th style="border:none;"></th>
-                <th style="text-align:center;">< No Implementado por el Momento ></th>
+                <th style="text-align:center;">{{rncOCedula}}</th>
                 <th style="text-align:center;">{{FILTROS.periodoAnioSeleccionadoBuscado}}{{FILTROS.periodoMesSeleccionadoBuscado}}</th>
                 <th style="text-align:center;">{{DATA.length}}</th>
                 <th style="text-align:center;">{{FILTROS.erroresNCF}}</th>
@@ -86,61 +86,226 @@
                 <td style="text-align:center;" colspan="2">{{ element.causa_anulacion | FilterUppercase }}</td>
                 <th style="text-align:center;" scope="col"></th>
                 <td style="text-align:center;">{{ element.ncf | FilterValidacionesNCF }}</td>
-</tbody>
+        </tbody>
     </table>
 
-    <nav aria-label="Page navigation example"
-         v-if="FILTROS.tipoConsulta !== 'Informe_608'">
-        <ul class="pagination justify-content-center">
-            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
-                <a class="page-link" v-on:click="Pagination(0)"><<</a>
-            </li>
-            <li v-bind:class="{'page-item': true, disabled: FILTROS.PaginatorIndex === 0 ? true : false}" title="Anterior">
-                <a class="page-link" v-on:click="Pagination(-1)"><</a>
-            </li>
-            <li class="page-item active">
-                <a class="page-link">{{ FILTROS.PaginatorIndex + 1 }}</a>
-            </li>
-            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Siguiente">
-                <a class="page-link" v-on:click="Pagination(+1)">></a>
-            </li>
-            <li v-bind:class="{'page-item':true, disabled: FILTROS.PaginatorIndex === FILTROS.PaginatorLastPage ? true : false}" title="Ultima pagina">
-                <a class="page-link" v-on:click="Pagination('MAX')">>></a>
-            </li>
-        </ul>
-    </nav>
+    @*---------------------------*@
+    @*----CLIENTE Informe 607----*@
+    @*---------------------------*@
+    <hr />
+    <button v-if="FILTROS.tipoConsulta === 'Informe_607'" type="button" class="btn btn-outline-info" v-on:click="ExportarAExcel()">Exportar a DGII (TXT)</button>
+    <hr />
+
+    <table id="tablaContabilidadYBanco"
+           class="table table-striped"
+           v-if="FILTROS.tipoConsulta === 'Informe_607'">
+        <thead>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">RNC o Cédula</th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">Periodo</th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">Cantidad de Registros</th>
+                <th style="text-align:center;" class="tableHeader" colspan="5">Total de Errores</th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" colspan="6">{{rncOCedula}}</th>
+                <th style="text-align:center;" colspan="6">{{FILTROS.periodoAnioSeleccionadoBuscado}}{{FILTROS.periodoMesSeleccionadoBuscado}}</th>
+                <th style="text-align:center;" colspan="6">{{DATA.length}}</th>
+                <th style="text-align:center;" colspan="5">{{FILTROS.erroresNCF}}</th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader">1</th>
+                <th style="text-align:center;" class="tableHeader">2</th>
+                <th style="text-align:center;" class="tableHeader">3</th>
+                <th style="text-align:center;" class="tableHeader">4</th>
+                <th style="text-align:center;" class="tableHeader">5</th>
+                <th style="text-align:center;" class="tableHeader">6</th>
+                <th style="text-align:center;" class="tableHeader">7</th>
+                <th style="text-align:center;" class="tableHeader">8</th>
+                <th style="text-align:center;" class="tableHeader">9</th>
+                <th style="text-align:center;" class="tableHeader">10</th>
+                <th style="text-align:center;" class="tableHeader">11</th>
+                <th style="text-align:center;" class="tableHeader">12</th>
+                <th style="text-align:center;" class="tableHeader">13</th>
+                <th style="text-align:center;" class="tableHeader">14</th>
+                <th style="text-align:center;" class="tableHeader">15</th>
+                <th style="text-align:center;" class="tableHeader">16</th>
+                <th style="text-align:center;" class="tableHeader">17</th>
+                <th style="text-align:center;" class="tableHeader">18</th>
+                <th style="text-align:center;" class="tableHeader">19</th>
+                <th style="text-align:center;" class="tableHeader">20</th>
+                <th style="text-align:center;" class="tableHeader">21</th>
+                <th style="text-align:center;" class="tableHeader">22</th>
+                <th style="text-align:center;" class="tableHeader">23</th>
+                <th style="border:none;" colspan="6"></th>
+            </tr>
+            <tr class="tableHeader">
+                <th style="text-align:center;" scope="col">No</th>
+                <th style="text-align:center;" scope="col">RNC/Cédula o Pasaporte</th>
+                <th style="text-align:center;" scope="col">Tipo Identificación</th>
+                <th style="text-align:center;" scope="col">Número Comprobante Fiscal</th>
+                <th style="text-align:center;" scope="col">Número Comprobante Fiscal Modificado</th>
+                <th style="text-align:center;" scope="col">Tipo de Ingreso</th>
+                <th style="text-align:center;" scope="col">Fecha Comprobante</th>
+                <th style="text-align:center;" scope="col">Fecha de Retención</th>
+                <th style="text-align:center;" scope="col">Monto Facturado</th>
+                <th style="text-align:center;" scope="col">ITBIS Facturado</th>
+                <th style="text-align:center;" scope="col">ITBIS Retenido por Terceros</th>
+                <th style="text-align:center;" scope="col">ITBIS Percibido</th>
+                <th style="text-align:center;" scope="col">Retención Renta por Terceros</th>
+                <th style="text-align:center;" scope="col">ISR Percibido</th>
+                <th style="text-align:center;" scope="col">Impuesto Selectivo al Consumo</th>
+                <th style="text-align:center;" scope="col">Otros Impuestos/Tasas</th>
+                <th style="text-align:center;" scope="col">Monto Propina Legal</th>
+                <th style="text-align:center;" scope="col">Efectivo</th>
+                <th style="text-align:center;" scope="col">Cheque/Transferencia/Depósito</th>
+                <th style="text-align:center;" scope="col">Tarjeta Débito/Crédito</th>
+                <th style="text-align:center;" scope="col">Venta a Crédito</th>
+                <th style="text-align:center;" scope="col">Bonos o Certificados de Regalo</th>
+                <th style="text-align:center;" scope="col">Permuta</th>
+                <th style="text-align:center;" scope="col">Otras Formas de Ventas</th>
+                <th style="text-align:center; padding: 0 260px" colspan="6">Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(element, index) in DATA">
+                <td style="text-align:center;">{{ index + 1 }}</td>
+                <td style="text-align:center;">{{ element.registro_tributario }}</td>
+                <td style="text-align:center;">{{ element.LENTipoIdentificacion | FilterTipoIdentificacion }}</td>
+                <td style="text-align:center;">{{ element.ncf }}</td>
+                <td style="text-align:center;">{{ element.ncfModificado }}</td>
+                <td style="text-align:center;">{{ element.TipoIngreso }}</td>
+                <td style="text-align:center;">{{ element.fecha_emision | FilterRemoverGuiones }}</td>
+                <td style="text-align:center;">{{ element.FechaRetencion }}</td>
+                <td style="text-align:center;">{{ element.MontoFacturado }}</td>
+                <td style="text-align:center;">{{ element.ITBIS }}</td>
+                <td style="text-align:center;">{{ element.ITBISRetenido }}</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">{{ element.MontoPropina}}</td>
+                <td style="text-align:center;">{{ element.Efectivo}}</td>
+                <td style="text-align:center;">{{ element.Cheque}}</td>
+                <td style="text-align:center;">{{ element.TarjetaDebito}}</td>
+                <td style="text-align:center;">{{ element.VentaCredito}}</td>
+                <td style="text-align:center;">{{ element.Bonos}}</td>
+                <td style="text-align:center;">{{ element.Permuta}}</td>
+                <td style="text-align:center;">{{ element.OtrasFormas}}</td>
+                <td style="text-align:center;" colspan="6">{{ element.Estatus}}</td>
+        </tbody>
+    </table>
+
+    @*---------------------------*@
+    @*----CLIENTE Informe 606----*@
+    @*---------------------------*@
+    <hr />
+    <button v-if="FILTROS.tipoConsulta === 'Informe_606'" type="button" class="btn btn-outline-info" v-on:click="ExportarAExcel()">Exportar a DGII (TXT)</button>
+    <hr />
+
+    <table id="tablaContabilidadYBanco"
+           class="table table-striped"
+           v-if="FILTROS.tipoConsulta === 'Informe_606'">
+        <thead>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">RNC o Cédula</th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">Periodo</th>
+                <th style="text-align:center;" class="tableHeader" colspan="6">Cantidad de Registros</th>
+                <th style="text-align:center;" class="tableHeader" colspan="5">Total de Errores</th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" colspan="6">{{rncOCedula}}</th>
+                <th style="text-align:center;" colspan="6">{{FILTROS.periodoAnioSeleccionadoBuscado}}{{FILTROS.periodoMesSeleccionadoBuscado}}</th>
+                <th style="text-align:center;" colspan="6">{{DATA.length}}</th>
+                <th style="text-align:center;" colspan="5">{{FILTROS.erroresNCF}}</th>
+            </tr>
+            <tr>
+                <th style="border:none;"></th>
+                <th style="text-align:center;" class="tableHeader">1</th>
+                <th style="text-align:center;" class="tableHeader">2</th>
+                <th style="text-align:center;" class="tableHeader">3</th>
+                <th style="text-align:center;" class="tableHeader">4</th>
+                <th style="text-align:center;" class="tableHeader">5</th>
+                <th style="text-align:center;" class="tableHeader">6</th>
+                <th style="text-align:center;" class="tableHeader">7</th>
+                <th style="text-align:center;" class="tableHeader">8</th>
+                <th style="text-align:center;" class="tableHeader">9</th>
+                <th style="text-align:center;" class="tableHeader">10</th>
+                <th style="text-align:center;" class="tableHeader">11</th>
+                <th style="text-align:center;" class="tableHeader">12</th>
+                <th style="text-align:center;" class="tableHeader">13</th>
+                <th style="text-align:center;" class="tableHeader">14</th>
+                <th style="text-align:center;" class="tableHeader">15</th>
+                <th style="text-align:center;" class="tableHeader">16</th>
+                <th style="text-align:center;" class="tableHeader">17</th>
+                <th style="text-align:center;" class="tableHeader">18</th>
+                <th style="text-align:center;" class="tableHeader">19</th>
+                <th style="text-align:center;" class="tableHeader">20</th>
+                <th style="text-align:center;" class="tableHeader">21</th>
+                <th style="text-align:center;" class="tableHeader">22</th>
+                <th style="text-align:center;" class="tableHeader">23</th>
+                <th style="border:none;" colspan="6"></th>
+            </tr>
+            <tr class="tableHeader">
+                <th style="text-align:center;" scope="col">No</th>
+                <th style="text-align:center;" scope="col">RNC o Cédula</th>
+                <th style="text-align:center;" scope="col">Tipo Id</th>
+                <th style="text-align:center;" scope="col">Tipo Bienes y Servicios Comprados</th>
+                <th style="text-align:center;" scope="col">NCF</th>
+                <th style="text-align:center;" scope="col">NCF ó Documento Modificado</th>
+                <th style="text-align:center;" scope="col">Fecha Comprobante</th>
+                <th style="text-align:center;" scope="col">Fecha Pago</th>
+                <th style="text-align:center;" scope="col">Monto Facturado en Servicios</th>
+                <th style="text-align:center;" scope="col">Monto Facturado en Bienes</th>
+                <th style="text-align:center;" scope="col">Total Monto Facturado</th>
+                <th style="text-align:center;" scope="col">ITBIS Facturado</th>
+                <th style="text-align:center;" scope="col">ITBIS Retenido</th>
+                <th style="text-align:center;" scope="col">ITBIS sujeto a Proporcionalidad (Art. 349)</th>
+                <th style="text-align:center;" scope="col">ITBIS llevado al Costo</th>
+                <th style="text-align:center;" scope="col">ITBIS por Adelantar</th>
+                <th style="text-align:center;" scope="col">ITBIS percibido en compras</th>
+                <th style="text-align:center;" scope="col">ITBIS percibido en compras</th>
+                <th style="text-align:center;" scope="col">Monto Retención Renta</th>
+                <th style="text-align:center;" scope="col">ISR Percibido en compras</th>
+                <th style="text-align:center;" scope="col">Impuesto Selectivo al Consumo</th>
+                <th style="text-align:center;" scope="col">Otros Impuesto/Tasas</th>
+                <th style="text-align:center;" scope="col">Monto Propina Legal</th>
+                <th style="text-align:center;" scope="col">Forma de Pago</th>
+                <th style="text-align:center; padding: 0 260px" colspan="6">Estatus</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr v-for="(element, index) in DATA">
+                <td style="text-align:center;">{{ index + 1 }}</td>
+                <td style="text-align:center;">{{ element.registro_tributario }}</td>
+                <td style="text-align:center;">{{ element.LENTipoIdentificacion | FilterTipoIdentificacion }}</td>
+                <td style="text-align:center;">{{ element.ncf }}</td>
+                <td style="text-align:center;">{{ element.ncfModificado }}</td>
+                <td style="text-align:center;">{{ element.TipoIngreso }}</td>
+                <td style="text-align:center;">{{ element.fecha_emision | FilterRemoverGuiones }}</td>
+                <td style="text-align:center;">{{ element.FechaRetencion }}</td>
+                <td style="text-align:center;">{{ element.MontoFacturado }}</td>
+                <td style="text-align:center;">{{ element.ITBIS }}</td>
+                <td style="text-align:center;">{{ element.ITBISRetenido }}</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">0</td>
+                <td style="text-align:center;">{{ element.MontoPropina}}</td>
+                <td style="text-align:center;">{{ element.Efectivo}}</td>
+                <td style="text-align:center;">{{ element.Cheque}}</td>
+                <td style="text-align:center;">{{ element.TarjetaDebito}}</td>
+                <td style="text-align:center;">{{ element.VentaCredito}}</td>
+                <td style="text-align:center;">{{ element.Bonos}}</td>
+                <td style="text-align:center;">{{ element.Permuta}}</td>
+                <td style="text-align:center;">{{ element.OtrasFormas}}</td>
+                <td style="text-align:center;" colspan="6">{{ element.Estatus}}</td>
+        </tbody>
+    </table>
 </div>
-
-@*  GRAFICOS*@
-@*<div id="CPdivGraficosDatosAgrupados"
-         class="col-12"
-         hidden>
-        <div class="row">
-            <div class="col-12 col-lg-8">
-                <canvas id="CPreportesGraficos"></canvas>
-            </div>
-
-            <div class="col-12 col-lg-4">
-                <div class="row">
-                    <div class="col-12 mb-2">
-                        <div class="card card-body border-info text-info text-center p-0">
-                            <div class="card-header">
-                                <label class="font-weight-bold">Parámetros de Análisis Gráfico</label>
-                            </div>
-                            <label class="font-weight-bold">Desde {{ FILTROS.fechaMinReporteBuscado }}</label>
-                            <label class="font-weight-bold">Categoria Clientes {{ FILTROS.categoriaClientesBuscada }}</label>
-                        </div>
-                    </div>
-
-                    <div class="col-12">
-                        <div class="card card-body border-info text-info text-center p-0">
-                            <div class="card-header">
-                                <label class="font-weight-bold">Total</label>
-                            </div>
-                            <label class="font-weight-bold">{{ FILTROS.totalReporteBuscado }}</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>*@

@@ -38,8 +38,7 @@ namespace MonicaExtraWeb.Controllers
 
                 return null;
             }
-            else
-                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
+            return null;
         }
 
         public ActionResult Movimiento(string parametros)
@@ -50,8 +49,9 @@ namespace MonicaExtraWeb.Controllers
                 var movimiento = Conn.Query<MovimientosCajas>(MovimientoCaja(), new { id = obj.NumeroTransacion }).FirstOrDefault();
                 return View(movimiento);
             }
-            else
-                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
+
+            Response.StatusCode = 401;
+            return null;
         }
 
         public ActionResult Cierre(string parametros)
@@ -62,8 +62,9 @@ namespace MonicaExtraWeb.Controllers
                 var cierreCaja = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(obj.NumeroCierre));
                 return View(cierreCaja);
             }
-            else
-                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
+
+            Response.StatusCode = 401;
+            return null;
         }
 
         public async Task<ActionResult> ReporteEstadoCuentaCliente(string parametros)
@@ -103,8 +104,9 @@ namespace MonicaExtraWeb.Controllers
 
                 return View(model);
             }
-            else
-                return RedirectToAction("Index", "Acceso", new { tokenStatus = "invalid" });
+
+            Response.StatusCode = 401;
+            return null;
         }
     }
 }

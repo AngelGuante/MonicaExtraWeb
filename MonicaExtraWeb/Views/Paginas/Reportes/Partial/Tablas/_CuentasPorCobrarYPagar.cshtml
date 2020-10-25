@@ -4,14 +4,14 @@
             <tr class="tableHeader">
                 <th v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" scope="col"></th>
 
-                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Número</th>
-                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Tipo</th>
+                <th style="text-align:right;" scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirNumero) && toggleTableColumns_byMostrarDetallesProductosCorte">Número</th>
+                <th style="text-align:left;" scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirTipo) && toggleTableColumns_byMostrarDetallesProductosCorte">Tipo</th>
                 <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Emisión</th>
                 <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Vencimiento</th>
                 <th scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.campoNCFBuscado) && toggleTableColumns_byMostrarDetallesProductosCorte">NCF</th>
                 <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Descripción</th>
-                <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Cod. Cliente</th>
-                <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Nombre</th>
+                <th style="text-align:right;" scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirCodCliente) && toggleTableColumns_byMostrarDetallesProductosCorte">Cod. Cliente</th>
+                <th style="text-align:left;" scope="col" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirNombre) && toggleTableColumns_byMostrarDetallesProductosCorte">Nombre</th>
                 <th style="text-align:right;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ tituloDiasMostrados }}</th>
                 <th style="text-align:left;" scope="col" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">Nombre Vendedor</th>
                 <th style="text-align:right;" scope="col">Monto</th>
@@ -23,14 +23,14 @@
             <tr v-for="element in DATA" v-bind:style="element.balance === 0 ? 'color: #f76876' : element.nro_dcmto ? 'color: #17A2B8' : ''">
                 <td v-if="!toggleTableColumns_byMostrarDetallesProductosCorte" style="text-align:left;">{{ element.categorizacionSinDetalles | FilterUppercase }}</td>
 
-                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto | FilterRemoveLeftZeros }}</td>
-                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo }}</td>
+                <td style="text-align:right;" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirNumero) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nro_dcmto | FilterRemoveLeftZeros }}</td>
+                <td style="text-align:left;" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirTipo) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.tipo }}</td>
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_emision | FilterDateFormat }}</td>
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.fecha_vcmto | FilterDateFormat }}</td>
                 <td v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.campoNCFBuscado) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.ncf }}</td>
                 <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.descripcion_dcmto | FilterUppercase }}</td>
-                <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.codigo_clte }}</td>
-                <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nombre | FilterUppercase }}</td>
+                <td style="text-align:right;" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirCodCliente) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.codigo_clte }}</td>
+                <td style="text-align:left;" v-if="(FILTROS.FormatoConsultas === 'personalizado' && FILTROS.incluirNombre) && toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.nombre | FilterUppercase }}</td>
                 <td style="text-align:right;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.diasTrancurridos }}</td>
                 <td style="text-align:left;" v-if="toggleTableColumns_byMostrarDetallesProductosCorte">{{ element.Nombre_vendedor | FilterUppercase }}</td>
                 <td style="text-align:right;">{{ element.monto | FilterStringToMoneyFormat }}</td>

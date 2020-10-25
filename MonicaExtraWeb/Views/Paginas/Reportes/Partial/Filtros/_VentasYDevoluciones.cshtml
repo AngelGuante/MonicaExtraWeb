@@ -115,7 +115,7 @@
         <div class="row">
             <div class="col-12 col-lg-4" data-toggle="tooltip" data-placement="bottom">
                 <label class="font-weight-bold">Tipo Consulta</label>
-                <select class="custom-select" v-model="FILTROS.tipoConsulta" v-on:change="TipoConsultaSelectChanged()">
+                <select class="custom-select" v-model="FILTROS.tipoConsulta">
                     <option value="RFA01">Por Numero</option>
                     <option value="RFA02">Por Monto Facturado</option>
                     <option value="RFA03">Por Termino de Pago</option>
@@ -134,19 +134,23 @@
                     <div class="col-12 col-lg-4"
                          v-if="FILTROS.tipoConsulta === 'RFA0'">
                         <label class="font-weight-bold">Opción</label>
-                        <select class="custom-select col" v-model="FILTROS.nombresBodegaSeleccionada">
+                        <select class="custom-select col"
+                                v-model="FILTROS.nombresBodegaSeleccionada"
+                                v-on:focus="LlenarSelect('nombresBodega')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.nombresBodega" v-bind:value="item.bodega_id">{{item.Nombre_bodega}}</option>
                         </select>
                     </div>
 
                     @*METODO DE AGRUPACION*@
-                    <div id="agrupacionDiv" class="col-12 col-lg-5"
+                    <div id="agrupacionDiv" class="col-12"
                          v-if="FILTROS.tipoConsulta === 'RFA08'">
                         @* FILTRO AGRUPACION POR CATEGORIA*@
                         <div v-if="FILTROS.tipoCorte === 'porCategoria'">
                             <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select col" v-model="FILTROS.categoriasProductosSeleccionada">
+                            <select class="custom-select col"
+                                    v-model="FILTROS.categoriasProductosSeleccionada"
+                                    v-on:focus="LlenarSelect('categoriasProductos')">
                                 <option selected value="">--SELECCIONE UNA OPCION--</option>
                                 <option v-for="item in FILTROS.categoriasProductos" v-bind:value="item.categoria_id">{{ item.Descripcion_categ }}</option>
                             </select>
@@ -165,7 +169,9 @@
                         @* FILTRO AGRUPACION POR TERMINO PAGO*@
                         <div v-if="FILTROS.tipoCorte === 'porTermino_de_Pago'">
                             <label class="font-weight-bold">Opción</label>
-                            <select class="custom-select" v-model="FILTROS.terminoPagoAgrupacionSeleccionada">
+                            <select class="custom-select"
+                                    v-model="FILTROS.terminoPagoAgrupacionSeleccionada"
+                                    v-on:focus="LlenarSelect('terminoDePago')">
                                 <option selected value="">--SELECCIONE UNA OPCION--</option>
                                 <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
                             </select>
@@ -229,7 +235,7 @@
                                                  || FILTROS.tipoCorte === 'porVendedor'
                                                  || FILTROS.tipoCorte === 'porComprobante'">
                             <label class="font-weight-bold">
-                                {{ FILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Espesifico
+                                {{ FILTROS.tipoCorte.replace('por', '').replace('_', ' ') }} Específico
                             </label>
                             <input type="text" class="form-control" v-model="FILTROS.valor" />
                         </div>
@@ -249,7 +255,9 @@
                     <div class="col-12 col-lg-5"
                          v-if="FILTROS.tipoConsulta === 'RFA03'">
                         <label class="font-weight-bold">Opción</label>
-                        <select class="custom-select" v-model="FILTROS.terminoDePagoSeleccionado">
+                        <select class="custom-select"
+                                v-model="FILTROS.terminoDePagoSeleccionado"
+                                v-on:focus="LlenarSelect('terminoDePago')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino}}</option>
                         </select>

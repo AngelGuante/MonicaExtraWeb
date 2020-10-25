@@ -349,7 +349,7 @@
                     reporte_clientesYProveedores.DATA = [];
                     //divGrafico = document.getElementById('CPdivGraficosDatosAgrupados');
                     break;
-                case 'inventarioYLiquidacion':
+                case 'inventarioYLiquidacionFiltro':
                     reporte_inventarioYLiquidacion.DATA = [];
                     divGrafico = document.getElementById('ILdivGraficosDatosAgrupados');
                     break;
@@ -359,6 +359,7 @@
                     break;
                 case 'contabilidadYBancoFiltro':
                     reporte_clientesYProveedores.DATA = [];
+                    divGrafico = document.getElementById('divTablaContabilidadYBanco');
                     break;
                 case 'CotizacionesYConducesFiltro':
                     reporte_cotizacionesYConduces.TablaVisible = '';

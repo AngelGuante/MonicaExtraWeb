@@ -20,8 +20,8 @@
     <UseIISExpress>true</UseIISExpress>
     <Use64BitIISExpress />
     <IISExpressSSLPort>44392</IISExpressSSLPort>
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
     <IISExpressUseClassicPipelineMode />
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
@@ -174,6 +174,7 @@
     <Compile Include="Controllers\AdministracionControl\EmpresasController.cs" />
     <Compile Include="Controllers\AdministracionRecursos\AdministracionController.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
+    <Compile Include="Controllers\API\ConcurrenciasController.cs" />
     <Compile Include="Controllers\API\EmpresasController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
@@ -219,6 +220,7 @@
     <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\Querys\Control\Concurrencias.cs" />
     <Compile Include="Utils\Querys\Control\Empresas.cs" />
     <Compile Include="Utils\Querys\Control\Modulos.cs" />
     <Compile Include="Utils\Querys\Control\PermisosUsuarios.cs" />

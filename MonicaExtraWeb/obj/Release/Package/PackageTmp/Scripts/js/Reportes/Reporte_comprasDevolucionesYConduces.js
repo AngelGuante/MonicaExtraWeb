@@ -93,6 +93,20 @@
             this.FILTROS.estatus = '';
             this.FILTROS.vendedorEspesifico = '';
         },
+        'FILTROS.tipoConsulta'() {
+            this.FILTROS.desde = '';
+            this.FILTROS.hasta = '';
+            this.FILTROS.valor = '';
+            this.FILTROS.analisisGrafico = false;
+            this.FILTROS.mostrarDetallesProductosCorte = false;
+            this.FILTROS.vendedorEspesifico = '';
+
+            if (this.FILTROS.tipoConsulta == "RFA08") {
+                this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
+                this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
+                this.FILTROS.tipoCorte = 'porCategoria';
+            }
+        },
     },
 
     methods: {
@@ -291,7 +305,7 @@
                             //  AGREGAR LOS SUB ELEMENTOS DE MANERA INTELIGENTE A LOS ELEMENTOS QUE COINCIDAN.
                             for (let i = 0; i < this.GroupDATA.length; i++) {
                                 const valorAgrupadoPor = this.PonerDescripcionDatosAgrupados(this.FILTROS.tipoCorte, index);
-                                
+
                                 if (this.GroupDATA[i][0][campo] === result[index][campo]) {
                                     this.GroupDATA[i].push({
                                         'Nombre_vendedor': `${valorAgrupadoPor} => `,
@@ -422,32 +436,6 @@
             this.FILTROS.valor = value;
         },
 
-        async TipoConsultaSelectChanged() {
-            //  LIMPIAR TODOS LOS CAMPOS.
-            this.FILTROS.desde = '';
-            this.FILTROS.hasta = '';
-            this.FILTROS.valor = '';
-            this.FILTROS.analisisGrafico = false;
-            this.FILTROS.mostrarDetallesProductosCorte = false;
-            this.FILTROS.vendedorEspesifico = '';
-
-            //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
-            switch (this.FILTROS.tipoConsulta) {
-                case 'RFA03':
-                    monicaReportes.BuscarData('terminoDePago');
-                    break;
-                case 'RFA0':
-                    monicaReportes.BuscarData('nombresBodega');
-                    break;
-                case 'RFA08':
-                    this.FILTROS.maxFecha_emision = monicaReportes.fechaHoy;
-                    this.FILTROS.minFecha_emision = monicaReportes.fechaHoy;
-                    this.FILTROS.tipoCorte = 'porCategoria';
-                    await monicaReportes.BuscarData('categoriasProductos');
-                    break;
-            }
-        },
-
         LlenarSelect(value) {
             monicaReportes.BuscarData(value);
         },
@@ -475,7 +463,6 @@
                     this.FILTROS.maxFecha_emisionAgrupacionSeleccionada = new Date().toISOString().slice(0, 10);
                     break;
             }
-
         },
     },
 

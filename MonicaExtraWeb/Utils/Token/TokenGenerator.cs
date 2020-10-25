@@ -7,7 +7,7 @@ namespace MonicaExtraWeb.Utils.Token
 {
     internal static class TokenGenerator
     {
-        public static string GenerateTokenJwt(string username)
+        public static string GenerateTokenJwt(string userId, string userEmpresa)
         {
             // appsetting for Token JWT
             var secretKey = ConfigurationManager.AppSettings["JWT_SECRET_KEY"];
@@ -19,7 +19,8 @@ namespace MonicaExtraWeb.Utils.Token
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // create a claimsIdentity
-            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, username) });
+            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userId), new Claim("empresa", userEmpresa) });
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim("userId", userId), new Claim("empresaId", userEmpresa) });
 
             // create token to the user
             var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();

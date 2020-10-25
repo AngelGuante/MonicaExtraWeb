@@ -89,7 +89,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             var query = new StringBuilder();
             var querySet = new StringBuilder();
 
-            query.Append($"UPDATE dbo.EmpresaRegistrada SET ");
+            query.Append($"UPDATE Control.dbo.EmpresaRegistrada SET ");
 
             if (!string.IsNullOrWhiteSpace(empresa.NombreEmpresa))
                 querySet.Append($"NombreEmpresa = '{empresa.NombreEmpresa}' ");
@@ -123,12 +123,12 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     querySet.Append(",");
                 querySet.Append($"Vencimiento = '{empresa.Vencimiento}' ");
             }
-            if (!string.IsNullOrWhiteSpace(empresa.idEmpresasM))
-            {
-                if (querySet.Length > 0)
-                    querySet.Append(",");
-                querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
-            }
+            //if (!string.IsNullOrWhiteSpace(empresa.idEmpresasM))
+            //{
+            if (querySet.Length > 0)
+                querySet.Append(",");
+            querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
+            //}
 
             query.Append(querySet.ToString());
             query.Append($"WHERE IdEmpresa = {empresa.IdEmpresa} ");

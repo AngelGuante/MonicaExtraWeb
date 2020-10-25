@@ -6,8 +6,10 @@
     </div>
 </div>
 
-<div id="cuentaDeshabilitada" class="alert alert-danger" role="alert" hidden>
-    SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA.
+<div id="ServerMessageDiv" style="position:absolute; left:0; width:100%" hidden>
+    <div class="alert alert-danger mt-2" role="alert" style="display:flex; justify-content:center;">
+        <h5 id="serverLoginMessage" style="font-weight:bolder"></h5>
+    </div>
 </div>
 
 
@@ -34,7 +36,6 @@
         </div>
     </div>
 
-
     @* FORM PARA LOGUEARSE *@
     <div id="log" style="height:90vh; display:flex; justify-content:center; align-items:center">
         <div class="col-lg-3 card border-secondary Sombra" style="background-color:white; padding:0">
@@ -52,17 +53,18 @@
                     <input type="text" class="form-control" v-model="DivLog.empresaNumeroUnico" placeholder="Número empresa">
                     <label for="inputPass">Nombre de Usuario</label>
                     <input type="text" class="form-control" v-model="DivLog.user" placeholder="Nombre">
+
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="chkRememberPass" v-model="DivLog.remember" checked>
+                        <label class="form-check-label" for="chkRememberPass">Recordar usuario</label>
+                    </div>
+
                     <label for="inputPass">Contraseña</label>
                     <input type="password" class="form-control" id="inputPass" v-model="DivLog.pass" v-on:keyup.enter="Log" placeholder="Contraseña">
                     <small id="badPass" class="form-text" style="color:red;" hidden>Datos Incorrectos.</small>
                 </div>
 
-                <div class="form-check mb-3">
-                    <input type="checkbox" class="form-check-input" id="chkRememberPass" v-model="DivLog.remember" checked>
-                    <label class="form-check-label" for="chkRememberPass">Recordar</label>
-                </div>
-
-                <button v-on:click="Log" class="btn btn-info" style="width:100%;">Submit</button>
+                <button v-on:click="Log" class="btn btn-info" style="width:100%;">Acceder</button>
             </div>
         </div>
     </div>

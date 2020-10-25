@@ -84,6 +84,31 @@ const getIntervalDate = param => {
     }
 }
 
+//  EXPORTAR UN TXT.
+const saveDownloadedData = (fileName, data) => {
+    if (~navigator.userAgent.indexOf('MSIE') || ~navigator.appVersion.indexOf('Trident/')) { /* IE9-11 */
+        const blob = new Blob([data], { type: 'text/csv;charset=utf-8;' });
+        navigator.msSaveBlob(blob, fileName);
+    } else {
+        const link = document.createElement('a')
+        link.setAttribute('target', '_blank');
+        if (Blob !== undefined) {
+            const blob = new Blob([data], { type: 'text/plain' });
+            link.setAttribute('href', URL.createObjectURL(blob));
+        } else {
+            link.setAttribute('href', 'data:text/plain,' + encodeURIComponent(data));
+        }
+
+        ~window.navigator.userAgent.indexOf('Edge')
+            && (fileName = fileName.replace(/[&\/\\#,+$~%.'':*?<>{}]/g, '_')); /* Edge */
+
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+}
+
 //  CREAR DATOS INICIALES DE LA COOCKIE PARA LA PAGINA.
 const CoockiesIniciales = () => {
     let rememberPasswordCookie = GetCookieElement('rememberPass=');
@@ -120,6 +145,14 @@ const RemoveCookieElement = element => {
 
 //  CERRAR SECCION DE UN USUARIO.
 const CloseUserSession = () => {
+    fetch('../API/CONCURRENCIAS/DELETE', {
+        method: 'DELETE',
+        body: JSON.stringify({ 'IdEmpresa': window.localStorage.getItem('NumeroUnicoEmpresa'), 'IdUsuario': window.localStorage.getItem('Number') }),
+        headers: {
+            'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+            'Content-Type': 'application/json'
+        }
+    });
     RemoveCookieElement('Authorization');
     //window.localStorage.removeItem('NumeroUnicoEmpresa');
     window.localStorage.removeItem('NombreUsuario');

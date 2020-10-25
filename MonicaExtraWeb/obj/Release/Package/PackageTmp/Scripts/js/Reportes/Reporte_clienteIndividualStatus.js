@@ -22,6 +22,10 @@
             descripcionSimplificada: true,
             diasVencidos: false,
             soloNCFFormatoElectronico: false,
+            incluirNumero: false,
+            incluirTipo: false,
+            incluirCodCliente: false,
+            incluirNombre: false,
 
             fechaMinReporteBuscado: '',
             fechaMaxReporteBuscado: '',
@@ -55,7 +59,7 @@
             columnaNCF: true,
             descripcionSimplificada: false,
             soloDocsVencidos: false,
-            diasVencidos: false,
+            diasVencidos: false
         },
 
         modalData: {
@@ -132,12 +136,31 @@
         },
         'FILTROS.descripcionSimplificada'() {
             SetCoockie(`formatoDataCPCCPP_descripcionSimplificada=${this.FILTROS.descripcionSimplificada};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.soloDocsVencidos'() {
             SetCoockie(`formatoDataCPCCPP_soloDocsVencidos=${this.FILTROS.soloDocsVencidos};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.diasVencidos'() {
             SetCoockie(`formatoDataCPCCPP_diasVencidos=${this.FILTROS.diasVencidos};`);
+            monicaReportes.LimpiarTablas();
+        },
+        'FILTROS.incluirNumero'() {
+            SetCoockie(`formatoDataCPCCPP_incluirNumero=${this.FILTROS.incluirNumero};`);
+            monicaReportes.LimpiarTablas();
+        },
+        'FILTROS.incluirTipo'() {
+            SetCoockie(`formatoDataCPCCPP_incluirTipo=${this.FILTROS.incluirTipo};`);
+            monicaReportes.LimpiarTablas();
+        },
+        'FILTROS.incluirCodCliente'() {
+            SetCoockie(`formatoDataCPCCPP_incluirCodCliente=${this.FILTROS.incluirCodCliente};`);
+            monicaReportes.LimpiarTablas();
+        },
+        'FILTROS.incluirNombre'() {
+            SetCoockie(`formatoDataCPCCPP_incluirNombre=${this.FILTROS.incluirNombre};`);
+            monicaReportes.LimpiarTablas();
         },
     },
 
@@ -181,6 +204,11 @@
             this.FILTROS.fechaMaxReporteBuscado = this.FILTROS.maxFecha_emision;
             this.FILTROS.campoNCFBuscado = this.FILTROS.columnaNCF;
 
+            this.FILTROS.incluirNumero = this.FILTROS.incluirNumero;
+            this.FILTROS.incluirTipo = this.FILTROS.incluirTipo;
+            this.FILTROS.incluirCodCliente = this.FILTROS.incluirCodCliente;
+            this.FILTROS.incluirNombre = this.FILTROS.incluirNombre;
+
             const codigo = (this.FILTROS.codCliente.split(' - '))[0];
 
             if (this.FILTROS.tipoConsulta === 'estadoCuentaIndividual' && !codigo) {
@@ -217,6 +245,14 @@
                         filtro.colComprobante = this.FILTROS.columnaNCF;
                     if (this.FILTROS.soloDocsVencidos)
                         filtro.SoloDocsVencidos = this.FILTROS.soloDocsVencidos
+                    if (this.FILTROS.incluirNumero)
+                        filtro.incluirNumero = this.FILTROS.incluirNumero
+                    if (this.FILTROS.incluirTipo)
+                        filtro.incluirTipo = this.FILTROS.incluirTipo
+                    if (this.FILTROS.incluirCodCliente)
+                        filtro.incluirCodCliente = this.FILTROS.incluirCodCliente
+                    if (this.FILTROS.incluirNombre)
+                        filtro.incluirNombre = this.FILTROS.incluirNombre
                 }
 
                 //  AGREGAR VALORES PARA DATOS AGRUPADOS
@@ -300,11 +336,19 @@
                     }
                 }
 
-                let camposArray = [9, 10, 11];
+                let camposArray = [5, 6, 7];
 
                 let columnasExtras = 0;
                 if (this.FILTROS.FormatoConsultas === 'personalizado') {
                     if (this.FILTROS.columnaNCF)
+                        columnasExtras++;
+                    if (this.FILTROS.incluirNumero)
+                        columnasExtras++;
+                    if (this.FILTROS.incluirTipo)
+                        columnasExtras++;
+                    if (this.FILTROS.incluirCodCliente)
+                        columnasExtras++;
+                    if (this.FILTROS.incluirNombre)
                         columnasExtras++;
                 }
 
@@ -582,6 +626,10 @@
             this.FILTROS.descripcionSimplificada = GetCookieElement('formatoDataCPCCPP_descripcionSimplificada=') === 'false' ? false : true;
             this.FILTROS.soloDocsVencidos = GetCookieElement('formatoDataCPCCPP_soloDocsVencidos=') === 'false' ? false : true;
             this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_diasVencidos=') === 'false' ? false : true;
+            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirNumero=') === 'false' ? false : true;
+            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirTipo=') === 'false' ? false : true;
+            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirCodCliente=') === 'false' ? false : true;
+            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirNombre=') === 'false' ? false : true;
         }
     },
 

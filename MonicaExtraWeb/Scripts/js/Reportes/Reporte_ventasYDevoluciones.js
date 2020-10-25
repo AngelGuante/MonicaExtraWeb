@@ -94,11 +94,24 @@
             this.FILTROS.hasta = this.FILTROS.hasta.replace(/^0/g, '');
         },
         'FILTROS.tipoConsulta'() {
+            this.FILTROS.Codigo_vendedor = '';
             this.TablaVisible = [];
+            this.FILTROS.valor = '';
+            this.FILTROS.desde = '';
+            this.FILTROS.hasta = '';
+            this.FILTROS.vendedorSeleccionado = '';
+            this.FILTROS.terminoDePagoSeleccionado = '';
+            this.FILTROS.nombresBodegaSeleccionada = '';
+            this.FILTROS.categoriaClientesSeleccionada = '';
+            this.FILTROS.categoriasProductosSeleccionada = '';
             this.FILTROS.agruparPorMes = false;
-            this.FILTROS.mostrarDetallesProductosCorte = false;
             this.FILTROS.analisisGrafico = false;
-            this.FILTROS.tipoCorte = 'porCategoria';
+            this.FILTROS.mostrarDetallesProductosCorte = false;
+
+            if (this.FILTROS.tipoConsulta === 'RFA08')
+                this.FILTROS.tipoCorte = 'porFecha_Emision';
+            else
+                this.FILTROS.tipoCorte = '';
         },
         'FILTROS.FormatoConsultas'() {
             SetCoockie(`formatoDataVentasYDevoluciones=${this.FILTROS.FormatoConsultas};`);
@@ -106,15 +119,19 @@
         },
         'FILTROS.columnaVendedor'() {
             SetCoockie(`formatoDataVentasYDevoluciones_vendedor=${this.FILTROS.columnaVendedor};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.columnaComprobante'() {
             SetCoockie(`formatoDataVentasYDevoluciones_comprobante=${this.FILTROS.columnaComprobante};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.columnaTermino'() {
             SetCoockie(`formatoDataVentasYDevoluciones_termino=${this.FILTROS.columnaTermino};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.columnaMoneda'() {
             SetCoockie(`formatoDataVentasYDevoluciones_moneda=${this.FILTROS.columnaMoneda};`);
+            monicaReportes.LimpiarTablas();
         },
         'FILTROS.desdeHastaRango'() {
             const rango = getIntervalDate(this.FILTROS.desdeHastaRango);
@@ -518,27 +535,6 @@
                 case 'porCategorias_de_Clientes':
                     return result[index].descripcion_categ;
             }
-        },
-
-        async TipoConsultaSelectChanged() {
-            //  LIMPIAR TODOS LOS CAMPOS.
-            this.FILTROS.Codigo_vendedor = '';
-            this.FILTROS.vendedorSeleccionado = '';
-            this.FILTROS.categoriaClientesSeleccionada = '';
-            this.FILTROS.desde = '';
-            this.FILTROS.hasta = '';
-            this.FILTROS.valor = '';
-            this.FILTROS.terminoDePagoSeleccionado = '';
-            this.FILTROS.nombresBodegaSeleccionada = '';
-            this.FILTROS.categoriasProductosSeleccionada = '';
-
-            //  BUSCAR INFORMACION SI ES NECESARIA O HACER CAMBIOS SEGUN EL TIPO DE CONSULTA.
-            if (this.FILTROS.tipoConsulta === 'RFA03')
-                monicaReportes.BuscarData('terminoDePago');
-            if (this.FILTROS.tipoConsulta === 'RFA0')
-                monicaReportes.BuscarData('nombresBodega');
-            if (this.FILTROS.tipoConsulta === 'RFA08')
-                monicaReportes.BuscarData('categoriasProductos');
         },
 
         async TipoCorteChanged() {

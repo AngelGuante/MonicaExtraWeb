@@ -22,6 +22,10 @@
         public string vendedorEspesifico { get; set; }
         public string tipoNCF { get; set; }
         public bool SoloDocsVencidos { get; set; } = false;
+        public string incluirNumero { get; set; }
+        public string incluirTipo { get; set; }
+        public string incluirCodCliente { get; set; }
+        public string incluirNombre { get; set; }
         public bool descripcionSimplificada { get; set; } = true;
         //public bool IncluirFirmas { get; set; } = false;
         //public bool IncluirMoras { get; set; } = false;
