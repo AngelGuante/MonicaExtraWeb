@@ -35,9 +35,10 @@ namespace MonicaExtraWeb.Controllers.API
                 login.Password == usuario.Clave)
             {
                 //  CONCURRENCIA
-                var usuarioConcurrencia = Convert.ToInt32(Conn.ExecuteScalar(Select_Count(login.IdEmpresa.ToString(), usuario.IdUsuario.Value.ToString())));
+                //var usuarioConcurrencia = Convert.ToInt32(Conn.ExecuteScalar(Select_Count(login.IdEmpresa.ToString(), usuario.IdUsuario.Value.ToString())));
 
-                if (usuarioConcurrencia == default)
+                //if (usuarioConcurrencia == default)
+                if (true)
                 {
                     // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
                     if (usuario.empresaEstatus == 0)

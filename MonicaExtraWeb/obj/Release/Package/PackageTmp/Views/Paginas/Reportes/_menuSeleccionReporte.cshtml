@@ -80,6 +80,9 @@
                         <li>
                             <a onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_CotizacionesYConduces')">Cerrar Documentos</a>
                         </li>
+                        <li>
+                            <a onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_Pedidos')">Creación</a>
+                        </li>
                     </ul>
                 </li>
 
@@ -207,6 +210,7 @@
 
             <div class="row">
                 @Html.Partial("~/Views/Paginas/Reportes/Partial/ManejoDeData/Cerrar/_CotizacionesYConduces.cshtml")
+                @Html.Partial("~/Views/Paginas/Reportes/Partial/ManejoDeData/CotizacionesYConduces/_Pedidos.cshtml")
             </div>
         </div>
     </div>

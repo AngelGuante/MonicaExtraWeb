@@ -459,6 +459,7 @@
     <Content Include="Views\Control\Index.cshtml" />
     <Content Include="Views\Empresas\Gestion.cshtml" />
     <Content Include="Views\SeleccionarEmpresa\Index.cshtml" />
+    <Content Include="Views\Paginas\Reportes\Partial\ManejoDeData\CotizacionesYConduces\_Pedidos.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -2147,8 +2147,8 @@ namespace MonicaExtraWeb.Utils
                     query.Append($",LEN(TS.registro_tributario) LENTipoIdentificacion ");
                     query.Append($",'1' TipoIngreso ");
                     query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
-                    query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncfModificado ");
-                    query.Append($",fecha_emision ");
+                    query.Append($",SUBSTRING(rtrim(TSD.ncf), 1, 19) ncfModificado ");
+                    query.Append($",TS.fecha_emision ");
                     query.Append($",TS.reteiva_monto  ");
                     query.Append($",TS.total MontoFacturado");
                     query.Append($",TS.impuesto_monto ");
@@ -2159,6 +2159,8 @@ namespace MonicaExtraWeb.Utils
                     #region FROM
                     query.Append($" FROM {filtro.conn}.dbo.devolucion_clte TS ");
                     query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON REPLACE(TS.termino_id, '\"', '') = TP.termino_id  ");
+                    query.Append($", {filtro.conn}.dbo.factura TSD  ");
+                    query.Append($"WHERE SUBSTRING(rtrim(TS.Campo3), 4, 12) = TSD.nro_factura ");
                     query.Append($" AND REPLACE(TS.anulada, '\"', '') = 0 ");
 
                     if (!string.IsNullOrEmpty(filtro.anio))
