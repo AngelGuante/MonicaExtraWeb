@@ -165,6 +165,7 @@ const CloseUserSession = () => {
     window.localStorage.removeItem('direccionEmpresa2');
     window.localStorage.removeItem('direccionEmpresa3');
     window.localStorage.removeItem('TelefonoEmpresa1');
+    window.localStorage.removeItem('Registro_Tributario_empresa');
     window.location.href = '/'
 }
 

@@ -95,6 +95,10 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.ContabilidadBanco:
                     query = ContabilidadBanco(filtro);
                     break;
+
+                case ClientMessageStatusEnum.Productos:
+                    query = Productos(filtro);
+                    break;
             }
 
             var obj = new WebSocketDTO

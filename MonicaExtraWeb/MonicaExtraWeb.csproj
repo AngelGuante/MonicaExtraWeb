@@ -305,6 +305,7 @@
     <Content Include="Scripts\js\Administracion\Usuarios.js" />
     <Content Include="Scripts\js\Chart.js" />
     <Content Include="Scripts\js\Control\Empresas.js" />
+    <Content Include="Scripts\js\ManejoDeData\ManejoDeData_procesoCrear.js" />
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Menu.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />

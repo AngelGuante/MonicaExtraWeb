@@ -2,6 +2,7 @@
     el: '#contabilidadYBanco',
 
     data: {
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
         rncOCedula: localStorage.getItem('Registro_Tributario_empresa').trim(),
 
         DATA: [],
@@ -24,6 +25,11 @@
             PaginatorIndex: 0,
             PaginatorLastPage: 0,
         },
+
+        ProcesoCrear: {
+            productosTabla1: [],
+            productosTabla2: [],
+        }
     },
 
     watch: {

@@ -621,7 +621,7 @@ namespace MonicaExtraWeb.Utils
 
             //if (!string.IsNullOrEmpty(filtro.minFecha_emision))
             //    query.Append($"AND TS.fecha_emision >= '{filtro.minFecha_emision}' ");
-                query.Append($" TS.fecha_emision >= '{filtro.minFecha_emision}' ");
+            query.Append($" TS.fecha_emision >= '{filtro.minFecha_emision}' ");
             if (!string.IsNullOrEmpty(filtro.maxFecha_emision))
                 query.Append($"AND TS.fecha_emision <= '{filtro.maxFecha_emision}' ");
             if (!string.IsNullOrEmpty(filtro.categoria_clte_id))
@@ -2252,6 +2252,9 @@ namespace MonicaExtraWeb.Utils
             {
                 query.Append("  TRIM(nombre_clte) nombre, ");
                 query.Append("  codigo_clte codigo ");
+
+                if (!string.IsNullOrEmpty(filtro.SELECT))
+                    query.Append(filtro.SELECT);
             }
 
             query.Append($"FROM {filtro.conn}.dbo.clientes ");
@@ -2465,7 +2468,6 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
-        #endregion
 
         public static string CerrarCotizacionQuery(Filtros filtro)
         {
@@ -2494,5 +2496,30 @@ namespace MonicaExtraWeb.Utils
 
             return query.ToString();
         }
+
+        public static string Productos(Filtros filtro)
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append("  codigo_producto, ");
+            query.Append("  descrip_producto ");
+
+            if (!string.IsNullOrEmpty(filtro.SELECT))
+                query.Append(filtro.SELECT);
+
+
+            query.Append($"FROM {filtro.conn}.dbo.productos ");
+
+            if (!string.IsNullOrEmpty(filtro.code))
+                query.Append($"WHERE codigo_producto = '{filtro.code}' ");
+            if (!string.IsNullOrEmpty(filtro.descripcion))
+                query.Append($"WHERE descrip_producto LIKE '%{filtro.descripcion}%' ");
+
+            query.Append("ORDER BY codigo_producto ");
+
+            return query.ToString();
+        }
+        #endregion
     }
 }

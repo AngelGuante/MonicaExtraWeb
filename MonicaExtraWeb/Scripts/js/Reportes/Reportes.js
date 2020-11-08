@@ -2,6 +2,7 @@
     el: '#moduloReportes',
 
     data: {
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],
@@ -41,8 +42,15 @@
                 console.log(err);
             });
         document.getElementById('cargando').setAttribute('hidden', true);
+        document.getElementById('divMaster').classList.remove('container');
 
-            document.getElementById('divMaster').classList.remove('container');
+        if (!this.usuarioPuedeProbarNuevasActualizaciones) {
+            setTimeout(() => {
+                document.getElementsByName('soloAlmonte').forEach(item => {
+                    item.setAttribute('hidden', true);
+                });
+            }, 10)
+        }
     },
 
     watch: {
@@ -50,6 +58,7 @@
             reporte_ventasYDevoluciones.FILTROS.vendedores = monicaReportes.vendedores;
             reporte_cotizacionesYConduces.FILTROS.vendedores = monicaReportes.vendedores;
             reporte_clientesYProveedores.FILTROS.vendedores = monicaReportes.vendedores;
+            manejoDeData_crearProceso.FILTROS.vendedores = monicaReportes.vendedores;
         },
         categoriasClientes: () => {
             reporte_ventasYDevoluciones.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
@@ -111,15 +120,6 @@
     },
 
     methods: {
-        //DivSeleccionarReporte(source) {
-        //    this.LimpiarTablas();
-
-        //    NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
-        //    document.getElementById('cargando').setAttribute('hidden', true);
-
-        //    this.sourceResportes = source;
-        //},
-
         //  OPCIONES DEL MENU
         async OpcionMenuCeleccionado(opcionSeleccionada) {
             this.LimpiarTablas();
@@ -308,6 +308,8 @@
                     if (this.giroNegociosPv.length === 0)
                         this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
+                case 'productosList':
+                    return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
                 case 'clientesList':
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
                 case 'proveedoresList':

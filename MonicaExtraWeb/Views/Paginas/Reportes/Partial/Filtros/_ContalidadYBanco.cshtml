@@ -52,7 +52,7 @@
                         <option disabled value="Resumen_de_Gastos">Resumen de Gastos</option>
                     </optgroup>
                     <optgroup label="Reportes Fiscales">
-                        <option value="Informe_606">Informe 606</option>
+                        <option v-bind:disabled="!usuarioPuedeProbarNuevasActualizaciones" value="Informe_606">Informe 606</option>
                         <option value="Informe_607">Informe 607</option>
                         <option value="Informe_608">Informe 608</option>
                         <option disabled value="Pre_Informe_IT1">Pre Informe IT1</option>

@@ -81,7 +81,7 @@
                             <a onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_CotizacionesYConduces')">Cerrar Documentos</a>
                         </li>
                         <li>
-                            <a onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_Pedidos')">Creación</a>
+                            <a name="soloAlmonte" onclick="monicaReportes.OpcionMenuCeleccionado('manejoDeData_Pedidos')">Creación</a>
                         </li>
                     </ul>
                 </li>
@@ -120,7 +120,9 @@
             @*----CLIENTE INDIVIDUAL STATUS----*@
             @*---------------------------------*@
             <div id="clienteIndividualStatus">
-                @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPagar.cshtml")
+                <div class="modal fade bd-example-modal-lg" id="buscarClienteModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+                    @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPagar.cshtml")
+                </div>
                 @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPorPagarFormatoTablas.cshtml")
                 <div>
                     @Html.Partial("~/Views/Paginas/Reportes/Partial/Filtros/_CuentasPorCobrarYPagar.cshtml")

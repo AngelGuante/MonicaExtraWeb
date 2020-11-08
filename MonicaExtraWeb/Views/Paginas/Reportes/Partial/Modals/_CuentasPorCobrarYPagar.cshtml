@@ -1,43 +1,41 @@
-﻿<div class="modal fade bd-example-modal-lg" id="buscarClienteModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="p-5">
-                <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$('#buscarClienteModal').modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
+﻿<div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        <div class="p-5">
+            <button type="button" class="btn btn-outline-danger" style="float:right;" onclick="$(`#${this.parentElement.parentElement.parentElement.parentElement.id}`).modal('hide');"><i class="material-icons" style="vertical-align:bottom">close</i></button>
 
-                <div>
-                    <h1 v-if="FILTROS.tipoReporte === 'porCobrar'">Buscar Cliente</h1>
-                    <h1 v-else>Buscar Proveedor</h1>
+            <div>
+                <h1>{{modalData.titulo}}</h1>
 
-                    <hr />
+                <hr />
 
-                    <div class="card border-info text-info">
-                        <div class="card-body p-4">
-                            <div class="row">
-                                @*  FILTRO*@
-                                <input class="form-control form-control-sm col-12 col-lg-11" type="text" v-model="modalData.nombreClienteABuscar" placeholder="Nombre del Cliente">
-                                <button class="btn btn-info col-12 col-lg-1" style="padding:0;" v-on:click="ModalBuscarClientes()"><i class="material-icons" style="vertical-align:bottom">search</i></button>
-                            </div>
+                <div class="card border-info text-info">
+                    <div class="card-body p-4">
+                        <div class="row">
+                            @*  FILTRO*@
+                            <input class="form-control form-control-sm col-12 col-lg-11" type="text" v-model="modalData.nombreClienteABuscar" placeholder="Nombre">
+                            <button class="btn btn-info col-12 col-lg-1" style="padding:0;" v-on:click="ModalBuscarClientes()"><i class="material-icons" style="vertical-align:bottom">search</i></button>
                         </div>
                     </div>
+                </div>
 
-                    <table class="table table-striped" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th scope="col">Código</th>
-                                <th scope="col">Nombre</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr v-for="item in modalData.clientes">
-                                <td>{{ item.codigo }}</td>
-                                <td>{{ item.nombre }}</td>
-                                <td style="text-align:right;"> <button class="btn btn-info" style="padding:0;" v-on:click="ModalClienteSleccionado(item.codigo + ' - ' + item.nombre)"><i class="material-icons" style="vertical-align:bottom">person</i> Seleccionar</button> </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <table class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th scope="col">Código</th>
+                            <th scope="col">Nombre</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="item in modalData.clientes">
+                            <td>{{ item.codigo }}</td>
+                            <td>{{ item.nombre }}</td>
+                            <td style="text-align:right;"> <button class="btn btn-info" style="padding:0;" v-on:click="ModalClienteSleccionado(item.codigo + ' - ' + item.nombre)"><i class="material-icons" style="vertical-align:bottom">person</i> Seleccionar</button> </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                    <nav aria-label="Page navigation">
+                @*<nav aria-label="Page navigation">
                         <ul class="pagination justify-content-center">
                             <li v-bind:class="{'page-item': true, disabled: modalData.PaginatorIndex === 0 ? true : false}" title="Primera pagina">
                                 <a class="page-link" v-on:click="Pagination(0, modalData, 'paginator')"><<</a>
@@ -55,8 +53,7 @@
                                 <a class="page-link" v-on:click="Pagination('MAX', modalData, 'paginator')">>></a>
                             </li>
                         </ul>
-                    </nav>
-                </div>
+                    </nav>*@
             </div>
         </div>
     </div>
