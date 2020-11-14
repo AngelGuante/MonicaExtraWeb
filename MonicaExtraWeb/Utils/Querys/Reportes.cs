@@ -2500,6 +2500,7 @@ namespace MonicaExtraWeb.Utils
         public static string Productos(Filtros filtro)
         {
             var query = new StringBuilder();
+            var queryWhere = new StringBuilder("WHERE ");
 
             query.Append("SELECT ");
             query.Append("  codigo_producto, ");
@@ -2508,15 +2509,40 @@ namespace MonicaExtraWeb.Utils
             if (!string.IsNullOrEmpty(filtro.SELECT))
                 query.Append(filtro.SELECT);
 
+            query.Append($"FROM {filtro.conn}.dbo.productos P ");
 
-            query.Append($"FROM {filtro.conn}.dbo.productos ");
+            if (!string.IsNullOrEmpty(filtro.JOIN))
+                if (filtro.JOIN.Contains("impuestos"))
+                    query.Append($"JOIN {filtro.conn}.dbo.impuestos I ON P.impuesto1_id = I.impuesto_id ");
 
             if (!string.IsNullOrEmpty(filtro.code))
-                query.Append($"WHERE codigo_producto = '{filtro.code}' ");
+                queryWhere.Append($"codigo_producto = '{filtro.code.Trim()}' ");
             if (!string.IsNullOrEmpty(filtro.descripcion))
-                query.Append($"WHERE descrip_producto LIKE '%{filtro.descripcion}%' ");
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"descrip_producto LIKE '%{filtro.descripcion}%' ");
+            }
+            if (!string.IsNullOrEmpty(filtro.estatus))
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"cant_total {filtro.estatus} ");
+            }
+            if (queryWhere.Length > 6)
+                query.Append(queryWhere.ToString());
 
             query.Append("ORDER BY codigo_producto ");
+
+            return query.ToString();
+        }
+
+        public static string Dolar(string dbName)
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT ");
+            query.Append($" MAX(dolar_venta) dolar FROM {dbName}dbo.cambio_dolar ");
 
             return query.ToString();
         }

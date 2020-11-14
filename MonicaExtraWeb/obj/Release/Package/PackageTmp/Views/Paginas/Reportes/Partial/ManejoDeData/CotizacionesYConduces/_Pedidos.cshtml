@@ -1,6 +1,6 @@
 ﻿<div id="manejoDeData_Pedidos" class="card border-info mb-3 Sombra card-body text-info ml-3" style="padding: 0px 6px 10px 6px;" hidden>
-    <div class="alert alert-danger" role="alert">
-        Ventana aún en proceso
+    <div class="modal fade bd-example-modal-lg" id="procesoCrearBuscarClienteModal" tabindex="-1" role="dialog" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        @Html.Partial("~/Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPagar.cshtml")
     </div>
 
     <h5 class="card-title" style="text-decoration:underline">Proceso de Crear</h5>
@@ -9,25 +9,24 @@
         <div class="row">
             <div class="col-12 col-lg-5">
                 <div class="col-12 form-group">
-
-                    <div class="row">
+                    <div class="row p-2 mb-2">
                         <div class="form-check col-2">
                             <input class="form-check-input" type="radio" id="ManejoDeData_crearPedido" value="pedido" checked @*v-model="tipoCierre"*@>
-                            <label class="form-check-label" for="ManejoDeData_crearPedido">
+                            <label class="form-check-label font-weight-bold" for="ManejoDeData_crearPedido">
                                 Pedido
                             </label>
                         </div>
 
                         <div class="form-check col-3">
                             <input class="form-check-input" type="radio" disabled>
-                            <label class="form-check-label">
+                            <label class="form-check-label font-weight-bold">
                                 Cotización
                             </label>
                         </div>
 
                         <div class="form-check col-3">
                             <input class="form-check-input" type="radio" disabled>
-                            <label class="form-check-label">
+                            <label class="form-check-label font-weight-bold">
                                 Conduce
                             </label>
                         </div>
@@ -39,64 +38,242 @@
 
                             <div class="col-auto col-10">
                                 <div class="input-group row mb-2">
-                                    <input type="text" class="form-control col-4" placeholder="Código" />
-                                    <input type="text" class="form-control col-8" placeholder="Nombre" />
+                                    <div class="input-group-prepend">
+                                        <button type="button" class="btn btn-info" style="padding:3px;" v-on:click="ModalBuscarClientes()"><i class="material-icons">person_search</i></button>
+                                    </div>
+                                    <input type="text" class="form-control col-4" placeholder="Código" v-model="ProcesoCrear.Pedidos.cliente.codigo" v-on:focus="ProcesoCrear.codClienteCorrecto = false" v-on:focusout="validarCodigo()" @@keyup.enter="validarCodigo()" />
+                                    <input type="text" class="form-control col-8" placeholder="Nombre" v-model="ProcesoCrear.Pedidos.cliente.nombre" disabled />
                                 </div>
                             </div>
                         </div>
 
-                        <input type="text" class="form-control col-11 mb-2" placeholder="Dirección" />
-                        <input type="text" class="form-control col-11 mb-2" placeholder="Telefono" />
-                        <input type="text" class="form-control col-11 mb-2" placeholder="Email" />
+                        <input type="text" class="form-control col-11 mb-2" v-model="ProcesoCrear.Pedidos.cliente.direcciones" placeholder="Dirección" disabled />
+                        <input type="text" class="form-control col-11 mb-2" v-model="ProcesoCrear.Pedidos.cliente.telefonos" placeholder="Telefono" disabled />
+                        <input type="text" class="form-control col-11 mb-2" v-model="ProcesoCrear.Pedidos.cliente.emails" placeholder="Email" disabled />
                     </div>
 
                     <div class="row" style="align-items:baseline;">
                         <p class="font-weight-bold col-12 col-lg-2">RNC</p>
-                        <input type="text" class="form-control col-12 col-lg-3" placeholder="RNC" />
+                        <input type="text" class="form-control col-12 col-lg-3" v-model="ProcesoCrear.Pedidos.cliente.rnc" placeholder="RNC" disabled />
 
                         <p class="font-weight-bold col-12 col-lg-2">Vendedor</p>
-                        <select class="form-control col-12 col-lg-4" @*v-model="Movimiento.Clasificancf"*@ disabled>
-                            <option selected value="codProducto">Código Vendedor</option>
+                        <select class="form-control col-12 col-lg-4"
+                                v-model="FILTROS.vendedorSeleccionado"
+                                v-on:focus="LlenarSelect('vendedores')">
+                            <option selected value="">--SELECCIONE UNA OPCION--</option>
+                            <option v-for="item in FILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{ item.Nombre_vendedor | FilterUppercase }}</option>
                         </select>
                     </div>
 
                     <div class="row" style="align-items:baseline;">
-                        <select class="form-control col-12 col-lg-3 mr-4" @*v-model="Movimiento.Clasificancf"*@>
-                            <option value="codProducto" disabled>Código Producto</option>
-                            <option selected value="descProducto">Descripción Producto</option>
+                        <select class="form-control col-12 col-lg-3 mr-4" v-model="FILTROS.buscarProductoPor">
+                            <option value="codProducto">Código Producto</option>
+                            <option value="descProducto">Descripción Producto</option>
                         </select>
 
                         <div class="col-auto col-8">
                             <div class="input-group row">
-                                <input type="text" class="form-control col-10" placeholder="valor" />
+                                <input type="text" class="form-control col-10" placeholder="valor" v-model="FILTROS.valor" @@keyup.enter="BuscarProducto()" />
                                 <input type="text" class="form-control col-2" placeholder="" disabled />
                             </div>
                         </div>
                     </div>
 
                     <div class="row mt-2" style="align-items:baseline;">
-                        <div class="Tables col-11">
-                            <table class="table table-striped">
+                        <div class="Tables">
+                            <table class="table table-striped" v-if="ProcesoCrear.Pedidos.productosTabla1.length">
                                 <thead>
-                                    <tr>
+                                    <tr class="tableHeader">
                                         <th scope="col">Código</th>
                                         <th scope="col">Descripción</th>
                                         <th scope="col">Cantidad</th>
                                         <th scope="col">Precio</th>
                                         <th scope="col"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in ProcesoCrear.Pedidos.productosTabla1">
+                                        <td>{{item.codigo_producto}}</td>
+                                        <td>{{item.descrip_producto}}</td>
+                                        <td>
+                                            <input v-bind:id="'item_' + item.codigo_producto" type="number" class="form-control col-7" placeholder="CANTIDAD" v-bind:value="item.cantidad" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant})">
+                                        </td>
+                                        <td>{{item.precio | FilterStringToMoneyFormat}}</td>
+                                        <td>
+                                            <a style="cursor:pointer;" v-on:click="removerProducto(item.codigo_producto)"><i class="material-icons" style="color:red">delete</i></a>
+                                        </td>
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="row pr-3 d-flex justify-content-between">
+                            <div class="col-8 p-3" style="background-color:#17A2B8; color:white;">
+                                <input type="text" class="form-control col-12 mb-2" placeholder="Comentario" />
+
+                                <div class="row mb-4">
+                                    <label class="col-9 form-check-label font-weight-bold">Sub Total</label>
+                                    <label class="col-3 form-check-label font-weight-bold" style="text-align-last: right">{{ProcesoCrear.subTotal}}</label>
+                                </div>
+
+                                <hr />
+
+                                <div class="row">
+                                    <label class="col-7 form-check-label font-weight-bold">Descuento</label>
+                                    <input type="text" class="form-control col-2" placeholder="%" disabled />
+                                    <label class="col-3 form-check-label font-weight-bold" style="text-align-last: right">{{ProcesoCrear.descuento}}</label>
+                                </div>
+
+                                <hr />
+
+                                <div class="row">
+                                    <label class="col-7 form-check-label font-weight-bold">ITBIS</label>
+                                    <input type="text" class="form-control col-2" placeholder="%" disabled />
+                                    <label class="col-3 form-check-label font-weight-bold" style="text-align-last: right">{{ProcesoCrear.itbis}}</label>
+                                </div>
+
+                                <hr />
+
+                                <div class="row">
+                                    <label class="col-9 form-check-label font-weight-bold">Total</label>
+                                    <label class="col-3 form-check-label font-weight-bold" style="text-align-last: right">{{ProcesoCrear.total}}</label>
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-outline-info col-4 font-weight-bold">PROCESAR</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-7">
+                <div class="col-12 form-group">
+                    <div class="row p-2 mb-2">
+                        <div class="col-6">
+                            <label class="font-weight-bold">Datos del Cliente</label>
+                        </div>
+
+                        <div class="col-6">
+                            <label class="font-weight-bold">Datos del Pedido</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Limite Credito" v-model="ProcesoCrear.Pedidos.cliente.maximo_Credito" disabled />
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Balance" v-model="ProcesoCrear.Pedidos.cliente.balance" disabled />
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Valor Balance" disabled />
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Disponible" disabled />
+                            <div class="row" style="align-items:baseline;">
+                                <p class="font-weight-bold col-lg-2">NCF</p>
+                                <select class="custom-select col-lg-9" @*v-model="FILTROS.tipoEmpresaSeleccionada"*@>
+                                    <option value="">--SELECCIONE UNA OPCION--</option>
+                                    <option value="1">CREDITO FISCAL</option>
+                                    <option value="2">DE CONSUMO</option>
+                                    <option value="3">GUBERNAMENTAL</option>
+                                    <option value="4">ESPECIAL</option>
+                                    <option value="5">EXPORTACIONES</option>
+                                </select>
+                            </div>
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Contacto" v-model="ProcesoCrear.Pedidos.cliente.contacto" disabled />
+                        </div>
+
+                        <div class="col-6">
+                            <input type="text" class="form-control col-11 mb-2" value="Pedido Nro.: ----" disabled />
+                            <div class="row" style="align-items:baseline;">
+                                <p class="font-weight-bold col-lg-4">FECHA EMISION</p>
+                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaInicio" disabled>
+                            </div>
+                            <div class="row" style="align-items:baseline;">
+                                <p class="font-weight-bold col-lg-4">FECHA VENCE</p>
+                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaVence" disabled>
+                            </div>
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Ref. Cliente" />
+                            <div class="row" style="align-items:baseline;">
+                                <p class="font-weight-bold col-lg-3">TERMINO</p>
+                                <select class="custom-select col col-lg-8"
+                                        v-model="FILTROS.terminoDePagoSeleccionado"
+                                        v-on:focus="LlenarSelect('terminoDePago')">
+                                    <option value="">--SELECCIONE UNA OPCION--</option>
+                                    <option v-for="item in FILTROS.terminoDePago" v-bind:value="item.termino_id">{{item.Descripcion_termino | FilterUppercase}}</option>
+                                </select>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" v-model="ProcesoCrear.Pedidos.cliente.Impto_incluido">
+                                <label class="form-check-label">Impuesto Incluido</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr v-if="!ProcesoCrear.Pedidos.productosTabla2.length" />
+
+                    <div class="row mt-2" style="align-items:baseline;">
+                        <div class="Tables col-12">
+                            <table class="table table-striped" v-if="ProcesoCrear.Pedidos.productosTabla2.length">
+                                <thead>
+                                    <tr class="tableHeader">
+                                        <th scope="col">Código</th>
+                                        <th scope="col">Descripción</th>
+                                        <th scope="col">Precio</th>
+                                        <th scope="col">Existencia</th>
                                         <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr v-for="item in empresas">
+                                    <tr v-for="item in ProcesoCrear.Pedidos.productosTabla2">
+                                        <td>{{item.codigo_producto}}</td>
+                                        <td>{{item.descrip_producto}}</td>
+                                        <td>{{item.precio | FilterStringToMoneyFormat}}</td>
+                                        <td>{{item.cant}}</td>
+                                        <td>
+                                            <a style="cursor:pointer;" v-on:click="detallesProducto({codigo_producto: item.codigo_producto})"><i class="material-icons" style="color:#17A2B8">remove_red_eye</i></a>
+                                            <a style="cursor:pointer;" v-on:click="agregarProductoALista({codigo_producto: item.codigo_producto, descrip_producto: item.descrip_producto, precio: item.precio, cantidad: 1, cant: item.cant})"><i class="material-icons" style="color:#17A2B8">add_circle</i></a>
+                                        </td>
                                     </tr>
                             </table>
+                        </div>
+                    </div>
+
+                    <div v-if="ProcesoCrear.Pedidos.mostrarDetallesProducto">
+                        <div class="row" v-if="ProcesoCrear.Pedidos.productosTabla2.length">
+                            <label class="font-weight-bold">Comentario del Producto:</label>
+                            <textarea class="form-control col-12" rows="4" disabled v-model="ProcesoCrear.Pedidos.producto.comentario">
+                        </textarea>
+                        </div>
+
+                        <div class="card mt-3 row" v-if="ProcesoCrear.Pedidos.productosTabla2.length">
+                            <div class="row">
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">Precio 2</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.precio2 | FilterStringToMoneyFormat}}</p>
+                                </div>
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">Precio 3</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.precio3 | FilterStringToMoneyFormat}}</p>
+                                </div>
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">Precio 4</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.precio4 | FilterStringToMoneyFormat}}</p>
+                                </div>
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">En US$</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.enUS | FilterStringToMoneyFormat}}</p>
+                                </div>
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">Impto.%</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.valor_impto | FilterStringToMoneyFormat}}</p>
+                                </div>
+                                <div class="col-6 col-lg-2 mt-4">
+                                    <p class="font-weight-bold text-center">P1 + Impto.</p>
+                                    <p class="text-center">{{ProcesoCrear.Pedidos.producto.pi_impuesto | FilterStringToMoneyFormat}}</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
-    <hr style="margin: 10px;" />
 </div>

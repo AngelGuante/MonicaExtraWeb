@@ -63,6 +63,7 @@
         },
 
         modalData: {
+            titulo: 'Buscar Cliente',
             clientes: [],
             PaginatorIndex: 0,
             PaginatorLastPage: 0,
@@ -84,6 +85,7 @@
         },
         'FILTROS.tipoReporte'() {
             this.FILTROS.soloNCFFormatoElectronico = false;
+            this.modalData.titulo = this.FILTROS.tipoReporte === 'porCobrar' ? 'Buscar Cliente' : 'Buscar Proveedor';
 
             switch (this.FILTROS.tipoReporte) {
                 case 'porCobrar':
@@ -231,7 +233,7 @@
                     tipoReporte: this.FILTROS.tipoReporte,
                     tipoConsulta: this.FILTROS.tipoConsulta,
                 }
-                
+
                 if (this.FILTROS.desdeHastaRango !== '-1') {
                     filtro.minFecha_emision = this.FILTROS.minFecha_emision;
                     filtro.maxFecha_emision = this.FILTROS.maxFecha_emision;

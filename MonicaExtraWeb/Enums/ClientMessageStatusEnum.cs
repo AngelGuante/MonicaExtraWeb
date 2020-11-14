@@ -29,5 +29,6 @@
         GiroNecogiosPv = 23,
         ContabilidadBanco = 24,
         Productos = 25,
+        Dolar = 26,
     }
 }

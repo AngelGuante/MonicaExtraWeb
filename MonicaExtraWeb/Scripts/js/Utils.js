@@ -31,6 +31,29 @@ const GetFormatedDate = date => {
     return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 };
 
+//  AGREGAR DIAS A UNA FECHA.
+const AddDaysToDate = (days, returnFormat, date) => {
+    if (!date)
+        date = new Date();
+
+    date.setDate(date.getDate() + days);
+
+    if (returnFormat) {
+        let day = date.getDate();
+        let month = date.getMonth();
+        let year = date.getFullYear();
+
+        switch (returnFormat) {
+            case 'ddMMyyyy':
+                return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+            case 'yyyyMMdd':
+                return `${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        }
+    }
+
+    return date;
+}
+
 //  RETORNA EL INTERVALO DE DOS FECHAS SEGUN EL PARAMETRO ESTABLECIDO
 const getIntervalDate = param => {
     const curr = new Date();

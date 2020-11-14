@@ -8,6 +8,8 @@
         public bool SUM { get; set; } = false;
         public bool COUNT { get; set; } = false;
         public bool GROUP { get; set; } = false;
+        public string JOIN { get; set; }
+        public string WHERE { get; set; }
         public string WHRER_IN { get; set; }
         public string conn { get; set; }
 

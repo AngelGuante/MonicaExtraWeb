@@ -20,6 +20,7 @@
         giroNegociosPv: [],
         minFecha_emision: '',
         maxFecha_emision: '',
+        dolar: '',
         modulos: []
     },
 
@@ -89,6 +90,7 @@
             reporte_clienteIndividualStatus.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_comprasDevolucionesYCotizaciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_clientesYProveedores.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            manejoDeData_crearProceso.FILTROS.terminoDePago = monicaReportes.terminoDePago;
         },
         terminoDePagoPv: () => {
             reporte_clientesYProveedores.FILTROS.terminoDePagoPv = monicaReportes.terminoDePagoPv;
@@ -308,6 +310,11 @@
                     if (this.giroNegociosPv.length === 0)
                         this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
+                case 'dolar':
+                    if (this.dolar)
+                        return this.dolar;
+                    else 
+                        return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
                 case 'productosList':
                     return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
                 case 'clientesList':

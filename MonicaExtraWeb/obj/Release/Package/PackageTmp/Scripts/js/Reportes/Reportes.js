@@ -2,6 +2,7 @@
     el: '#moduloReportes',
 
     data: {
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],
@@ -19,6 +20,7 @@
         giroNegociosPv: [],
         minFecha_emision: '',
         maxFecha_emision: '',
+        dolar: '',
         modulos: []
     },
 
@@ -41,8 +43,15 @@
                 console.log(err);
             });
         document.getElementById('cargando').setAttribute('hidden', true);
+        document.getElementById('divMaster').classList.remove('container');
 
-            document.getElementById('divMaster').classList.remove('container');
+        if (!this.usuarioPuedeProbarNuevasActualizaciones) {
+            setTimeout(() => {
+                document.getElementsByName('soloAlmonte').forEach(item => {
+                    item.setAttribute('hidden', true);
+                });
+            }, 10)
+        }
     },
 
     watch: {
@@ -50,6 +59,7 @@
             reporte_ventasYDevoluciones.FILTROS.vendedores = monicaReportes.vendedores;
             reporte_cotizacionesYConduces.FILTROS.vendedores = monicaReportes.vendedores;
             reporte_clientesYProveedores.FILTROS.vendedores = monicaReportes.vendedores;
+            manejoDeData_crearProceso.FILTROS.vendedores = monicaReportes.vendedores;
         },
         categoriasClientes: () => {
             reporte_ventasYDevoluciones.FILTROS.categoriasClientes = monicaReportes.categoriasClientes;
@@ -80,6 +90,7 @@
             reporte_clienteIndividualStatus.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_comprasDevolucionesYCotizaciones.FILTROS.terminoDePago = monicaReportes.terminoDePago;
             reporte_clientesYProveedores.FILTROS.terminoDePago = monicaReportes.terminoDePago;
+            manejoDeData_crearProceso.FILTROS.terminoDePago = monicaReportes.terminoDePago;
         },
         terminoDePagoPv: () => {
             reporte_clientesYProveedores.FILTROS.terminoDePagoPv = monicaReportes.terminoDePagoPv;
@@ -111,15 +122,6 @@
     },
 
     methods: {
-        //DivSeleccionarReporte(source) {
-        //    this.LimpiarTablas();
-
-        //    NavigationBehaviour('SeleccionarReporte', 'SeleccionarSourceParaReporte');
-        //    document.getElementById('cargando').setAttribute('hidden', true);
-
-        //    this.sourceResportes = source;
-        //},
-
         //  OPCIONES DEL MENU
         async OpcionMenuCeleccionado(opcionSeleccionada) {
             this.LimpiarTablas();
@@ -308,6 +310,13 @@
                     if (this.giroNegociosPv.length === 0)
                         this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
+                case 'dolar':
+                    if (this.dolar)
+                        return this.dolar;
+                    else 
+                        return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
+                case 'productosList':
+                    return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
                 case 'clientesList':
                     return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
                 case 'proveedoresList':

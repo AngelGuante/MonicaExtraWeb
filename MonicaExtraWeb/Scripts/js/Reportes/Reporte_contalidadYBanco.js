@@ -2,7 +2,7 @@
     el: '#contabilidadYBanco',
 
     data: {
-        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
         rncOCedula: localStorage.getItem('Registro_Tributario_empresa').trim(),
 
         DATA: [],
