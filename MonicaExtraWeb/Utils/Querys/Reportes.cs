@@ -2469,34 +2469,6 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string CerrarCotizacionQuery(Filtros filtro)
-        {
-            var query = new StringBuilder();
-            var setQuery = new StringBuilder();
-
-            query.Append("UPDATE ");
-            query.Append($"{filtro.conn}.dbo.estimado ");
-
-            query.Append("SET ");
-            if (!string.IsNullOrEmpty(filtro.NroFactura))
-                setQuery.Append($"genero_factura1 = '{filtro.NroFactura}' ");
-            else
-                setQuery.Append($"genero_factura1 = '0' ");
-            if (!string.IsNullOrEmpty(filtro.notas))
-            {
-                if (setQuery.Length > 0)
-                    setQuery.Append(",");
-                setQuery.Append($"notas = notas + '{filtro.notas}' ");
-            }
-
-            query.Append(setQuery.ToString());
-
-            if (!string.IsNullOrEmpty(filtro.NroCotizacion))
-                query.Append($"WHERE ltrim(str(nro_estimado)) = '{filtro.NroCotizacion}' ");
-
-            return query.ToString();
-        }
-
         public static string Productos(Filtros filtro)
         {
             var query = new StringBuilder();
@@ -2534,6 +2506,9 @@ namespace MonicaExtraWeb.Utils
 
             query.Append("ORDER BY codigo_producto ");
 
+            query.Append($" OFFSET {filtro.skip * filtro.take} ROWS ");
+            query.Append($" FETCH NEXT {filtro.take} ROWS ONLY ");
+
             return query.ToString();
         }
 
@@ -2541,8 +2516,39 @@ namespace MonicaExtraWeb.Utils
         {
             var query = new StringBuilder();
 
-            query.Append("SELECT ");
-            query.Append($" MAX(dolar_venta) dolar FROM {dbName}dbo.cambio_dolar ");
+            query.Append("SELECT TOP 1 dolar_venta ");
+            query.Append($"FROM {dbName}dbo.cambio_dolar ");
+            query.Append(" ORDER BY fecha_cambio DESC ");
+
+            return query.ToString();
+        }
+
+        // ---------
+
+        public static string CerrarCotizacionQuery(Filtros filtro)
+        {
+            var query = new StringBuilder();
+            var setQuery = new StringBuilder();
+
+            query.Append("UPDATE ");
+            query.Append($"{filtro.conn}.dbo.estimado ");
+
+            query.Append("SET ");
+            if (!string.IsNullOrEmpty(filtro.NroFactura))
+                setQuery.Append($"genero_factura1 = '{filtro.NroFactura}' ");
+            else
+                setQuery.Append($"genero_factura1 = '0' ");
+            if (!string.IsNullOrEmpty(filtro.notas))
+            {
+                if (setQuery.Length > 0)
+                    setQuery.Append(",");
+                setQuery.Append($"notas = notas + '{filtro.notas}' ");
+            }
+
+            query.Append(setQuery.ToString());
+
+            if (!string.IsNullOrEmpty(filtro.NroCotizacion))
+                query.Append($"WHERE ltrim(str(nro_estimado)) = '{filtro.NroCotizacion}' ");
 
             return query.ToString();
         }

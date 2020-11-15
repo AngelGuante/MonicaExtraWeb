@@ -310,7 +310,7 @@
                     if (this.giroNegociosPv.length === 0)
                         this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
-                case 'dolar':
+                case 'dolar_venta':
                     if (this.dolar)
                         return this.dolar;
                     else 

@@ -2,7 +2,7 @@
     el: '#moduloReportes',
 
     data: {
-        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],
@@ -310,7 +310,7 @@
                     if (this.giroNegociosPv.length === 0)
                         this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
                     break;
-                case 'dolar':
+                case 'dolar_venta':
                     if (this.dolar)
                         return this.dolar;
                     else 

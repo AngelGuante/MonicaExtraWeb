@@ -33,6 +33,8 @@
                     emails: '',
                     rnc: '',
                     Impto_incluido: '',
+                    tipo_empresaUsuario: '',
+                    termino: '',
                     detalesProductosAgregados: []
                 },
                 productosTabla1: [],
@@ -66,31 +68,29 @@
             if (!this.ProcesoCrear.Pedidos.cliente.codigo.length || this.ProcesoCrear.codClienteCorrecto)
                 return;
 
-            this.ProcesoCrear.codClienteCorrecto = false;
             const filtro = {
                 code: this.ProcesoCrear.Pedidos.cliente.codigo,
-                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido `
+                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido, tipo_empresa, termino_id `
             };
-
+            
             var data = await monicaReportes.BuscarData('clientesList', filtro);
             if (data.length) {
+                this.LlenarSelect('terminoDePago');
                 this.ProcesoCrear.codClienteCorrecto = true;
                 this.ProcesoCrear.Pedidos.cliente.nombre = data[0].nombre;
                 this.ProcesoCrear.Pedidos.cliente.direcciones = data[0].direcciones;
                 this.ProcesoCrear.Pedidos.cliente.telefonos = data[0].telefonos;
-                this.ProcesoCrear.Pedidos.cliente.emails = data[0].emails;
+                this.ProcesoCrear.Pedidos.cliente.emails = data[0].emails.toString().trim().length > 1 ? `ATENCION: ${data[0].emails}` : '';
                 this.ProcesoCrear.Pedidos.cliente.rnc = data[0].rnc;
                 this.ProcesoCrear.Pedidos.cliente.maximo_Credito = data[0].maximo_Credito;
                 this.ProcesoCrear.Pedidos.cliente.Balance = data[0].Balance;
                 this.ProcesoCrear.Pedidos.cliente.Contacto = data[0].Contacto;
                 this.ProcesoCrear.Pedidos.cliente.Impto_incluido = data[0].Impto_incluido === 'S' ? true : false;
+                this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario = data[0].tipo_empresa;
+                this.ProcesoCrear.Pedidos.cliente.termino = data[0].termino_id;
             }
             else {
-                this.ProcesoCrear.Pedidos.cliente.nombre = '';
-                this.ProcesoCrear.Pedidos.cliente.direcciones = '';
-                this.ProcesoCrear.Pedidos.cliente.telefonos = '';
-                this.ProcesoCrear.Pedidos.cliente.emails = '';
-                this.ProcesoCrear.Pedidos.cliente.rnc = '';
+                this.Limpiar();
 
                 MostrarMensage({
                     title: 'Código incorrecto.',
@@ -101,10 +101,8 @@
         },
 
         async ModalBuscarClientes() {
-            this.modalData.clientes = [];
-
             $('#procesoCrearBuscarClienteModal').modal('hide');
-
+            this.Limpiar();
             const filtros = {
                 skip: this.modalData.PaginatorIndex
             };
@@ -206,12 +204,13 @@
             }
         },
 
-        ModalClienteSleccionado(value) {
+        async ModalClienteSleccionado(value) {
             $('#procesoCrearBuscarClienteModal').modal('hide');
             const seleccionado = value.split(' - ');
             this.ProcesoCrear.Pedidos.cliente.codigo = seleccionado[0];
             this.ProcesoCrear.Pedidos.cliente.nombre = seleccionado[1];
-            this.ProcesoCrear.codClienteCorrecto = true;
+            //this.ProcesoCrear.codClienteCorrecto = true;
+            await this.validarCodigo();
         },
 
         LlenarSelect(value) {
@@ -224,7 +223,8 @@
 
             let filtro = {
                 SELECT: `, cant_total cant, precio1 precio `,
-                estatus: `> 0`
+                estatus: `> 0`,
+                take: 8
             };
 
             if (this.FILTROS.buscarProductoPor === 'codProducto')
@@ -265,7 +265,7 @@
                 }
             }
             else {
-                let dolar = await monicaReportes.BuscarData('dolar');
+                let dolar_venta = await monicaReportes.BuscarData('dolar_venta');
 
                 filtro = {
                     SELECT: `, precio1, precio2, precio3, precio4, comentario, I.valor_impto `,
@@ -280,11 +280,25 @@
                 this.ProcesoCrear.Pedidos.producto.precio3 = data[0].precio3;
                 this.ProcesoCrear.Pedidos.producto.precio4 = data[0].precio4;
                 this.ProcesoCrear.Pedidos.producto.valor_impto = data[0].valor_impto;
-                this.ProcesoCrear.Pedidos.producto.enUS = Number(data[0].precio1) * dolar[0].dolar;
+                this.ProcesoCrear.Pedidos.producto.enUS = Number(data[0].precio1) / dolar_venta[0].dolar_venta;
                 this.ProcesoCrear.Pedidos.producto.pi_impuesto = (((Number(data[0].valor_impto) / 100) + 1) * Number(data[0].precio1))
 
                 window.scrollTo(0, document.body.scrollHeight);
             }
+        },
+
+        Limpiar() {
+            this.ProcesoCrear.Pedidos.cliente.nombre = '';
+            this.ProcesoCrear.Pedidos.cliente.direcciones = '';
+            this.ProcesoCrear.Pedidos.cliente.telefonos = '';
+            this.ProcesoCrear.Pedidos.cliente.emails = '';
+            this.ProcesoCrear.Pedidos.cliente.rnc = '';
+            this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario = '';
+            this.ProcesoCrear.Pedidos.cliente.termino = '';
+
+            this.ProcesoCrear.Pedidos.cliente.codigo = '';
+            this.ProcesoCrear.codClienteCorrecto = false;
+            this.modalData.clientes = [];
         }
     },
 
