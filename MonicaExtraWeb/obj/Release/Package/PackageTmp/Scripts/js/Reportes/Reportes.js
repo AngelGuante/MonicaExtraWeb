@@ -2,7 +2,7 @@
     el: '#moduloReportes',
 
     data: {
-        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],
@@ -21,10 +21,11 @@
         minFecha_emision: '',
         maxFecha_emision: '',
         dolar: '',
-        modulos: []
+        modulos: [],
+        parametros: []
     },
 
-    created: function () {
+    created: async function () {
         document.getElementById('btnHome').removeAttribute('hidden');
 
         fetch(`../../API/PERMISOSUSUARIO/GET/${localStorage.getItem('Number')}`, {
@@ -45,6 +46,7 @@
         document.getElementById('cargando').setAttribute('hidden', true);
         document.getElementById('divMaster').classList.remove('container');
 
+        //  ELEMENTOS QUE NO SE PUEDEN VER POR TODOS LOS USUARIOS
         if (!this.usuarioPuedeProbarNuevasActualizaciones) {
             setTimeout(() => {
                 document.getElementsByName('soloAlmonte').forEach(item => {
@@ -140,7 +142,6 @@
 
             //  MODULO ACCESIBLE POR EL USUARIO
             document.getElementById('sinPermisosAModulos').setAttribute('hidden', true);
-
             switch (opcionSeleccionada) {
                 case 'VentasYDevolucionesCategoriaYVendedor':
                     if (!this.modulos.includes('FAC')) {
@@ -244,6 +245,14 @@
                         document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
                     }
                     break;
+                case 'manejoDeData_Pedidos':
+                    //  CARGAR PARAMETROS
+                    let filtro = {
+                        conn: localStorage.getItem('conn'),
+                        WHRER_IN: "'USO_IMPTO_ESTIMADO'"
+                    };
+                    await this.BuscarData('parametros', filtro);
+                    break;
             }
         },
 
@@ -313,8 +322,21 @@
                 case 'dolar_venta':
                     if (this.dolar)
                         return this.dolar;
-                    else 
+                    else
                         return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
+                case 'parametros':
+                    filtro.WHRER_IN = filtro.WHRER_IN.split(',');
+                    this.parametros.forEach(item => {
+                        filtro.WHRER_IN.splice(filtro.WHRER_IN.indexOf(item), 1)
+                    });
+                    filtro.WHRER_IN = filtro.WHRER_IN.join(',');
+                    if (filtro.WHRER_IN) {
+                        const param = await BuscarInformacionLocal('SendWebsocketServer/27', filtro);
+                        param.forEach(item => {
+                            this.parametros.push({ parametro: item.parametro.trim(), valor_caracter: item.valor_caracter });
+                        });
+                    }
+                    return this.parametros;
                 case 'productosList':
                     return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
                 case 'clientesList':

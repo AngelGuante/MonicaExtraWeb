@@ -63,7 +63,7 @@ namespace MonicaExtraWeb.Utils.Token
             {
                 statusCode = HttpStatusCode.Unauthorized;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 statusCode = HttpStatusCode.InternalServerError;
             }

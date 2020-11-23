@@ -102,6 +102,9 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.Dolar:
                     query = Dolar(monica10_global);
                     break;
+                case ClientMessageStatusEnum.Paramtro:
+                    query = Parametro(filtro);
+                    break;
             }
 
             var obj = new WebSocketDTO

@@ -1,6 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="Control-Web.config Connection String" description="Control Connection String used in web.config by the application to access the database." defaultValue="Server=tcp:monidata.database.windows.net,1433;Initial Catalog=Control;Persist Security Info=False;User ID=Almonte;Password=aSe/].6PQmY#L)V`;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;" tags="SqlConnectionString">
-    <parameterEntry kind="XmlFile" scope="D:\\Mis\ cosas\\I\\Proyectos\\\.Net\\\.Net\ Framework\\Web\\MonicaExtraWeb\\MonicaExtraWeb\\MonicaExtraWeb\\obj\\Release\\Package\\PackageTmp\\Web\.config$" match="/configuration/connectionStrings/add[@name='Control']/@connectionString" />
-  </parameter>
-</parameters>

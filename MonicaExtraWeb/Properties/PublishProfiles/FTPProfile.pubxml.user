@@ -1,0 +1,881 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+This file is used by the publish/package process of your Web project. You can customize the behavior of this process
+by editing this MSBuild file. In order to learn more about this please visit https://go.microsoft.com/fwlink/?LinkID=208121. 
+-->
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <TimeStampOfAssociatedLegacyPublishXmlFile />
+    <EncryptedPassword />
+    <_PublishTargetUrl>ftp://c2040694.ferozo.com:21</_PublishTargetUrl>
+  </PropertyGroup>
+  <ItemGroup>
+    <File Include="bin/Antlr3.Runtime.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/Antlr3.Runtime.pdb">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/Dapper.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/EntityFramework.SqlServer.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/log4net.dll">
+      <publishTime>11/23/2013 10:04:16</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Core.dll">
+      <publishTime>04/03/2019 00:30:56</publishTime>
+    </File>
+    <File Include="bin/Microsoft.AspNet.SignalR.Core.pdb">
+      <publishTime>04/03/2019 07:19:50</publishTime>
+    </File>
+    <File Include="bin/Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/Microsoft.IdentityModel.JsonWebTokens.dll">
+      <publishTime>09/08/2020 19:02:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.IdentityModel.Logging.dll">
+      <publishTime>09/08/2020 19:02:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.IdentityModel.Tokens.dll">
+      <publishTime>09/08/2020 19:02:46</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.dll">
+      <publishTime>01/13/2014 16:11:08</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Owin.Security.dll">
+      <publishTime>01/13/2014 16:11:08</publishTime>
+    </File>
+    <File Include="bin/Microsoft.Web.Infrastructure.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/MonicaExtraWeb.dll">
+      <publishTime>11/22/2020 21:20:56</publishTime>
+    </File>
+    <File Include="bin/MonicaExtraWeb.pdb">
+      <publishTime>11/22/2020 21:20:56</publishTime>
+    </File>
+    <File Include="bin/Newtonsoft.Json.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/Owin.dll">
+      <publishTime>11/13/2012 12:19:34</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.exe.config">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/csc.rsp">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/csi.exe">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/csi.exe.config">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/csi.rsp">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Build.Tasks.CodeAnalysis.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.CSharp.Scripting.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.Scripting.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CodeAnalysis.VisualBasic.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.CSharp.Core.targets">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.DiaSymReader.Native.amd64.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.DiaSymReader.Native.x86.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.Managed.Core.targets">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/Microsoft.VisualBasic.Core.targets">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.AppContext.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Collections.Immutable.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Console.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Diagnostics.FileVersionInfo.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Diagnostics.StackTrace.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.IO.Compression.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.IO.FileSystem.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.IO.FileSystem.Primitives.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.IO.Pipes.AccessControl.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.IO.Pipes.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Reflection.Metadata.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.AccessControl.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Claims.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Cryptography.Algorithms.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Cryptography.Encoding.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Cryptography.Primitives.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Cryptography.X509Certificates.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Security.Principal.Windows.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Text.Encoding.CodePages.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.ValueTuple.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Xml.ReaderWriter.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Xml.XmlDocument.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Xml.XPath.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/System.Xml.XPath.XDocument.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.exe.config">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/vbc.rsp">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/roslyn/VBCSCompiler.exe.config">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="bin/System.IdentityModel.Tokens.Jwt.dll">
+      <publishTime>09/08/2020 19:02:47</publishTime>
+    </File>
+    <File Include="bin/System.Net.Http.Formatting.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Helpers.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Http.WebHost.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Mvc.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Optimization.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.Razor.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Deployment.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/System.Web.WebPages.Razor.dll">
+      <publishTime>05/25/2020 15:43:35</publishTime>
+    </File>
+    <File Include="bin/WebGrease.dll">
+      <publishTime>05/25/2020 15:43:36</publishTime>
+    </File>
+    <File Include="Content/assets/cash.png">
+      <publishTime>05/27/2020 23:17:24</publishTime>
+    </File>
+    <File Include="Content/assets/down-arrow.png">
+      <publishTime>05/27/2020 23:17:24</publishTime>
+    </File>
+    <File Include="Content/assets/graphic.png">
+      <publishTime>08/18/2020 10:45:50</publishTime>
+    </File>
+    <File Include="Content/assets/loading.gif">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/assets/logoHeaderMonica.png">
+      <publishTime>08/13/2020 01:20:25</publishTime>
+    </File>
+    <File Include="Content/assets/management.png">
+      <publishTime>08/02/2020 20:49:38</publishTime>
+    </File>
+    <File Include="Content/assets/permissions.png">
+      <publishTime>09/08/2020 21:29:10</publishTime>
+    </File>
+    <File Include="Content/assets/sell.png">
+      <publishTime>05/27/2020 23:17:24</publishTime>
+    </File>
+    <File Include="Content/assets/server.png">
+      <publishTime>05/27/2020 23:17:24</publishTime>
+    </File>
+    <File Include="Content/assets/tower-pc.png">
+      <publishTime>05/27/2020 23:17:24</publishTime>
+    </File>
+    <File Include="Content/assets/transaction.png">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/assets/users.png">
+      <publishTime>09/08/2020 21:27:55</publishTime>
+    </File>
+    <File Include="Content/bootstrap-grid.css">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap-grid.css.map">
+      <publishTime>08/05/2020 14:13:00</publishTime>
+    </File>
+    <File Include="Content/bootstrap-grid.min.css">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap-grid.min.css.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap-reboot.css">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap-reboot.css.map">
+      <publishTime>08/13/2020 01:09:09</publishTime>
+    </File>
+    <File Include="Content/bootstrap-reboot.min.css">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap-reboot.min.css.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Content/bootstrap.css.map">
+      <publishTime>08/05/2020 14:13:00</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Content/bootstrap.min.css.map">
+      <publishTime>08/05/2020 14:13:00</publishTime>
+    </File>
+    <File Include="Content/css/Bootstrapt.css">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Content/css/PrintStyle.css">
+      <publishTime>06/26/2020 15:34:38</publishTime>
+    </File>
+    <File Include="Content/css/ReportStyle.css">
+      <publishTime>08/21/2020 13:41:01</publishTime>
+    </File>
+    <File Include="Content/css/SAP.css">
+      <publishTime>11/18/2020 18:11:53</publishTime>
+    </File>
+    <File Include="Content/Site.css">
+      <publishTime>11/14/2020 22:12:47</publishTime>
+    </File>
+    <File Include="favicon.ico">
+      <publishTime>08/07/2020 21:46:27</publishTime>
+    </File>
+    <File Include="Global.asax">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.bundle.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.bundle.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.bundle.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.bundle.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/bootstrap.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper-utils.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper-utils.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper-utils.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper-utils.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/esm/popper.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/index.js.flow">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.min.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.slim.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.slim.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery-3.3.1.slim.min.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/jquery.validate.unobtrusive.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/js/Acceso.js">
+      <publishTime>10/24/2020 21:35:19</publishTime>
+    </File>
+    <File Include="Scripts/js/Administracion/Usuarios.js">
+      <publishTime>10/24/2020 21:25:17</publishTime>
+    </File>
+    <File Include="Scripts/js/Chart.js">
+      <publishTime>07/19/2020 18:26:01</publishTime>
+    </File>
+    <File Include="Scripts/js/Control/Empresas.js">
+      <publishTime>10/01/2020 23:12:40</publishTime>
+    </File>
+    <File Include="Scripts/js/ManejoDeData/ManejoDeData_cotizacionesYConduces.js">
+      <publishTime>08/07/2020 20:10:49</publishTime>
+    </File>
+    <File Include="Scripts/js/ManejoDeData/ManejoDeData_procesoCrear.js">
+      <publishTime>11/22/2020 00:26:42</publishTime>
+    </File>
+    <File Include="Scripts/js/Menu.js">
+      <publishTime>09/28/2020 22:15:06</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reportes.js">
+      <publishTime>11/18/2020 21:46:05</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_clienteIndividualStatus.js">
+      <publishTime>11/07/2020 15:45:52</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_clientesYProveedores.js">
+      <publishTime>10/07/2020 20:21:18</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_comprasDevolucionesYConduces.js">
+      <publishTime>10/24/2020 21:10:32</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_contalidadYBanco.js">
+      <publishTime>11/08/2020 22:16:29</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_cotizacionesYConduces.js">
+      <publishTime>10/02/2020 21:05:28</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_inventarioYLiquidacion.js">
+      <publishTime>11/05/2020 21:34:40</publishTime>
+    </File>
+    <File Include="Scripts/js/Reportes/Reporte_ventasYDevoluciones.js">
+      <publishTime>10/24/2020 20:07:43</publishTime>
+    </File>
+    <File Include="Scripts/js/SAP.js">
+      <publishTime>09/24/2020 19:19:37</publishTime>
+    </File>
+    <File Include="Scripts/js/SeleccionarEmpresa.js">
+      <publishTime>10/24/2020 22:05:57</publishTime>
+    </File>
+    <File Include="Scripts/js/Swal.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/js/Utils.js">
+      <publishTime>11/08/2020 21:26:07</publishTime>
+    </File>
+    <File Include="Scripts/js/Vue.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/modernizr-2.8.3.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper-utils.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper-utils.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper-utils.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper-utils.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/popper.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/README.md">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/index.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/defaults.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/destroy.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/disableEventListeners.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/enableEventListeners.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/placements.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/methods/update.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/applyStyle.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/arrow.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/computeStyle.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/flip.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/hide.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/index.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/inner.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/keepTogether.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/offset.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/preventOverflow.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/modifiers/shift.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/clockwise.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/computeAutoPlacement.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/debounce.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/find.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/findCommonOffsetParent.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/findIndex.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getBordersSize.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getBoundaries.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getBoundingClientRect.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getClientRect.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getFixedPositionOffsetParent.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOffsetParent.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOffsetRect.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOffsetRectRelativeToArbitraryNode.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOppositePlacement.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOppositeVariation.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getOuterSizes.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getParentNode.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getPopperOffsets.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getReferenceNode.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getReferenceOffsets.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getRoot.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getRoundedOffsets.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getScroll.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getScrollParent.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getStyleComputedProperty.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getSupportedPropertyName.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getViewportOffsetRectRelativeToArtbitraryNode.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getWindow.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/getWindowSizes.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/includeScroll.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/index.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isBrowser.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isFixed.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isFunction.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isIE.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isModifierEnabled.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isModifierRequired.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isNumeric.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/isOffsetContainer.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/removeEventListeners.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/runModifiers.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/setAttributes.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/setStyles.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/src/utils/setupEventListeners.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper-utils.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper-utils.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper-utils.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper-utils.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper.js.flow">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper.min.js">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Scripts/umd/popper.min.js.map">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Views/Acceso/Index.cshtml">
+      <publishTime>10/24/2020 11:18:14</publishTime>
+    </File>
+    <File Include="Views/Administracion/Index.cshtml">
+      <publishTime>10/01/2020 22:04:06</publishTime>
+    </File>
+    <File Include="Views/Componentes/_BotonesNavegacion.cshtml">
+      <publishTime>10/24/2020 21:49:42</publishTime>
+    </File>
+    <File Include="Views/Componentes/_LoadingPage.cshtml">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Views/Control/Index.cshtml">
+      <publishTime>09/29/2020 21:54:16</publishTime>
+    </File>
+    <File Include="Views/Empresas/Gestion.cshtml">
+      <publishTime>10/01/2020 21:48:06</publishTime>
+    </File>
+    <File Include="Views/Impresion/Cierre.cshtml">
+      <publishTime>09/13/2020 22:11:11</publishTime>
+    </File>
+    <File Include="Views/Impresion/Firmas.cshtml">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Views/Impresion/ImpresionesHeader.cshtml">
+      <publishTime>06/23/2020 20:11:25</publishTime>
+    </File>
+    <File Include="Views/Impresion/Movimiento.cshtml">
+      <publishTime>06/23/2020 23:21:37</publishTime>
+    </File>
+    <File Include="Views/Impresion/ReporteEstadoCuentaCliente.cshtml">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Views/Menu/Index.cshtml">
+      <publishTime>09/28/2020 22:06:08</publishTime>
+    </File>
+    <File Include="Views/MoniExtra/Index.cshtml">
+      <publishTime>11/05/2020 20:54:50</publishTime>
+    </File>
+    <File Include="Views/Paginas/Caja/_CrudMovimientos.cshtml">
+      <publishTime>06/23/2020 22:54:45</publishTime>
+    </File>
+    <File Include="Views/Paginas/Caja/_CuadresCaja.cshtml">
+      <publishTime>09/13/2020 23:51:13</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_ClientesYProveedores.cshtml">
+      <publishTime>11/14/2020 22:28:39</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_ComprasDevolucionesYCotizaciones.cshtml">
+      <publishTime>10/24/2020 22:27:14</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_ContalidadYBanco.cshtml">
+      <publishTime>11/03/2020 18:13:39</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_CotizacionesYConduces.cshtml">
+      <publishTime>10/24/2020 22:36:24</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_CuentasPorCobrarYPagar.cshtml">
+      <publishTime>11/05/2020 20:45:38</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_InventarioYLiquidacion.cshtml">
+      <publishTime>10/07/2020 20:52:24</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Filtros/_VentasYDevoluciones.cshtml">
+      <publishTime>11/07/2020 20:34:07</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/ManejoDeData/Cerrar/_CotizacionesYConduces.cshtml">
+      <publishTime>10/07/2020 19:27:38</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/ManejoDeData/CotizacionesYConduces/_Pedidos.cshtml">
+      <publishTime>11/21/2020 22:34:36</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_ClientesYProveedoresFormatoTablas.cshtml">
+      <publishTime>08/19/2020 22:25:21</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_ComprasDevolucionesYCotizacionesCodigo.cshtml">
+      <publishTime>08/14/2020 20:13:44</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_ContalidadYBancoFormatoTablas.cshtml">
+      <publishTime>10/24/2020 23:02:57</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPagar.cshtml">
+      <publishTime>11/07/2020 15:47:57</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_CuentasPorCobrarYPorPagarFormatoTablas.cshtml">
+      <publishTime>10/03/2020 21:31:57</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionCodigo.cshtml">
+      <publishTime>08/11/2020 19:50:39</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_InventarioYLiquidacionFormatoTablas.cshtml">
+      <publishTime>08/16/2020 23:43:17</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Modals/_VentasYDevoluciones.cshtml">
+      <publishTime>08/13/2020 01:09:19</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_ClientesYProveedores.cshtml">
+      <publishTime>08/20/2020 09:58:10</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_ComprasDevolucionesYCotizaciones.cshtml">
+      <publishTime>08/17/2020 17:37:09</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_ContalidadYBanco.cshtml">
+      <publishTime>11/01/2020 16:20:47</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_CotizacionesYConduces.cshtml">
+      <publishTime>08/16/2020 00:22:10</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_CuentasPorCobrarYPagar.cshtml">
+      <publishTime>10/03/2020 21:22:23</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_InventarioYLiquidacion.cshtml">
+      <publishTime>08/18/2020 11:20:55</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/Tablas/_VentasYDevoluciones.cshtml">
+      <publishTime>08/16/2020 00:22:27</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/Partial/_sinPermisoAModulos.cshtml">
+      <publishTime>09/17/2020 18:40:42</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/_menuSeleccionReporte.cshtml">
+      <publishTime>11/07/2020 15:07:50</publishTime>
+    </File>
+    <File Include="Views/Paginas/Reportes/_menuSeleccionSourceReportes.cshtml">
+      <publishTime>11/01/2020 16:37:22</publishTime>
+    </File>
+    <File Include="Views/Paginas/_Empresas.cshtml">
+      <publishTime>09/24/2020 19:13:19</publishTime>
+    </File>
+    <File Include="Views/Reportes/Index.cshtml">
+      <publishTime>09/08/2020 19:02:45</publishTime>
+    </File>
+    <File Include="Views/SAP/Index.cshtml">
+      <publishTime>09/28/2020 21:53:16</publishTime>
+    </File>
+    <File Include="Views/SeleccionarEmpresa/Index.cshtml">
+      <publishTime>10/24/2020 21:50:16</publishTime>
+    </File>
+    <File Include="Views/Shared/Error.cshtml">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Views/Shared/_Layout.cshtml">
+      <publishTime>11/17/2020 17:50:13</publishTime>
+    </File>
+    <File Include="Views/Usuarios/Gestion.cshtml">
+      <publishTime>10/24/2020 21:23:33</publishTime>
+    </File>
+    <File Include="Views/Web.config">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Views/_ViewStart.cshtml">
+      <publishTime>05/25/2020 15:43:34</publishTime>
+    </File>
+    <File Include="Web.config">
+      <publishTime>11/22/2020 21:21:26</publishTime>
+    </File>
+  </ItemGroup>
+</Project>

@@ -2257,7 +2257,11 @@ namespace MonicaExtraWeb.Utils
                     query.Append(filtro.SELECT);
             }
 
-            query.Append($"FROM {filtro.conn}.dbo.clientes ");
+            query.Append($"FROM {filtro.conn}.dbo.clientes C ");
+
+            if (!string.IsNullOrEmpty(filtro.JOIN))
+                if (filtro.JOIN.Contains("impuestos"))
+                    query.Append($"JOIN {filtro.conn}.dbo.impuestos I ON I.Abreviatura = C.impto ");
 
             if (!string.IsNullOrEmpty(filtro.code))
                 query.Append($"WHERE codigo_clte = '{filtro.code}'");
@@ -2519,6 +2523,17 @@ namespace MonicaExtraWeb.Utils
             query.Append("SELECT TOP 1 dolar_venta ");
             query.Append($"FROM {dbName}dbo.cambio_dolar ");
             query.Append(" ORDER BY fecha_cambio DESC ");
+
+            return query.ToString();
+        }
+
+        public static string Parametro(Filtros filtro)
+        {
+            var query = new StringBuilder();
+
+            query.Append("SELECT parametro, valor_caracter ");
+            query.Append($"FROM {filtro.conn}.dbo.parametros_genericos ");
+            query.Append($"WHERE parametro IN ({filtro.WHRER_IN}) ");
 
             return query.ToString();
         }

@@ -53,8 +53,8 @@ namespace MonicaExtraWeb.Controllers.API
                     var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());
                     return Json(new { token, usuario.NombreUsuario, /*usuario.Estatus,*/ usuario.Nivel, usuario.IdUsuario, /*usuario.Estatus.Value,*/ initialPass, usuario.idEmpresasM });
                 }
-                else
-                    return Json(new { message = "ESTE USUARIO YA SE ENCUENTRA LOGUEADO." });
+                //else
+                //    return Json(new { message = "ESTE USUARIO YA SE ENCUENTRA LOGUEADO." });
             }
             else
                 return Unauthorized();

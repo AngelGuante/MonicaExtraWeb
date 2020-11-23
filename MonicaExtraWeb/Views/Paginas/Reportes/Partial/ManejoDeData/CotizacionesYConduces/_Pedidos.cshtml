@@ -81,7 +81,7 @@
                                 v-model="FILTROS.vendedorSeleccionado"
                                 v-on:focus="LlenarSelect('vendedores')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
-                            <option v-for="item in FILTROS.vendedores" v-bind:value="item.Codigo_vendedor">{{ item.Nombre_vendedor | FilterUppercase }}</option>
+                            <option v-for="item in FILTROS.vendedores" v-bind:value="item.vendedor_id">{{ item.Nombre_vendedor | FilterUppercase }}</option>
                         </select>
                     </div>
 
@@ -95,8 +95,7 @@
 
                         <div class="col-auto col-8">
                             <div class="input-group row">
-                                <input type="text" class="form-control col-10" placeholder="valor" v-model="FILTROS.valor" @@keyup.enter="BuscarProducto()" />
-                                <input type="text" class="form-control col-2" placeholder="" disabled />
+                                <input type="text" class="form-control col-12" placeholder="valor" v-model="FILTROS.valor" @@keyup.enter="BuscarProducto()" />
                             </div>
                         </div>
                     </div>
@@ -118,9 +117,11 @@
                                         <td>{{item.codigo_producto}}</td>
                                         <td>{{item.descrip_producto}}</td>
                                         <td>
-                                            <input v-bind:id="'item_' + item.codigo_producto" type="number" class="form-control col-7" placeholder="CANTIDAD" v-bind:value="item.cantidad" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant})">
+                                            <input v-bind:id="'item_' + item.codigo_producto" type="number" class="form-control col-3" placeholder="CANTIDAD" v-bind:value="item.cantidad" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant})">
                                         </td>
-                                        <td>{{item.precio | FilterStringToMoneyFormat}}</td>
+                                        <td>
+                                            <input v-bind:id="'itemPrecio_' + item.codigo_producto" type="number" class="form-control col-7" placeholder="Precio" v-bind:value="item.precio" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant, precio: item.precio})">
+                                        </td>
                                         <td>
                                             <a style="cursor:pointer;" v-on:click="removerProducto(item.codigo_producto)"><i class="material-icons" style="color:red">delete</i></a>
                                         </td>
@@ -144,7 +145,7 @@
                                 <div class="row">
                                     <label class="col-6 form-check-label font-weight-bold">Descuento</label>
                                     <div class="input-group col-3">
-                                        <input type="number" class="form-control" disabled>
+                                        <input type="number" class="form-control" v-model="ProcesoCrear.Pedidos.cliente.descuento">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">%</div>
                                         </div>
@@ -157,7 +158,7 @@
                                 <div class="row">
                                     <label class="col-6 form-check-label font-weight-bold">ITBIS</label>
                                     <div class="input-group col-3">
-                                        <input type="number" class="form-control" disabled>
+                                        <input type="number" class="form-control" v-model="ProcesoCrear.Pedidos.itbis" v-bind:disabled="ProcesoCrear.Pedidos.cliente.aplica_impto === 'NO'">
                                         <div class="input-group-prepend">
                                             <div class="input-group-text">%</div>
                                         </div>
@@ -204,17 +205,17 @@
                             <input type="text" class="form-control col-11 mb-2" value="Pedido Nro.: ----" disabled />
                             <div class="row" style="align-items:baseline;">
                                 <p class="font-weight-bold col-lg-4">FECHA EMISION</p>
-                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaInicio" >
+                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaInicio">
                             </div>
                             <div class="row" style="align-items:baseline;">
                                 <p class="font-weight-bold col-lg-4">FECHA VENCE</p>
-                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaVence" >
+                                <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaVence">
                             </div>
                             <input type="text" class="form-control col-11 mb-2" placeholder="Ref. Cliente" />
 
                             <div class="form-check">
-                                <input type="checkbox" class="form-check-input" v-model="ProcesoCrear.Pedidos.cliente.Impto_incluido">
-                                <label class="form-check-label">Impuesto Incluido</label>
+                                <input id="checkImpuestoIncluido" type="checkbox" class="form-check-input" v-model="ProcesoCrear.Pedidos.cliente.Impto_incluido">
+                                <label class="form-check-label" for="checkImpuestoIncluido">Impuesto Incluido</label>
                             </div>
                         </div>
                     </div>

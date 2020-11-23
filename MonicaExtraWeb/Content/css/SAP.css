@@ -17,13 +17,13 @@ body {
     top: 40%;
     transform:translate(-50%, -50%);
 }
-
+/*
 .CentrarImage {
     position: relative;
     left: 50%;
     transform: translate(-50%);
     margin-top:4%;
-}
+}*/
 
 .Sombra{
     box-shadow:2px 2px 4px grey;

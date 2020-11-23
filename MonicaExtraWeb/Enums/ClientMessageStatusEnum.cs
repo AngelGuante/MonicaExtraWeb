@@ -30,5 +30,6 @@
         ContabilidadBanco = 24,
         Productos = 25,
         Dolar = 26,
+        Paramtro = 27,
     }
 }

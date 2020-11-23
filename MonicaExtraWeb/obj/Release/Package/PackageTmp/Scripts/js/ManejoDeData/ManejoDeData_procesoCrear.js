@@ -25,6 +25,7 @@
 
             Pedidos: {
                 mostrarDetallesProducto: false,
+                itbis: 0,
                 cliente: {
                     codigo: '',
                     nombre: '',
@@ -35,6 +36,9 @@
                     Impto_incluido: '',
                     tipo_empresaUsuario: '',
                     termino: '',
+                    descuentoBk: 0,
+                    aplica_impto: 0,
+                    descuento: 0,
                     detalesProductosAgregados: []
                 },
                 productosTabla1: [],
@@ -58,9 +62,26 @@
     },
 
     watch: {
-        'ProcesoCrear.Pedidos.productosTabla1': function () {
-            this.SumarPreciosProductos();
+        //'ProcesoCrear.Pedidos.productosTabla1': function () {
+        //    this.SumarPreciosProductos();
+        //},
+        'ProcesoCrear.Pedidos.cliente.descuento': function () {
+            if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) < 0)
+                this.ProcesoCrear.Pedidos.cliente.descuento = 0;
+            else if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) > Number(this.ProcesoCrear.Pedidos.cliente.descuentoBk))
+                this.ProcesoCrear.Pedidos.cliente.descuento = this.ProcesoCrear.Pedidos.cliente.descuentoBk;
+            else
+                this.SumarPreciosProductos();
         },
+        'ProcesoCrear.Pedidos.itbis': function () {
+            if (Number(this.ProcesoCrear.Pedidos.itbis) < 0)
+                this.ProcesoCrear.Pedidos.itbis = 0;
+            else
+                this.SumarPreciosProductos();
+        },
+        'ProcesoCrear.Pedidos.cliente.Impto_incluido': function () {
+            this.SumarPreciosProductos();
+        }
     },
 
     methods: {
@@ -68,11 +89,12 @@
             if (!this.ProcesoCrear.Pedidos.cliente.codigo.length || this.ProcesoCrear.codClienteCorrecto)
                 return;
 
-            const filtro = {
+            let filtro = {
                 code: this.ProcesoCrear.Pedidos.cliente.codigo,
-                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido, tipo_empresa, termino_id `
+                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido, tipo_empresa, termino_id, Descuento, aplica_impto, I.valor_impto `,
+                JOIN: 'impuestos'
             };
-            
+
             var data = await monicaReportes.BuscarData('clientesList', filtro);
             if (data.length) {
                 this.LlenarSelect('terminoDePago');
@@ -88,6 +110,10 @@
                 this.ProcesoCrear.Pedidos.cliente.Impto_incluido = data[0].Impto_incluido === 'S' ? true : false;
                 this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario = data[0].tipo_empresa;
                 this.ProcesoCrear.Pedidos.cliente.termino = data[0].termino_id;
+                this.ProcesoCrear.Pedidos.cliente.descuento = data[0].Descuento;
+                this.ProcesoCrear.Pedidos.cliente.descuentoBk = data[0].Descuento;
+                this.ProcesoCrear.Pedidos.cliente.aplica_impto = data[0].aplica_impto;
+                this.ProcesoCrear.Pedidos.itbis = data[0].valor_impto;
             }
             else {
                 this.Limpiar();
@@ -149,19 +175,55 @@
                         icon: 'warning'
                     });
             }
-
             this.SumarPreciosProductos();
             this.ProcesoCrear.Pedidos.mostrarDetallesProducto = false;
         },
 
-        SumarPreciosProductos(config) {
+        async SumarPreciosProductos(config) {
             if (!config) {
                 let total = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, current) => {
                     return total + (Number(current.precio) * Number(current.cantidad));
                 }, 0);
 
                 this.ProcesoCrear.subTotal = monicaReportes.$options.filters.FilterStringToMoneyFormat(total);
-                let sumatorias = Number(total) + Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''));
+                let descuento = 0;
+                if (Number(this.ProcesoCrear.Pedidos.cliente.descuento)) {
+                    if (this.ProcesoCrear.Pedidos.cliente.Impto_incluido) {
+                        descuento = (Number(total) / ((Number(this.ProcesoCrear.Pedidos.itbis) / 100) + 1) * (Number(this.ProcesoCrear.Pedidos.cliente.descuento) / 100));
+
+                        let filtro = {
+                            conn: localStorage.getItem('conn'),
+                            WHRER_IN: "'USO_IMPTO_ESTIMADO'"
+                        };
+                        let parametros = await monicaReportes.BuscarData('parametros', filtro);
+                        let totalProd = 0;
+                        if (parametros.find(item => { return item.parametro === 'USO_IMPTO_ESTIMADO' }).valor_caracter.toUpperCase() === 'SI')
+                            totalProd = Number(total);
+                        else {
+                            totalProd = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, actual) => {
+                                if (this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(item => { return item.codigo_producto.trim() === actual.codigo_producto.trim() })) {
+                                    return total + (Number(actual.cantidad) * Number(actual.precio));
+                                }
+                                else {
+                                    return total;
+                                }
+                            }, 0);
+                        }
+                        itbis = (totalProd - (100 / descuento)) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
+
+                    }
+                    else {
+                        descuento = (Number(this.ProcesoCrear.Pedidos.cliente.descuento) / 100) * Number(total);
+                        itbis = (Number(total) - descuento) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
+                    }
+                    this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbis);
+                }
+                this.ProcesoCrear.descuento = monicaReportes.$options.filters.FilterStringToMoneyFormat(descuento);
+                //console.log(this.ProcesoCrear.itbis);
+                //this.CalcularItbis();
+
+                console.log(this.ProcesoCrear.itbis);
+                const sumatorias = (Number(total) - Number(descuento)) + Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''));
                 this.ProcesoCrear.total = monicaReportes.$options.filters.FilterStringToMoneyFormat(sumatorias);
             }
             else {
@@ -176,14 +238,23 @@
                     return;
                 }
 
-                let impto = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(x => { return x.codigo_producto.trim() === config.codigo_producto.trim() });
-                if (impto) {
-                    impto.cant = Number(valor);
+                //let impto = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(x => { return x.codigo_producto.trim() === config.codigo_producto.trim() });
+                //if (impto) {
+                //    impto.cant = Number(valor);
 
-                    let itbisTodal = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.reduce((total, current) => {
-                        return total + (current.valor_impto * current.cant)
-                    }, 0);
-                    this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisTodal);
+                //    let itbisTodal = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.reduce((total, current) => {
+                //        return total + (current.valor_impto * current.cant)
+                //    }, 0);
+                //    this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisTodal);
+                //}
+
+                if (config.precio) {
+                    let valorPrecio = document.getElementById(`itemPrecio_${config.codigo_producto}`).value;
+                    let producto = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto);
+                    if (!valorPrecio || Number(valorPrecio) < 0)
+                        producto.precio = 0;
+                    else
+                        producto.precio = valorPrecio;
                 }
 
                 this.ProcesoCrear.Pedidos.productosTabla1.find(item => item.codigo_producto === config.codigo_producto).cantidad = valor;
@@ -193,15 +264,15 @@
 
         removerProducto(codigo) {
             this.ProcesoCrear.Pedidos.productosTabla1.splice(this.ProcesoCrear.Pedidos.productosTabla1.indexOf(this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === codigo)), 1);
-
+            this.SumarPreciosProductos();
             //  REMOVER ITBIS.
-            const obj = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(x => x.codigo_producto === codigo);
-            if (obj) {
-                const totalItbis = Number(obj.cant) * Number(obj.valor_impto);
-                const resta = Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, '')) - Number(totalItbis) ;
-                this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(resta);
-                this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.splice(this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.indexOf(obj), 1);
-            }
+            //const obj = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(x => x.codigo_producto === codigo);
+            //if (obj) {
+            //    const totalItbis = Number(obj.cant) * Number(obj.valor_impto);
+            //    const resta = Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, '')) - Number(totalItbis);
+            //    this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(resta);
+            //    this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.splice(this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.indexOf(obj), 1);
+            //}
         },
 
         async ModalClienteSleccionado(value) {
@@ -244,24 +315,58 @@
                 this.ProcesoCrear.Pedidos.productosTabla2 = data;
         },
 
+        async CalcularItbis() {
+            let itbis = 0;
+            let descuento = Number(this.ProcesoCrear.descuento.replace(/,/g, '').replace(/.00/g, ''));
+            let total = Number(this.ProcesoCrear.subTotal.replace(/,/g, '').replace(/.00/g, ''));
+            let filtro = {
+                conn: localStorage.getItem('conn'),
+                WHRER_IN: "'USO_IMPTO_ESTIMADO'"
+            };
+            var parametros = await monicaReportes.BuscarData('parametros', filtro);
+
+            if (this.ProcesoCrear.Pedidos.cliente.Impto_incluido) {
+                let totalProd = 0;
+                if (parametros.find(item => { return item.parametro === 'USO_IMPTO_ESTIMADO' }).valor_caracter.toUpperCase() === 'SI')
+                    totalProd = Number(total);
+                else {
+                    totalProd = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, actual) => {
+                        if (this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(item => { return item.codigo_producto.trim() === actual.codigo_producto.trim() })) {
+                            return total + (Number(actual.cantidad) * Number(actual.precio));
+                        }
+                        else {
+                            return total;
+                        }
+                    }, 0);
+                }
+                debugger
+                itbis = (totalProd - (100 / descuento)) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
+            }
+            else {
+                itbis = (Number(total) - descuento) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
+            }
+            this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbis);
+        },
+
         async detallesProducto(config) {
             this.ProcesoCrear.Pedidos.mostrarDetallesProducto = true;
             let filtro = {};
 
             if (config.tipo === 'add') {
                 filtro = {
-                    SELECT: `, P.impto1_en_vtas, I.valor_impto `,
-                    JOIN: `impuestos`,
+                    SELECT: `, P.impto1_en_vtas `,
+                    //SELECT: `, P.impto1_en_vtas, I.valor_impto `,
+                    //JOIN: `impuestos`,
                     code: config.codigo_producto,
                     estatus: `> 0`
                 };
 
                 var data = await monicaReportes.BuscarData('productosList', filtro);
-
                 if (data[0].impto1_en_vtas === 'Si') {
-                    this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, valor_impto: data[0].valor_impto, cant: 1 });
-                    const itbisViejoMasNuevoItbis = Number(Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''))) + Number(data[0].valor_impto);
-                    this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisViejoMasNuevoItbis);
+                    this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, cant: 1 });
+                    //this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, valor_impto: data[0].valor_impto, cant: 1 });
+                    //const itbisViejoMasNuevoItbis = Number(Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''))) + Number(data[0].valor_impto);
+                    //this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisViejoMasNuevoItbis);
                 }
             }
             else {
@@ -295,6 +400,8 @@
             this.ProcesoCrear.Pedidos.cliente.rnc = '';
             this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario = '';
             this.ProcesoCrear.Pedidos.cliente.termino = '';
+            this.ProcesoCrear.Pedidos.cliente.descuento = 0;
+            this.ProcesoCrear.Pedidos.cliente.descuentoBk = 0;
 
             this.ProcesoCrear.Pedidos.cliente.codigo = '';
             this.ProcesoCrear.codClienteCorrecto = false;
