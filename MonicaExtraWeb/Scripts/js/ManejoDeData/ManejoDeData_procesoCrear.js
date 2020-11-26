@@ -175,11 +175,15 @@
                         icon: 'warning'
                     });
             }
-            this.SumarPreciosProductos();
             this.ProcesoCrear.Pedidos.mostrarDetallesProducto = false;
         },
 
         async SumarPreciosProductos(config) {
+            if (!this.ProcesoCrear.Pedidos.productosTabla1.length) {
+                this.ProcesoCrear.subTotal = this.ProcesoCrear.descuento = this.ProcesoCrear.itbis = this.ProcesoCrear.total = '0.00';
+                return;
+            }
+
             if (!config) {
                 let total = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, current) => {
                     return total + (Number(current.precio) * Number(current.cantidad));
@@ -210,7 +214,6 @@
                             }, 0);
                         }
                         itbis = (totalProd - (100 / descuento)) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
-
                     }
                     else {
                         descuento = (Number(this.ProcesoCrear.Pedidos.cliente.descuento) / 100) * Number(total);
@@ -219,10 +222,7 @@
                     this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbis);
                 }
                 this.ProcesoCrear.descuento = monicaReportes.$options.filters.FilterStringToMoneyFormat(descuento);
-                //console.log(this.ProcesoCrear.itbis);
-                //this.CalcularItbis();
 
-                console.log(this.ProcesoCrear.itbis);
                 const sumatorias = (Number(total) - Number(descuento)) + Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''));
                 this.ProcesoCrear.total = monicaReportes.$options.filters.FilterStringToMoneyFormat(sumatorias);
             }
@@ -315,39 +315,6 @@
                 this.ProcesoCrear.Pedidos.productosTabla2 = data;
         },
 
-        async CalcularItbis() {
-            let itbis = 0;
-            let descuento = Number(this.ProcesoCrear.descuento.replace(/,/g, '').replace(/.00/g, ''));
-            let total = Number(this.ProcesoCrear.subTotal.replace(/,/g, '').replace(/.00/g, ''));
-            let filtro = {
-                conn: localStorage.getItem('conn'),
-                WHRER_IN: "'USO_IMPTO_ESTIMADO'"
-            };
-            var parametros = await monicaReportes.BuscarData('parametros', filtro);
-
-            if (this.ProcesoCrear.Pedidos.cliente.Impto_incluido) {
-                let totalProd = 0;
-                if (parametros.find(item => { return item.parametro === 'USO_IMPTO_ESTIMADO' }).valor_caracter.toUpperCase() === 'SI')
-                    totalProd = Number(total);
-                else {
-                    totalProd = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, actual) => {
-                        if (this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(item => { return item.codigo_producto.trim() === actual.codigo_producto.trim() })) {
-                            return total + (Number(actual.cantidad) * Number(actual.precio));
-                        }
-                        else {
-                            return total;
-                        }
-                    }, 0);
-                }
-                debugger
-                itbis = (totalProd - (100 / descuento)) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
-            }
-            else {
-                itbis = (Number(total) - descuento) * (Number(this.ProcesoCrear.Pedidos.itbis) / 100);
-            }
-            this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbis);
-        },
-
         async detallesProducto(config) {
             this.ProcesoCrear.Pedidos.mostrarDetallesProducto = true;
             let filtro = {};
@@ -390,6 +357,7 @@
 
                 window.scrollTo(0, document.body.scrollHeight);
             }
+            this.SumarPreciosProductos();
         },
 
         Limpiar() {
