@@ -20,8 +20,13 @@ namespace MonicaExtraWeb.Controllers
         [HttpPost]
         [Route("ReceiveDataFromWebSocketServer")]
         [Route("ReceiveDataFromWebSocketServer/{IP}")]
-        public void ReceiveDataFromWebSocketServer(string IP, WebSocketDTO data) =>
+        public void ReceiveDataFromWebSocketServer(string IP, WebSocketDTO data)
+        {
+            if (data.data.IndexOf("-->>") > 0)
+                IP = (data.data.Split(new string[] { "-->>" }, System.StringSplitOptions.None))[1];
+
             DataWebsocketPerClient.Add(IP, JsonConvert.SerializeObject(data));
+        }
 
         [HttpGet]
         [Route("GetWebsocketResponseFile")]

@@ -43,6 +43,9 @@ const AddDaysToDate = (days, returnFormat, date) => {
         let month = date.getMonth();
         let year = date.getFullYear();
 
+        if (!month)
+            month = 1;
+
         switch (returnFormat) {
             case 'ddMMyyyy':
                 return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;

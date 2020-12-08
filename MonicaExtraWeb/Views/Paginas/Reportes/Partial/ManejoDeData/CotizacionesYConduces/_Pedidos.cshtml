@@ -78,7 +78,7 @@
 
                         <p class="font-weight-bold col-12 col-lg-2">Vendedor</p>
                         <select class="form-control col-12 col-lg-4"
-                                v-model="FILTROS.vendedorSeleccionado"
+                                v-model="ProcesoCrear.Pedidos.cliente.vendedor"
                                 v-on:focus="LlenarSelect('vendedores')">
                             <option selected value="">--SELECCIONE UNA OPCION--</option>
                             <option v-for="item in FILTROS.vendedores" v-bind:value="item.vendedor_id">{{ item.Nombre_vendedor | FilterUppercase }}</option>
@@ -110,6 +110,7 @@
                                         <th scope="col">Cantidad</th>
                                         <th scope="col">Precio</th>
                                         <th scope="col"></th>
+                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -123,6 +124,14 @@
                                             <input v-bind:id="'itemPrecio_' + item.codigo_producto" type="number" class="form-control col-7" placeholder="Precio" v-bind:value="item.precio" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant, precio: item.precio})">
                                         </td>
                                         <td>
+                                            <div class="dropdown">
+                                                <a style="cursor:pointer;" id="tbl1Menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">more_vert</i></a>
+                                                <div class="dropdown-menu" aria-labelledby="tbl1Menu">
+                                                    <button class="dropdown-item" type="button">Total</button>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
                                             <a style="cursor:pointer;" v-on:click="removerProducto(item.codigo_producto)"><i class="material-icons" style="color:red">delete</i></a>
                                         </td>
                                     </tr>
@@ -133,7 +142,7 @@
                     <div class="card">
                         <div class="row pr-3 d-flex justify-content-between">
                             <div class="col-8 p-3" style="background-color:#17A2B8; color:white;">
-                                <input type="text" class="form-control col-12 mb-2" placeholder="Comentario" />
+                                <input type="text" class="form-control col-12 mb-2" v-model="ProcesoCrear.Pedidos.comentario" placeholder="Comentario" />
 
                                 <div class="row mb-4">
                                     <label class="col-9 form-check-label font-weight-bold">Sub Total</label>
@@ -174,7 +183,7 @@
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-outline-info col-4 font-weight-bold">PROCESAR</button>
+                            <button type="button" class="btn btn-outline-info col-4 font-weight-bold" v-on:click="GuardarPedido()">PROCESAR</button>
                         </div>
                     </div>
                 </div>
@@ -211,7 +220,7 @@
                                 <p class="font-weight-bold col-lg-4">FECHA VENCE</p>
                                 <input type="date" class="form-control col-lg-7" v-model="FILTROS.fechaVence">
                             </div>
-                            <input type="text" class="form-control col-11 mb-2" placeholder="Ref. Cliente" />
+                            <input type="text" class="form-control col-11 mb-2" placeholder="Ref. Cliente" v-model="FILTROS.refCliente" />
 
                             <div class="form-check">
                                 <input id="checkImpuestoIncluido" type="checkbox" class="form-check-input" v-model="ProcesoCrear.Pedidos.cliente.Impto_incluido">

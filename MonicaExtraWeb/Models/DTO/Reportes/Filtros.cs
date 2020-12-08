@@ -90,5 +90,9 @@
             get => _take > 0 ? _take : 20;
             set => _take = value;
         }
+
+        // Control
+        public bool remote { get; set; } = false;
+        public string BEMPRESABorrar { get; set; }
     }
 }

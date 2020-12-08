@@ -107,8 +107,13 @@ namespace MonicaExtraWeb.Utils
                     break;
             }
 
+            CompanyRemoteConnectionIP.TryGetValue(filtro.BEMPRESABorrar, out string _ip);
+
+            if (filtro.remote)
+                query += $"-->>{_ip}";
+
             var obj = new WebSocketDTO
-            {
+            { 
                 data = query
             };
 
@@ -123,7 +128,15 @@ namespace MonicaExtraWeb.Utils
             DataWebsocketPerClient.TryGetValue(IP, out resultset);
 
             if (resultset != default)
+            {
+                if (resultset.IndexOf("-->>") > 0)
+                {
+                    var ip = (resultset.Split(new string[] { "-->>" }, System.StringSplitOptions.None))[1];
+                    resultset.Replace($"-->>{ip}", "");
+                }
+
                 DataWebsocketPerClient.Remove(IP);
+            }
         }
     }
 }

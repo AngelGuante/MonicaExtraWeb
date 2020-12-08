@@ -9,6 +9,7 @@ using MonicaExtraWeb.Models.DTO;
 
 namespace MonicaExtraWeb.Controllers.API
 {
+    [Authorize]
     [RoutePrefix("API/EMPRESAS")]
     public class EmpresasController : ApiController
     {

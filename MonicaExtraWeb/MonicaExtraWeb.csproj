@@ -178,6 +178,7 @@
     <Compile Include="Controllers\API\EmpresasController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
+    <Compile Include="Controllers\API\PedidoController.cs" />
     <Compile Include="Controllers\API\PermisosUsuarioController.cs" />
     <Compile Include="Controllers\API\UsuariosController.cs" />
     <Compile Include="Controllers\AdministracionControl\ControlController.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Models\DTO\Impresion\LocalReports\ReporteEstadoCuentaClienteDTO.cs" />
     <Compile Include="Models\DTO\Impresion\MovimientoDTO.cs" />
     <Compile Include="Models\DTO\NuevoUsuario.cs" />
+    <Compile Include="Models\DTO\PedidoDTO.cs" />
     <Compile Include="Models\DTO\QueryConfigDTO.cs" />
     <Compile Include="Models\LoginRequest.cs" />
     <Compile Include="Models\DTO\Reportes\Filtros.cs" />
@@ -216,6 +218,8 @@
     <Compile Include="Models\monica10\ClasificacionMovimientoCaja.cs" />
     <Compile Include="Models\monica10\Clientes.cs" />
     <Compile Include="Models\monica10\Docs_cc.cs" />
+    <Compile Include="Models\monica10\Estimado.cs" />
+    <Compile Include="Models\monica10\EstimadoDetalle.cs" />
     <Compile Include="Models\monica10\MovimientosCajas.cs" />
     <Compile Include="Models\monica10\Usuarios.cs" />
     <Compile Include="Models\monica10_global\Empresas.cs" />
@@ -223,6 +227,7 @@
     <Compile Include="Utils\Querys\Control\Concurrencias.cs" />
     <Compile Include="Utils\Querys\Control\Empresas.cs" />
     <Compile Include="Utils\Querys\Control\Modulos.cs" />
+    <Compile Include="Utils\Querys\monica10\Pedidos.cs" />
     <Compile Include="Utils\Querys\Control\PermisosUsuarios.cs" />
     <Compile Include="Utils\Querys\Control\Usuarios.cs" />
     <Compile Include="Utils\Token\TokenValidatorController.cs" />

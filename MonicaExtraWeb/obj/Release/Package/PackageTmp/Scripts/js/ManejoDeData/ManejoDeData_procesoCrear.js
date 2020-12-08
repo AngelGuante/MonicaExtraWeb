@@ -4,13 +4,15 @@
     data: {
         FILTROS: {
             vendedorSeleccionado: '',
-            vendedores: [],
             buscarProductoPor: 'codProducto',
             valor: '',
             fechaInicio: GetCurrentDate(),
             fechaVence: AddDaysToDate(30, 'yyyyMMdd'),
-            terminoDePagoSeleccionado: '',
+            refCliente: '',
+            /*terminoDePagoSeleccionado: '',*/
             terminoDePago: [],
+            //vendedorSeleccionado: '',
+            vendedores: [],
         },
 
         ProcesoCrear: {
@@ -26,6 +28,7 @@
             Pedidos: {
                 mostrarDetallesProducto: false,
                 itbis: 0,
+                comentario: '',
                 cliente: {
                     codigo: '',
                     nombre: '',
@@ -36,6 +39,7 @@
                     Impto_incluido: '',
                     tipo_empresaUsuario: '',
                     termino: '',
+                    vendedor: '',
                     descuentoBk: 0,
                     aplica_impto: 0,
                     descuento: 0,
@@ -91,13 +95,13 @@
 
             let filtro = {
                 code: this.ProcesoCrear.Pedidos.cliente.codigo,
-                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido, tipo_empresa, termino_id, Descuento, aplica_impto, I.valor_impto `,
+                SELECT: `, CONCAT(TRIM(direccion1), ' ', TRIM(direccion2), ' ', TRIM(direccion3), TRIM(ciudad), ' ', TRIM(Provincia)) direcciones, CONCAT(telefono1, ' - ', telefono2) telefonos, CONCAT(TRIM(Contacto), ' - ', TRIM(e_mail1)) emails, registro_tributario rnc, maximo_Credito,Balance, Contacto, Impto_incluido, tipo_empresa, termino_id, vendedor_id, Descuento, aplica_impto, I.valor_impto `,
                 JOIN: 'impuestos'
             };
 
             var data = await monicaReportes.BuscarData('clientesList', filtro);
             if (data.length) {
-                this.LlenarSelect('terminoDePago');
+                this.LlenarSelect(['terminoDePago', 'vendedores']);
                 this.ProcesoCrear.codClienteCorrecto = true;
                 this.ProcesoCrear.Pedidos.cliente.nombre = data[0].nombre;
                 this.ProcesoCrear.Pedidos.cliente.direcciones = data[0].direcciones;
@@ -110,6 +114,7 @@
                 this.ProcesoCrear.Pedidos.cliente.Impto_incluido = data[0].Impto_incluido === 'S' ? true : false;
                 this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario = data[0].tipo_empresa;
                 this.ProcesoCrear.Pedidos.cliente.termino = data[0].termino_id;
+                this.ProcesoCrear.Pedidos.cliente.vendedor = data[0].vendedor_id;
                 this.ProcesoCrear.Pedidos.cliente.descuento = data[0].Descuento;
                 this.ProcesoCrear.Pedidos.cliente.descuentoBk = data[0].Descuento;
                 this.ProcesoCrear.Pedidos.cliente.aplica_impto = data[0].aplica_impto;
@@ -144,14 +149,6 @@
         },
 
         agregarProductoALista(producto) {
-            this.ProcesoCrear.Pedidos.producto.comentario = '';
-            this.ProcesoCrear.Pedidos.producto.precio2 = '';
-            this.ProcesoCrear.Pedidos.producto.precio3 = '';
-            this.ProcesoCrear.Pedidos.producto.precio4 = '';
-            this.ProcesoCrear.Pedidos.producto.valor_impto = '';
-            this.ProcesoCrear.Pedidos.producto.enUS = '';
-            this.ProcesoCrear.Pedidos.producto.pi_impuesto = '';
-
             let productoConsulta = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === producto.codigo_producto);
 
             if (productoConsulta) {
@@ -159,14 +156,14 @@
                 if (productoConsulta.cantidad > productoConsulta.cant) {
                     productoConsulta.cantidad = productoConsulta.cant;
                     this.ProcesoCrear.Pedidos.productosTabla2 = [];
-                    this.detallesProducto({ tipo: 'add', codigo_producto: producto.codigo_producto });
+                    this.detallesProducto({ tipo: 'add', codigo_producto: producto.codigo_producto, comentario: this.ProcesoCrear.Pedidos.producto.comentario });
                 }
             }
             else {
                 if (Number(producto.cant) > 0) {
                     this.ProcesoCrear.Pedidos.productosTabla1.push(producto);
                     this.ProcesoCrear.Pedidos.productosTabla2 = [];
-                    this.detallesProducto({ tipo: 'add', codigo_producto: producto.codigo_producto });
+                    this.detallesProducto({ tipo: 'add', codigo_producto: producto.codigo_producto, comentario: this.ProcesoCrear.Pedidos.producto.comentario });
                 }
                 else
                     MostrarMensage({
@@ -176,6 +173,14 @@
                     });
             }
             this.ProcesoCrear.Pedidos.mostrarDetallesProducto = false;
+
+            this.ProcesoCrear.Pedidos.producto.comentario = '';
+            this.ProcesoCrear.Pedidos.producto.precio2 = '';
+            this.ProcesoCrear.Pedidos.producto.precio3 = '';
+            this.ProcesoCrear.Pedidos.producto.precio4 = '';
+            this.ProcesoCrear.Pedidos.producto.valor_impto = '';
+            this.ProcesoCrear.Pedidos.producto.enUS = '';
+            this.ProcesoCrear.Pedidos.producto.pi_impuesto = '';
         },
 
         async SumarPreciosProductos(config) {
@@ -321,7 +326,7 @@
 
             if (config.tipo === 'add') {
                 filtro = {
-                    SELECT: `, P.impto1_en_vtas `,
+                    SELECT: `, P.producto_id, P.impto1_en_vtas `,
                     //SELECT: `, P.impto1_en_vtas, I.valor_impto `,
                     //JOIN: `impuestos`,
                     code: config.codigo_producto,
@@ -334,6 +339,13 @@
                     //this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, valor_impto: data[0].valor_impto, cant: 1 });
                     //const itbisViejoMasNuevoItbis = Number(Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''))) + Number(data[0].valor_impto);
                     //this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisViejoMasNuevoItbis);
+                }
+
+                // AGREGAR LOS DATOS DEL PRODUCTO AGREGADO A LA TABLA PARA LUEGO PODER HACER INSERT DE ESTOS
+                let producto = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto);
+                if (producto) {
+                    producto.producto_id = data[0].producto_id;
+                    producto.comentario = config.comentario.trim();
                 }
             }
             else {
@@ -360,7 +372,68 @@
             this.SumarPreciosProductos();
         },
 
-        Limpiar() {
+        async GuardarPedido() {
+            const json = {
+                estimado: {
+                    cliente_id: this.ProcesoCrear.Pedidos.cliente.codigo,
+                    clte_direccion1: this.ProcesoCrear.Pedidos.cliente.direcciones,
+                    clte_direccion2: this.ProcesoCrear.Pedidos.cliente.telefonos,
+                    clte_direccion3: this.ProcesoCrear.Pedidos.cliente.emails,
+                    registro_tributario: this.ProcesoCrear.Pedidos.cliente.rnc,
+                    vendedor_id: this.ProcesoCrear.Pedidos.cliente.vendedor,
+                    tipo_documento: this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario,
+                    fecha_emision: this.FILTROS.fechaInicio,
+                    fecha_vcmto: this.FILTROS.fechaVence,
+                    refer_cliente: this.FILTROS.refCliente,
+                    termino_id: this.ProcesoCrear.Pedidos.cliente.termino,
+                    impto_en_precio: this.ProcesoCrear.Pedidos.cliente.Impto_incluido ? 1 : 0,
+                    comentario_Detalle: this.ProcesoCrear.Pedidos.comentario,
+                    subtotal: this.ProcesoCrear.subTotal,
+                    dscto_monto: this.ProcesoCrear.descuento,
+                    impuesto_monto: this.ProcesoCrear.itbis,
+                    total: this.ProcesoCrear.total,
+                    dscto_pciento: this.ProcesoCrear.Pedidos.cliente.descuento,
+                    impuesto_pciento: this.ProcesoCrear.Pedidos.itbis
+                },
+                detalle: this.ProcesoCrear.Pedidos.productosTabla1
+            };
+
+            json.detalle.forEach(item => {
+                delete item.descrip_producto;
+                delete item.codigo_producto;
+                delete item.cant;
+            });
+
+            const response = await fetch('../../API/PEDIDO/POST', {
+                method: 'POST',
+                body: JSON.stringify(json),
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            this.Limpiar({
+                limpiarTablas: true,
+                limpiarFechas: true,
+            });
+
+            let id = (await response.json()).rst;
+            if (id)
+                MostrarMensage({
+                    title: 'Pedido Creado.',
+                    message: `Se ha creado el pedido ${id}`,
+                    icon: 'success'
+                });
+            else
+                MostrarMensage({
+                    title: 'Algo a ocurrido.',
+                    message: `Un error a ocurrido con la creacion de su pedido.`,
+                    icon: 'error'
+                });
+        },
+
+        Limpiar(config) {
             this.ProcesoCrear.Pedidos.cliente.nombre = '';
             this.ProcesoCrear.Pedidos.cliente.direcciones = '';
             this.ProcesoCrear.Pedidos.cliente.telefonos = '';
@@ -374,6 +447,19 @@
             this.ProcesoCrear.Pedidos.cliente.codigo = '';
             this.ProcesoCrear.codClienteCorrecto = false;
             this.modalData.clientes = [];
+
+            if (!config)
+                return;
+
+            if (config.limpiarTablas) {
+                this.ProcesoCrear.Pedidos.productosTabla1 = [];
+                this.ProcesoCrear.Pedidos.productosTabla2 = [];
+            }
+
+            if (config && config.limpiarFechas) {
+                this.FILTROS.fechaInicio = GetCurrentDate();
+                this.FILTROS.fechaVence = AddDaysToDate(30, 'yyyyMMdd');
+            }
         }
     },
 

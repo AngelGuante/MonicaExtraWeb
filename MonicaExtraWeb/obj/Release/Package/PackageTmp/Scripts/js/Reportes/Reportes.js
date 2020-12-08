@@ -274,92 +274,98 @@
 
         //  BUSCAR INFORMACION SI ES NECESARIA.
         async BuscarData(data, filtro) {
-            switch (data) {
-                case 'terminoDePago':
-                    if (this.terminoDePago.length === 0)
-                        this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});
-                    break;
-                case 'terminoDePagoPv':
-                    if (this.terminoDePagoPv.length === 0)
-                        this.terminoDePagoPv = await BuscarInformacionLocal('SendWebsocketServer/20', {});
-                    break;
-                case 'nombresBodega':
-                    if (this.nombresBodega.length === 0)
-                        this.nombresBodega = await BuscarInformacionLocal('SendWebsocketServer/8', {});
-                    break;
-                case 'categoriasProductos':
-                    if (this.categoriasProductos.length === 0)
-                        this.categoriasProductos = (await BuscarInformacionLocal('SendWebsocketServer/9', {})).reverse();
-                    break;
-                case 'vendedores':
-                    if (this.vendedores.length === 0)
-                        this.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
-                    break;
-                case 'categoriasClientes':
-                    if (this.categoriasClientes.length === 0)
-                        this.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
-                    break;
-                case 'categoriasProveedores':
-                    if (this.categoriasProveedores.length === 0)
-                        this.categoriasProveedores = await BuscarInformacionLocal('SendWebsocketServer/11', {});
-                    break;
-                case 'subCategoriasProductos':
-                    if (this.subCategoriasProductos.length === 0)
-                        this.subCategoriasProductos = await BuscarInformacionLocal('SendWebsocketServer/16', {});
-                    break;
-                case 'impuestos':
-                    if (this.impuestos.length === 0)
-                        this.impuestos = await BuscarInformacionLocal('SendWebsocketServer/21', {});
-                    break;
-                case 'giroNegocios':
-                    if (this.giroNegocios.length === 0)
-                        this.giroNegocios = await BuscarInformacionLocal('SendWebsocketServer/22', {});
-                    break;
-                case 'giroNegociosPv':
-                    if (this.giroNegociosPv.length === 0)
-                        this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
-                    break;
-                case 'dolar_venta':
-                    if (this.dolar)
-                        return this.dolar;
-                    else
-                        return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
-                case 'parametros':
-                    filtro.WHRER_IN = filtro.WHRER_IN.split(',');
-                    this.parametros.forEach(item => {
-                        filtro.WHRER_IN.splice(filtro.WHRER_IN.indexOf(item), 1)
-                    });
-                    filtro.WHRER_IN = filtro.WHRER_IN.join(',');
-                    if (filtro.WHRER_IN) {
-                        const param = await BuscarInformacionLocal('SendWebsocketServer/27', filtro);
-                        param.forEach(item => {
-                            this.parametros.push({ parametro: item.parametro.trim(), valor_caracter: item.valor_caracter });
+            if (typeof (data) === "string") {
+                switch (data) {
+                    case 'terminoDePago':
+                        if (this.terminoDePago.length === 0)
+                            this.terminoDePago = await BuscarInformacionLocal('SendWebsocketServer/7', {});
+                        break;
+                    case 'terminoDePagoPv':
+                        if (this.terminoDePagoPv.length === 0)
+                            this.terminoDePagoPv = await BuscarInformacionLocal('SendWebsocketServer/20', {});
+                        break;
+                    case 'nombresBodega':
+                        if (this.nombresBodega.length === 0)
+                            this.nombresBodega = await BuscarInformacionLocal('SendWebsocketServer/8', {});
+                        break;
+                    case 'categoriasProductos':
+                        if (this.categoriasProductos.length === 0)
+                            this.categoriasProductos = (await BuscarInformacionLocal('SendWebsocketServer/9', {})).reverse();
+                        break;
+                    case 'vendedores':
+                        if (this.vendedores.length === 0)
+                            this.vendedores = await BuscarInformacionLocal('SendWebsocketServer/3', {});
+                        break;
+                    case 'categoriasClientes':
+                        if (this.categoriasClientes.length === 0)
+                            this.categoriasClientes = await BuscarInformacionLocal('SendWebsocketServer/5', {});
+                        break;
+                    case 'categoriasProveedores':
+                        if (this.categoriasProveedores.length === 0)
+                            this.categoriasProveedores = await BuscarInformacionLocal('SendWebsocketServer/11', {});
+                        break;
+                    case 'subCategoriasProductos':
+                        if (this.subCategoriasProductos.length === 0)
+                            this.subCategoriasProductos = await BuscarInformacionLocal('SendWebsocketServer/16', {});
+                        break;
+                    case 'impuestos':
+                        if (this.impuestos.length === 0)
+                            this.impuestos = await BuscarInformacionLocal('SendWebsocketServer/21', {});
+                        break;
+                    case 'giroNegocios':
+                        if (this.giroNegocios.length === 0)
+                            this.giroNegocios = await BuscarInformacionLocal('SendWebsocketServer/22', {});
+                        break;
+                    case 'giroNegociosPv':
+                        if (this.giroNegociosPv.length === 0)
+                            this.giroNegociosPv = await BuscarInformacionLocal('SendWebsocketServer/23', {});
+                        break;
+                    case 'dolar_venta':
+                        if (this.dolar)
+                            return this.dolar;
+                        else
+                            return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
+                    case 'parametros':
+                        filtro.WHRER_IN = filtro.WHRER_IN.split(',');
+                        this.parametros.forEach(item => {
+                            filtro.WHRER_IN.splice(filtro.WHRER_IN.indexOf(item), 1)
                         });
-                    }
-                    return this.parametros;
-                case 'productosList':
-                    return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
-                case 'clientesList':
-                    return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
-                case 'proveedoresList':
-                    return await BuscarInformacionLocal('SendWebsocketServer/10', filtro);
-                case 'vendedoresList':
-                    return await BuscarInformacionLocal('SendWebsocketServer/18', filtro);
+                        filtro.WHRER_IN = filtro.WHRER_IN.join(',');
+                        if (filtro.WHRER_IN) {
+                            const param = await BuscarInformacionLocal('SendWebsocketServer/27', filtro);
+                            param.forEach(item => {
+                                this.parametros.push({ parametro: item.parametro.trim(), valor_caracter: item.valor_caracter });
+                            });
+                        }
+                        return this.parametros;
+                    case 'productosList':
+                        return await BuscarInformacionLocal('SendWebsocketServer/25', filtro);
+                    case 'clientesList':
+                        return await BuscarInformacionLocal('SendWebsocketServer/6', filtro);
+                    case 'proveedoresList':
+                        return await BuscarInformacionLocal('SendWebsocketServer/10', filtro);
+                    case 'vendedoresList':
+                        return await BuscarInformacionLocal('SendWebsocketServer/18', filtro);
 
-                //  ---------------
-                //  MANEJO DE DATA.
-                //  ---------------
-                //case 'obtenerCotizacion':
-                //    return await BuscarInformacionLocal('SendWebsocketServer/12', filtro, true);
-                case 'obtenerEstimado':
-                    return await BuscarInformacionLocal('SendWebsocketServer/13', filtro);
-                case 'actualizarEstimado':
-                    return await BuscarInformacionLocal('SendWebsocketServer/14', filtro, true);
+                    //  ---------------
+                    //  MANEJO DE DATA.
+                    //  ---------------
+                    //case 'obtenerCotizacion':
+                    //    return await BuscarInformacionLocal('SendWebsocketServer/12', filtro, true);
+                    case 'obtenerEstimado':
+                        return await BuscarInformacionLocal('SendWebsocketServer/13', filtro);
+                    case 'actualizarEstimado':
+                        return await BuscarInformacionLocal('SendWebsocketServer/14', filtro, true);
 
-                default:
-                    alert('Console Error');
-                    new Error(`Opcion: ${data}, NO manejada.`);
-                    break;
+                    default:
+                        alert('Console Error');
+                        new Error(`Opcion: ${data}, NO manejada.`);
+                        break;
+                }
+            }
+            else {
+                for (let i = 0; i < data.length; i++)
+                    await (this.BuscarData(data[i]));
             }
         },
 

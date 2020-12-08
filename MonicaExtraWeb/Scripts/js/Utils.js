@@ -43,6 +43,9 @@ const AddDaysToDate = (days, returnFormat, date) => {
         let month = date.getMonth();
         let year = date.getFullYear();
 
+        if (!month)
+            month = 1;
+
         switch (returnFormat) {
             case 'ddMMyyyy':
                 return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
@@ -189,6 +192,7 @@ const CloseUserSession = () => {
     window.localStorage.removeItem('direccionEmpresa3');
     window.localStorage.removeItem('TelefonoEmpresa1');
     window.localStorage.removeItem('Registro_Tributario_empresa');
+    window.localStorage.removeItem('remoteConexion');
     window.location.href = '/'
 }
 
@@ -370,6 +374,8 @@ const ApiReportesLocales = '/API/ReportesLocales/';
 const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     let cargando = document.getElementById('cargando');
     filtro.conn = localStorage.getItem('conn');
+    filtro.remote = localStorage.getItem('remoteConexion');
+    filtro.BEMPRESABorrar = localStorage.getItem('NumeroUnicoEmpresa');
 
     if (cargando)
         cargando.removeAttribute('hidden');
@@ -406,7 +412,9 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                         }
                     });
                     const innerContent = await innerResponse.json();
-                    const parsedContent = JSON.parse(innerContent.resultset);
+                    let parsedContent = JSON.parse(innerContent.resultset);
+                    
+                    parsedContent.data = parsedContent.data.includes('-->>') ? (parsedContent.data.split('-->>'))[0] : parsedContent.data;
 
                     if (parsedContent) {
                         clearInterval(interval);
