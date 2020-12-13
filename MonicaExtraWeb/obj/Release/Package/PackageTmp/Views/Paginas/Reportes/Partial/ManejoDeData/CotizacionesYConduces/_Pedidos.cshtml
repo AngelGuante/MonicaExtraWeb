@@ -33,10 +33,10 @@
                     </div>
 
                     <div class="row" style="align-items:baseline;">
-                        <div class="col-12 row">
+                        <div class="col row">
                             <p class="font-weight-bold col-4 col-lg-2">Cliente</p>
 
-                            <div class="col-auto col-10">
+                            <div class="col">
                                 <div class="input-group row mb-2">
                                     <div class="input-group-prepend">
                                         <button type="button" class="btn btn-info" style="padding:3px;" v-on:click="ModalBuscarClientes()"><i class="material-icons">person_search</i></button>
@@ -110,7 +110,6 @@
                                         <th scope="col">Cantidad</th>
                                         <th scope="col">Precio</th>
                                         <th scope="col"></th>
-                                        <th scope="col"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -118,18 +117,16 @@
                                         <td>{{item.codigo_producto}}</td>
                                         <td>{{item.descrip_producto}}</td>
                                         <td>
-                                            <input v-bind:id="'item_' + item.codigo_producto" type="number" class="form-control col-3" placeholder="CANTIDAD" v-bind:value="item.cantidad" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant})">
+                                            <input v-bind:id="'item_' + item.codigo_producto" type="number" class="form-control col-4" placeholder="CANTIDAD" v-bind:value="item.cantidad" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant})">
                                         </td>
                                         <td>
-                                            <input v-bind:id="'itemPrecio_' + item.codigo_producto" type="number" class="form-control col-7" placeholder="Precio" v-bind:value="item.precio" v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant, precio: item.precio})">
-                                        </td>
-                                        <td>
-                                            <div class="dropdown">
-                                                <a style="cursor:pointer;" id="tbl1Menu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="material-icons">more_vert</i></a>
-                                                <div class="dropdown-menu" aria-labelledby="tbl1Menu">
-                                                    <button class="dropdown-item" type="button">Total</button>
-                                                </div>
-                                            </div>
+                                            <input v-bind:id="'itemPrecio_' + item.codigo_producto"
+                                                   type="number"
+                                                   class="form-control col-7"
+                                                   placeholder="Precio"
+                                                   v-bind:value="item.precio"
+                                                   v-on:input="SumarPreciosProductos({codigo_producto: item.codigo_producto, cant: item.cant, precio: item.precio})"
+                                                   v-bind:disabled="!ProcesoCrear.Pedidos.parametro_cambiaPrecioEstimado">
                                         </td>
                                         <td>
                                             <a style="cursor:pointer;" v-on:click="removerProducto(item.codigo_producto)"><i class="material-icons" style="color:red">delete</i></a>
@@ -251,7 +248,7 @@
                                         <td>{{item.cant}}</td>
                                         <td>
                                             <a style="cursor:pointer;" v-on:click="detallesProducto({codigo_producto: item.codigo_producto})"><i class="material-icons" style="color:#17A2B8">remove_red_eye</i></a>
-                                            <a style="cursor:pointer;" v-on:click="agregarProductoALista({codigo_producto: item.codigo_producto, descrip_producto: item.descrip_producto, precio: item.precio, cantidad: 1, cant: item.cant})"><i class="material-icons" style="color:#17A2B8">add_circle</i></a>
+                                            <a style="cursor:pointer;"v-on:click="agregarProductoALista({codigo_producto: item.codigo_producto, descrip_producto: item.descrip_producto, precio: item.precio, cantidad: 1, cant: item.cant, factura_sin_stock: item.factura_sin_stock})"><i class="material-icons" style="color:#17A2B8">add_circle</i></a>
                                         </td>
                                     </tr>
                             </table>
@@ -261,7 +258,7 @@
                     <div v-if="ProcesoCrear.Pedidos.mostrarDetallesProducto">
                         <div class="row" v-if="ProcesoCrear.Pedidos.productosTabla2.length">
                             <label class="font-weight-bold">Comentario del Producto:</label>
-                            <textarea class="form-control col-12" rows="4" v-model="ProcesoCrear.Pedidos.producto.comentario">
+                            <textarea class="form-control col-12" rows="4" v-model="ProcesoCrear.Pedidos.producto.comentario" v-bind:disabled="!ProcesoCrear.Pedidos.parametro_producto_comenta_factura">
                         </textarea>
                         </div>
 

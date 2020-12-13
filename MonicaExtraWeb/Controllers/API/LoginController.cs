@@ -52,7 +52,7 @@ namespace MonicaExtraWeb.Controllers.API
                     //Conn.Query($"INSERT INTO {Control}dbo.Concurrencia (idEmpresa, IdUsuario) VALUES ({login.IdEmpresa}, {usuario.IdUsuario})");
 
                     //  GUARDAR LA IP PARA LA CONEXION REMOTA de cada empresa
-                    if (login.remoto && !CompanyRemoteConnectionIP.ContainsKey(HttpContext.Current.Request.UserHostAddress))
+                    if (!CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
                         CompanyRemoteConnectionIP.Add(login.IdEmpresa.ToString(), HttpContext.Current.Request.UserHostAddress);
 
                     var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());

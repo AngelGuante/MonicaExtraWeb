@@ -65,7 +65,7 @@
                 </div>
 
                 <button v-on:click="Log" class="btn btn-info" style="width:100%;">Acceso Local &nbsp;<i class="material-icons" style="padding:3px;">computer</i></button>
-                <button onclick="alert('Servicio no disponible')" class="btn btn-secondary mt-2" style="width:100%;">Acceso a distancia &nbsp; <i class="material-icons" style="padding:3px;">cloud_queue</i></button>
+                <button  v-on:click="Log({remoto: true})" class="btn btn-secondary mt-2" style="width:100%;">Acceso a distancia &nbsp; <i class="material-icons" style="padding:3px;">cloud_queue</i></button>
             </div>
         </div>
     </div>

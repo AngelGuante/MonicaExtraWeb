@@ -225,6 +225,21 @@ const MostrarMensage = config => {
     )
 }
 
+//  MUESTRA UNA ALERTA DE CONFIRMACION.
+const MostrarConfirmacion = config => new Promise((resolve, reject) => {
+    Swal.fire({
+        title: config.title,
+        text: config.message,
+        icon: config.icon,
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: config.confirmButtonText ? config.confirmButtonText : 'Continuar'
+    }).then((result) => {
+        resolve(result.value);
+    });
+});
+
 //  COMVERTIR MESES DE ESCALARES A DESCRIPCION
 const ConvertirMesADescripcion = value => {
     switch (value) {
@@ -400,7 +415,7 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
 
                 MostrarMensage({
                     title: 'No se pudo conectar a su Base de Datos..',
-                    message: `Asegurese de que el servicio ExtraService se encuentra en ejecución.`,
+                    message: `Asegúrese de que la PC-Servidor de Monica o el servicio ExtraService se encuentren disponibles y en ejecución.`,
                     icon: 'error'
                 });
             }
@@ -413,7 +428,7 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                     });
                     const innerContent = await innerResponse.json();
                     let parsedContent = JSON.parse(innerContent.resultset);
-                    
+
                     parsedContent.data = parsedContent.data.includes('-->>') ? (parsedContent.data.split('-->>'))[0] : parsedContent.data;
 
                     if (parsedContent) {

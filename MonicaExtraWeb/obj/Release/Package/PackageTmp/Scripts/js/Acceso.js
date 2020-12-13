@@ -25,7 +25,7 @@
                 .replace('user=', '')
                 .replace(';', '');
         }
-        
+
         document.getElementById('cargando').setAttribute('hidden', true);
 
         if (window.location.search.includes('tokenStatus'))
@@ -35,7 +35,7 @@
     },
 
     methods: {
-        Log() {
+        Log(config) {
             if (this.DivLog.remember) {
                 SetCoockie(`user=${this.DivLog.user};`);
                 SetCoockie(`rememberPass=true;`);
@@ -47,13 +47,18 @@
 
             document.getElementById('cargando').removeAttribute('hidden');
 
+            let auth = {
+                IdEmpresa: this.DivLog.empresaNumeroUnico,
+                Username: this.DivLog.user,
+                Password: this.DivLog.pass
+            };
+
+            auth.remoto = config.remoto ? true : false;
+            localStorage.setItem('remoteConexion', auth.remoto);
+
             fetch('../API/Login/authenticate', {
                 method: 'POST',
-                body: JSON.stringify({
-                    IdEmpresa: this.DivLog.empresaNumeroUnico,
-                    Username: this.DivLog.user,
-                    Password: this.DivLog.pass
-                }),
+                body: JSON.stringify(auth),
                 headers: {
                     'Content-Type': 'application/json'
                 }

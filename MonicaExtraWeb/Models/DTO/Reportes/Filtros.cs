@@ -4,6 +4,8 @@
     {
         private int _take;
 
+        public bool parametro_P_BUSQPRDFAB_ESTIMADO { get; set; } = false;
+
         public string SELECT { get; set; }
         public bool SUM { get; set; } = false;
         public bool COUNT { get; set; } = false;
@@ -84,6 +86,7 @@
         public string genero_factura3 { get; set; }
 
         //  PAGINACION
+        public bool omitirPaginacion { get; set; } = false;
         public int skip { get; set; } = 0;
         public int take
         {

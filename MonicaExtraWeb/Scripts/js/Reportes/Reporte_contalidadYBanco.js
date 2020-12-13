@@ -91,6 +91,7 @@
                 switch (this.FILTROS.tipoConsulta) {
                     case 'Plan_de_Cuentas':
                         filtro.clasificacion = this.FILTROS.clasificacion;
+                        filtro.omitirPaginacion = true;
 
                         if (this.FILTROS.ConBalance)
                             filtro.conBalance = this.FILTROS.ConBalance;
@@ -134,6 +135,8 @@
                         item.VentaCredito = 0;
                         item.Bonos = 0;
                         item.Permuta = 0;
+                        item.MontoFacturado = Number(item.MontoFacturado) - Number(item.impuesto_monto) - Number(item.MontoPropina);
+
                         switch (Number(item.codigo_termino)) {
                             case 1:
                                 item.Efectivo = item.MontoFacturado

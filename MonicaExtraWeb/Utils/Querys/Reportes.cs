@@ -578,12 +578,8 @@ namespace MonicaExtraWeb.Utils
             query.Append($" INNER JOIN {filtro.conn}.dbo.vendedores V ON TS.vendedor_id = V.vendedor_id ");
             query.Append($" INNER JOIN {filtro.conn}.dbo.clientes C ON TS.cliente_id = C.cliente_id  ");
 
-            if (!filtro.GROUP
-                || !string.IsNullOrEmpty(filtro.colTermino)
-                || filtro.tipoCorte == "porTermino_de_Pago")
-                query.Append($",  {filtro.conn}.dbo.terminos_pago TP ");
-
             if (!string.IsNullOrEmpty(filtro.tipoConsulta))
+            {
                 switch (filtro.tipoConsulta)
                 {
                     case "RFA0":
@@ -612,6 +608,11 @@ namespace MonicaExtraWeb.Utils
                             }
                         break;
                 }
+            }
+            if (!filtro.GROUP
+                || !string.IsNullOrEmpty(filtro.colTermino)
+                || filtro.tipoCorte == "porTermino_de_Pago")
+                query.Append($",  {filtro.conn}.dbo.terminos_pago TP ");
             #endregion
 
             #region WHERE
@@ -1524,6 +1525,24 @@ namespace MonicaExtraWeb.Utils
             }
             #endregion
 
+            if (!filtro.SUM && !filtro.GROUP)
+            {
+                query.Append("GROUP BY ");
+
+                query.Append("vendedor,");
+                query.Append("TS.nro_compra,");
+                query.Append("TS.moneda,");
+                query.Append("TS.subtotal,");
+                query.Append("TS.impuesto_monto,");
+                query.Append("TS.total,");
+                query.Append("TS.fecha,");
+                query.Append("TS.fecha_vcmto,");
+                query.Append("TS.ncf,");
+                query.Append("TS.recibida,");
+                query.Append("TS.dscto_monto,");
+                query.Append("TP.Descripcion_terminopv ");
+            }
+
             #region ORDER BY
             if (!filtro.SUM)
             {
@@ -1602,13 +1621,10 @@ namespace MonicaExtraWeb.Utils
             }
             #endregion
 
-            if (!filtro.SUM)
+            if (!filtro.SUM && !filtro.GROUP)
             {
-                if (!filtro.GROUP)
-                {
-                    query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
-                    query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
-                }
+                query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
             }
 
             return query.ToString();
@@ -2022,7 +2038,7 @@ namespace MonicaExtraWeb.Utils
                     query.Append("  SELECT ");
                     query.Append($"  TS.cuenta_contable ");
                     query.Append($", TS.nivel_cuenta ");
-                    query.Append($", TS.nombre_cuenta ");
+                    query.Append($", CASE TS.nombre_cuenta WHEN 'S' THEN TS.nombre_cuenta ELSE CONCAT(' ', TS.nombre_cuenta) END AS nombre_cuenta ");
                     query.Append($", TS.balance ");
                     query.Append($", TS.tipo_cuenta ");
                     query.Append($", TS.centro_costos ");
@@ -2070,8 +2086,11 @@ namespace MonicaExtraWeb.Utils
                     query.Append($" TS.cuenta_contable ");
                     #endregion
 
-                    query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
-                    query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                    if (!filtro.omitirPaginacion)
+                    {
+                        query.Append($"OFFSET {filtro.skip * filtro.take} ROWS ");
+                        query.Append($"FETCH NEXT {filtro.take} ROWS ONLY ");
+                    }
                     break;
                 case "Informe_608":
                     #region SELECT
@@ -2493,6 +2512,12 @@ namespace MonicaExtraWeb.Utils
 
             if (!string.IsNullOrEmpty(filtro.code))
                 queryWhere.Append($"codigo_producto = '{filtro.code.Trim()}' ");
+            if (filtro.parametro_P_BUSQPRDFAB_ESTIMADO)
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("OR ");
+                queryWhere.Append($"codigo_fabricante = '{filtro.code}' ");
+            }
             if (!string.IsNullOrEmpty(filtro.descripcion))
             {
                 if (queryWhere.Length > 6)
@@ -2503,7 +2528,7 @@ namespace MonicaExtraWeb.Utils
             {
                 if (queryWhere.Length > 6)
                     queryWhere.Append("AND ");
-                queryWhere.Append($"cant_total {filtro.estatus} ");
+                queryWhere.Append($"situacion_producto {filtro.estatus} ");
             }
             if (queryWhere.Length > 6)
                 query.Append(queryWhere.ToString());
@@ -2531,7 +2556,7 @@ namespace MonicaExtraWeb.Utils
         {
             var query = new StringBuilder();
 
-            query.Append("SELECT parametro, valor_caracter ");
+            query.Append("SELECT parametro, valor_caracter, valor_numerico  ");
             query.Append($"FROM {filtro.conn}.dbo.parametros_genericos ");
             query.Append($"WHERE parametro IN ({filtro.WHRER_IN}) ");
 

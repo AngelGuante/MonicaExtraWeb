@@ -53,10 +53,8 @@
                 Password: this.DivLog.pass
             };
 
-            if (config.remoto) {
-                auth.remoto = true;
-                localStorage.setItem('remoteConexion', true);
-            }
+            auth.remoto = config.remoto ? true : false;
+            localStorage.setItem('remoteConexion', auth.remoto);
 
             fetch('../API/Login/authenticate', {
                 method: 'POST',

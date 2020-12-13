@@ -121,6 +121,9 @@
         subCategoriasProductos: () => {
             reporte_inventarioYLiquidacion.FILTROS.subProductosCategorias = monicaReportes.subCategoriasProductos;
         },
+        parametros: function () {
+            manejoDeData_crearProceso.ProcesoCrear.Pedidos.parametro_cambiaPrecioEstimado = this.parametros.find(ele => ele.parametro === 'CAMBIA_PRECIO_ESTIMADO').valor_caracter.toUpperCase() === 'SI';
+        },
     },
 
     methods: {
@@ -249,7 +252,7 @@
                     //  CARGAR PARAMETROS
                     let filtro = {
                         conn: localStorage.getItem('conn'),
-                        WHRER_IN: "'USO_IMPTO_ESTIMADO'"
+                        WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
                     };
                     await this.BuscarData('parametros', filtro);
                     break;
@@ -334,7 +337,7 @@
                         if (filtro.WHRER_IN) {
                             const param = await BuscarInformacionLocal('SendWebsocketServer/27', filtro);
                             param.forEach(item => {
-                                this.parametros.push({ parametro: item.parametro.trim(), valor_caracter: item.valor_caracter });
+                                this.parametros.push({ parametro: item.parametro.trim(), valor_caracter: item.valor_caracter, valor_numerico: item.valor_numerico });
                             });
                         }
                         return this.parametros;

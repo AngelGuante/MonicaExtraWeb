@@ -9,9 +9,7 @@
             fechaInicio: GetCurrentDate(),
             fechaVence: AddDaysToDate(30, 'yyyyMMdd'),
             refCliente: '',
-            /*terminoDePagoSeleccionado: '',*/
             terminoDePago: [],
-            //vendedorSeleccionado: '',
             vendedores: [],
         },
 
@@ -26,6 +24,8 @@
             },
 
             Pedidos: {
+                parametro_cambiaPrecioEstimado: false,
+                parametro_producto_comenta_factura: false,
                 mostrarDetallesProducto: false,
                 itbis: 0,
                 comentario: '',
@@ -66,9 +66,6 @@
     },
 
     watch: {
-        //'ProcesoCrear.Pedidos.productosTabla1': function () {
-        //    this.SumarPreciosProductos();
-        //},
         'ProcesoCrear.Pedidos.cliente.descuento': function () {
             if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) < 0)
                 this.ProcesoCrear.Pedidos.cliente.descuento = 0;
@@ -148,8 +145,24 @@
             $('#procesoCrearBuscarClienteModal').modal('show');
         },
 
-        agregarProductoALista(producto) {
+        async agregarProductoALista(producto) {
+            let parametro_facturarSinStock = false;
             let productoConsulta = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === producto.codigo_producto);
+
+            if (producto.factura_sin_stock && producto.factura_sin_stock.toUpperCase() === 'SI') {
+                const cantidadProducto = productoConsulta ? Number(productoConsulta.cantidad) + 1 : 1;
+
+                if (cantidadProducto > producto.cant) {
+                    const confirmacion = await MostrarConfirmacion({
+                        title: 'Desea agregar este producto apesar de que está superando la cantidad en almacen?',
+                        message: `La cantidad que está tratando de facturar de este producto, es superior a la cantidad en existencia.`,
+                        icon: 'warning'
+                    });
+                    if (!confirmacion)
+                        return;
+                    parametro_facturarSinStock = true;
+                }
+            }
 
             if (productoConsulta) {
                 productoConsulta.cantidad = Number(productoConsulta.cantidad) + 1;
@@ -160,7 +173,7 @@
                 }
             }
             else {
-                if (Number(producto.cant) > 0) {
+                if (Number(producto.cant) > 0 || parametro_facturarSinStock) {
                     this.ProcesoCrear.Pedidos.productosTabla1.push(producto);
                     this.ProcesoCrear.Pedidos.productosTabla2 = [];
                     this.detallesProducto({ tipo: 'add', codigo_producto: producto.codigo_producto, comentario: this.ProcesoCrear.Pedidos.producto.comentario });
@@ -184,6 +197,7 @@
         },
 
         async SumarPreciosProductos(config) {
+            //  SI NO HAY NINGUN PRODUCTO, SE COLOTA EL CAMPO TOTAL = 0.00
             if (!this.ProcesoCrear.Pedidos.productosTabla1.length) {
                 this.ProcesoCrear.subTotal = this.ProcesoCrear.descuento = this.ProcesoCrear.itbis = this.ProcesoCrear.total = '0.00';
                 return;
@@ -200,13 +214,8 @@
                     if (this.ProcesoCrear.Pedidos.cliente.Impto_incluido) {
                         descuento = (Number(total) / ((Number(this.ProcesoCrear.Pedidos.itbis) / 100) + 1) * (Number(this.ProcesoCrear.Pedidos.cliente.descuento) / 100));
 
-                        let filtro = {
-                            conn: localStorage.getItem('conn'),
-                            WHRER_IN: "'USO_IMPTO_ESTIMADO'"
-                        };
-                        let parametros = await monicaReportes.BuscarData('parametros', filtro);
                         let totalProd = 0;
-                        if (parametros.find(item => { return item.parametro === 'USO_IMPTO_ESTIMADO' }).valor_caracter.toUpperCase() === 'SI')
+                        if (monicaReportes.parametros.find(item => { return item.parametro === 'USO_IMPTO_ESTIMADO' }).valor_caracter.toUpperCase() === 'SI')
                             totalProd = Number(total);
                         else {
                             totalProd = this.ProcesoCrear.Pedidos.productosTabla1.reduce((total, actual) => {
@@ -234,13 +243,24 @@
             else {
                 //  VALIDAR QUE EL PRODUCTO TENGA EXISTENCIA.
                 let valor = document.getElementById(`item_${config.codigo_producto}`).value;
-                if (Number(valor) > Number(config.cant)) {
+                let valorPrecio = document.getElementById(`itemPrecio_${config.codigo_producto}`).value;
+                if (config.cant !== 0 && Number(valor) > Number(config.cant)) {
                     document.getElementById(`item_${config.codigo_producto}`).value = config.cant;
                     return;
                 }
                 else if (Number(valor) < 1) {
                     document.getElementById(`item_${config.codigo_producto}`).value = 1;
                     return;
+                }
+                //  VALIDAR EL PRECIO DEL PRODUCTO.
+                if (Number(valorPrecio) < this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto).costo ) {
+                    document.getElementById(`itemPrecio_${config.codigo_producto}`).value = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto).costo;
+
+                    MostrarMensage({
+                        title: 'Precio incorrecto.',
+                        message: `El precio de venta no puede ser menor al costo del producto.`,
+                        icon: 'warning'
+                    });
                 }
 
                 //let impto = this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.find(x => { return x.codigo_producto.trim() === config.codigo_producto.trim() });
@@ -298,13 +318,17 @@
                 return;
 
             let filtro = {
-                SELECT: `, cant_total cant, precio1 precio `,
+                SELECT: `, cant_total cant, precio1 precio, factura_sin_stock `,
                 estatus: `> 0`,
                 take: 8
             };
 
-            if (this.FILTROS.buscarProductoPor === 'codProducto')
+            if (this.FILTROS.buscarProductoPor === 'codProducto') {
                 filtro.code = this.FILTROS.valor;
+
+                if (monicaReportes.parametros.find(item => { return item.parametro === 'P_BUSQPRDFAB_ESTIMADO' }).valor_numerico == '1')
+                    filtro.parametro_P_BUSQPRDFAB_ESTIMADO = true;
+            }
             else
                 filtro.descripcion = this.FILTROS.valor;
 
@@ -326,38 +350,35 @@
 
             if (config.tipo === 'add') {
                 filtro = {
-                    SELECT: `, P.producto_id, P.impto1_en_vtas `,
+                    SELECT: `, P.producto_id, P.impto1_en_vtas, P.costo `,
                     //SELECT: `, P.impto1_en_vtas, I.valor_impto `,
                     //JOIN: `impuestos`,
                     code: config.codigo_producto,
                     estatus: `> 0`
                 };
 
-                var data = await monicaReportes.BuscarData('productosList', filtro);
-                if (data[0].impto1_en_vtas === 'Si') {
+                const data = await monicaReportes.BuscarData('productosList', filtro);
+                if (data[0].impto1_en_vtas === 'Si')
                     this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, cant: 1 });
-                    //this.ProcesoCrear.Pedidos.cliente.detalesProductosAgregados.push({ codigo_producto: config.codigo_producto, valor_impto: data[0].valor_impto, cant: 1 });
-                    //const itbisViejoMasNuevoItbis = Number(Number(this.ProcesoCrear.itbis.replace(/,/g, '').replace(/.00/g, ''))) + Number(data[0].valor_impto);
-                    //this.ProcesoCrear.itbis = monicaReportes.$options.filters.FilterStringToMoneyFormat(itbisViejoMasNuevoItbis);
-                }
 
                 // AGREGAR LOS DATOS DEL PRODUCTO AGREGADO A LA TABLA PARA LUEGO PODER HACER INSERT DE ESTOS
                 let producto = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto);
                 if (producto) {
                     producto.producto_id = data[0].producto_id;
                     producto.comentario = config.comentario.trim();
+                    producto.costo = data[0].costo;
                 }
             }
             else {
                 let dolar_venta = await monicaReportes.BuscarData('dolar_venta');
 
                 filtro = {
-                    SELECT: `, precio1, precio2, precio3, precio4, comentario, I.valor_impto `,
+                    SELECT: `, precio1, precio2, precio3, precio4, comentario, I.valor_impto, comenta_factura `,
                     code: config.codigo_producto,
                     JOIN: `impuestos`,
                 };
 
-                let data = await monicaReportes.BuscarData('productosList', filtro);
+                const data = await monicaReportes.BuscarData('productosList', filtro);
 
                 this.ProcesoCrear.Pedidos.producto.comentario = data[0].comentario;
                 this.ProcesoCrear.Pedidos.producto.precio2 = data[0].precio2;
@@ -366,6 +387,9 @@
                 this.ProcesoCrear.Pedidos.producto.valor_impto = data[0].valor_impto;
                 this.ProcesoCrear.Pedidos.producto.enUS = Number(data[0].precio1) / dolar_venta[0].dolar_venta;
                 this.ProcesoCrear.Pedidos.producto.pi_impuesto = (((Number(data[0].valor_impto) / 100) + 1) * Number(data[0].precio1))
+
+                //  HABILITAR O DESHABILITAR EL CUADRO DE COMENTARIO SEGUN EL PRODUCTO AMERITE O NO LA EDICION DE SU COMENTARIO.
+                this.ProcesoCrear.Pedidos.parametro_producto_comenta_factura = data[0].comenta_factura.toUpperCase() === 'SI' ? true : false;
 
                 window.scrollTo(0, document.body.scrollHeight);
             }
