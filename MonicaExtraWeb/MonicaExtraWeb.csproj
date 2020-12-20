@@ -291,6 +291,7 @@
     <Content Include="Content\bootstrap-grid.css.map" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
     <None Include="Properties\PublishProfiles\FTPProfile.pubxml" />
+    <None Include="Properties\PublishProfiles\FTPProfile1.pubxml" />
     <None Include="Properties\PublishProfiles\MoniExtra - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MoniExtra - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\MoniExtra - Web Deploy.pubxml" />

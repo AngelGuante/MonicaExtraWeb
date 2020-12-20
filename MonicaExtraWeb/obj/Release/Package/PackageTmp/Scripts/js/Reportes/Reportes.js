@@ -2,7 +2,7 @@
     el: '#moduloReportes',
 
     data: {
-        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
+        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '1',
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],

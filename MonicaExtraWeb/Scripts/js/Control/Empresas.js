@@ -72,6 +72,7 @@
                 await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`,)
                     .then(response => { return response.json(); })
                     .then(json => {
+                        debugger
                         this.telefono = json.empresas[0].Telefono;
 
                         if (json.empresas[0].idEmpresasM !== null && json.empresas[0].idEmpresasM !== '') {
@@ -208,7 +209,7 @@
             this.tipoModalStatus = true;
             this.IdEmpresaSleccionada =
 
-            this.IdEmpresa = '';
+                this.IdEmpresa = '';
             this.nombre = '';
             this.contacto = '';
             this.telefono = '';

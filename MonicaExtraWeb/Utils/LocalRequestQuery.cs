@@ -110,7 +110,7 @@ namespace MonicaExtraWeb.Utils
             CompanyRemoteConnectionIP.TryGetValue(filtro.BEMPRESABorrar, out string _ip);
 
             if (filtro.remote)
-                query += $"-->>{_ip}";
+                query += $"-->>{IP}";
 
             var obj = new WebSocketDTO
             { 
@@ -119,7 +119,7 @@ namespace MonicaExtraWeb.Utils
 
             var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
 
-            return await POST($"{_websocketServerPATH}/SendToClient/{IP}", content);
+            return await POST($"{_websocketServerPATH}/SendToClient/{_ip}", content);
         }
 
         public static void RequestClientData(out string resultset)
