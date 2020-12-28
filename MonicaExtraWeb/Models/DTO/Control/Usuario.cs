@@ -11,5 +11,6 @@
         public int? Estatus { get; set; } = null;
         public string idEmpresasM { get; set; } = null;
         public int empresaEstatus { get; set; }
+        public bool Remoto { get; set; }
     }
 }

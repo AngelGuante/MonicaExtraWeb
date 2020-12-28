@@ -94,8 +94,7 @@
             set => _take = value;
         }
 
-        // Control
-        public bool remote { get; set; } = false;
-        public string BEMPRESABorrar { get; set; }
+        //// Control
+        //public bool remote { get; set; } = false;
     }
 }

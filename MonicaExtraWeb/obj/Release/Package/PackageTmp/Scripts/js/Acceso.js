@@ -53,9 +53,6 @@
                 Password: this.DivLog.pass
             };
 
-            auth.remoto = config.remoto ? true : false;
-            localStorage.setItem('remoteConexion', auth.remoto);
-
             fetch('../API/Login/authenticate', {
                 method: 'POST',
                 body: JSON.stringify(auth),
@@ -103,8 +100,9 @@
 
                     if (json.Nivel === 0)
                         window.location.href = `../Control`;
-                    else
+                    else {
                         window.location.href = `../SeleccionarEmpresa`;
+                    }
                 });
             document.getElementById('cargando').setAttribute('hidden', true);
         },

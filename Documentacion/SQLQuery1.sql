@@ -44,7 +44,7 @@ CREATE TABLE Usuario(
 	Nivel SMALLINT DEFAULT 2,
 	--LoginMonica VARCHAR(15)
 	--EnlaceMonica VARCHAR(15)
-	--Remoto SMALLINT DEFAULT 0
+	Remoto SMALLINT DEFAULT 0
 	--ConexionServidor VARCHAR(60)
 	--CampoCompuesto VARCHAR(60)
 )

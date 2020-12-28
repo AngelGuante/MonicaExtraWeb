@@ -10,7 +10,11 @@ using System.Web;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
-
+using static MonicaExtraWeb.Utils.Querys.Usuarios;
+using static MonicaExtraWeb.Utils.Token.Claims;
+using System.Linq;
+using MonicaExtraWeb.Models.DTO.Control;
+using Dapper;
 
 namespace MonicaExtraWeb.Utils
 {
@@ -107,19 +111,38 @@ namespace MonicaExtraWeb.Utils
                     break;
             }
 
-            CompanyRemoteConnectionIP.TryGetValue(filtro.BEMPRESABorrar, out string _ip);
 
-            if (filtro.remote)
+            #region VALIDAR SI ES UNA CONEXION REMOTA
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { userId = "", empresaId = "" });
+            string _ip = default;
+
+            if (CompanyRemoteConnectionUsers.ContainsKey(json.userId))
+            {
+                var usuario = Conn.Query<Usuario>(Select(new Usuario
+                {
+                    IdEmpresa = long.Parse(json.empresaId),
+                    IdUsuario = long.Parse(json.userId),
+                }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
+
+                if (!usuario.Remoto)
+                    return "Error_RemoteConectionNotAllowed:NO TIENE PERMISO PARA ACCEDER DE MANERA REMOTA.";
+
+                CompanyRemoteConnectionIP.TryGetValue(json.empresaId, out _ip);
+
                 query += $"-->>{IP}";
+            }
 
+            #endregion
             var obj = new WebSocketDTO
-            { 
+            {
                 data = query
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(obj), Encoding.UTF8, "application/json");
 
-            return await POST($"{_websocketServerPATH}/SendToClient/{_ip}", content);
+            return await POST($"{_websocketServerPATH}/SendToClient/{(_ip != default ? _ip : IP)}", content);
         }
 
         public static void RequestClientData(out string resultset)

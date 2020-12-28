@@ -18,10 +18,10 @@
                     <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Correo</th>
-                    <th scope="col">Nro. Empresas</th>
-                    <th scope="col">Nro. Usuarios</th>
+                    <th scope="col">Número</th>
+                    <th scope="col">Usuarios</th>
                     <th scope="col">Fecha Inicio</th>
-                    <th scope="col">Fecha Vencimiento</th>
+                    @*<th scope="col">Fecha Vencimiento</th>*@
                     <th scope="col">Estatus</th>
                     <th scope="col"></th>
                 </tr>
@@ -34,7 +34,7 @@
                     <td>{{item.CantidadEmpresas}}</td>
                     <td>{{item.CantidadUsuariosPagados}}</td>
                     <td>{{item.FechaInicio | FilterDateFormat}}</td>
-                    <td>{{item.Vencimiento | FilterDateFormat}}</td>
+                    @*<td>{{item.Vencimiento | FilterDateFormat}}</td>*@
                     <td>
                         <div class="alert alert-success" v-if="item.Estatus" role="alert">
                             Habilitado
@@ -132,7 +132,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}`;
+        ConfigurarVentana();
     </script>
     <script src="~/Scripts/js/Control/Empresas.js"></script>
 }

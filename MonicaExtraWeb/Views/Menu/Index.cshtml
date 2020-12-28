@@ -56,7 +56,7 @@
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')}  - ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}`;
+        ConfigurarVentana();
 
         if (window.localStorage.getItem('Nivel') == 2)
             document.getElementById('moduloAdministracion').setAttribute('hidden', true);

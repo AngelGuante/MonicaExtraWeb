@@ -69,7 +69,11 @@
                     IdEmpresa: config.IdEmpresa
                 });
 
-                await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`,)
+                await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                    }
+                })
                     .then(response => { return response.json(); })
                     .then(json => {
                         debugger

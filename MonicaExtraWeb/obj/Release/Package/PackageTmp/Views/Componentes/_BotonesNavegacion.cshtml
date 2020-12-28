@@ -1,7 +1,18 @@
 ﻿<div class="mt-2">
-    <button id="btnBack" class="btn btn-danger" onclick="NavigationBehaviour(-1)" hidden><i class="material-icons">arrow_back</i></button>
-    <button id="btnHome" class="btn btn-info" onclick="NavigationBehaviour(0)" hidden><i class="material-icons">home</i></button>
+    <button id="btnBack" class="btn btn-danger" onclick="NavigationBehaviour(-1)" style="padding-bottom:0" hidden><i class="material-icons">arrow_back</i></button>
+    <button id="btnHome" class="btn btn-info" onclick="NavigationBehaviour(0)" style="padding-bottom:0" hidden><i class="material-icons">home</i></button>
     <button id="btnUsuario" class="btn btn-info" onclick="$('#modalUsuarioLogeado').modal('show');" style="float:right;"></button>
+    <div class="btn-group" style="float:right; margin-right:10px">
+        <button id="btnConnection" type="button" class="btn btn-danger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-bottom:0" hidden>
+            <i class="material-icons">cloud_queue</i>
+        </button>
+        <div class="dropdown-menu">
+            <a id="optConecction_permitir" class="dropdown-item" href="#" onclick="EstablecerConexionRemota()" hidden><i class="material-icons">check</i> Permitir conexiones remotas a través de éste equipo.</a>
+            <a id="optConecction_Cerrar" class="dropdown-item" href="#" onclick="CerrarConexionRemota()" hidden><i class="material-icons">close</i> Cerrar conexiones remotas a través de este equipo.</a>
+            <a id="optConecction_objener" class="dropdown-item" href="#" onclick="EstablecerConexionRemota()" hidden><i class="material-icons">cloud_queue</i> Obtener data de manera remota.</a>
+            <a id="optConecction_dejar" class="dropdown-item" href="#" onclick="CerrarConexionRemota()" hidden><i class="material-icons">close</i> Dejar de obtener data de manera remota.</a>
+        </div>
+    </div>
 </div>
 
 @*  MODAL PARA CERRAR SECCION*@

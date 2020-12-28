@@ -64,11 +64,12 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             {
                 query.Clear();
                 query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
-                query.Append("(idEmpresa, Login, Nivel, NombreUsuario) ");
+                query.Append("(idEmpresa, Login, Nivel, Remoto, NombreUsuario) ");
                 query.Append("VALUES ");
                 query.Append("(@idEmpresa, ");
                 query.Append("@Login, ");
                 query.Append("@Nivel, ");
+                query.Append("@Remoto, ");
                 query.Append("@NombreUsuario) ");
                 Conn.Query(query.ToString(), new
                 {
@@ -76,6 +77,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     Login = "Admin",
                     Nivel = "1",
                     NombreUsuario = "Usuario Administrador",
+                    Remoto = 1
                 });
             }
             else

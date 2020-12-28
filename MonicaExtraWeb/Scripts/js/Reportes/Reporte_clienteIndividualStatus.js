@@ -583,8 +583,8 @@
 
             document.getElementById('CPCCPPIconBottonBuscar').style = 'margin-top: 3%';
 
-            if (divAgrupacion !== null && !('col-lg-5' in divAgrupacion.classList.add('col-lg-5')))
-                document.getElementById('agrupacionDiv').classList.add('col-lg-5');
+            if (divAgrupacion !== null && !('col-lg-5' in divAgrupacion.classList))
+                document.getElementById('CPCCPPagrupacionDiv').classList.add('col-lg-5');
 
             switch (this.FILTROS.tipoCorte) {
                 case 'porTermino_de_Pago':

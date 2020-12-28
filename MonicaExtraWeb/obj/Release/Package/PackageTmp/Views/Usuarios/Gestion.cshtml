@@ -9,8 +9,9 @@
 
     <hr />
 
-    <button type="button" class="btn btn-success" v-on:click="AbrirModalUsuario()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
+    <button type="button" class="btn btn-secondary" v-on:click="AbrirModalUsuario()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Nuevo Usuario</button>
     <button type="button" class="btn btn-primary" v-on:click="AbrirModalEmpresas()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">business</i>Empresas</button>
+    <button type="button" class="btn btn-success" v-on:click="AbrirModalConexionesRemotas()"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cloud_queue</i>Conexiones Remotas Abiertas</button>
 
     <div class="alert alert-info mt-3" role="alert" v-if="tipoModalStatus">
         <p>Número único de la empresa: <strong>{{numeroUnicoEmpresa}}</strong></p>
@@ -41,7 +42,7 @@
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalUsuario({IdUsuario: item.IdUsuario, Login: item.Login, NombreUsuario: item.NombreUsuario, Estatus: item.Estatus, Nivel: item.Nivel})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
+                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalUsuario({IdUsuario: item.IdUsuario, Login: item.Login, NombreUsuario: item.NombreUsuario, Estatus: item.Estatus, Nivel: item.Nivel, Remoto: item.Remoto})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
                     </td>
                 </tr>
         </table>
@@ -97,6 +98,16 @@
                                         <select class="form-control" v-model="nivelUsuarioSeleccionado">
                                             <option value="2">Regular</option>
                                             <option value="1">Maestro</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-4">
+                                    <div class="form-group">
+                                        <label>Remoto</label>
+                                        <select class="form-control" v-model="permisoRemoto">
+                                            <option value="0">No</option>
+                                            <option value="1">Si</option>
                                         </select>
                                     </div>
                                 </div>
@@ -159,7 +170,7 @@
                 </div>
             </div>
         </div>
-    </div>.
+    </div>
 
     @*  MODAL PARA VER LAS EMPRESAS LOCALES*@
     <div class="modal fade bd-example-modal-lg" id="modalEmpresas" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
@@ -190,11 +201,53 @@
             </div>
         </div>
     </div>
+
+    @*  MODAL PARA VER LAS CONEXIONES REMOTAS*@
+    <div class="modal fade bd-example-modal-lg" id="modalConexionesRemotasAbiertas" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="p-5">
+
+                    <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalConexionesRemotasAbiertas').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+
+                    <h1>CONEXIONES LOCALES ABIERTAS</h1>
+
+                    <hr />
+
+                    <div class="card-body">
+                        <div class="Tables mt-2">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Nombre</th>
+                                        <th scope="col">Desconectar</th>
+                                        <th scope="col">Desconectar y Quitar Permiso</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="item in conexionesRemotasAbiertas">
+                                        <td>{{item.IdUsuario}}</td>
+                                        <td>{{item.NombreUsuario}}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-info" v-on:click="DesconectarUsuario({idUsuario: item.IdUsuario, quitarRemoto: false})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-info" v-on:click="DesconectarUsuario({idUsuario: item.IdUsuario, quitarRemoto: true})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">person_add_disabled</i></button>
+                                        </td>
+                                    </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts{
     <script>
-        document.getElementById('btnUsuario').innerHTML = `${window.localStorage.getItem('NombreUsuario')} ${window.localStorage.getItem('Nombre_empresa') !== null ? `- ${window.localStorage.getItem('Nombre_empresa').toUpperCase()}` : ''}`;
+        ConfigurarVentana();
     </script>
     <script src="~/Scripts/js/Administracion/Usuarios.js"></script>
 }

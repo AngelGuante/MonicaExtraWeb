@@ -2,10 +2,9 @@
 using MonicaExtraWeb.Models;
 using MonicaExtraWeb.Models.DTO.Control;
 using MonicaExtraWeb.Utils.Token;
-using System;
+//using System;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 //using static MonicaExtraWeb.Utils.Querys.Control.Concurrencias;
@@ -32,7 +31,7 @@ namespace MonicaExtraWeb.Controllers.API
                 NombreUsuario = login.Username,
             }, new Models.DTO.QueryConfigDTO { Select = "E.ESTATUS empresaEstatus", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = true })).FirstOrDefault();
 
-            if (usuario != default &&
+             if (usuario != default &&
                 login.Password == usuario.Clave)
             {
                 //  CONCURRENCIA
@@ -50,10 +49,6 @@ namespace MonicaExtraWeb.Controllers.API
                         return Json(new { message = "SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA." });
 
                     //Conn.Query($"INSERT INTO {Control}dbo.Concurrencia (idEmpresa, IdUsuario) VALUES ({login.IdEmpresa}, {usuario.IdUsuario})");
-
-                    //  GUARDAR LA IP PARA LA CONEXION REMOTA de cada empresa
-                    if (!CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
-                        CompanyRemoteConnectionIP.Add(login.IdEmpresa.ToString(), HttpContext.Current.Request.UserHostAddress);
 
                     var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());
                     return Json(new { token, usuario.NombreUsuario, /*usuario.Estatus,*/ usuario.Nivel, usuario.IdUsuario, /*usuario.Estatus.Value,*/ initialPass, usuario.idEmpresasM });

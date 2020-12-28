@@ -4,10 +4,12 @@ using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using static MonicaExtraWeb.Utils.Token.TokenValidatorController;
+//using static MonicaExtraWeb.Utils.Token.TokenValidatorController;
 using static MonicaExtraWeb.Utils.Querys.Control.Concurrencias;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using Dapper;
+//using Newtonsoft.Json;
+using static MonicaExtraWeb.Utils.Token.Claims;
 using Newtonsoft.Json;
 
 namespace MonicaExtraWeb
@@ -31,10 +33,10 @@ namespace MonicaExtraWeb
             {
                 if (token != default)
                 {
-                    GetTokenClaims(out Microsoft.IdentityModel.Tokens.SecurityToken claims, token, false);
-                    var usuario = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                    var claims = GetClaims();
+                    var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                         new { userId = "", empresaId = "" });
-                    Conn.Query(Delete(usuario.empresaId, usuario.userId));
+                    Conn.Query(Delete(json.empresaId, json.userId));
                 }
                 Response.Redirect("~/Acceso?tokenStatus=invalid");
             }

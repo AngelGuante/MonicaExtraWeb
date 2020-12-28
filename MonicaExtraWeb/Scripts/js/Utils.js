@@ -170,15 +170,20 @@ const RemoveCookieElement = element => {
 }
 
 //  CERRAR SECCION DE UN USUARIO.
-const CloseUserSession = () => {
-    fetch('../API/CONCURRENCIAS/DELETE', {
-        method: 'DELETE',
-        body: JSON.stringify({ 'IdEmpresa': window.localStorage.getItem('NumeroUnicoEmpresa'), 'IdUsuario': window.localStorage.getItem('Number') }),
-        headers: {
-            'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
-            'Content-Type': 'application/json'
-        }
-    });
+const CloseUserSession = async () => {
+    $('#modalUsuarioLogeado').modal('hide');
+
+    //fetch('../API/CONCURRENCIAS/DELETE', {
+    //    method: 'DELETE',
+    //    body: JSON.stringify({ 'IdEmpresa': window.localStorage.getItem('NumeroUnicoEmpresa'), 'IdUsuario': window.localStorage.getItem('Number') }),
+    //    headers: {
+    //        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+    //        'Content-Type': 'application/json'
+    //    }
+    //});
+
+    await CerrarConexionRemota();
+
     RemoveCookieElement('Authorization');
     //window.localStorage.removeItem('NumeroUnicoEmpresa');
     window.localStorage.removeItem('NombreUsuario');
@@ -325,6 +330,124 @@ const TablaEstiloTotalizacionFilaAgrupadas = (tableName, cols, rows, restarleVal
     }
 }
 
+//  AGREGA A LA VENTANA VISIBLE EN EL MOMENTO, LAS VARIABLES QUE NECESITA.
+const ConfigurarVentana = (config) => {
+    let usuario = '';
+    let empresa = '';
+
+    usuario = window.localStorage.getItem('NombreUsuario');
+    empresa = window.localStorage.getItem('Nombre_empresa');
+
+    document.getElementById('btnUsuario').innerHTML = `${usuario} ${empresa ? ' - ' + empresa.toUpperCase() : ''}`;
+
+    //  --
+    BotonesConexionesRemotas();
+}
+
+//  METODO QUE ESTABLECE LA CONEXION PARA CONECTARSE A DISTANCIA.
+const EstablecerConexionRemota = async () => {
+    document.getElementById('cargando').removeAttribute('hidden');
+    var res = await fetch(`../../API/CONEXIONREMOTA/ESTABLECER`, {
+        headers: {
+            'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+        }
+    });
+
+    var json = await res.json();
+    if (json.message)
+        MostrarMensage({
+            title: 'NO SE PUDO ABRIR LA CONEXION',
+            message: `${json.message}`,
+            icon: 'warning'
+        });
+    else {
+        localStorage.setItem('remoteConexion', true);
+
+        BotonesConexionesRemotas();
+
+        MostrarMensage({
+            title: 'LISTO!',
+            message: `CONEXION A DISTANCIA ABIERTA.`,
+            icon: 'success'
+        });
+    }
+    document.getElementById('cargando').setAttribute('hidden', true);
+}
+
+//  METODO QUE ESTABLECE LA CONEXION PARA CONECTARSE A DISTANCIA.
+const CerrarConexionRemota = async () => {
+    document.getElementById('cargando').removeAttribute('hidden');
+    var res = await fetch(`../../API/CONEXIONREMOTA/CERRAR`, {
+        headers: {
+            'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+        }
+    });
+
+    var json = await res.json();
+    if (json.message)
+        MostrarMensage({
+            title: 'ALGO HA OCURRIDO',
+            message: `${json.message}`,
+            icon: 'warning'
+        });
+    else
+        MostrarMensage({
+            title: 'LISTO!',
+            message: `CONEXION A DISTANCIA CERRADA.`,
+            icon: 'success'
+        });
+
+    localStorage.removeItem('remoteConexion');
+    BotonesConexionesRemotas();
+    document.getElementById('cargando').setAttribute('hidden', true);
+}
+
+//  BONOTES DE OPCION DE CONEXION REMOTA
+const BotonesConexionesRemotas = () => {
+    if (localStorage.getItem('Nivel') === '1' || localStorage.getItem('Nivel') === '2') {
+        const btn = document.getElementById('btnConnection');
+        btn.removeAttribute('hidden');
+        if (localStorage.getItem('remoteConexion') === 'true') {
+            btn.classList.remove('btn-danger');
+            btn.classList.add('btn-success');
+        }
+        else {
+            btn.classList.remove('btn-success');
+            btn.classList.add('btn-danger');
+        }
+    }
+
+    switch (localStorage.getItem('Nivel')) {
+        case '1':
+            document.getElementById('optConecction_objener').setAttribute('hidden', true);
+            document.getElementById('optConecction_dejar').setAttribute('hidden', true);
+
+            if (localStorage.getItem('remoteConexion') === 'true') {
+                document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
+                document.getElementById('optConecction_permitir').setAttribute('hidden', true);
+                document.getElementById('optConecction_Cerrar').removeAttribute('hidden');
+            }
+            else {
+                document.getElementById('optConecction_permitir').removeAttribute('hidden');
+                document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
+            }
+            break;
+        case '2':
+            document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
+            document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
+
+            if (localStorage.getItem('remoteConexion') === 'true') {
+                document.getElementById('optConecction_objener').setAttribute('hidden', true);
+                document.getElementById('optConecction_dejar').removeAttribute('hidden');
+            }
+            else {
+                document.getElementById('optConecction_objener').removeAttribute('hidden');
+                document.getElementById('optConecction_dejar').setAttribute('hidden', true);
+            }
+            break;
+    }
+}
+
 //  NAVEGACION DE LA PAGINA
 const Navegacion = [
     { anterior: '', actual: '' }
@@ -389,8 +512,6 @@ const ApiReportesLocales = '/API/ReportesLocales/';
 const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     let cargando = document.getElementById('cargando');
     filtro.conn = localStorage.getItem('conn');
-    filtro.remote = localStorage.getItem('remoteConexion');
-    filtro.BEMPRESABorrar = localStorage.getItem('NumeroUnicoEmpresa');
 
     if (cargando)
         cargando.removeAttribute('hidden');
@@ -420,6 +541,11 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                 });
             }
             else if (content.value === 'true') {
+                //if (localStorage.getItem('remoteConexion')) {
+                //    localStorage.removeItem('remoteConexion');
+                //    BotonesConexionesRemotas();
+                //}
+
                 interval = setInterval(async () => {
                     const innerResponse = await fetch(`../..${ApiReportesLocales}GetWebsocketResponseFile`, {
                         headers: {
@@ -457,10 +583,25 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                     }
                 }, 1000);
             }
+            else {
+                cargando.setAttribute('hidden', true);
+                if (content.value.startsWith('Error_RemoteConectionNotAllowed:')) {
+                    content.value = content.value.replace(/Error:/g, '');
+
+                    MostrarMensage({
+                        title: 'NO SE PUDO ESTABLECER CONEXION',
+                        message: content.value,
+                        icon: 'error'
+                    });
+                }
+            }
         } catch {
             clearInterval(interval);
             if (cargando)
                 cargando.setAttribute('hidden', true);
+
+            localStorage.removeItem('remoteConexion');
+            BotonesConexionesRemotas();
 
             MostrarMensage({
                 title: 'Ha ocurrido un problema',

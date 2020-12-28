@@ -7,6 +7,7 @@
         nombreUsuario: '',
         nombreCompleto: '',
         nivelUsuarioSeleccionado: 2,
+        permisoRemoto: 0,
 
         nro_empresas: 0,
 
@@ -16,6 +17,8 @@
         empresasLocales: [],
         nroEmpresasSeleccionadas: 0,
         numeroUnicoEmpresa: '',
+
+        conexionesRemotasAbiertas: [],
 
         IdUsuarioSeleccionado: '',
         EstadoUsuarioSeleccionado: '',
@@ -128,6 +131,7 @@
                 this.tipoModalStatus = true;
                 this.nombreUsuario = '';
                 this.nivelUsuarioSeleccionado = '2';
+                this.permisoRemoto = '0';
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
             //  SI ES UN USUARIO EXISTENTE
@@ -138,6 +142,7 @@
                 this.IdUsuarioSeleccionado = config.IdUsuario;
                 this.EstadoUsuarioSeleccionado = config.Estatus;
                 this.nivelUsuarioSeleccionado = config.Nivel;
+                this.permisoRemoto = config.Remoto === true ? '1' : '0';
 
                 await fetch(`../../API/PERMISOSUSUARIO/GET/${config.IdUsuario}`, {
                     headers: {
@@ -169,7 +174,11 @@
                 IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa')
             });
 
-            await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`,)
+            await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                }
+            })
                 .then(response => { return response.json(); })
                 .then(json => {
                     this.nroEmpresasSeleccionadas = 0;
@@ -190,6 +199,34 @@
                 });
 
             $('#modalEmpresas').modal('show');
+        },
+
+        AbrirModalConexionesRemotas: async function () {
+            document.getElementById('cargando').removeAttribute('hidden');
+            const res = await fetch(`../../API/CONEXIONREMOTA/OBTENERCOEXIONES`, {
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                }
+            });
+
+            var json = await res.json();
+            this.conexionesRemotasAbiertas = json.conexiones;
+            document.getElementById('cargando').setAttribute('hidden', true);
+
+            $('#modalConexionesRemotasAbiertas').modal('show');
+        },
+
+        DesconectarUsuario: async function (config) {
+            document.getElementById('cargando').removeAttribute('hidden');
+            $('#modalConexionesRemotasAbiertas').modal('hide');
+
+            await fetch(`../../API/CONEXIONREMOTA/CERRAR?idUsuarioADesconectar=${String(config.idUsuario)}&quitarPermiso=${config.quitarRemoto}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                }
+            });
+            this.BuscarUsuarios();
+            document.getElementById('cargando').setAttribute('hidden', true);
         },
 
         ModificarEmpresa: async function () {
@@ -254,12 +291,13 @@
             for (item of document.querySelectorAll('*[id^="check_"]'))
                 if (document.getElementById(item.id).checked)
                     modulos.push(item.id.replace(/check_/g, ''));
-
+            debugger
             const json = {
                 usuario: {
                     Login: this.nombreUsuario,
                     NombreUsuario: `${this.nombre} ${this.apellidos}`,
                     Nivel: this.nivelUsuarioSeleccionado,
+                    Remoto: this.permisoRemoto === '1' ? true : false,
                     IdEmpresa: localStorage.getItem('NumeroUnicoEmpresa')
                 },
                 modulos
@@ -285,10 +323,10 @@
                 if (document.getElementById(item.id).checked)
                     modulos.push(item.id.replace(/check_/g, ''));
 
-
             const usuario = {
                 IdUsuario: this.IdUsuarioSeleccionado,
-                Nivel: this.nivelUsuarioSeleccionado
+                Nivel: this.nivelUsuarioSeleccionado,
+                Remoto: this.permisoRemoto === '1' ? true : false
             };
 
             const json = {
@@ -382,6 +420,7 @@
             this.IdUsuarioSeleccionado = '';
             this.EstadoUsuarioSeleccionado = '';
             this.nivelUsuarioSeleccionado = 2;
+            this.permisoRemoto = 0;
             this.usuarios = [];
             this.nroEmpresasSeleccionadas = 0;
             //this.modulos = [];

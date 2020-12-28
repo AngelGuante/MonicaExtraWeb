@@ -18,7 +18,7 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult Get(string usuario = default)
         {
             var usuarioDeserialized = usuario != default ? JsonConvert.DeserializeObject<Usuario>(usuario) : new Usuario();
-            var query = Select(usuarioDeserialized, new QueryConfigDTO { ExcluirUsuariosControl = true });
+            var query = Select(usuarioDeserialized, new QueryConfigDTO {Select = " U.Remoto ", ExcluirUsuariosControl = true });
             var usuarios = Conn.Query<Usuario>(query.ToString()).ToList();
 
             return Json(new

@@ -14,6 +14,8 @@ namespace MonicaExtraWeb.Utils.Querys
         public static string Select(Usuario user = default, QueryConfigDTO config = default)
         {
             var query = new StringBuilder();
+            var queryWhere = new StringBuilder();
+            queryWhere.Append("WHERE ");
 
             #region SELECT
             query.Append($"SELECT ");
@@ -24,7 +26,7 @@ namespace MonicaExtraWeb.Utils.Querys
             query.Append($",Nivel ");
 
             if (!string.IsNullOrEmpty(config.Select))
-                query.Append($",{config.Select}");
+                query.Append($",{config.Select} ");
 
             if (config.Usuario_Join_IdEmpresaM)
                 query.Append($",idEmpresasM ");
@@ -37,20 +39,45 @@ namespace MonicaExtraWeb.Utils.Querys
                 query.Append($"JOIN Control.dbo.EmpresaRegistrada E ON U.idEmpresa = E.idEmpresa ");
             #endregion
 
-            query.Append("WHERE ");
-            query.Append($"U.IdEmpresa = '{user.IdEmpresa}'");
-
-            if (user.IdUsuario != default)
-                query.Append($"idUsuario = '{user.IdUsuario}' ");
-            if (user.NombreUsuario != default)
-                query.Append($"AND Login = '{user.NombreUsuario}' ");
+            #region WHERE
             if (user.IdEmpresa != default)
-                query.Append($"AND U.IdEmpresa = '{user.IdEmpresa}' ");
+                queryWhere.Append($"U.IdEmpresa = '{user.IdEmpresa}'");
+            if (user.IdUsuario != default)
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"idUsuario = '{user.IdUsuario}' ");
+            }
+            if (user.NombreUsuario != default)
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"Login = '{user.NombreUsuario}' ");
+            }
             if (user.Estatus != default)
-                query.Append($"AND U.Estatus = '{user.Estatus}' ");
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"U.Estatus = '{user.Estatus}' ");
+            }
             if (config != null
                 && config.ExcluirUsuariosControl)
-                query.Append($"AND Nivel != '0' ");
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"Nivel != '0' ");
+            }
+
+            if (config.Where_In != default && config.Where_In != "")
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"idUsuario IN ({config.Where_In})");
+            }
+
+            if (queryWhere.Length > 6)
+                query.Append(queryWhere.ToString());
+            #endregion
 
             return query.ToString();
         }
@@ -60,12 +87,13 @@ namespace MonicaExtraWeb.Utils.Querys
             var query = new StringBuilder();
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
-            query.Append("(idEmpresa, Login, Nivel, NombreUsuario) ");
+            query.Append("(idEmpresa, Login, Nivel, NombreUsuario, Remoto) ");
             query.Append("VALUES ");
             query.Append("(@idEmpresa, ");
             query.Append("@Login, ");
             query.Append("@Nivel, ");
-            query.Append("@NombreUsuario) ");
+            query.Append("@NombreUsuario, ");
+            query.Append("@Remoto) ");
             query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) ");
 
             var rslt = Conn.Query<int>(query.ToString(), new
@@ -74,6 +102,7 @@ namespace MonicaExtraWeb.Utils.Querys
                 user.Login,
                 user.Nivel,
                 user.NombreUsuario,
+                user.Remoto,
             }).FirstOrDefault();
 
             if (rslt != default)
@@ -100,6 +129,8 @@ namespace MonicaExtraWeb.Utils.Querys
 
             if (user.Estatus != default)
                 querySet.Append($"Estatus = '{user.Estatus}' ");
+            if (user.Remoto)
+                querySet.Append($"Remoto = {(user.Remoto ? "1" : "0")} ");
             else if (user.Clave != default)
             {
                 if (user.Clave == "default")

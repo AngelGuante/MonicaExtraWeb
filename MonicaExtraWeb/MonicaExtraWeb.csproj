@@ -175,6 +175,7 @@
     <Compile Include="Controllers\AdministracionRecursos\AdministracionController.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\API\ConcurrenciasController.cs" />
+    <Compile Include="Controllers\API\ConexionRemotaController.cs" />
     <Compile Include="Controllers\API\EmpresasController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
@@ -230,6 +231,7 @@
     <Compile Include="Utils\Querys\monica10\Pedidos.cs" />
     <Compile Include="Utils\Querys\Control\PermisosUsuarios.cs" />
     <Compile Include="Utils\Querys\Control\Usuarios.cs" />
+    <Compile Include="Utils\Token\Claims.cs" />
     <Compile Include="Utils\Token\TokenValidatorController.cs" />
     <Compile Include="Utils\GlobalVariables.cs" />
     <Compile Include="Utils\Helper.cs" />
@@ -318,6 +320,7 @@
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_procesoCrear.js" />
     <Content Include="Scripts\js\ManejoDeData\ManejoDeData_cotizacionesYConduces.js" />
     <Content Include="Scripts\js\Menu.js" />
+    <Content Include="Scripts\js\Popper.js" />
     <Content Include="Scripts\js\Reportes\Reportes.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clienteIndividualStatus.js" />
     <Content Include="Scripts\js\Reportes\Reporte_clientesYProveedores.js" />

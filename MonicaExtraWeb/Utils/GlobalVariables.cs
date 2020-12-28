@@ -26,5 +26,6 @@ namespace MonicaExtraWeb.Utils
 
         public static Dictionary<string, string> DataWebsocketPerClient = new Dictionary<string, string>();
         public static Dictionary<string, string> CompanyRemoteConnectionIP = new Dictionary<string, string>();
+        public static Dictionary<string, string> CompanyRemoteConnectionUsers = new Dictionary<string, string>();
     }
 }
