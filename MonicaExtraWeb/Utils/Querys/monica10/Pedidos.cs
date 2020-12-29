@@ -18,7 +18,8 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
 
                 query.Append($"INSERT INTO {GlobalVariables.monica10}[dbo].[estimado] ");
                 query.Append("( ");
-                query.Append("[cliente_id] ");
+                query.Append("[nro_estimado]");
+                query.Append(",[cliente_id] ");
                 query.Append(",[clte_direccion1]");
                 query.Append(",[clte_direccion2]");
                 query.Append(",[clte_direccion3]");
@@ -37,10 +38,12 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                 query.Append(",[total]");
                 query.Append(",[dscto_pciento]");
                 query.Append(",[impuesto_pciento]");
+                query.Append(",[tipo_envio]");
                 query.Append(") ");
                 query.Append("VALUES ");
                 query.Append("( ");
-                query.Append("@cliente_id ");
+                query.Append($"(SELECT TOP 1 CASE WHEN nro_estimado IS NULL OR nro_estimado < 1000000001 THEN 1000000001 ELSE nro_estimado + 1 END nro_estimado FROM {GlobalVariables.monica10}dbo.estimado ORDER BY estimado_id DESC) ");
+                query.Append(",@cliente_id ");
                 query.Append(",@clte_direccion1");
                 query.Append(",@clte_direccion2");
                 query.Append(",@clte_direccion3");
@@ -59,6 +62,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                 query.Append(",@total");
                 query.Append(",@dscto_pciento");
                 query.Append(",@impuesto_pciento");
+                query.Append(",@tipo_envio");
                 query.Append(") ");
                 query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) ");
 
@@ -83,6 +87,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                     estimado.total,
                     estimado.dscto_pciento,
                     estimado.impuesto_pciento,
+                    tipo_envio = "P"
                 }).FirstOrDefault();
 
                 //  INSERTAR EL DETALLES 
@@ -140,7 +145,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                     throw new Exception();
                 return rslt;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return -1;
             }
