@@ -35,7 +35,7 @@
     },
 
     methods: {
-        Log(config) {
+        async Log() {
             if (this.DivLog.remember) {
                 SetCoockie(`user=${this.DivLog.user};`);
                 SetCoockie(`rememberPass=true;`);
@@ -78,10 +78,10 @@
                     }
 
                     const json = await content.json();
-
                     if ('message' in json) {
                         document.getElementById('ServerMessageDiv').removeAttribute('hidden')
                         document.getElementById('serverLoginMessage').innerHTML = json.message;
+                        document.getElementById('cargando').setAttribute('hidden', true);
                         return;
                     }
                     if (json.initialPass === this.DivLog.pass) {
@@ -89,6 +89,7 @@
                         document.getElementById('divCambiarContrasenia').removeAttribute('hidden');
                         window.localStorage.setItem('Number', json.IdUsuario);
                         this.provitional = json.token;
+                        document.getElementById('cargando').setAttribute('hidden', true);
                         return;
                     }
                     localStorage.setItem('Number', json.IdUsuario);
@@ -97,14 +98,19 @@
                     localStorage.setItem('Empresas', json.idEmpresasM);
                     localStorage.setItem('NumeroUnicoEmpresa', this.DivLog.empresaNumeroUnico);
                     localStorage.setItem('Nivel', json.Nivel);
-
                     if (json.Nivel === 0)
                         window.location.href = `../Control`;
+                    else if (json.Nivel === 3) {
+                        alert("Este usuario está configurado para funcionar como remoto en la aplicación 'ExtraService Notification'.");
+                        await CloseUserSession();
+                        window.location.href = `../`;
+                        return;
+                    }
                     else {
+                        localStorage.setItem('remoteConexion', true);
                         window.location.href = `../SeleccionarEmpresa`;
                     }
                 });
-            document.getElementById('cargando').setAttribute('hidden', true);
         },
 
         CambiarContrasenia: async function () {

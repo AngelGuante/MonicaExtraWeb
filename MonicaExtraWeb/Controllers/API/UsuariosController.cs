@@ -18,7 +18,7 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult Get(string usuario = default)
         {
             var usuarioDeserialized = usuario != default ? JsonConvert.DeserializeObject<Usuario>(usuario) : new Usuario();
-            var query = Select(usuarioDeserialized, new QueryConfigDTO {Select = " U.Remoto ", ExcluirUsuariosControl = true });
+            var query = Select(usuarioDeserialized, new QueryConfigDTO {Select = " U.Login, U.Remoto ", ExcluirUsuariosControl = true });
             var usuarios = Conn.Query<Usuario>(query.ToString()).ToList();
 
             return Json(new
@@ -31,9 +31,17 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("POST")]
         public IHttpActionResult Post(NuevoUsuario param)
         {
+            // VALIDAR QUE EL NOMBRE DE USUARIO NO EXISTA.
+            var usuarios = Conn.Query<Usuario>(Select(new Usuario { 
+                IdEmpresa = param.usuario.IdEmpresa,
+                NombreUsuario = param.usuario.Login
+            }, new QueryConfigDTO { ExcluirUsuariosControl = true }).ToString()).ToList();
+            if (usuarios.Count > 0)
+                return Ok(false);
+
             Insert(param.usuario, param.modulos);
 
-            return Ok();
+            return Ok(true);
         }
 
         [HttpPut]

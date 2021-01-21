@@ -2,12 +2,13 @@
 using MonicaExtraWeb.Models;
 using MonicaExtraWeb.Models.DTO.Control;
 using MonicaExtraWeb.Utils.Token;
-//using System;
 using System.Configuration;
 using System.Linq;
 using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-//using static MonicaExtraWeb.Utils.Querys.Control.Concurrencias;
+using static MonicaExtraWeb.Utils.Helper;
+using static MonicaExtraWeb.Utils.Querys.Control.EmpresaEquiposRegistrados;
+using static MonicaExtraWeb.Utils.Querys.Control.EquiposAsignadosAUsuario;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 
 namespace MonicaExtraWeb.Controllers.API
@@ -21,43 +22,84 @@ namespace MonicaExtraWeb.Controllers.API
         public IHttpActionResult Authenticate(LoginRequest login)
         {
             var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
+            var usuario = ValidarUsuarioLogin(login);
 
-            if (login == default || login.IdEmpresa == default || login.Username == default || login.Password == default)
+            if (usuario == default)
                 return Unauthorized();
 
-            var usuario = Conn.Query<Usuario>(Select(new Usuario
+            if (usuario != default &&
+               login.Password == usuario.Clave)
             {
-                IdEmpresa = login.IdEmpresa,
-                NombreUsuario = login.Username,
-            }, new Models.DTO.QueryConfigDTO { Select = "E.ESTATUS empresaEstatus", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = true })).FirstOrDefault();
+                // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
+                if (usuario.empresaEstatus == 0)
+                    return Json(new { message = "ESTE USUARIO NO PUEDE ACCEDER YA QUE LA EMPRESA A LA QUE PERTENECE, ESTA INHABILITADA." });
 
-             if (usuario != default &&
-                login.Password == usuario.Clave)
-            {
-                //  CONCURRENCIA
-                //var usuarioConcurrencia = Convert.ToInt32(Conn.ExecuteScalar(Select_Count(login.IdEmpresa.ToString(), usuario.IdUsuario.Value.ToString())));
+                //  SI EL USUARIO SE ENCUENTRA INHABILITADO.
+                if (usuario.Estatus == 0)
+                    return Json(new { message = "SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA." });
 
-                //if (usuarioConcurrencia == default)
-                if (true)
+                #region VALIDAR SI ES UN USUARIO SERVIDOR REMOTO AGREGAR LA MAC CON LA QUE SE REGISTRA
+                if (login.Username == "Remoto" && login.mac != string.Empty)
                 {
-                    // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
-                    if (usuario.empresaEstatus == 0)
-                        return Json(new { message = "ESTE USUARIO NO PUEDE ACCEDER YA QUE LA EMPRESA A LA QUE PERTENECE, ESTA INHABILITADA." });
+                    #region VALIDAR LA MAC Y EL USUARIO SEAN VALIDOS PARA CONTINUAR
+                    var EmpresasEquiposRegistrados = Conn.Query<EmpresasEquiposRegistrados>(
+                        Select(new EmpresasEquiposRegistrados
+                        {
+                            identificador = login.mac
+                        }).ToString())
+                        .FirstOrDefault();
 
-                    //  SI EL USUARIO SE ENCUENTRA INHABILITADO.
-                    if (usuario.Estatus == 0)
-                        return Json(new { message = "SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA." });
+                    var EquipoAsignadoAUsuario = Conn.Query<EquiposAsignadosAUsuarios>(
+                        Select(new EquiposAsignadosAUsuarios
+                        {
+                            idUsuario = usuario.IdUsuario.Value
+                        }).ToString())
+                        .FirstOrDefault();
 
-                    //Conn.Query($"INSERT INTO {Control}dbo.Concurrencia (idEmpresa, IdUsuario) VALUES ({login.IdEmpresa}, {usuario.IdUsuario})");
+                    if (EmpresasEquiposRegistrados != default
+                        && EquipoAsignadoAUsuario != default)
+                    {
+                        if (EmpresasEquiposRegistrados.id != EquipoAsignadoAUsuario.idEquipoRegistrado)
+                            return Unauthorized();
+                        else
+                            return Ok();
+                    }
+                    if (EquipoAsignadoAUsuario == default
+                        && EmpresasEquiposRegistrados != default)
+                        return Unauthorized();
+                    #endregion
 
-                    var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());
-                    return Json(new { token, usuario.NombreUsuario, /*usuario.Estatus,*/ usuario.Nivel, usuario.IdUsuario, /*usuario.Estatus.Value,*/ initialPass, usuario.idEmpresasM });
+                    Insert(new EmpresasEquiposRegistrados
+                    {
+                        idEmpresa = login.IdEmpresa,
+                        identificador = login.mac
+                    }, usuario);
+                    return Ok();
                 }
-                //else
-                //    return Json(new { message = "ESTE USUARIO YA SE ENCUENTRA LOGUEADO." });
+                #endregion
+                else if (login.Username != "Remoto" && usuario.Nivel != 0)
+                {
+                    usuario.IdEmpresa = login.IdEmpresa;
+                    var validacionRemoto = ValidarUsuarioParaConectarseRemoto(usuario);
+                    if (validacionRemoto != string.Empty)
+                        return Json(new { message = validacionRemoto });
+                }
+                var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());
+                return Json(new { token, usuario.NombreUsuario, /*usuario.Estatus,*/ usuario.Nivel, usuario.IdUsuario, /*usuario.Estatus.Value,*/ initialPass, usuario.idEmpresasM });
             }
             else
                 return Unauthorized();
+        }
+
+
+        [HttpGet]
+        [Route("ClientAppLogin")]
+        public IHttpActionResult ClientAppLogin(string pass)
+        {
+            if (pass == "2468@!.55")
+                return Ok(true);
+            else
+                return Ok(false);
         }
     }
 }

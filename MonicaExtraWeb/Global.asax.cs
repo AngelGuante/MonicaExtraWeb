@@ -1,16 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Web;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-//using static MonicaExtraWeb.Utils.Token.TokenValidatorController;
-using static MonicaExtraWeb.Utils.Querys.Control.Concurrencias;
-using static MonicaExtraWeb.Utils.GlobalVariables;
-using Dapper;
-//using Newtonsoft.Json;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using Newtonsoft.Json;
+using static MonicaExtraWeb.Utils.GlobalVariables;
 
 namespace MonicaExtraWeb
 {
@@ -28,7 +24,6 @@ namespace MonicaExtraWeb
         protected void Application_EndRequest(object sender, EventArgs e)
         {
             var token = HttpContext.Current.Request.Cookies.Get("Authorization")?.Value;
-
             if (Response.StatusCode == 401)
             {
                 if (token != default)
@@ -36,7 +31,9 @@ namespace MonicaExtraWeb
                     var claims = GetClaims();
                     var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                         new { userId = "", empresaId = "" });
-                    Conn.Query(Delete(json.empresaId, json.userId));
+
+                    if (CompanyRemoteConnectionIP.ContainsKey(json.empresaId) && CompanyRemoteConnectionUsers.ContainsKey(json.userId))
+                        CompanyRemoteConnectionUsers.Remove(json.userId);
                 }
                 Response.Redirect("~/Acceso?tokenStatus=invalid");
             }

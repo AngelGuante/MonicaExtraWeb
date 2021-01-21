@@ -125,13 +125,26 @@
                         console.log(err);
                     });
             }
+            
+            const inptNombre = document.getElementById('inptNombreNuevoUsuario');
+            if (inptNombre)
+                inptNombre.removeAttribute('disabled');
+            const inptApellido = document.getElementById('inptApellidosNuevoUsuario');
+            if (inptApellido)
+                inptApellido.removeAttribute('disabled');
+            const inptNombreUsuario = document.getElementById('inptNombreUsuario');
+            if (inptNombreUsuario)
+                inptNombreUsuario.setAttribute('disabled', true);
 
             //  SI ES UN USUARIO NUEVO
             if (!config) {
                 this.tipoModalStatus = true;
                 this.nombreUsuario = '';
+                this.nombre = '';
+                this.apellidos = '';
                 this.nivelUsuarioSeleccionado = '2';
                 this.permisoRemoto = '0';
+                inptNombreUsuario.removeAttribute('disabled');
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
             //  SI ES UN USUARIO EXISTENTE
@@ -220,7 +233,7 @@
             document.getElementById('cargando').removeAttribute('hidden');
             $('#modalConexionesRemotasAbiertas').modal('hide');
 
-            await fetch(`../../API/CONEXIONREMOTA/CERRAR?idUsuarioADesconectar=${String(config.idUsuario)}&quitarPermiso=${config.quitarRemoto}`, {
+            await fetch(`../../API/CONEXIONREMOTA/CERRAR?idUsuarioADesconectar=${String(config.idUsuario)}&quitarPermiso=${config.quitarRemoto}&disconectedByAdmin=true`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
@@ -283,7 +296,15 @@
                 document.getElementById(item.id).checked = value;
         },
 
-        NuevoUsuario: function () {
+        NuevoUsuario: async function () {
+            if (this.nombreUsuario === ''
+                || this.nombre === ''
+                || this.apellidos === ''
+                || this.nivelUsuarioSeleccionado === ''
+                || this.permisoRemoto === ''
+                || localStorage.getItem('NumeroUnicoEmpresa') === '') {
+                return;
+            }
             document.getElementById('cargando').removeAttribute('hidden');
 
             const modulos = []
@@ -291,7 +312,7 @@
             for (item of document.querySelectorAll('*[id^="check_"]'))
                 if (document.getElementById(item.id).checked)
                     modulos.push(item.id.replace(/check_/g, ''));
-            debugger
+
             const json = {
                 usuario: {
                     Login: this.nombreUsuario,
@@ -303,15 +324,29 @@
                 modulos
             };
 
-            fetch('../../API/USUARIOS/POST', {
+            const response = await fetch('../../API/USUARIOS/POST', {
                 method: 'POST',
                 body: JSON.stringify(json),
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
                     'Content-Type': 'application/json'
                 }
-            })
-                .then(response => { this.Limpiar(); });
+            });
+            const jsonRes = await response.json();
+            console.log(jsonRes);
+
+            if (jsonRes === true)
+                this.Limpiar();
+            else if (jsonRes === false) {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                document.getElementById('inptNombreUsuario').removeAttribute('disabled');
+
+                MostrarMensage({
+                    title: '',
+                    message: `El nombre de usuario <b>${this.nombreUsuario}</b>, yá existe, ingrese uno manualmente.`,
+                    icon: 'warning'
+                });
+            }
         },
 
         ModificarUsuario: async function (IdUsuario) {
@@ -435,12 +470,3 @@
         }
     }
 });
-
-
-//else if (this.nroEmpresasSeleccionadas > this.nro_empresas) {
-//    MostrarMensage({
-//        title: '',
-//        message: `Solo Puede seleccionar ${this.nro_empresas}`,
-//        icon: 'warning'
-//    });
-//}

@@ -5,6 +5,8 @@
         public long IdEmpresa { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
-        public bool remoto { get; set; } = false;
+        public string mac { get; set; } = string.Empty;
+        public bool passwordEncriptado { get; set; } = false;
+        //public bool remoto { get; set; } = false;
     }
 }

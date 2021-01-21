@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MonicaExtraWeb.Models;
 using MonicaExtraWeb.Models.DTO.Control;
 using Newtonsoft.Json;
 using System.Linq;
@@ -7,67 +8,65 @@ using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Utils.Helper;
 
 namespace MonicaExtraWeb.Controllers.API
 {
-    [Authorize]
     [RoutePrefix("API/CONEXIONREMOTA")]
     public class ConexionRemotaController : ApiController
     {
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("ESTABLECERSERVIDOR")]
+        public IHttpActionResult EstablecerServidor(LoginRequest login)
+        {
+            if (ValidarUsuarioLogin(login) == default)
+                return Unauthorized();
+
+            if (!CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
+            {
+                CompanyRemoteConnectionIP.Add(login.IdEmpresa.ToString(), HttpContext.Current.Request.UserHostAddress);
+                return Ok(true);
+            }
+            return Ok("Esta empresa ya tiene una conexion de servidor abierta, debe cerrar la existente para iniciar esta.");
+        }
+
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("CERRARSERVIDOR")]
+        public IHttpActionResult CerrarServidor(LoginRequest login)
+        {
+            if (ValidarUsuarioLogin(login) == default)
+                return Unauthorized();
+
+            if (CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
+            {
+                CompanyRemoteConnectionIP.Remove(login.IdEmpresa.ToString());
+
+                foreach (var item in CompanyRemoteConnectionUsers.Where(x => x.Value == login.IdEmpresa.ToString()).ToList())
+                {
+                    CompanyRemoteConnectionUsersDisconected.Add(item.Key, item.Value);
+                    CompanyRemoteConnectionUsers.Remove(item.Key);
+                }
+            }
+            return Ok(true);
+        }
+
+        [Authorize]
         [HttpGet]
         [Route("ESTABLECER")]
         public IHttpActionResult Establecer()
         {
-            var claims = GetClaims();
-
-            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
-                new { userId = "", empresaId = "" });
-
-            var usuario = Conn.Query<Usuario>(Select(new Usuario
-            {
-                IdEmpresa = long.Parse(json.empresaId),
-                IdUsuario = long.Parse(json.userId),
-            }, new Models.DTO.QueryConfigDTO { Select = "U.Nivel, U.Remoto", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
-
-            if (usuario.Nivel == 1)
-            {
-                if (!CompanyRemoteConnectionIP.ContainsKey(json.empresaId))
-                {
-                    CompanyRemoteConnectionIP.Add(json.empresaId, HttpContext.Current.Request.UserHostAddress);
-                    return Json(new { });
-                }
-                else
-                    return Json(new { message = "ESTA EMPRESA YA TIENE UNA CONEXION A DISTANCIA ABIERTA." });
-            }
-            else if (usuario.Nivel == 2)
-            {
-                if (!usuario.Remoto)
-                    return Json(new { message = "SU USUARIO NO TIENE PERMISOS PARA REALIZAR ESTA ACCION." });
-
-                if (CompanyRemoteConnectionIP.ContainsKey(json.empresaId))
-                {
-                    if (!CompanyRemoteConnectionUsers.ContainsKey(json.userId))
-                    {
-                        CompanyRemoteConnectionUsers.Add(json.userId, json.empresaId);
-                        return Json(new { });
-                    }
-                    else
-                        return Json(new { message = "ESTE USUARIO YA ESTA CONECTADO." });
-                }
-                else
-                    return Json(new
-                    {
-                        message = "NO SE PUEDE CONECTAR DE MANERA A DISTANCIA POR EL MOMENTO, NO EXISTE NINGUNA CONEXION ABIERTA." +
-                        "\nCOMUNICASRSE CON EL ADMINISTRADOR PARA REALIZAR ESTA CONEXION."
-                    });
-            }
-
-            return Json(new { message = "HA OCURRIDO UN ERROR." }); ;
+            var validacionRemoto = ValidarUsuarioParaConectarseRemoto();
+            if (validacionRemoto != string.Empty)
+                return Json(new { message = validacionRemoto });
+            return Json(new { });
         }
 
+        [Authorize]
         [HttpGet]
         [Route("CERRAR")]
-        public IHttpActionResult Cerrar(string idUsuarioADesconectar = default, bool quitarPermiso = false)
+        public IHttpActionResult Cerrar(string idUsuarioADesconectar = default, bool quitarPermiso = false, bool disconectedByAdmin = false)
         {
             if (idUsuarioADesconectar == default)
             {
@@ -76,39 +75,20 @@ namespace MonicaExtraWeb.Controllers.API
                 var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                     new { userId = "", empresaId = "" });
 
-                var usuario = Conn.Query<Usuario>(Select(new Usuario
+                if (CompanyRemoteConnectionIP.ContainsKey(json.empresaId) && CompanyRemoteConnectionUsers.ContainsKey(json.userId))
                 {
-                    IdEmpresa = long.Parse(json.empresaId),
-                    IdUsuario = long.Parse(json.userId),
-                }, new Models.DTO.QueryConfigDTO { Select = "U.Nivel", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
-
-                if (usuario.Nivel == 1)
-                {
-                    if (CompanyRemoteConnectionIP.ContainsKey(json.empresaId))
-                    {
-                        CompanyRemoteConnectionIP.Remove(json.empresaId);
-
-                        foreach (var item in CompanyRemoteConnectionUsers.Where(x => x.Value == json.empresaId).ToList())
-                            CompanyRemoteConnectionUsers.Remove(item.Key);
-
-                        return Json(new { });
-                    }
-                    else
-                        return Json(new { message = "NINGUNA CONEXION DE ESTA EMPRESA ENCONTRADA." });
+                    CompanyRemoteConnectionUsers.Remove(json.userId);
+                    return Json(new { });
                 }
-                else if (usuario.Nivel == 2)
-                {
-                    if (CompanyRemoteConnectionIP.ContainsKey(json.empresaId) && CompanyRemoteConnectionUsers.ContainsKey(json.userId))
-                    {
-                        CompanyRemoteConnectionUsers.Remove(json.userId);
-                        return Json(new { });
-                    }
-                    else
-                        return Json(new { message = "NINGUNA CONEXION DE ESTA EMPRESA ENCONTRADA." });
-                }
+                return Json(new { });
             }
             else
             {
+                if (disconectedByAdmin)
+                    CompanyRemoteConnectionUsersDisconected.Add(
+                        idUsuarioADesconectar,
+                        CompanyRemoteConnectionUsers.Where(x => x.Key == idUsuarioADesconectar).FirstOrDefault().Value);
+
                 CompanyRemoteConnectionUsers.Remove(idUsuarioADesconectar);
 
                 if (quitarPermiso)
@@ -116,8 +96,6 @@ namespace MonicaExtraWeb.Controllers.API
 
                 return Json(new { });
             }
-
-            return Json(new { message = "HA OCURRIDO UN ERROR." }); ;
         }
 
         [HttpGet]

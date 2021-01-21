@@ -172,16 +172,6 @@ const RemoveCookieElement = element => {
 //  CERRAR SECCION DE UN USUARIO.
 const CloseUserSession = async () => {
     $('#modalUsuarioLogeado').modal('hide');
-
-    //fetch('../API/CONCURRENCIAS/DELETE', {
-    //    method: 'DELETE',
-    //    body: JSON.stringify({ 'IdEmpresa': window.localStorage.getItem('NumeroUnicoEmpresa'), 'IdUsuario': window.localStorage.getItem('Number') }),
-    //    headers: {
-    //        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
-    //        'Content-Type': 'application/json'
-    //    }
-    //});
-
     await CerrarConexionRemota();
 
     RemoveCookieElement('Authorization');
@@ -356,25 +346,24 @@ const EstablecerConexionRemota = async () => {
     var json = await res.json();
     if (json.message)
         MostrarMensage({
-            title: 'NO SE PUDO ABRIR LA CONEXION',
+            title: 'No se puede abrir la conexion',
             message: `${json.message}`,
             icon: 'warning'
         });
     else {
         localStorage.setItem('remoteConexion', true);
-
         BotonesConexionesRemotas();
 
         MostrarMensage({
-            title: 'LISTO!',
-            message: `CONEXION A DISTANCIA ABIERTA.`,
+            title: 'Listo!',
+            message: `Conexión remota abierta.`,
             icon: 'success'
         });
     }
     document.getElementById('cargando').setAttribute('hidden', true);
 }
 
-//  METODO QUE ESTABLECE LA CONEXION PARA CONECTARSE A DISTANCIA.
+//  METODO QUE CIERRA LA CONEXION A DISTANCIA.
 const CerrarConexionRemota = async () => {
     document.getElementById('cargando').removeAttribute('hidden');
     var res = await fetch(`../../API/CONEXIONREMOTA/CERRAR`, {
@@ -383,68 +372,34 @@ const CerrarConexionRemota = async () => {
         }
     });
 
-    var json = await res.json();
-    if (json.message)
-        MostrarMensage({
-            title: 'ALGO HA OCURRIDO',
-            message: `${json.message}`,
-            icon: 'warning'
-        });
-    else
-        MostrarMensage({
-            title: 'LISTO!',
-            message: `CONEXION A DISTANCIA CERRADA.`,
-            icon: 'success'
-        });
-
-    localStorage.removeItem('remoteConexion');
+    localStorage.setItem('remoteConexion', false);
     BotonesConexionesRemotas();
     document.getElementById('cargando').setAttribute('hidden', true);
 }
 
 //  BONOTES DE OPCION DE CONEXION REMOTA
 const BotonesConexionesRemotas = () => {
-    if (localStorage.getItem('Nivel') === '1' || localStorage.getItem('Nivel') === '2') {
-        const btn = document.getElementById('btnConnection');
-        btn.removeAttribute('hidden');
-        if (localStorage.getItem('remoteConexion') === 'true') {
-            btn.classList.remove('btn-danger');
-            btn.classList.add('btn-success');
-        }
-        else {
-            btn.classList.remove('btn-success');
-            btn.classList.add('btn-danger');
-        }
+    const btn = document.getElementById('btnConnection');
+    const nvl = localStorage.getItem('Nivel');
+
+    if (!btn)
+        return;
+
+    if (nvl && nvl === '0') {
+        btn.setAttribute('hidden', true);
+        return;
     }
 
-    switch (localStorage.getItem('Nivel')) {
-        case '1':
-            document.getElementById('optConecction_objener').setAttribute('hidden', true);
-            document.getElementById('optConecction_dejar').setAttribute('hidden', true);
-
-            if (localStorage.getItem('remoteConexion') === 'true') {
-                document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
-                document.getElementById('optConecction_permitir').setAttribute('hidden', true);
-                document.getElementById('optConecction_Cerrar').removeAttribute('hidden');
-            }
-            else {
-                document.getElementById('optConecction_permitir').removeAttribute('hidden');
-                document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
-            }
-            break;
-        case '2':
-            document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
-            document.getElementById('optConecction_Cerrar').setAttribute('hidden', true);
-
-            if (localStorage.getItem('remoteConexion') === 'true') {
-                document.getElementById('optConecction_objener').setAttribute('hidden', true);
-                document.getElementById('optConecction_dejar').removeAttribute('hidden');
-            }
-            else {
-                document.getElementById('optConecction_objener').removeAttribute('hidden');
-                document.getElementById('optConecction_dejar').setAttribute('hidden', true);
-            }
-            break;
+    if (localStorage.getItem('remoteConexion') === 'true') {
+        btn.classList.remove('btn-danger');
+        btn.classList.add('btn-success');
+        document.getElementById('infoConectado').removeAttribute('hidden');
+    }
+    else {
+        btn.classList.remove('btn-success');
+        btn.classList.add('btn-danger');
+        document.getElementById('optConecction_objener').removeAttribute('hidden');
+        document.getElementById('infoConectado').setAttribute('hidden', true);
     }
 }
 
@@ -455,13 +410,6 @@ const Navegacion = [
 
 //  SISTEMA DE NAVEGACION.
 const NavigationBehaviour = (actual, inicial) => {
-    //if (actual === 'SeleccionarReporte' || actual === 'SeleccionarManejoDeData')
-    //    document.getElementById('divMaster').classList.remove('container');
-    //else {
-    //    if (!document.getElementById('divMaster').classList.contains('container'))
-    //        document.getElementById('divMaster').classList.add('container');
-    //}
-
     let divActualVisible = Navegacion[Navegacion.length - 1].actual;
 
     if (actual === 0) {
@@ -541,11 +489,6 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                 });
             }
             else if (content.value === 'true') {
-                //if (localStorage.getItem('remoteConexion')) {
-                //    localStorage.removeItem('remoteConexion');
-                //    BotonesConexionesRemotas();
-                //}
-
                 interval = setInterval(async () => {
                     const innerResponse = await fetch(`../..${ApiReportesLocales}GetWebsocketResponseFile`, {
                         headers: {
@@ -555,7 +498,14 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                     const innerContent = await innerResponse.json();
                     let parsedContent = JSON.parse(innerContent.resultset);
 
-                    parsedContent.data = parsedContent.data.includes('-->>') ? (parsedContent.data.split('-->>'))[0] : parsedContent.data;
+                    if (parsedContent.data.includes('-->>')) {
+                        parsedContent.data = (parsedContent.data.split('-->>'))[0];
+                        localStorage.setItem('remoteConexion', true);
+                    }
+                    else
+                        localStorage.setItem('remoteConexion', false);
+
+                    BotonesConexionesRemotas();
 
                     if (parsedContent) {
                         clearInterval(interval);
@@ -585,11 +535,15 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
             }
             else {
                 cargando.setAttribute('hidden', true);
-                if (content.value.startsWith('Error_RemoteConectionNotAllowed:')) {
-                    content.value = content.value.replace(/Error:/g, '');
+                if (content.value.startsWith('Error_RemoteConectionNotAllowed:') || content.value.startsWith('Error_RemoteConectionUserDisconected:')) {
+                    content.value = content.value.replace(/Error_RemoteConectionNotAllowed:/g, '');
+                    content.value = content.value.replace(/Error_RemoteConectionUserDisconected:/g, '');
+
+                    localStorage.setItem('remoteConexion', false);
+                    BotonesConexionesRemotas();
 
                     MostrarMensage({
-                        title: 'NO SE PUDO ESTABLECER CONEXION',
+                        title: 'No se púdo establecer la conexión.',
                         message: content.value,
                         icon: 'error'
                     });

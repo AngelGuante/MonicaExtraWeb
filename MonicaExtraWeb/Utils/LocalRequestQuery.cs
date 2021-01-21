@@ -127,11 +127,15 @@ namespace MonicaExtraWeb.Utils
                 }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
 
                 if (!usuario.Remoto)
-                    return "Error_RemoteConectionNotAllowed:NO TIENE PERMISO PARA ACCEDER DE MANERA REMOTA.";
+                    return "Error_RemoteConectionNotAllowed:No tiene permiso para acceder de manera remota.";
 
                 CompanyRemoteConnectionIP.TryGetValue(json.empresaId, out _ip);
 
                 query += $"-->>{IP}";
+            }
+            else if (CompanyRemoteConnectionUsersDisconected.ContainsKey(json.userId)) {
+                CompanyRemoteConnectionUsersDisconected.Remove(json.userId);
+                return "Error_RemoteConectionUserDisconected:Su usuario ha sido desconectado por un usuario Administrador.";
             }
 
             #endregion

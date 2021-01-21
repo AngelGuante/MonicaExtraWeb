@@ -1,4 +1,11 @@
-﻿using System.Linq;
+﻿using MonicaExtraWeb.Models;
+using MonicaExtraWeb.Models.DTO.Control;
+using System.Linq;
+using static MonicaExtraWeb.Utils.Querys.Usuarios;
+using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Utils.Token.Claims;
+using Dapper;
+using Newtonsoft.Json;
 
 namespace MonicaExtraWeb.Utils
 {
@@ -49,35 +56,72 @@ namespace MonicaExtraWeb.Utils
             return "";
         }
 
-        /// <summary>
-        /// Comprueba si alguna de las propiedades de un objeto tiene valor.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static bool AlgunaPropiedadConValor(object obj)
+        public static Usuario ValidarUsuarioLogin(LoginRequest login)
         {
-            try
+            Usuario usuario = default;
+
+            if (login == default || login.IdEmpresa == default || login.Username == default || login.Password == default)
+                return default;
+
+            usuario = Conn.Query<Usuario>(Select(new Usuario
             {
-                var Properties = obj.GetType().GetProperties();
+                IdEmpresa = login.IdEmpresa,
+                NombreUsuario = login.Username,
+            }, new Models.DTO.QueryConfigDTO { Select = "U.Remoto, E.ESTATUS empresaEstatus", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = true })).FirstOrDefault();
 
-                //var values = Properties.Skip(1).Select(item => (string)item.GetValue(obj))
-                //                       .ToList();
-
-                //var values = Properties
-                //    .ToList()
-                //    .Select(item => (string)item.GetValue(obj));
-
-                //var has = values.Any(el => !string.IsNullOrEmpty(el));
-
-                var has = Properties.Any(el => el != default);
-
-
-                return has;
-            }
-            catch (System.Exception)
+            #region VALIDACION PARA HACERSE CUANDO LA APLICACION 'ExtraService Notification.exe' INTENTA LOGEARSE UN CLIENTE.
+            if (login.passwordEncriptado)
             {
-                return false;
+                if (!BCrypt.Net.BCrypt.Verify(usuario.Clave, login.Password))
+                    return default;
+                login.Password = usuario.Clave;
             }
+            #endregion
+
+            return usuario;
+        }
+
+        public static string ValidarUsuarioParaConectarseRemoto(Usuario usuario = default)
+         {
+            string IdEmpresa;
+            string IdUsuario;
+
+            if (usuario == default)
+            {
+                var claims = GetClaims();
+                var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                    new { userId = "", empresaId = "" });
+
+                IdEmpresa = json.empresaId;
+                IdUsuario = json.userId;
+
+                usuario = Conn.Query<Usuario>(Select(new Usuario
+                {
+                    IdEmpresa = long.Parse(json.empresaId),
+                    IdUsuario = long.Parse(json.userId),
+                }, new Models.DTO.QueryConfigDTO { Select = " U.Remoto", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
+            }
+            else
+            {
+                IdEmpresa = usuario.IdEmpresa.ToString();
+                IdUsuario = usuario.IdUsuario.ToString();
+            }
+
+            if (!usuario.Remoto)
+                return "SU USUARIO NO TIENE PERMISOS PARA CONECTARSE DE MANERA REMOTA.";
+
+            if (CompanyRemoteConnectionIP.ContainsKey(IdEmpresa))
+            {
+                if (!CompanyRemoteConnectionUsers.ContainsKey(IdUsuario))
+                {
+                    CompanyRemoteConnectionUsers.Add(IdUsuario, IdEmpresa);
+                    return string.Empty;
+                }
+                else
+                    return "ESTE USUARIO YA ESTA CONECTADO.";
+            }
+            else
+                return "No se puede establecer conexión con el servidor de datos de su empresa, favor comunicarse con un usuario administrador.";
         }
     }
 }

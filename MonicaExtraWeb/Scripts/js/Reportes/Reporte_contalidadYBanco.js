@@ -77,128 +77,124 @@
             this.FILTROS.periodoAnioSeleccionadoBuscado = this.FILTROS.periodoAnioSeleccionado;
             this.FILTROS.erroresNCF = 0;
 
-            if (monicaReportes.sourceResportes === 'web')
-                alert('Por el momento esta busqueda solo se ha planteado para la parte Local');
-            else if (monicaReportes.sourceResportes === 'local') {
-                this.DATA = [];
+            this.DATA = [];
 
-                const filtro = {
-                    tipoConsulta: this.FILTROS.tipoConsulta,
-                    tipoReporte: this.FILTROS.tipoReporte,
-                    skip: skip
-                }
+            const filtro = {
+                tipoConsulta: this.FILTROS.tipoConsulta,
+                tipoReporte: this.FILTROS.tipoReporte,
+                skip: skip
+            }
 
-                switch (this.FILTROS.tipoConsulta) {
-                    case 'Plan_de_Cuentas':
-                        filtro.clasificacion = this.FILTROS.clasificacion;
-                        filtro.omitirPaginacion = true;
+            switch (this.FILTROS.tipoConsulta) {
+                case 'Plan_de_Cuentas':
+                    filtro.clasificacion = this.FILTROS.clasificacion;
+                    filtro.omitirPaginacion = true;
 
-                        if (this.FILTROS.ConBalance)
-                            filtro.conBalance = this.FILTROS.ConBalance;
+                    if (this.FILTROS.ConBalance)
+                        filtro.conBalance = this.FILTROS.ConBalance;
 
-                        if (this.FILTROS.valor)
-                            switch (this.FILTROS.tipoBusqueda) {
-                                case "codigo":
-                                    filtro.code = this.FILTROS.valor;
-                                    break;
-                                case "descripcion":
-                                    filtro.descripcion = this.FILTROS.valor;
-                                    break;
-                            }
-                        break;
-                    case 'Informe_608':
-                    case 'Informe_607':
-                    case 'Informe_606':
-                        filtro.mes = this.FILTROS.periodoMesSeleccionado;
-                        filtro.anio = this.FILTROS.periodoAnioSeleccionado;
-                        break;
-                }
-
-                let result = await BuscarInformacionLocal('SendWebsocketServer/24', filtro);
-
-                for (item of result) {
-                    this.DATA.push(item);
-
-                    if (this.FILTROS.tipoConsulta === 'Informe_608')
-                        if (this.$options.filters.FilterValidacionesNCF(item.ncf) !== undefined)
-                            this.FILTROS.erroresNCF++;
-                    if (this.FILTROS.tipoConsulta === 'Informe_607'
-                        || this.FILTROS.tipoConsulta === 'Informe_606') {
-                        if (item.reteiva_monto.length > 0 && Number(item.reteiva_monto) > 0)
-                            item.FechaRetencion = this.$options.filters.FilterRemoverGuiones(item.fecha_emision);
-                        else
-                            item.FechaRetencion = '';
-
-                        item.Efectivo = 0;
-                        item.Cheque = 0;
-                        item.TarjetaDebito = 0;
-                        item.VentaCredito = 0;
-                        item.Bonos = 0;
-                        item.Permuta = 0;
-                        item.MontoFacturado = Number(item.MontoFacturado) - Number(item.impuesto_monto) - Number(item.MontoPropina);
-
-                        switch (Number(item.codigo_termino)) {
-                            case 1:
-                                item.Efectivo = item.MontoFacturado
+                    if (this.FILTROS.valor)
+                        switch (this.FILTROS.tipoBusqueda) {
+                            case "codigo":
+                                filtro.code = this.FILTROS.valor;
                                 break;
-                            case 2:
-                                item.Cheque = item.MontoFacturado
-                                break;
-                            case 3:
-                                item.TarjetaDebito = item.MontoFacturado
-                                break;
-                            case 4:
-                                item.VentaCredito = item.MontoFacturado
-                                break;
-                            case 8:
-                                item.Bonos = item.MontoFacturado
-                                break;
-                            case 5:
-                                item.Permuta = item.MontoFacturado
+                            case "descripcion":
+                                filtro.descripcion = this.FILTROS.valor;
                                 break;
                         }
+                    break;
+                case 'Informe_608':
+                case 'Informe_607':
+                case 'Informe_606':
+                    filtro.mes = this.FILTROS.periodoMesSeleccionado;
+                    filtro.anio = this.FILTROS.periodoAnioSeleccionado;
+                    break;
+            }
 
-                        const LENcodigo_termino = Number(item.LENcodigo_termino);
-                        if (LENcodigo_termino !== 8 &&
-                            (LENcodigo_termino <= 0
-                                || LENcodigo_termino >= 6)) {
-                            item.OtrasFormas = i
-                            tem.MontoFacturado;
-                        }
-                        else
-                            item.OtrasFormas = 0;
+            let result = await BuscarInformacionLocal('SendWebsocketServer/24', filtro);
 
-                        item.Estatus = '';
-                        if (item.registro_tributario === '') {
-                            item.Estatus += '1 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (Number(item.LENTipoIdentificacion) === 0) {
-                            item.Estatus += '2 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (item.ncf === '') {
-                            item.Estatus += '3 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (item.TipoIngreso === '') {
-                            item.Estatus += '5 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (item.fecha_emision === '') {
-                            item.Estatus += '6 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (item.MontoFacturado === '') {
-                            item.Estatus += '8 - No puede estar vacío. ';
-                            this.FILTROS.erroresNCF++;
-                        }
-                        if (item.Efectivo === 0 && item.Cheque === 0 && item.TarjetaDebito === 0
-                            && item.VentaCredito === 0 && item.Bonos === 0 && item.Permuta === 0
-                            && item.OtrasFormas === 0) {
-                            item.Estatus += 'Almenos uno de los siguientes campos debe tener un valor: 17 hasta el 23.';
-                            this.FILTROS.erroresNCF++;
-                        }
+            for (item of result) {
+                this.DATA.push(item);
+
+                if (this.FILTROS.tipoConsulta === 'Informe_608')
+                    if (this.$options.filters.FilterValidacionesNCF(item.ncf) !== undefined)
+                        this.FILTROS.erroresNCF++;
+                if (this.FILTROS.tipoConsulta === 'Informe_607'
+                    || this.FILTROS.tipoConsulta === 'Informe_606') {
+                    if (item.reteiva_monto.length > 0 && Number(item.reteiva_monto) > 0)
+                        item.FechaRetencion = this.$options.filters.FilterRemoverGuiones(item.fecha_emision);
+                    else
+                        item.FechaRetencion = '';
+
+                    item.Efectivo = 0;
+                    item.Cheque = 0;
+                    item.TarjetaDebito = 0;
+                    item.VentaCredito = 0;
+                    item.Bonos = 0;
+                    item.Permuta = 0;
+                    item.MontoFacturado = Number(item.MontoFacturado) - Number(item.impuesto_monto) - Number(item.MontoPropina);
+
+                    switch (Number(item.codigo_termino)) {
+                        case 1:
+                            item.Efectivo = item.MontoFacturado
+                            break;
+                        case 2:
+                            item.Cheque = item.MontoFacturado
+                            break;
+                        case 3:
+                            item.TarjetaDebito = item.MontoFacturado
+                            break;
+                        case 4:
+                            item.VentaCredito = item.MontoFacturado
+                            break;
+                        case 8:
+                            item.Bonos = item.MontoFacturado
+                            break;
+                        case 5:
+                            item.Permuta = item.MontoFacturado
+                            break;
+                    }
+
+                    const LENcodigo_termino = Number(item.LENcodigo_termino);
+                    if (LENcodigo_termino !== 8 &&
+                        (LENcodigo_termino <= 0
+                            || LENcodigo_termino >= 6)) {
+                        item.OtrasFormas = i
+                        tem.MontoFacturado;
+                    }
+                    else
+                        item.OtrasFormas = 0;
+
+                    item.Estatus = '';
+                    if (item.registro_tributario === '') {
+                        item.Estatus += '1 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (Number(item.LENTipoIdentificacion) === 0) {
+                        item.Estatus += '2 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (item.ncf === '') {
+                        item.Estatus += '3 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (item.TipoIngreso === '') {
+                        item.Estatus += '5 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (item.fecha_emision === '') {
+                        item.Estatus += '6 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (item.MontoFacturado === '') {
+                        item.Estatus += '8 - No puede estar vacío. ';
+                        this.FILTROS.erroresNCF++;
+                    }
+                    if (item.Efectivo === 0 && item.Cheque === 0 && item.TarjetaDebito === 0
+                        && item.VentaCredito === 0 && item.Bonos === 0 && item.Permuta === 0
+                        && item.OtrasFormas === 0) {
+                        item.Estatus += 'Almenos uno de los siguientes campos debe tener un valor: 17 hasta el 23.';
+                        this.FILTROS.erroresNCF++;
                     }
                 }
             }
@@ -361,7 +357,7 @@
         },
 
         FilterRemoverGuiones: value => {
-            return value.replaceAll(/-/g, '');
+            return (value.replaceAll(/-/g, '')).substr(0, 8);
         }
     },
 });

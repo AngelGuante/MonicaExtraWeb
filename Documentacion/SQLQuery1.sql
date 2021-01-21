@@ -109,3 +109,15 @@ CREATE TABLE Concurrencia(
 	idEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(idEmpresa),
 	IdUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario)
 )
+
+CREATE TABLE EmpresasEquiposRegistrados(
+	id INT PRIMARY KEY IDENTITY(1, 1),
+	idEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(idEmpresa),
+	identificador VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE EquiposAsignadosAUsuarios(
+	id INT PRIMARY KEY IDENTITY(1, 1),
+	idUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario),
+	idEquipoRegistrado INT FOREIGN KEY REFERENCES EmpresasEquiposRegistrados(id)
+)

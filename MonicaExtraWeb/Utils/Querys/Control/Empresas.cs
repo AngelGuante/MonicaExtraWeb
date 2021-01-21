@@ -3,7 +3,6 @@ using MonicaExtraWeb.Models.DTO;
 using MonicaExtraWeb.Models.DTO.Control;
 using System.Linq;
 using System.Text;
-using System.Web.Helpers;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 
 namespace MonicaExtraWeb.Utils.Querys.Control
@@ -59,9 +58,10 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                 empresa.idEmpresasM,
             }).FirstOrDefault();
 
-            //  INSERTAR EL USUARIO ADMINISTRADOR
+            //  INSERTAR EL USUARIO ADMINISTRADOR Y USUARIO REMOTO
             if (rslt != default)
             {
+                //  ADMINISTRADOR
                 query.Clear();
                 query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
                 query.Append("(idEmpresa, Login, Nivel, Remoto, NombreUsuario) ");
@@ -77,6 +77,25 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     Login = "Admin",
                     Nivel = "1",
                     NombreUsuario = "Usuario Administrador",
+                    Remoto = 1
+                });
+
+                //  REMOTO
+                query.Clear();
+                query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
+                query.Append("(idEmpresa, Login, Nivel, Remoto, NombreUsuario) ");
+                query.Append("VALUES ");
+                query.Append("(@idEmpresa, ");
+                query.Append("@Login, ");
+                query.Append("@Nivel, ");
+                query.Append("@Remoto, ");
+                query.Append("@NombreUsuario) ");
+                Conn.Query(query.ToString(), new
+                {
+                    idEmpresa = rslt,
+                    Login = "Remoto",
+                    Nivel = "3",
+                    NombreUsuario = "Remoto",
                     Remoto = 1
                 });
             }
