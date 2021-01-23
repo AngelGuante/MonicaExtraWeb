@@ -2134,17 +2134,6 @@ namespace MonicaExtraWeb.Utils
                     query.Append($",TS.impuesto_monto ");
                     query.Append($",TS.impuesto2_monto MontoPropina");
                     query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
-                    //query.Append($" 'registroTributario' registro_tributario ");
-                    //query.Append($",0 LENTipoIdentificacion ");
-                    //query.Append($",1 TipoIngreso ");
-                    //query.Append($",3 ncf ");
-                    //query.Append($",4 ncfModificado ");
-                    //query.Append($",'2020-02-02' fecha_emision ");
-                    //query.Append($",5 reteiva_monto  ");
-                    //query.Append($",1525 MontoFacturado");
-                    //query.Append($",7 impuesto_monto ");
-                    //query.Append($",8 MontoPropina");
-                    //query.Append($",8 LENcodigo_termino ");
                     #endregion
 
                     #region FROM

@@ -39,34 +39,6 @@
     },
 
     methods: {
-        //Pagination(value, instance, origin) {
-        //    instance = instance === undefined ? this.FILTROS : instance;
-
-        //    switch (value) {
-        //        case -1:
-        //            instance.PaginatorIndex--;
-        //            break;
-        //        case +1:
-        //            instance.PaginatorIndex++;
-        //            break;
-        //        case 'MAX':
-        //            instance.PaginatorIndex = instance.PaginatorLastPage;
-        //            break
-        //        case 0:
-        //        default:
-        //            instance.PaginatorIndex = 0;
-        //            break;
-        //    }
-        //    switch (origin) {
-        //        case 'paginator':
-        //            this.ModalBuscarCodigo();
-        //            break;
-        //        default:
-        //            this.Buscar(this.FILTROS.PaginatorIndex)
-        //            break;
-        //    }
-        //},
-
         async Buscar(skip) {
             if (skip === undefined) {
                 skip = 0;
@@ -134,7 +106,7 @@
                     item.Permuta = 0;
                     item.MontoFacturado = Number(item.MontoFacturado) - Number(item.impuesto_monto) - Number(item.MontoPropina);
 
-                    switch (Number(item.codigo_termino)) {
+                    switch (Number(item.LENcodigo_termino)) {
                         case 1:
                             item.Efectivo = item.MontoFacturado
                             break;
@@ -170,7 +142,7 @@
                         item.Estatus += '1 - No puede estar vacío. ';
                         this.FILTROS.erroresNCF++;
                     }
-                    if (Number(item.LENTipoIdentificacion) === 0) {
+                    if (Number(item.LENTipoIdentificacion) === 0 && !item.ncf.startsWith('B02')) {
                         item.Estatus += '2 - No puede estar vacío. ';
                         this.FILTROS.erroresNCF++;
                     }
@@ -200,7 +172,7 @@
             }
         },
 
-        ExportarAExcel() {
+        ExportarATXT() {
             let txtContent = '';
             let informe;
 
@@ -211,13 +183,19 @@
             else if (this.FILTROS.tipoConsulta === 'Informe_606')
                 informe = '606';
 
-            txtContent += `${informe}|${this.rncOCedula}|${this.FILTROS.periodoAnioSeleccionadoBuscado}${this.FILTROS.periodoMesSeleccionadoBuscado}|${this.DATA.length} \n`;
+            txtContent += `${informe}|${this.rncOCedula.replaceAll(/-/g, '')}|${this.FILTROS.periodoAnioSeleccionadoBuscado}${this.FILTROS.periodoMesSeleccionadoBuscado}|${this.DATA.length} \n`;
 
             this.DATA.forEach(item => {
-                txtContent += `${item.ncf}        |${(item.fecha_emision).replaceAll(/-/g, '')}|<paraPreguntarEnProximaReunión>\n`;
+                txtContent += (
+                    `${item.registro_tributario}|${this.$options.filters.FilterTipoIdentificacion(item.LENTipoIdentificacion)}|${item.ncf}|${item.ncfModificado}|${item.TipoIngreso}|${item.fecha_emision}|${item.FechaRetencion}|${item.MontoFacturado}|${item.impuesto_monto}|${item.reteiva_monto}||||||${this.validarCeroParaExportarTXT(item.MontoPropina)}|${this.validarCeroParaExportarTXT(item.Efectivo)}|${this.validarCeroParaExportarTXT(item.Cheque)}|${this.validarCeroParaExportarTXT(item.TarjetaDebito)}|${this.validarCeroParaExportarTXT(item.VentaCredito)}|${this.validarCeroParaExportarTXT(item.Bonos)}|${this.validarCeroParaExportarTXT(item.Permuta)}|${this.validarCeroParaExportarTXT(item.OtrasFormas)}--\n`).replaceAll(/ /g, '').replaceAll(/-/g, '').replaceAll(/\|0\|/g, '||');
             });
 
             saveDownloadedData(`${informe}_${new Date().toISOString().substr(0, 10)}`, txtContent);
+        },
+
+        validarCeroParaExportarTXT(monto) {
+            return monto == '0' ? '' : monto;
+
         },
 
         TipoConsultaSelectChanged() {
@@ -313,7 +291,7 @@
             if (value.length !== 11
                 && value.length !== 13
                 && value.length !== 19) {
-                return "Loingitud de NCF Incorrecta.";
+                return "Longitud de NCF Incorrecta.";
             }
             if (value[0] !== 'A'
                 && value[0] !== 'B'

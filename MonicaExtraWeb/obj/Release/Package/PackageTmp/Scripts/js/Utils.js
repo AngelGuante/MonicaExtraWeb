@@ -76,7 +76,10 @@ const getIntervalDate = param => {
         case "2":
             return { firstday: `${currYear}-${currMonth}-01`, lastday: new Date().toISOString().slice(0, 10) };
         case "3":
-            return { firstday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-01`, lastday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-${new Date(currYear, currMonth - 1, 0).getDate()}` };
+            if (currMonth == '1')
+                return { firstday: `${currYear - 1}-12-01`, lastday: `${currYear - 1}-12-31` };
+            else
+                return { firstday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-01`, lastday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-${new Date(currYear, currMonth - 1, 0).getDate()}` };
         case "4":
             return { firstday: `${currYear}-01-01`, lastday: new Date().toISOString().slice(0, 10) };
         case "5":

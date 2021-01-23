@@ -34,6 +34,8 @@ namespace MonicaExtraWeb.Controllers
                         return RedirectToAction("Cierre", new { parametros = paremetros });
                     case "reporteEstadoCuentaCliente":
                         return RedirectToAction("ReporteEstadoCuentaCliente", new { parametros = paremetros });
+                    case "CXC_estadoCuentaIndividual":
+                        return RedirectToAction("CXC_estadoCuentaIndividual", new { parametros = paremetros });
                 }
 
                 return null;
@@ -103,6 +105,23 @@ namespace MonicaExtraWeb.Controllers
                 };
 
                 return View(model);
+            }
+
+            Response.StatusCode = 401;
+            return null;
+        }
+
+        //**********
+        //*REPORTES*
+        //**********
+
+        public ActionResult CXC_estadoCuentaIndividual(string parametros)
+        {
+            if (Validate(this))
+            {
+                //var obj = JsonConvert.DeserializeObject<CierreDTO>(parametros);
+                //var cierreCaja = Conn.Query<MovimientosCajas>(ObtenerMovimientosDeCierre(obj.NumeroCierre));
+                return View();
             }
 
             Response.StatusCode = 401;

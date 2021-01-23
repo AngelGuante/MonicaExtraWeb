@@ -1,4 +1,6 @@
 ﻿<div class="col-12" v-if="DATA.length > 0" style="width:99%">
+    <button v-if="FILTROS.tipoConsulta === 'estadoCuentaIndividual'" type="button" v-on:click="Print('CXC_estadoCuentaIndividual', { })" class="btn btn-outline-info"><i class="material-icons" style="padding:3px;">print</i></button>
+
     <table id="tablaEstadoCuentaCliente" class="table table-striped">
         <thead>
             <tr class="tableHeader">
