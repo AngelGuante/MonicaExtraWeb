@@ -628,10 +628,10 @@
             this.FILTROS.descripcionSimplificada = GetCookieElement('formatoDataCPCCPP_descripcionSimplificada=') === 'false' ? false : true;
             this.FILTROS.soloDocsVencidos = GetCookieElement('formatoDataCPCCPP_soloDocsVencidos=') === 'false' ? false : true;
             this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_diasVencidos=') === 'false' ? false : true;
-            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirNumero=') === 'false' ? false : true;
-            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirTipo=') === 'false' ? false : true;
-            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirCodCliente=') === 'false' ? false : true;
-            this.FILTROS.diasVencidos = GetCookieElement('formatoDataCPCCPP_incluirNombre=') === 'false' ? false : true;
+            this.FILTROS.incluirNumero = GetCookieElement('formatoDataCPCCPP_incluirNumero=') === 'false' ? false : true;
+            this.FILTROS.incluirTipo = GetCookieElement('formatoDataCPCCPP_incluirTipo=') === 'false' ? false : true;
+            this.FILTROS.incluirCodCliente = GetCookieElement('formatoDataCPCCPP_incluirCodCliente=') === 'false' ? false : true;
+            this.FILTROS.incluirNombre = GetCookieElement('formatoDataCPCCPP_incluirNombre=') === 'false' ? false : true;
         }
     },
 

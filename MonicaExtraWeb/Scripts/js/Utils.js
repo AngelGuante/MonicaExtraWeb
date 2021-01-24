@@ -25,10 +25,24 @@ const DaysDiff = (minDate, maxDate) => {
 //  RETORNA LA FECHA ACTUAL.
 const GetCurrentDate = () => `${new Date().getFullYear()}-${new Date().getMonth().toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`;
 
-//  RETORNA LA FECHA EN FORMATO YYYY/MM/DD.
-const GetFormatedDate = date => {
+//  RETORNA LA FECHA EN FORMATO YYYY/MM/DD POR DEFECTO, O EL FORMATO ESPESIFICADO.
+const GetFormatedDate = (date, format, separator) => {
     date = new Date(date);
-    return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    separator = separator ? separator : '-';
+    if (format === 'dd/MM/yyyy')
+        return `${date.getDate().toString().padStart(2, '0')}${separator}${(date.getMonth() + 1).toString().padStart(2, '0')}${separator}${date.getFullYear()}`;
+    else
+        return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+};
+
+//  FORMATEAR VALOR A FORMATO DE DINERO
+const StringToMoneyFormat = value => {
+    const mount = Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace('$', '');
+
+    if (mount !== 'NaN')
+        return mount;
+    else
+        return value;
 };
 
 //  AGREGAR DIAS A UNA FECHA.

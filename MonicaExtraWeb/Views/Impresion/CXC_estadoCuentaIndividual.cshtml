@@ -7,50 +7,22 @@
     <hr />
 
     <div style="text-align:center;">
-        @*<div>
-                <table style="border: 1px solid black; margin: auto;">
-                    <thead>
-                        <tr style="border-bottom: 1px solid;">
-                            <th style="border-bottom: 1px solid; text-align:center; width:200px" scope="col">#</th>
-                            <th style="border-bottom: 1px solid; width:200px" scope="col">Fehca Inicial</th>
-                            <th style="border-bottom: 1px solid; width:200px" scope="col">Fecha Final</th>
-                            <th style="border-bottom: 1px solid; width:200px; text-align:center;" scope="col">Saldo Final</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr style="height:50px; border-bottom: 1px solid;">
-                            <td id="NumeroCierre" style="border-right: 1px solid; text-align:center;"></td>
-                            <td id="FechaInicial" style="border-right: 1px solid;"></td>
-                            <td id="FechaFinal" style="border-right: 1px solid;"></td>
-                            <td id="SaldoFinal" style="text-align:center;"></td>
-                        </tr>
-                </table>
-            </div>
-
-            <hr />
-
-            <div id="todosMovimientosParaCierre" class="Tables" v-if="VentanaCierres.MovimientosDeCierre">
-                <table style="margin: auto;">
-                    <thead>
-                        <tr>
-                            <th style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">Beneficiario</th>
-                            <th style="border-right: 1px solid; border-bottom: 1px solid;">Concepto</th>
-                            <th style="border-right: 1px solid; border-bottom: 1px solid;">Monto</th>
-                            <th style="border-right: 1px solid; border-bottom: 1px solid;">Fecha</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for (int i = 0; i < Model.Count; i++)
-                        {
-                            <tr v-for="movimiento in VentanaCierres.MovimientosDeCierre">
-                                <td style="border-right: 1px solid; border-left: 1px solid; border-bottom: 1px solid;">@Model[i].nombre_completo</td>
-                                <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Concepto</td>
-                                <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Monto</td>
-                                <td style="border-right: 1px solid; border-bottom: 1px solid;">@Model[i].Fecha</td>
-                            </tr>
-                        }
-                </table>
-            </div>*@
+        <table class="table table-striped" style="border: 1px solid black; margin: auto;">
+            <thead>
+                <tr class="tableHeader">
+                    <th style="text-align:right;" scope="col">Emisión</th>
+                    <th style="text-align:right;" scope="col">Vencimiento</th>
+                    <th style="text-align:left;" scope="col">Descripción</th>
+                    <th style="text-align:right;" scope="col">Días Vencidos</th>
+                    <th style="text-align:left;" scope="col">Nombre Vendedor</th>
+                    <th style="text-align:right;" scope="col">Monto</th>
+                    <th style="text-align:right;" scope="col">Pagos Acumulados</th>
+                    <th style="text-align:right;" scope="col">Saldo</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
     </div>
 </div>
 
@@ -62,6 +34,30 @@
             document.getElementById('direccionEmpresa2').innerHTML = localStorage.getItem('direccionEmpresa2');
             document.getElementById('direccionEmpresa3').innerHTML = localStorage.getItem('direccionEmpresa3');
             document.getElementById('TelefonoEmpresa1').innerHTML = localStorage.getItem('TelefonoEmpresa1');
+
+            const registros = JSON.parse(localStorage.getItem('registros'));
+            localStorage.removeItem('registros');
+
+            const table = document.getElementById("tbody");
+            registros.forEach(item => {
+                const row = table.insertRow();
+                const saldo = row.insertCell(0);
+                const pagosAcumulados = row.insertCell(0);
+                const monto = row.insertCell(0);
+                const vendedor = row.insertCell(0);
+                const diasTranscurridos = row.insertCell(0);
+                const descripcion = row.insertCell(0);
+                const vencimiento = row.insertCell(0);
+                const emision = row.insertCell(0);
+                monto.innerHTML = item.monto ? StringToMoneyFormat(item.monto) : '';
+                pagosAcumulados.innerHTML = item.pagosAcumulados ? StringToMoneyFormat(item.pagosAcumulados) : '';
+                saldo.innerHTML = item.balance ? StringToMoneyFormat(item.balance) : '';
+                vendedor.innerHTML = item.Nombre_vendedor ? item.Nombre_vendedor.toUpperCase() : '';
+                diasTranscurridos.innerHTML = item.diasTrancurridos ? item.diasTrancurridos : '';
+                descripcion.innerHTML = item.descripcion_dcmto ? item.descripcion_dcmto : '';
+                vencimiento.innerHTML = item.fecha_vcmto ? GetFormatedDate(item.fecha_vcmto, 'dd/MM/yyyy', '/') : '';
+                emision.innerHTML = item.fecha_emision ? GetFormatedDate(item.fecha_emision, 'dd/MM/yyyy', '/') : '';
+            });
 
             window.print();
         });

@@ -263,11 +263,15 @@
         Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
             if (SetlocalStorageItemsToPrint) {
                 switch (type) {
-                    case 'cierre':
-                        localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
-                        localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
-                        localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
-                        localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
+                    //case 'cierre':
+                    //    localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
+                    //    localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
+                    //    localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
+                    //    localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
+                    //    break;
+                    case 'CXC_estadoCuentaIndividual':
+                        localStorage.removeItem('registros');
+                        localStorage.setItem('registros', SetlocalStorageItemsToPrint.registros);
                         break;
                 }
             }
