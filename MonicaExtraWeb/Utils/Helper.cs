@@ -67,7 +67,7 @@ namespace MonicaExtraWeb.Utils
             {
                 IdEmpresa = login.IdEmpresa,
                 NombreUsuario = login.Username,
-            }, new Models.DTO.QueryConfigDTO { Select = "U.Remoto, E.ESTATUS empresaEstatus", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = true })).FirstOrDefault();
+            }, new Models.DTO.QueryConfigDTO { Select = "U.idEmpresasM, U.Remoto, E.ESTATUS empresaEstatus", ExcluirUsuariosControl = false, Usuario_Join_EmpresasRegistradas = true })).FirstOrDefault();
 
             #region VALIDACION PARA HACERSE CUANDO LA APLICACION 'ExtraService Notification.exe' INTENTA LOGEARSE UN CLIENTE.
             if (login.passwordEncriptado)
@@ -99,7 +99,7 @@ namespace MonicaExtraWeb.Utils
                 {
                     IdEmpresa = long.Parse(json.empresaId),
                     IdUsuario = long.Parse(json.userId),
-                }, new Models.DTO.QueryConfigDTO { Select = " U.Remoto", ExcluirUsuariosControl = false, Usuario_Join_IdEmpresaM = false })).FirstOrDefault();
+                }, new Models.DTO.QueryConfigDTO { Select = " U.Remoto", ExcluirUsuariosControl = false/*, Usuario_Join_IdEmpresaM = false*/ })).FirstOrDefault();
             }
             else
             {

@@ -21,9 +21,7 @@ CREATE TABLE EmpresaRegistrada(
 	Vencimiento DATETIME NOT NULL,
 	FechaSuspencion DATETIME,
 	ConexionServidor VARCHAR(100),
-	--idEmpresaM,
-	--IdCiudadEstado,
-	--IdToken
+	idEmpresasM VARCHAR(200) NULL,
 	ESTATUS INT FOREIGN KEY REFERENCES EmpresaRegistradaEstatus(Id) DEFAULT 1
 )
 INSERT INTO EmpresaRegistrada(NombreEmpresa, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento)

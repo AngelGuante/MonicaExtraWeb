@@ -28,14 +28,14 @@ namespace MonicaExtraWeb.Utils.Querys
             if (!string.IsNullOrEmpty(config.Select))
                 query.Append($",{config.Select} ");
 
-            if (config.Usuario_Join_IdEmpresaM)
-                query.Append($",idEmpresasM ");
+            //if (config.Usuario_Join_IdEmpresaM)
+            //    query.Append($",idEmpresasM ");
             #endregion
 
             #region FROM
             query.Append($"FROM {GlobalVariables.Control}dbo.Usuario U ");
 
-            if (config.Usuario_Join_IdEmpresaM)
+            if (config.Usuario_Join_EmpresasRegistradas)
                 query.Append($"JOIN Control.dbo.EmpresaRegistrada E ON U.idEmpresa = E.idEmpresa ");
             #endregion
 

@@ -84,8 +84,8 @@ namespace MonicaExtraWeb.Controllers.API
                     if (validacionRemoto != string.Empty)
                         return Json(new { message = validacionRemoto });
                 }
-                var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString());
-                return Json(new { token, usuario.NombreUsuario, /*usuario.Estatus,*/ usuario.Nivel, usuario.IdUsuario, /*usuario.Estatus.Value,*/ initialPass, usuario.idEmpresasM });
+                var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString());
+                return Json(new { token, usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, usuario.idEmpresasM });
             }
             else
                 return Unauthorized();

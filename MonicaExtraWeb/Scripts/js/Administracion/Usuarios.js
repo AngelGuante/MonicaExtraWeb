@@ -13,6 +13,7 @@
 
         usuarios: [],
         modulos: [],
+        empresas: [],
 
         empresasLocales: [],
         nroEmpresasSeleccionadas: 0,
@@ -110,22 +111,28 @@
 
             //  BUSCAR TODOS LOS MODULOS
             if (this.modulos.length === 0) {
-                await fetch('../../API/MODULOS/GET', {
+                const modulosRequest = await fetch('../../API/MODULOS/GET', {
                     headers: {
                         'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                     }
-                })
-                    .then(response => { return response.json(); })
-                    .then(json => {
-                        this.modulos = json.modulos;
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                    })
-                    .catch(err => {
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        console.log(err);
-                    });
+                });
+                this.modulos = (await modulosRequest.json()).modulos;
+
+                //  BUSCAR LAS EMPRESAS ASIGNADAS AL PLAN
+                const config = {
+                    'Select' : 'idEmpresasM'
+                };
+                const empresasRequest = await fetch(`../../API/EMPRESAS/GET?config=${JSON.stringify(config)}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                    }
+                });
+                
+                this.empresas = (await empresasRequest.json()).empresas[0].idEmpresasM;
+
+                document.getElementById('cargando').setAttribute('hidden', true);
             }
-            
+
             const inptNombre = document.getElementById('inptNombreNuevoUsuario');
             if (inptNombre)
                 inptNombre.removeAttribute('disabled');
@@ -183,11 +190,7 @@
             if (this.empresasLocales.length === 0)
                 this.empresasLocales = await BuscarInformacionLocal('SendWebsocketServer/4', {});
 
-            const empresaParams = JSON.stringify({
-                IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa')
-            });
-
-            await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`, {
+            await fetch(`../../API/EMPRESAS/GET`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
