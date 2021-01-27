@@ -124,40 +124,40 @@ namespace MonicaExtraWeb.Utils.Querys
         public static string Update(Usuario user)
         {
             var query = new StringBuilder();
-            var querySet = new StringBuilder();
             var queryAnd = new StringBuilder();
             var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
 
             query.Append($"UPDATE dbo.Usuario SET  ");
-
-            if (user.Estatus != default)
-                querySet.Append($"Estatus = '{user.Estatus}' ");
-
-            //if (user.Remoto)
-            queryAnd.Append($"Remoto = {(user.Remoto ? "1" : "0")} ");
-            if (queryAnd.Length > 0)
-                queryAnd.Append($", ");
             queryAnd.Append($"idEmpresasM = '{user.idEmpresasM}' ");
-            if (queryAnd.Length > 0)
-                querySet.Append(queryAnd.ToString());
 
+            if (user.Remoto.HasValue)
+            {
+                if (queryAnd.Length > 0)
+                    queryAnd.Append($", ");
+                queryAnd.Append($"Remoto = {(user.Remoto.Value ? "1" : "0")} ");
+            }
+            if (user.Estatus != default)
+            {
+                if (queryAnd.Length > 0)
+                    queryAnd.Append($", ");
+                queryAnd.Append($"Estatus = '{user.Estatus}' ");
+            }
             if (user.Clave != default)
             {
                 if (queryAnd.Length > 0)
-                    querySet.Append($", ");
+                    queryAnd.Append($", ");
                 if (user.Clave == "default")
-                    querySet.Append($"Clave = '{initialPass}' ");
+                    queryAnd.Append($"Clave = '{initialPass}' ");
                 else
-                    querySet.Append($"Clave = '{user.Clave}' ");
+                    queryAnd.Append($"Clave = '{user.Clave}' ");
             }
             else if (user.Nivel != default)
             {
                 if (queryAnd.Length > 0)
-                    querySet.Append($", ");
-                querySet.Append($"Nivel = '{user.Nivel}' ");
+                    queryAnd.Append($", ");
+                queryAnd.Append($"Nivel = '{user.Nivel}' ");
             }
-
-            query.Append(querySet.ToString());
+            query.Append(queryAnd.ToString());
             query.Append($"WHERE IdUsuario = {user.IdUsuario} ");
 
             CompanyRemoteConnectionUsers.Remove(user.IdUsuario.ToString());

@@ -145,7 +145,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                     throw new Exception();
                 return rslt;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return -1;
             }

@@ -12,6 +12,6 @@
         public string idEmpresasM { get; set; } = null;
         public string EmpresaRegistrada_idEmpresasM { get; set; } = null;
         public int empresaEstatus { get; set; }
-        public bool Remoto { get; set; }
+        public bool? Remoto { get; set; }
     }
 }

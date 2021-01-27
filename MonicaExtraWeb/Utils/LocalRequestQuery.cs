@@ -126,7 +126,7 @@ namespace MonicaExtraWeb.Utils
                     IdUsuario = long.Parse(json.userId),
                 }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false/*, Usuario_Join_IdEmpresaM = false*/ })).FirstOrDefault();
 
-                if (!usuario.Remoto)
+                if (!usuario.Remoto.Value)
                     return "Error_RemoteConectionNotAllowed:No tiene permiso para acceder de manera remota.";
 
                 CompanyRemoteConnectionIP.TryGetValue(json.empresaId, out _ip);

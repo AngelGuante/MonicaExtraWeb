@@ -107,7 +107,7 @@ namespace MonicaExtraWeb.Utils
                 IdUsuario = usuario.IdUsuario.ToString();
             }
 
-            if (!usuario.Remoto)
+            if (!usuario.Remoto.Value)
                 return "SU USUARIO NO TIENE PERMISOS PARA CONECTARSE DE MANERA REMOTA.";
 
             if (CompanyRemoteConnectionIP.ContainsKey(IdEmpresa))
