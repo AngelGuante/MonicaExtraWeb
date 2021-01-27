@@ -13,6 +13,7 @@
 
         usuarios: [],
         modulos: [],
+        empresas: [],
 
         empresasLocales: [],
         nroEmpresasSeleccionadas: 0,
@@ -60,35 +61,24 @@
 
         nivelUsuarioSeleccionado: function () {
             if (this.nivelUsuarioSeleccionado === "1")
-                this.ToggleTodosLosModulos(true);
+                this.ToggleTodosCheck(true, 'check_');
             else if (this.nivelUsuarioSeleccionado === "2")
-                this.ToggleTodosLosModulos(false);
+                this.ToggleTodosCheck(false, 'check_');
         }
     },
 
     methods: {
-        BuscarUsuarios: function () {
-            const usuario = {
-                IdEmpresa: localStorage.getItem('NumeroUnicoEmpresa')
-            };
-
-            fetch(`../../API/USUARIOS/GET?usuario=${JSON.stringify(usuario)}`, {
+        BuscarUsuarios: async function () {
+            const response = await fetch(`../../API/USUARIOS/GET`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
-            })
-                .then(response => { return response.json(); })
-                .then(json => {
-                    this.usuarios = json.usuarios;
-                    document.getElementById('cargando').setAttribute('hidden', true);
-                })
-                .catch(err => {
-                    document.getElementById('cargando').setAttribute('hidden', true);
-                    console.log(err);
-                });
+            });
+            this.usuarios = (await response.json()).usuarios;
+            document.getElementById('cargando').setAttribute('hidden', true);
         },
 
-        GenerarUserName: function () {
+        GenerarUserName: async function () {
             this.nombreUsuario = '';
 
             const stringChanged = (this.nombreUsuario.split(''));
@@ -106,26 +96,35 @@
 
         AbrirModalUsuario: async function (config) {
             document.getElementById('cargando').removeAttribute('hidden');
-            this.ToggleTodosLosModulos(false);
+            this.ToggleTodosCheck(false, 'check_');
+            this.ToggleTodosCheck(false, 'checkEmpresas_');
 
             //  BUSCAR TODOS LOS MODULOS
             if (this.modulos.length === 0) {
-                await fetch('../../API/MODULOS/GET', {
+                const modulosRequest = await fetch('../../API/MODULOS/GET', {
                     headers: {
                         'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                     }
-                })
-                    .then(response => { return response.json(); })
-                    .then(json => {
-                        this.modulos = json.modulos;
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                    })
-                    .catch(err => {
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        console.log(err);
-                    });
+                });
+                this.modulos = (await modulosRequest.json()).modulos;
+
+                //  BUSCAR LAS EMPRESAS ASIGNADAS AL PLAN
+                const config = {
+                    'Select': 'idEmpresasM'
+                };
+                const empresasRequest = await fetch(`../../API/EMPRESAS/GET?config=${JSON.stringify(config)}`, {
+                    headers: {
+                        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
+                    }
+                });
+
+                this.empresas = ((await empresasRequest.json()).empresas[0].idEmpresasM).split(',');
+                this.empresas = this.empresas[0] === '' ? [] : this.empresas;
+
+
+                document.getElementById('cargando').setAttribute('hidden', true);
             }
-            
+
             const inptNombre = document.getElementById('inptNombreNuevoUsuario');
             if (inptNombre)
                 inptNombre.removeAttribute('disabled');
@@ -157,25 +156,24 @@
                 this.nivelUsuarioSeleccionado = config.Nivel;
                 this.permisoRemoto = config.Remoto === true ? '1' : '0';
 
-                await fetch(`../../API/PERMISOSUSUARIO/GET/${config.IdUsuario}`, {
+                const response = await fetch(`../../API/PERMISOSUSUARIO/GET/${config.IdUsuario}`, {
                     headers: {
                         'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                     }
-                })
-                    .then(response => { return response.json(); })
-                    .then(json => {
-                        for (item of json.permisosUsuario)
-                            document.getElementById(`check_${item}`).checked = true;
+                });
 
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                    })
-                    .catch(err => {
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        console.log(err);
+                for (item of (await response.json()).permisosUsuario)
+                    document.getElementById(`check_${item}`).checked = true;
+
+                if (config.idEmpresasM !== null && config.idEmpresasM !== '')
+                    config.idEmpresasM.split(',').forEach(x => {
+                        let ele = document.getElementById(`checkEmpresas_${x}`);
+                        if (ele)
+                            ele.checked = true;
                     });
+
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
-
             $('#modalNuevoUsuario').modal('show');
         },
 
@@ -183,11 +181,7 @@
             if (this.empresasLocales.length === 0)
                 this.empresasLocales = await BuscarInformacionLocal('SendWebsocketServer/4', {});
 
-            const empresaParams = JSON.stringify({
-                IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa')
-            });
-
-            await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`, {
+            await fetch(`../../API/EMPRESAS/GET`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
@@ -202,7 +196,7 @@
                         this.nroEmpresasSeleccionadas = empresasM.length;
 
                         for (item of empresasM) {
-                            const ele = document.getElementById(`check_${item}`);
+                            const ele = document.getElementById(`checkEmpresasLocales_${item}`);
                             if (ele != undefined)
                                 ele.checked = true;
                         }
@@ -245,12 +239,11 @@
         ModificarEmpresa: async function () {
             const empresasLocales = []
 
-            for (item of document.querySelectorAll('*[id^="check_"]'))
+            for (item of document.querySelectorAll('*[id^="checkEmpresasLocales_"]'))
                 if (document.getElementById(item.id).checked)
-                    empresasLocales.push(item.id.replace(/check_/g, ''));
+                    empresasLocales.push(item.id.replace(/checkEmpresasLocales_/g, ''));
 
             const empresa = {
-                IdEmpresa: window.localStorage.getItem('NumeroUnicoEmpresa'),
                 idEmpresasM: empresasLocales.join()
             };
 
@@ -262,11 +255,8 @@
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
                     'Content-Type': 'application/json'
                 }
-            })
-                .then(response => {
-                    this.Limpiar();
-                    $('#modalEmpresas').modal('hide');
-                });
+            });
+            window.location.reload();
         },
 
         empresaCheckChanged: function (check) {
@@ -289,8 +279,8 @@
             }
         },
 
-        ToggleTodosLosModulos: (value) => {
-            const checkBoxesModulos = document.querySelectorAll('*[id^="check_"]');
+        ToggleTodosCheck: (value, id) => {
+            const checkBoxesModulos = document.querySelectorAll(`*[id^="${id}"]`);
 
             for (item of checkBoxesModulos)
                 document.getElementById(item.id).checked = value;
@@ -307,11 +297,15 @@
             }
             document.getElementById('cargando').removeAttribute('hidden');
 
-            const modulos = []
+            const modulos = [];
+            const idEmpresasM = [];
 
             for (item of document.querySelectorAll('*[id^="check_"]'))
                 if (document.getElementById(item.id).checked)
                     modulos.push(item.id.replace(/check_/g, ''));
+            document.querySelectorAll('*[id^="checkEmpresas_"]:checked').forEach(x => {
+                idEmpresasM.push(`${x.id.replaceAll(/checkEmpresas_/g, '')}`)
+            });
 
             const json = {
                 usuario: {
@@ -319,7 +313,7 @@
                     NombreUsuario: `${this.nombre} ${this.apellidos}`,
                     Nivel: this.nivelUsuarioSeleccionado,
                     Remoto: this.permisoRemoto === '1' ? true : false,
-                    IdEmpresa: localStorage.getItem('NumeroUnicoEmpresa')
+                    idEmpresasM: idEmpresasM.join(',')
                 },
                 modulos
             };
@@ -352,16 +346,21 @@
         ModificarUsuario: async function (IdUsuario) {
             document.getElementById('cargando').removeAttribute('hidden');
 
-            const modulos = []
+            const modulos = [];
+            const idEmpresasM = [];
 
             for (item of document.querySelectorAll('*[id^="check_"]'))
                 if (document.getElementById(item.id).checked)
                     modulos.push(item.id.replace(/check_/g, ''));
+            document.querySelectorAll('*[id^="checkEmpresas_"]:checked').forEach(x => {
+                idEmpresasM.push(`${x.id.replaceAll(/checkEmpresas_/g, '')}`)
+            });
 
             const usuario = {
                 IdUsuario: this.IdUsuarioSeleccionado,
                 Nivel: this.nivelUsuarioSeleccionado,
-                Remoto: this.permisoRemoto === '1' ? true : false
+                Remoto: this.permisoRemoto === '1' ? true : false,
+                idEmpresasM: idEmpresasM.join(',')
             };
 
             const json = {

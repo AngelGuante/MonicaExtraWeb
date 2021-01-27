@@ -194,7 +194,6 @@ const CloseUserSession = async () => {
     await CerrarConexionRemota();
 
     RemoveCookieElement('Authorization');
-    //window.localStorage.removeItem('NumeroUnicoEmpresa');
     window.localStorage.removeItem('NombreUsuario');
     window.localStorage.removeItem('conn');
     window.localStorage.removeItem('Empresas');

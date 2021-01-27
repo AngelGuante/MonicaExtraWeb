@@ -25,10 +25,24 @@ const DaysDiff = (minDate, maxDate) => {
 //  RETORNA LA FECHA ACTUAL.
 const GetCurrentDate = () => `${new Date().getFullYear()}-${new Date().getMonth().toString().padStart(2, '0')}-${new Date().getDate().toString().padStart(2, '0')}`;
 
-//  RETORNA LA FECHA EN FORMATO YYYY/MM/DD.
-const GetFormatedDate = date => {
+//  RETORNA LA FECHA EN FORMATO YYYY/MM/DD POR DEFECTO, O EL FORMATO ESPESIFICADO.
+const GetFormatedDate = (date, format, separator) => {
     date = new Date(date);
-    return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    separator = separator ? separator : '-';
+    if (format === 'dd/MM/yyyy')
+        return `${date.getDate().toString().padStart(2, '0')}${separator}${(date.getMonth() + 1).toString().padStart(2, '0')}${separator}${date.getFullYear()}`;
+    else
+        return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+};
+
+//  FORMATEAR VALOR A FORMATO DE DINERO
+const StringToMoneyFormat = value => {
+    const mount = Number(value).toLocaleString('en-US', { style: 'currency', currency: 'USD' }).replace('$', '');
+
+    if (mount !== 'NaN')
+        return mount;
+    else
+        return value;
 };
 
 //  AGREGAR DIAS A UNA FECHA.
@@ -76,10 +90,12 @@ const getIntervalDate = param => {
         case "2":
             return { firstday: `${currYear}-${currMonth}-01`, lastday: new Date().toISOString().slice(0, 10) };
         case "3":
-            if (currMonth == '1')
+            if (currMonth == '01')
                 return { firstday: `${currYear - 1}-12-01`, lastday: `${currYear - 1}-12-31` };
             else
                 return { firstday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-01`, lastday: `${currYear}-${(currMonth - 1).toString().padStart(2, '0')}-${new Date(currYear, currMonth - 1, 0).getDate()}` };
+        case "4.0":
+            return { firstday: `${currYear - 1}-01-01`, lastday: `${currYear - 1}-12-31` };
         case "4":
             return { firstday: `${currYear}-01-01`, lastday: new Date().toISOString().slice(0, 10) };
         case "5":
@@ -178,7 +194,6 @@ const CloseUserSession = async () => {
     await CerrarConexionRemota();
 
     RemoveCookieElement('Authorization');
-    //window.localStorage.removeItem('NumeroUnicoEmpresa');
     window.localStorage.removeItem('NombreUsuario');
     window.localStorage.removeItem('conn');
     window.localStorage.removeItem('Empresas');

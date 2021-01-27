@@ -10,7 +10,7 @@ VALUES
 (3, 'Inactivo')
 
 CREATE TABLE EmpresaRegistrada(
-	idEmpresa BIGINT IDENTITY PRIMARY KEY,
+	idEmpresa BIGINT IDENTITY(99, 1) PRIMARY KEY,
 	NombreEmpresa VARCHAR(60) NOT NULL,
 	Contacto VARCHAR(60),
 	Telefono VARCHAR(20),
@@ -24,11 +24,9 @@ CREATE TABLE EmpresaRegistrada(
 	idEmpresasM VARCHAR(200) NULL,
 	ESTATUS INT FOREIGN KEY REFERENCES EmpresaRegistradaEstatus(Id) DEFAULT 1
 )
-INSERT INTO EmpresaRegistrada(NombreEmpresa, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento)
+INSERT INTO EmpresaRegistrada(idEmpresa, NombreEmpresa, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento)
 VALUES
-('Almonte_MoniExtra', 'almonte@computadorasengrande.com', 1, 1, GETDATE()),
-('Empresa Demo', 'demo@domain.com', 1, 1, GETDATE())
-
+('99', 'Almonte_MoniExtra', 'almonte@computadorasengrande.com', 1, 1, GETDATE())
 
 CREATE TABLE Usuario(
 	IdUsuario BIGINT IDENTITY PRIMARY KEY,
@@ -36,20 +34,15 @@ CREATE TABLE Usuario(
 	[Login] VARCHAR(15) NOT NULL,
 	NombreUsuario VARCHAR(40) NOT NULL,
 	Clave VARCHAR(10) DEFAULT '123456abc!',
-	--IdToken
-	--DispositivosRegistrados
 	Estatus SMALLINT DEFAULT 1,
 	Nivel SMALLINT DEFAULT 2,
-	--LoginMonica VARCHAR(15)
-	--EnlaceMonica VARCHAR(15)
-	Remoto SMALLINT DEFAULT 0
-	--ConexionServidor VARCHAR(60)
-	--CampoCompuesto VARCHAR(60)
+	Remoto SMALLINT DEFAULT 0,
+	idEmpresasM VARCHAR(200) NULL
 )
 INSERT INTO Usuario(IdEmpresa, Login, NombreUsuario, Nivel, Clave)
 VALUES
-('1', 'Admin', 'Administrador', 0, 'Adm@5452!'),
-('2', 'Administrador', 'Usuario Administrador', 1, '123456@!')
+('99', 'Admin', 'Administrador', 0, '123456abc!')
+--('2', 'Administrador', 'Usuario Administrador', 1, '123456@!')
 
 CREATE TABLE Modulo(
 	IdModulo VARCHAR(4) NOT NULL UNIQUE,
@@ -97,15 +90,8 @@ CREATE TABLE DetallesModulo(
 CREATE TABLE PermisosUsuario(
 	IdPermiso INT IDENTITY PRIMARY KEY,
 	IdEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(IdEmpresa),
-	--IdEmpresaM
 	IdUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario),
 	IdModulo VARCHAR(4) FOREIGN KEY REFERENCES Modulo(IdModulo)
-)
-
-CREATE TABLE Concurrencia(
-	id BIGINT PRIMARY KEY IDENTITY,
-	idEmpresa BIGINT FOREIGN KEY REFERENCES EmpresaRegistrada(idEmpresa),
-	IdUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario)
 )
 
 CREATE TABLE EmpresasEquiposRegistrados(
@@ -119,3 +105,10 @@ CREATE TABLE EquiposAsignadosAUsuarios(
 	idUsuario BIGINT FOREIGN KEY REFERENCES Usuario(IdUsuario),
 	idEquipoRegistrado INT FOREIGN KEY REFERENCES EmpresasEquiposRegistrados(id)
 )
+
+-- EquiposAsignadosAUsuarios
+-- EmpresasEquiposRegistrados
+-- PermisosUsuario
+
+-- Usuario
+-- EmpresaRegistrada

@@ -84,8 +84,25 @@ namespace MonicaExtraWeb.Controllers.API
                     if (validacionRemoto != string.Empty)
                         return Json(new { message = validacionRemoto });
                 }
+
                 var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString());
-                return Json(new { token, usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, usuario.idEmpresasM });
+
+                #region VALIDAR LAS EMPRESAS DISPONIBLES QUE TENGA EL USUARIO Y LAS QUE ESTAN SELECCIONADAS POR EL ADMINISTRADOR
+                var idEmpresasM = "";
+                if (usuario.Nivel != 0)
+                {
+                    if (usuario.idEmpresasM != null && usuario.idEmpresasM != string.Empty)
+                        foreach (var item in usuario.idEmpresasM.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries).ToList())
+                            if (usuario.EmpresaRegistrada_idEmpresasM.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries).ToList().FirstOrDefault(x => x == item) != default)
+                            {
+                                if (idEmpresasM.Length != 0)
+                                    idEmpresasM += ",";
+                                idEmpresasM += item;
+                            }
+                }
+                #endregion
+
+                return Json(new { token, usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, idEmpresasM });
             }
             else
                 return Unauthorized();

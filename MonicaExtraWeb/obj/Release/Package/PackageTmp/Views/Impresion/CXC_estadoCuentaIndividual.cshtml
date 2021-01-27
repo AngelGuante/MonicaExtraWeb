@@ -1,0 +1,65 @@
+﻿
+<div>
+    @Html.Partial("ImpresionesHeader")
+
+    <h4>Estado de Cuenta Individual</h4>
+
+    <hr />
+
+    <div style="text-align:center;">
+        <table class="table table-striped" style="border: 1px solid black; margin: auto;">
+            <thead>
+                <tr class="tableHeader">
+                    <th style="text-align:right;" scope="col">Emisión</th>
+                    <th style="text-align:right;" scope="col">Vencimiento</th>
+                    <th style="text-align:left;" scope="col">Descripción</th>
+                    <th style="text-align:right;" scope="col">Días Vencidos</th>
+                    <th style="text-align:left;" scope="col">Nombre Vendedor</th>
+                    <th style="text-align:right;" scope="col">Monto</th>
+                    <th style="text-align:right;" scope="col">Pagos Acumulados</th>
+                    <th style="text-align:right;" scope="col">Saldo</th>
+                </tr>
+            </thead>
+            <tbody id="tbody">
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        window.addEventListener('load', () => {
+            document.getElementById('Nombre_empresa').innerHTML = localStorage.getItem('Nombre_empresa');
+            document.getElementById('direccionEmpresa1').innerHTML = localStorage.getItem('direccionEmpresa1');
+            document.getElementById('direccionEmpresa2').innerHTML = localStorage.getItem('direccionEmpresa2');
+            document.getElementById('direccionEmpresa3').innerHTML = localStorage.getItem('direccionEmpresa3');
+            document.getElementById('TelefonoEmpresa1').innerHTML = localStorage.getItem('TelefonoEmpresa1');
+
+            const registros = JSON.parse(localStorage.getItem('registros'));
+            localStorage.removeItem('registros');
+
+            const table = document.getElementById("tbody");
+            registros.forEach(item => {
+                const row = table.insertRow();
+                const saldo = row.insertCell(0);
+                const pagosAcumulados = row.insertCell(0);
+                const monto = row.insertCell(0);
+                const vendedor = row.insertCell(0);
+                const diasTranscurridos = row.insertCell(0);
+                const descripcion = row.insertCell(0);
+                const vencimiento = row.insertCell(0);
+                const emision = row.insertCell(0);
+                monto.innerHTML = item.monto ? StringToMoneyFormat(item.monto) : '';
+                pagosAcumulados.innerHTML = item.pagosAcumulados ? StringToMoneyFormat(item.pagosAcumulados) : '';
+                saldo.innerHTML = item.balance ? StringToMoneyFormat(item.balance) : '';
+                vendedor.innerHTML = item.Nombre_vendedor ? item.Nombre_vendedor.toUpperCase() : '';
+                diasTranscurridos.innerHTML = item.diasTrancurridos ? item.diasTrancurridos : '';
+                descripcion.innerHTML = item.descripcion_dcmto ? item.descripcion_dcmto : '';
+                vencimiento.innerHTML = item.fecha_vcmto ? GetFormatedDate(item.fecha_vcmto, 'dd/MM/yyyy', '/') : '';
+                emision.innerHTML = item.fecha_emision ? GetFormatedDate(item.fecha_emision, 'dd/MM/yyyy', '/') : '';
+            });
+
+            window.print();
+        });
+    </script>
+}

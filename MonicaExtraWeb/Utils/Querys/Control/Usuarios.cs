@@ -28,8 +28,8 @@ namespace MonicaExtraWeb.Utils.Querys
             if (!string.IsNullOrEmpty(config.Select))
                 query.Append($",{config.Select} ");
 
-            //if (config.Usuario_Join_IdEmpresaM)
-            //    query.Append($",idEmpresasM ");
+            if (config.Usuario_Join_EmpresasRegistradas)
+                query.Append($", E.idEmpresasM EmpresaRegistrada_idEmpresasM ");
             #endregion
 
             #region FROM
@@ -87,12 +87,13 @@ namespace MonicaExtraWeb.Utils.Querys
             var query = new StringBuilder();
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
-            query.Append("(idEmpresa, Login, Nivel, NombreUsuario, Remoto) ");
+            query.Append("(idEmpresa, Login, Nivel, NombreUsuario, idEmpresasM, Remoto) ");
             query.Append("VALUES ");
             query.Append("(@idEmpresa, ");
             query.Append("@Login, ");
             query.Append("@Nivel, ");
             query.Append("@NombreUsuario, ");
+            query.Append("@idEmpresasM, ");
             query.Append("@Remoto) ");
             query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) ");
 
@@ -102,6 +103,7 @@ namespace MonicaExtraWeb.Utils.Querys
                 user.Login,
                 user.Nivel,
                 user.NombreUsuario,
+                user.idEmpresasM,
                 user.Remoto,
             }).FirstOrDefault();
 
@@ -123,26 +125,42 @@ namespace MonicaExtraWeb.Utils.Querys
         {
             var query = new StringBuilder();
             var querySet = new StringBuilder();
+            var queryAnd = new StringBuilder();
             var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
 
             query.Append($"UPDATE dbo.Usuario SET  ");
 
             if (user.Estatus != default)
                 querySet.Append($"Estatus = '{user.Estatus}' ");
-            if (user.Remoto)
-                querySet.Append($"Remoto = {(user.Remoto ? "1" : "0")} ");
-            else if (user.Clave != default)
+
+            //if (user.Remoto)
+            queryAnd.Append($"Remoto = {(user.Remoto ? "1" : "0")} ");
+            if (queryAnd.Length > 0)
+                queryAnd.Append($", ");
+            queryAnd.Append($"idEmpresasM = '{user.idEmpresasM}' ");
+            if (queryAnd.Length > 0)
+                querySet.Append(queryAnd.ToString());
+
+            if (user.Clave != default)
             {
+                if (queryAnd.Length > 0)
+                    querySet.Append($", ");
                 if (user.Clave == "default")
                     querySet.Append($"Clave = '{initialPass}' ");
                 else
                     querySet.Append($"Clave = '{user.Clave}' ");
             }
             else if (user.Nivel != default)
+            {
+                if (queryAnd.Length > 0)
+                    querySet.Append($", ");
                 querySet.Append($"Nivel = '{user.Nivel}' ");
+            }
 
             query.Append(querySet.ToString());
             query.Append($"WHERE IdUsuario = {user.IdUsuario} ");
+
+            CompanyRemoteConnectionUsers.Remove(user.IdUsuario.ToString());
 
             return query.ToString();
         }

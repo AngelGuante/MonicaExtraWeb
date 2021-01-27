@@ -42,7 +42,7 @@
                         </div>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalUsuario({IdUsuario: item.IdUsuario, Login: item.Login, NombreUsuario: item.NombreUsuario, Estatus: item.Estatus, Nivel: item.Nivel, Remoto: item.Remoto})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
+                        <button type="button" class="btn btn-outline-info" v-on:click="AbrirModalUsuario({IdUsuario: item.IdUsuario, Login: item.Login, NombreUsuario: item.NombreUsuario, Estatus: item.Estatus, Nivel: item.Nivel, Remoto: item.Remoto, idEmpresasM: item.idEmpresasM})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">remove_red_eye</i></button>
                     </td>
                 </tr>
         </table>
@@ -67,135 +67,105 @@
                             <p>Esta se cambiará obligatoriamente al momento del primer acceso del usuario a su cuenta.</p>
                         </div>
 
-                        <form>
-                            <div class="row">
-                                <div class="form-group col-12" v-if="!tipoModalStatus">
-                                    <label>Nombre Usuario</label>
-                                    <input type="text" class="form-control" v-model="nombreCompleto" disabled>
-                                </div>
+                        <div class="row">
+                            <div class="form-group col-12" v-if="!tipoModalStatus">
+                                <label>Nombre Usuario</label>
+                                <input type="text" class="form-control" v-model="nombreCompleto" disabled>
+                            </div>
 
-                                <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
-                                    <label>Nombre</label>
-                                    <input id="inptNombreNuevoUsuario" type="text" class="form-control" placeholder="Nombre" v-model="nombre" maxlength="10">
-                                </div>
-                                <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
-                                    <label>Apellidos</label>
-                                    <input id="inptApellidosNuevoUsuario" type="text" class="form-control" placeholder="Apellidos" v-model="apellidos" maxlength="10">
-                                </div>
+                            <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
+                                <label>Nombre</label>
+                                <input id="inptNombreNuevoUsuario" type="text" class="form-control" placeholder="Nombre" v-model="nombre" maxlength="10">
+                            </div>
+                            <div class="form-group col-12 col-lg-6" v-if="tipoModalStatus">
+                                <label>Apellidos</label>
+                                <input id="inptApellidosNuevoUsuario" type="text" class="form-control" placeholder="Apellidos" v-model="apellidos" maxlength="10">
+                            </div>
 
-                                <div class="form-group col-8">
-                                    <label>Nombre de Acceso</label>
-                                    <input id="inptNombreUsuario" type="text" class="form-control" placeholder="--" disabled v-model="nombreUsuario" maxlength="15">
-                                </div>
+                            <div class="form-group col-8">
+                                <label>Nombre de Acceso</label>
+                                <input id="inptNombreUsuario" type="text" class="form-control" placeholder="--" disabled v-model="nombreUsuario" maxlength="15">
+                            </div>
 
-                                <div class="col-4 d-flex align-items-center" v-if="tipoModalStatus">
-                                    <button id="btnGenerarUserName" v-on:click="GenerarUserName()" type="button" class="btn btn-info" style="width:100%" disabled>Generar Nombre de Acceso</button>
-                                </div>
+                            <div class="col-4 d-flex align-items-center" v-if="tipoModalStatus">
+                                <button id="btnGenerarUserName" v-on:click="GenerarUserName()" type="button" class="btn btn-info" style="width:100%">Generar Nombre de Acceso</button>
+                            </div>
 
-                                <div class="form-group col-8">
-                                    <div class="form-group">
-                                        <label>Nivel</label>
-                                        <select class="form-control" v-model="nivelUsuarioSeleccionado">
-                                            <option value="2">Regular</option>
-                                            <option value="1">Maestro</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="form-group col-4">
-                                    <div class="form-group">
-                                        <label>Remoto</label>
-                                        <select class="form-control" v-model="permisoRemoto">
-                                            <option value="0">No</option>
-                                            <option value="1">Si</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div v-if="!tipoModalStatus" class="col-12 form-group">
-                                    <div class="row">
-                                        <button type="button" class="btn btn-outline-info col-6" v-on:click="ResetearContrasenia()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">not_started</i>Resetear Contraseña</button>
-                                        <button type="button" class="btn btn-outline-danger col-6" v-if="EstadoUsuarioSeleccionado === 1" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">person_add_disabled</i>Deshabilitar Usuario</button>
-                                        <button type="button" class="btn btn-outline-info col-6" v-else v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">verified_user</i>Habilitar Usuario</button>
-                                    </div>
-                                </div>
-
-                                <div class=" col-12">
-                                    <button class="btn btn-dark" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="seleccionarEmpresasDiv" style="width:100%">Empresas Disponibles para el Usuario</button>
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="collapse multi-collapse" id="seleccionarEmpresasDiv">
-                                                <div class="card card-body">
-                                                    <div id="accordion">
-                                                        <div class="card">
-
-                                                            @* LISTADO DE EMPRESAS *@
-                                                            <div v-for="item in empresas">
-                                                                <div class="card-header">
-                                                                    <h5 class="mb-0">
-                                                                        <input v-bind:id="'checkEmpresa_' + item" type="checkbox">
-                                                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                                            {{item}} - {{item.IdModulo}}
-                                                                        </button>
-                                                                    </h5>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <hr />
-
-                                <div class=" col-12">
-                                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="seleccionarAccesosUsuarioDiv" style="width:100%">Accesos del usuario</button>
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="collapse multi-collapse" id="seleccionarAccesosUsuarioDiv">
-                                                <div class="card card-body">
-                                                    <div id="accordion">
-                                                        <div class="card">
-                                                            <div class="row">
-                                                                <button class="btn btn-info col-6" type="button" v-on:click="ToggleTodosLosModulos(true)">Seleccionar Todos</button>
-                                                                <button class="btn btn-danger col-6" type="button" v-on:click="ToggleTodosLosModulos(false)">Deseleccionar Todos</button>
-                                                            </div>
-
-                                                            @* LISTADO DE PERMISOS *@
-                                                            <div v-for="item in modulos">
-                                                                <div class="card-header">
-                                                                    <h5 class="mb-0">
-                                                                        <input v-bind:id="'check_' + item.IdModulo" type="checkbox">
-                                                                        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                                                            {{item.Descripcion}} - {{item.IdModulo}}
-                                                                        </button>
-                                                                    </h5>
-                                                                </div>
-                                                                <div v-bind:id="'modulo_' + item.IdModulo" class="collapse" data-parent="#accordion">
-                                                                    <div class="card-body">
-                                                                        @*Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.*@
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
+                            <div class="form-group col-8">
+                                <div class="form-group">
+                                    <label>Nivel</label>
+                                    <select class="form-control" v-model="nivelUsuarioSeleccionado">
+                                        <option value="2">Regular</option>
+                                        <option value="1">Maestro</option>
+                                    </select>
                                 </div>
                             </div>
 
-                            <hr />
+                            <div class="form-group col-4">
+                                <div class="form-group">
+                                    <label>Remoto</label>
+                                    <select class="form-control" v-model="permisoRemoto">
+                                        <option value="0">No</option>
+                                        <option value="1">Si</option>
+                                    </select>
+                                </div>
+                            </div>
 
-                            <button id="btnAgregarNuevoUsuario" v-on:click="NuevoUsuario()" v-if="tipoModalStatus" type="button" class="btn btn-info" style="width:100%" disabled><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
-                            <button v-on:click="ModificarUsuario()" v-else type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
-                        </form>
+                            <div v-if="!tipoModalStatus" class="col-12 form-group">
+                                <div class="row">
+                                    <button type="button" class="btn btn-outline-info col-6" v-on:click="ResetearContrasenia()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">not_started</i>Resetear Contraseña</button>
+                                    <button type="button" class="btn btn-outline-danger col-6" v-if="EstadoUsuarioSeleccionado === 1" v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">person_add_disabled</i>Deshabilitar Usuario</button>
+                                    <button type="button" class="btn btn-outline-info col-6" v-else v-on:click="CambiarEstadoUsuario()" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">verified_user</i>Habilitar Usuario</button>
+                                </div>
+                            </div>
+
+                            <div id="accordion" class="col-12">
+                                <div class="card">
+                                    <div class="card-header" id="headingOne">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                Empresas Disponibles para el Usuario
+                                            </button>
+                                        </h5>
+                                    </div>
+
+                                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                        <div class="card-body">
+                                            <div v-for="item in empresas">
+                                                <input v-bind:id="'checkEmpresas_' + item" type="checkbox">
+                                                <label v-bind:for="'checkEmpresas_' + item" class="form-check-label col-11">{{item}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card">
+                                    <div class="card-header" id="headingTwo">
+                                        <h5 class="mb-0">
+                                            <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                Accesos del usuario
+                                            </button>
+                                        </h5>
+                                    </div>
+                                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                        <div class="row">
+                                            <button class="btn btn-info col-6" type="button" v-on:click="ToggleTodosCheck(true, 'check_')">Seleccionar Todos</button>
+                                            <button class="btn btn-danger col-6" type="button" v-on:click="ToggleTodosCheck(false, 'check_')">Deseleccionar Todos</button>
+                                        </div>
+                                        <div class="card-body">
+                                            <div v-for="item in modulos">
+                                                <input v-bind:id="'check_' + item.IdModulo" type="checkbox">
+                                                <label v-bind:for="'check_' + item.IdModulo" class="form-check-label col-11">{{item.Descripcion}} - {{item.IdModulo}}</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr />
+
+                        <button id="btnAgregarNuevoUsuario" v-on:click="NuevoUsuario()" v-if="tipoModalStatus" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+                        <button v-on:click="ModificarUsuario()" v-else type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
                     </div>
 
                 </div>
@@ -219,9 +189,9 @@
                         <div v-for="item in empresasLocales">
                             <div class="card-header">
                                 <h5 class="mb-0">
-                                    <input v-bind:id="'check_' + item.empresa_id" type="checkbox" v-on:click="empresaCheckChanged('check_' + item.empresa_id)">
+                                    <input v-bind:id="'checkEmpresasLocales_' + item.empresa_id" type="checkbox" v-on:click="empresaCheckChanged('checkEmpresasLocales_' + item.empresa_id)">
                                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        {{item.Nombre_empresa | FilterUppercase}} - {{item.empresa_id}}
+                                        {{item.empresa_id}} - {{item.Nombre_empresa | FilterUppercase}}
                                     </button>
                                 </h5>
                             </div>

@@ -1,7 +1,13 @@
 ﻿<div class="mt-2">
     <button id="btnBack" class="btn btn-danger" onclick="NavigationBehaviour(-1)" style="padding-bottom:0" hidden><i class="material-icons">arrow_back</i></button>
     <button id="btnHome" class="btn btn-info" onclick="NavigationBehaviour(0)" style="padding-bottom:0" hidden><i class="material-icons">home</i></button>
-    <button id="btnUsuario" class="btn btn-info" onclick="$('#modalUsuarioLogeado').modal('show');" style="float:right;"></button>
+    <div class="btn-group" style="float:right;">
+        <button id="btnUsuario" type="button" class="btn btn-info" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        </button>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="#" onclick="CloseUserSession()"  style="padding-bottom:0"><i class="material-icons">close</i>Cerrar Sección.</a>
+        </div>
+    </div>
     <div class="btn-group" style="float:right; margin-right:10px">
         <button id="btnConnection" type="button" class="btn btn-danger" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="padding-bottom:0">
             <i class="material-icons">cloud_queue</i>
@@ -9,22 +15,6 @@
         <div class="dropdown-menu">
             <a id="optConecction_objener" class="dropdown-item" href="#" onclick="EstablecerConexionRemota()" hidden><i class="material-icons">check</i>Conectarse de manera remota.</a>
             <span id="infoConectado" class="dropdown-item font-weight-bold" hidden>Usted está obteniendo la data desde el servidor de su empresa.</span>
-        </div>
-    </div>
-</div>
-
-@*  MODAL PARA CERRAR SECCION*@
-<div class="modal fade bd-example-modal-lg" id="modalUsuarioLogeado" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="p-5">
-
-                <button type="button" class="btn btn-outline-dark" style="float:right;" onclick="$('#modalUsuarioLogeado').modal('hide');"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>
-
-                <div class="card-body">
-                    <button onclick="CloseUserSession()" type="button" class="btn btn-danger mt-2" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i>Cerrar Sección</button>
-                </div>
-            </div>
         </div>
     </div>
 </div>

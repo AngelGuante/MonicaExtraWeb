@@ -186,10 +186,16 @@
             txtContent += `${informe}|${this.rncOCedula.replaceAll(/-/g, '')}|${this.FILTROS.periodoAnioSeleccionadoBuscado}${this.FILTROS.periodoMesSeleccionadoBuscado}|${this.DATA.length} \n`;
 
             this.DATA.forEach(item => {
-                txtContent += (`${item.ncf}|${(item.fecha_emision.replaceAll(/-/g, '')).substr(0, 8)}|--\n`).replaceAll(/ /g, '');
+                txtContent += (
+                    `${item.registro_tributario}|${this.$options.filters.FilterTipoIdentificacion(item.LENTipoIdentificacion)}|${item.ncf}|${item.ncfModificado}|${item.TipoIngreso}|${item.fecha_emision}|${item.FechaRetencion}|${item.MontoFacturado}|${item.impuesto_monto}|${item.reteiva_monto}||||||${this.validarCeroParaExportarTXT(item.MontoPropina)}|${this.validarCeroParaExportarTXT(item.Efectivo)}|${this.validarCeroParaExportarTXT(item.Cheque)}|${this.validarCeroParaExportarTXT(item.TarjetaDebito)}|${this.validarCeroParaExportarTXT(item.VentaCredito)}|${this.validarCeroParaExportarTXT(item.Bonos)}|${this.validarCeroParaExportarTXT(item.Permuta)}|${this.validarCeroParaExportarTXT(item.OtrasFormas)}--\n`).replaceAll(/ /g, '').replaceAll(/-/g, '').replaceAll(/\|0\|/g, '||');
             });
 
             saveDownloadedData(`${informe}_${new Date().toISOString().substr(0, 10)}`, txtContent);
+        },
+
+        validarCeroParaExportarTXT(monto) {
+            return monto == '0' ? '' : monto;
+
         },
 
         TipoConsultaSelectChanged() {

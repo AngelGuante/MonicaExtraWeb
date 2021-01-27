@@ -264,8 +264,9 @@
     <Content Include="Content\assets\cash.png" />
     <Content Include="Content\assets\down-arrow.png" />
     <Content Include="Content\assets\loading.gif" />
-    <Content Include="Content\assets\logoHeaderMonica.png" />
     <Content Include="Content\assets\graphic.png" />
+    <Content Include="Content\assets\logoHeaderMonica.png" />
+    <Content Include="Content\assets\Logo_MoniExtraMenu.png" />
     <Content Include="Content\assets\management.png" />
     <Content Include="Content\assets\permissions.png" />
     <Content Include="Content\assets\sell.png" />

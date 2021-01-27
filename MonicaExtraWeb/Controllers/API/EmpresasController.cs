@@ -46,6 +46,13 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("PUT")]
         public IHttpActionResult PUT(Empresa empresa)
         {
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { empresaId = "", userNivel = "" });
+
+            if (json.userNivel != "0")
+                empresa.IdEmpresa = long.Parse(json.empresaId);
+
             var query = Update(empresa);
             Conn.Execute(query.ToString());
 
