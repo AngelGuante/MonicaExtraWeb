@@ -128,8 +128,9 @@ namespace MonicaExtraWeb.Utils.Querys
             var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
 
             query.Append($"UPDATE dbo.Usuario SET  ");
-            queryAnd.Append($"idEmpresasM = '{user.idEmpresasM}' ");
 
+            if (user.idEmpresasM != null)
+                queryAnd.Append($"idEmpresasM = '{user.idEmpresasM}' ");
             if (user.Remoto.HasValue)
             {
                 if (queryAnd.Length > 0)
@@ -160,7 +161,8 @@ namespace MonicaExtraWeb.Utils.Querys
             query.Append(queryAnd.ToString());
             query.Append($"WHERE IdUsuario = {user.IdUsuario} ");
 
-            CompanyRemoteConnectionUsers.Remove(user.IdUsuario.ToString());
+            if (user.desconectar)
+                CompanyRemoteConnectionUsers.Remove(user.IdUsuario.ToString());
 
             return query.ToString();
         }

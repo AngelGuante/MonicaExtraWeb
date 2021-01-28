@@ -2,6 +2,7 @@
 using MonicaExtraWeb.Models;
 using MonicaExtraWeb.Models.DTO.Control;
 using MonicaExtraWeb.Utils.Token;
+using System;
 using System.Configuration;
 using System.Linq;
 using System.Web.Http;
@@ -33,6 +34,10 @@ namespace MonicaExtraWeb.Controllers.API
                 // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
                 if (usuario.empresaEstatus == 0)
                     return Json(new { message = "ESTE USUARIO NO PUEDE ACCEDER YA QUE LA EMPRESA A LA QUE PERTENECE, ESTA INHABILITADA." });
+
+                //  SI EL PLAN DE LA EMPRESA EXPIRO.
+                if (usuario.empresaVencimiento > DateTime.Now)
+                    return Json(new { message = "EL PLAN DE SU EMPRESA HA EXPIRADO." });
 
                 //  SI EL USUARIO SE ENCUENTRA INHABILITADO.
                 if (usuario.Estatus == 0)

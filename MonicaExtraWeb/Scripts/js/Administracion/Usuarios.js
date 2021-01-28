@@ -8,6 +8,7 @@
         nombreCompleto: '',
         nivelUsuarioSeleccionado: 2,
         permisoRemoto: 0,
+        teniaEmpresasMSeleccionadas: false,
 
         nro_empresas: 0,
 
@@ -165,12 +166,14 @@
                 for (item of (await response.json()).permisosUsuario)
                     document.getElementById(`check_${item}`).checked = true;
 
-                if (config.idEmpresasM !== null && config.idEmpresasM !== '')
+                if (config.idEmpresasM !== null && config.idEmpresasM !== '') {
+                    this.teniaEmpresasMSeleccionadas = true;
                     config.idEmpresasM.split(',').forEach(x => {
                         let ele = document.getElementById(`checkEmpresas_${x}`);
                         if (ele)
                             ele.checked = true;
                     });
+                }
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -355,13 +358,15 @@
             document.querySelectorAll('*[id^="checkEmpresas_"]:checked').forEach(x => {
                 idEmpresasM.push(`${x.id.replaceAll(/checkEmpresas_/g, '')}`)
             });
-
+            
             const usuario = {
                 IdUsuario: this.IdUsuarioSeleccionado,
                 Nivel: this.nivelUsuarioSeleccionado,
                 Remoto: this.permisoRemoto === '1' ? true : false,
-                idEmpresasM: idEmpresasM.join(',')
             };
+
+            if (idEmpresasM.length || this.teniaEmpresasMSeleccionadas)
+                usuario.idEmpresasM = idEmpresasM.join(',')
 
             const json = {
                 usuario,
@@ -457,6 +462,7 @@
             this.permisoRemoto = 0;
             this.usuarios = [];
             this.nroEmpresasSeleccionadas = 0;
+            this.teniaEmpresasMSeleccionadas = false;
             //this.modulos = [];
 
             this.BuscarUsuarios();
