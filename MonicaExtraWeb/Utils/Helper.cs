@@ -67,7 +67,7 @@ namespace MonicaExtraWeb.Utils
             {
                 IdEmpresa = login.IdEmpresa,
                 NombreUsuario = login.Username,
-            }, new Models.DTO.QueryConfigDTO { Select = "U.idEmpresasM, U.Remoto, E.ESTATUS empresaEstatus, E.Vencimiento ", ExcluirUsuariosControl = false, Usuario_Join_EmpresasRegistradas = true })).FirstOrDefault();
+            }, new Models.DTO.QueryConfigDTO { Select = "U.idEmpresasM, U.Remoto, E.ESTATUS empresaEstatus, E.Vencimiento ", ExcluirUsuariosControl = false, Usuario_Join_EmpresasRegistradas = true, TraerClave = true })).FirstOrDefault();
 
             #region VALIDACION PARA HACERSE CUANDO LA APLICACION 'ExtraService Notification.exe' INTENTA LOGEARSE UN CLIENTE.
             if (login.passwordEncriptado)

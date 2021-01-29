@@ -218,7 +218,7 @@
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
             });
-
+            debugger
             var json = await res.json();
             this.conexionesRemotasAbiertas = json.conexiones;
             document.getElementById('cargando').setAttribute('hidden', true);

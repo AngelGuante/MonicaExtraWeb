@@ -589,6 +589,10 @@
             return monicaReportes.$options.filters.FilterDateFormat(value);
         },
 
+        FilterDateFormat2: value => {
+            return monicaReportes.$options.filters.FilterDateFormat2(value);
+        },
+
         FilterStringToMoneyFormat: value => {
             return monicaReportes.$options.filters.FilterStringToMoneyFormat(value);
         },

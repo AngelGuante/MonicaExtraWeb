@@ -111,7 +111,9 @@ namespace MonicaExtraWeb.Controllers.API
                 return Json(new { });
 
             var usuarios = Conn.Query<Usuario>(Select(new Usuario
-            { }, new Models.DTO.QueryConfigDTO { Where_In = conexiones, ExcluirUsuariosControl = false/*, Usuario_Join_IdEmpresaM = false*/ })).ToList();
+            { }, new Models.DTO.QueryConfigDTO { Where_In = conexiones, ExcluirUsuariosControl = false })).ToList();
+
+            //usuarios.Remove(json.userId);
 
             return Json(new { conexiones = usuarios });
         }

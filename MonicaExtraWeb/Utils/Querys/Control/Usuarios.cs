@@ -22,8 +22,10 @@ namespace MonicaExtraWeb.Utils.Querys
             query.Append($" IdUsuario ");
             query.Append($",NombreUsuario ");
             query.Append($",U.Estatus ");
-            query.Append($",Clave ");
             query.Append($",Nivel ");
+
+            if (config.TraerClave)
+                query.Append($",Clave ");
 
             if (!string.IsNullOrEmpty(config.Select))
                 query.Append($",{config.Select} ");
@@ -66,6 +68,13 @@ namespace MonicaExtraWeb.Utils.Querys
                 if (queryWhere.Length > 6)
                     queryWhere.Append("AND ");
                 queryWhere.Append($"Nivel != '0' ");
+            }
+            if (config != null
+                && config.ExcluirUsuariosRemotos)
+            {
+                if (queryWhere.Length > 6)
+                    queryWhere.Append("AND ");
+                queryWhere.Append($"Nivel != '3' ");
             }
 
             if (config.Where_In != default && config.Where_In != "")

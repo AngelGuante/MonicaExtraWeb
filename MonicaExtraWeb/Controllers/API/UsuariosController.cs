@@ -27,7 +27,7 @@ namespace MonicaExtraWeb.Controllers.API
             if (json.userNivel != "0")
                 usuarioDeserialized.IdEmpresa = long.Parse(json.empresaId);
 
-            var query = Select(usuarioDeserialized, new QueryConfigDTO {Select = " U.Login, U.Remoto, U.idEmpresasM ", ExcluirUsuariosControl = true });
+            var query = Select(usuarioDeserialized, new QueryConfigDTO {Select = " U.Login, U.Remoto, U.idEmpresasM ", ExcluirUsuariosControl = true, ExcluirUsuariosRemotos= true });
             var usuarios = Conn.Query<Usuario>(query.ToString()).ToList();
 
             return Json(new

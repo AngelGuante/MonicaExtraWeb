@@ -116,8 +116,10 @@
         CambiarContrasenia: async function () {
             const usuario = {
                 IdUsuario: window.localStorage.getItem('Number'),
-                Clave: this.newPass
+                Clave: this.newPass,
+                desconectar: true
             };
+
             //  ACTUALIZAR LAS CONTRASEñAS
             await fetch('../API/USUARIOS/PUT', {
                 method: 'PUT',

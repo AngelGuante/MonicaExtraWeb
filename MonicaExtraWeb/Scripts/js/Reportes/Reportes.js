@@ -423,6 +423,16 @@
 
         FilterDateFormat: value => {
             const date = new Date(value);
+            const fecha = `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+
+            if (!fecha.includes('NaN'))
+                return fecha;
+            else
+                return value;
+        },
+
+        FilterDateFormat2: value => {
+            const date = new Date(value);
             const fecha = `${(date.getDate() + 1).toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
 
             if (!fecha.includes('NaN'))

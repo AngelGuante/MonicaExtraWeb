@@ -21,7 +21,6 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
                     <th scope="col">Login</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Estatus</th>
@@ -30,7 +29,6 @@
             </thead>
             <tbody>
                 <tr v-for="item in usuarios">
-                    <td>{{item.IdUsuario}}</td>
                     <td>{{item.Login}}</td>
                     <td>{{item.NombreUsuario}}</td>
                     <td>
@@ -220,7 +218,6 @@
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
                                         <th scope="col">Nombre</th>
                                         <th scope="col">Desconectar</th>
                                         <th scope="col">Desconectar y Quitar Permiso</th>
@@ -228,7 +225,6 @@
                                 </thead>
                                 <tbody>
                                     <tr v-for="item in conexionesRemotasAbiertas">
-                                        <td>{{item.IdUsuario}}</td>
                                         <td>{{item.NombreUsuario}}</td>
                                         <td>
                                             <button type="button" class="btn btn-outline-info" v-on:click="DesconectarUsuario({idUsuario: item.IdUsuario, quitarRemoto: false})" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">close</i></button>

@@ -17,8 +17,8 @@ namespace MonicaExtraWeb.Models.DTO.Control
 
         //  VARIABLES DE EMPRESA
         public int empresaEstatus { get; set; }
-        public DateTime? empresaVencimiento { get; set; }
-        public string Vencimiento { get; set; }
+        public DateTime? Vencimiento { get; set; }
+        //public string Vencimiento { get; set; }
 
         // CONFIGURACIONES
         public bool desconectar { get; set; }
