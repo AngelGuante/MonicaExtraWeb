@@ -32,7 +32,7 @@ const GetFormatedDate = (date, format, separator) => {
     if (format === 'dd/MM/yyyy')
         return `${date.getDate().toString().padStart(2, '0')}${separator}${(date.getMonth() + 1).toString().padStart(2, '0')}${separator}${date.getFullYear()}`;
     else
-        return `${date.getFullYear()}-${date.getMonth().toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
 };
 
 //  FORMATEAR VALOR A FORMATO DE DINERO
@@ -193,6 +193,7 @@ const CloseUserSession = async () => {
     $('#modalUsuarioLogeado').modal('hide');
     await CerrarConexionRemota();
 
+    document.getElementById('cargando').removeAttribute('hidden');
     RemoveCookieElement('Authorization');
     window.localStorage.removeItem('NombreUsuario');
     window.localStorage.removeItem('conn');
@@ -515,8 +516,8 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                     });
                     const innerContent = await innerResponse.json();
                     let parsedContent = JSON.parse(innerContent.resultset);
-
-                    if (parsedContent.data.includes('-->>')) {
+                    
+                    if (parsedContent && parsedContent.data.includes('-->>')) {
                         parsedContent.data = (parsedContent.data.split('-->>'))[0];
                         localStorage.setItem('remoteConexion', true);
                     }

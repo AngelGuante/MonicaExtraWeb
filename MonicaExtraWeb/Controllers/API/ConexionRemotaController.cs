@@ -9,6 +9,8 @@ using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
 using static MonicaExtraWeb.Utils.Helper;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
+using static MonicaExtraWeb.Utils.Querys.Control.Empresas;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -26,6 +28,19 @@ namespace MonicaExtraWeb.Controllers.API
             if (!CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
             {
                 CompanyRemoteConnectionIP.Add(login.IdEmpresa.ToString(), HttpContext.Current.Request.UserHostAddress);
+
+                #region GUARDAR LOS DATOS DE LA EMPRESA EN MEMORIA
+                var query = Select(new Empresa
+                {
+                    IdEmpresa = login.IdEmpresa
+                }, new Models.DTO.QueryConfigDTO
+                {
+                    Select = "idEmpresa, ConnectionString, CantidadEmpresas, CantidadUsuariosPagados, Estatus"
+                });
+                var empresas = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
+                cache_empresas.Add(empresas);
+                #endregion
+
                 return Ok(true);
             }
             return Ok("Esta empresa ya tiene una conexion de servidor abierta, debe cerrar la existente para iniciar esta.");
@@ -36,16 +51,24 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("CERRARSERVIDOR")]
         public IHttpActionResult CerrarServidor(LoginRequest login)
         {
-            if (ValidarUsuarioLogin(login) == default)
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { userNivel = "" });
+
+            if (ValidarUsuarioLogin(login) == default && json.userNivel != "0")
                 return Unauthorized();
 
             if (CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
             {
                 CompanyRemoteConnectionIP.Remove(login.IdEmpresa.ToString());
 
-                foreach (var item in CompanyRemoteConnectionUsers.Where(x => x.Value == login.IdEmpresa.ToString()).ToList())
+                #region QUITAR LA INFORMACION EN CACHE DE LA EMPRESA QUE SE ACABA DE DESCONECTAR
+                cache_empresas.Remove(cache_empresas.Where(x => x.IdEmpresa == login.IdEmpresa).FirstOrDefault());
+                #endregion
+
+                foreach (var item in CompanyRemoteConnectionUsers.Where(x => x.Value.IdEmpresa.ToString() == login.IdEmpresa.ToString()).ToList())
                 {
-                    CompanyRemoteConnectionUsersDisconected.Add(item.Key, item.Value);
+                    CompanyRemoteConnectionUsersDisconected.Add(item.Key, item.Value.IdEmpresa.ToString());
                     CompanyRemoteConnectionUsers.Remove(item.Key);
                 }
             }
@@ -71,7 +94,6 @@ namespace MonicaExtraWeb.Controllers.API
             if (idUsuarioADesconectar == default)
             {
                 var claims = GetClaims();
-
                 var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                     new { userId = "", empresaId = "" });
 
@@ -87,7 +109,7 @@ namespace MonicaExtraWeb.Controllers.API
                 if (disconectedByAdmin)
                     CompanyRemoteConnectionUsersDisconected.Add(
                         idUsuarioADesconectar,
-                        CompanyRemoteConnectionUsers.Where(x => x.Key == idUsuarioADesconectar).FirstOrDefault().Value);
+                        CompanyRemoteConnectionUsers.Where(x => x.Key == idUsuarioADesconectar).FirstOrDefault().Value.IdEmpresa.ToString());
 
                 CompanyRemoteConnectionUsers.Remove(idUsuarioADesconectar);
 
@@ -105,15 +127,13 @@ namespace MonicaExtraWeb.Controllers.API
             var claims = GetClaims();
             var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                 new { userId = "", empresaId = "" });
-            var conexiones = string.Join(", ", CompanyRemoteConnectionUsers.Where(x => x.Value == json.empresaId).Select(x => x.Key).ToList());
+            var conexiones = string.Join(", ", CompanyRemoteConnectionUsers.Where(x => x.Value.IdEmpresa.ToString() == json.empresaId).Select(x => x.Key).ToList());
 
             if (conexiones == "")
                 return Json(new { });
 
             var usuarios = Conn.Query<Usuario>(Select(new Usuario
             { }, new Models.DTO.QueryConfigDTO { Where_In = conexiones, ExcluirUsuariosControl = false })).ToList();
-
-            //usuarios.Remove(json.userId);
 
             return Json(new { conexiones = usuarios });
         }

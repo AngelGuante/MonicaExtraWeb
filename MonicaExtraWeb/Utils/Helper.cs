@@ -4,6 +4,7 @@ using System.Linq;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using Dapper;
 using Newtonsoft.Json;
 
@@ -82,7 +83,7 @@ namespace MonicaExtraWeb.Utils
         }
 
         public static string ValidarUsuarioParaConectarseRemoto(Usuario usuario = default)
-         {
+        {
             string IdEmpresa;
             string IdUsuario;
 
@@ -114,7 +115,9 @@ namespace MonicaExtraWeb.Utils
             {
                 if (!CompanyRemoteConnectionUsers.ContainsKey(IdUsuario))
                 {
-                    CompanyRemoteConnectionUsers.Add(IdUsuario, IdEmpresa);
+                    CompanyRemoteConnectionUsers.Add(IdUsuario, new Usuario {
+                        IdUsuario = long.Parse(IdEmpresa)
+                    });
                     return string.Empty;
                 }
                 else

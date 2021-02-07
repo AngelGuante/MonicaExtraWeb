@@ -12,6 +12,7 @@ using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using System.Linq;
 using MonicaExtraWeb.Models.DTO.Control;
 using Dapper;
@@ -25,7 +26,40 @@ namespace MonicaExtraWeb.Utils
         public static async Task<string> SendQueryToClient(ClientMessageStatusEnum status, Filtros filtro)
         {
             var IP = HttpContext.Current.Request.UserHostAddress;
-            string query = "";
+            var query = "";
+            var datosConeccion = "";
+
+            #region VALIDAR SI ES UNA CONEXION REMOTA
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { userId = "", empresaId = "" });
+            string _ip = default;
+
+            if (CompanyRemoteConnectionUsers.ContainsKey(json.userId))
+            {
+                var usuario = Conn.Query<Usuario>(Select(new Usuario
+                {
+                    IdEmpresa = long.Parse(json.empresaId),
+                    IdUsuario = long.Parse(json.userId),
+                }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false })).FirstOrDefault();
+
+                if (!usuario.Remoto.Value)
+                    return "Error_RemoteConectionNotAllowed:No tiene permiso para acceder de manera remota.";
+
+                CompanyRemoteConnectionIP.TryGetValue(json.empresaId, out _ip);
+
+                var connectionString = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId)).ConnectionString;
+                datosConeccion += $@"-->>{IP}-->>{ConfigurationManager.AppSettings[$"{connectionString}_Servcer"]}-->>{ConfigurationManager.AppSettings[$"{connectionString}_DataBase"]}-->>{ConfigurationManager.AppSettings[$"{connectionString}_UID"]}-->>{ConfigurationManager.AppSettings[$"{connectionString}_PWD"]}";
+            }
+            else if (CompanyRemoteConnectionUsersDisconected.ContainsKey(json.userId))
+            {
+                CompanyRemoteConnectionUsersDisconected.Remove(json.userId);
+                return "Error_RemoteConectionUserDisconected:Su usuario ha sido desconectado por un usuario Administrador.";
+            }
+            else
+                return default;
+
+            #endregion
 
             switch (status)
             {
@@ -39,7 +73,7 @@ namespace MonicaExtraWeb.Utils
                     query = VendedoresInformacionQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.EmpresaInformacion:
-                    query = EmpresaInformacionQuery(filtro, monica10_global);
+                    query = EmpresaInformacionQuery(filtro);
                     break;
                 case ClientMessageStatusEnum.CategoriasClientesInformacion:
                     query = CategoriasClientesQuery(filtro);
@@ -104,41 +138,15 @@ namespace MonicaExtraWeb.Utils
                     query = Productos(filtro);
                     break;
                 case ClientMessageStatusEnum.Dolar:
-                    query = Dolar(monica10_global);
+                    query = Dolar();
                     break;
                 case ClientMessageStatusEnum.Paramtro:
                     query = Parametro(filtro);
                     break;
             }
 
+            query += datosConeccion;
 
-            #region VALIDAR SI ES UNA CONEXION REMOTA
-            var claims = GetClaims();
-            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
-                new { userId = "", empresaId = "" });
-            string _ip = default;
-
-            if (CompanyRemoteConnectionUsers.ContainsKey(json.userId))
-            {
-                var usuario = Conn.Query<Usuario>(Select(new Usuario
-                {
-                    IdEmpresa = long.Parse(json.empresaId),
-                    IdUsuario = long.Parse(json.userId),
-                }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false/*, Usuario_Join_IdEmpresaM = false*/ })).FirstOrDefault();
-
-                if (!usuario.Remoto.Value)
-                    return "Error_RemoteConectionNotAllowed:No tiene permiso para acceder de manera remota.";
-
-                CompanyRemoteConnectionIP.TryGetValue(json.empresaId, out _ip);
-
-                query += $"-->>{IP}";
-            }
-            else if (CompanyRemoteConnectionUsersDisconected.ContainsKey(json.userId)) {
-                CompanyRemoteConnectionUsersDisconected.Remove(json.userId);
-                return "Error_RemoteConectionUserDisconected:Su usuario ha sido desconectado por un usuario Administrador.";
-            }
-
-            #endregion
             var obj = new WebSocketDTO
             {
                 data = query
@@ -158,7 +166,7 @@ namespace MonicaExtraWeb.Utils
             {
                 if (resultset.IndexOf("-->>") > 0)
                 {
-                    var ip = (resultset.Split(new string[] { "-->>" }, System.StringSplitOptions.None))[1];
+                    var ip = resultset.Split(new string[] { "-->>" }, System.StringSplitOptions.None)[1];
                     resultset.Replace($"-->>{ip}", "");
                 }
 

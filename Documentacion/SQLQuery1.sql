@@ -22,6 +22,7 @@ CREATE TABLE EmpresaRegistrada(
 	FechaSuspencion DATETIME,
 	ConexionServidor VARCHAR(100),
 	idEmpresasM VARCHAR(200) NULL,
+	ConnectionString VARCHAR(30) NOT NULL DEFAULT 'monica9',
 	ESTATUS INT FOREIGN KEY REFERENCES EmpresaRegistradaEstatus(Id) DEFAULT 1
 )
 INSERT INTO EmpresaRegistrada(idEmpresa, NombreEmpresa, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento)

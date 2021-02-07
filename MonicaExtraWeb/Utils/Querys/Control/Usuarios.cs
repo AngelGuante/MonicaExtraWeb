@@ -6,6 +6,7 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 
 namespace MonicaExtraWeb.Utils.Querys
 {

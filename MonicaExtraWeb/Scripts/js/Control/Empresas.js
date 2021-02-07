@@ -11,6 +11,8 @@
         nro_usuarios: 0,
         fechaInicio: '',
         vencimiento: '',
+        database: '',
+        idEmpresasM: '',
 
         empresas: [],
 
@@ -62,35 +64,12 @@
                 this.correo = config.Correo;
                 this.nro_empresas = config.CantidadEmpresas;
                 this.nro_usuarios = config.CantidadUsuariosPagados;
+                this.database = config.ConnectionString;
                 this.fechaInicio = GetFormatedDate(config.FechaInicio);
                 this.vencimiento = GetFormatedDate(config.Vencimiento);
+                this.EstadoEmpresaSeleccionada = config.Estatus;
 
-                const empresaParams = JSON.stringify({
-                    IdEmpresa: config.IdEmpresa
-                });
-
-                await fetch(`../../API/EMPRESAS/GET?empresa=${empresaParams}`, {
-                    headers: {
-                        'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
-                    }
-                })
-                    .then(response => { return response.json(); })
-                    .then(json => {
-                        debugger
-                        this.telefono = json.empresas[0].Telefono;
-
-                        if (json.empresas[0].idEmpresasM !== null && json.empresas[0].idEmpresasM !== '') {
-                            const empresasM = json.empresas[0].idEmpresasM.split(',');
-
-                            for (item of empresasM) {
-                                const ele = document.getElementById(`check_${item}`);
-                                if (ele != undefined)
-                                    ele.checked = true;
-                            }
-                        }
-
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                    });
+                document.getElementById('cargando').setAttribute('hidden', true);
             }
 
             $('#modalNuevaEmpresa').modal('show');
@@ -139,11 +118,39 @@
                 });
                 return;
             }
+            else if (this.database.toString().trim() === '') {
+                MostrarMensage({
+                    title: 'Débe seleccionar la base de datos que utilizará la empresa.',
+                    message: mensaje,
+                    icon: 'warning'
+                });
+                return;
+            }
 
             if (this.tipoModalStatus)
                 this.NuevaEmpresa();
             else
                 this.ModificarEmrpresa();
+        },
+
+        CambiarEstadoEmpresa: async function () {
+            document.getElementById('cargando').removeAttribute('hidden');
+
+            const json = {
+                IdEmpresa: this.IdEmpresa,
+                Estatus: this.EstadoEmpresaSeleccionada === 1 ? 0 : 1
+            };
+            
+            await fetch('../../API/EMPRESAS/PUT', {
+                method: 'PUT',
+                body: JSON.stringify(json),
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            this.Limpiar();
         },
 
         NuevaEmpresa: function () {
@@ -156,7 +163,8 @@
                 Correo: this.correo,
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
-                Vencimiento: this.vencimiento
+                Vencimiento: this.vencimiento,
+                ConnectionString: this.database
             };
 
             fetch('../../API/EMPRESAS/POST', {
@@ -181,9 +189,6 @@
 
         ModificarEmrpresa: async function () {
             document.getElementById('cargando').removeAttribute('hidden');
-
-
-
             const empresa = {
                 IdEmpresa: this.IdEmpresa,
                 NombreEmpresa: this.nombre,
@@ -192,7 +197,8 @@
                 Correo: this.correo,
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
-                Vencimiento: this.vencimiento
+                Vencimiento: this.vencimiento,
+                ConnectionString: this.database
             };
 
             //  ACTUALIZAR LOS DATOS DE LA EMPRESA
@@ -222,6 +228,7 @@
             this.nro_usuarios = 0;
             this.fechaInicio = GetCurrentDate();
             this.vencimiento = '';
+            this.database = '';
 
             if (soloLimpiar !== false) {
                 $('#modalNuevaEmpresa').modal('hide');

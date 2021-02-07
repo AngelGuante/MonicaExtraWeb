@@ -7,6 +7,8 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using static MonicaExtraWeb.Utils.Token.Claims;
 using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
+using System.Linq;
 
 namespace MonicaExtraWeb
 {
@@ -41,10 +43,31 @@ namespace MonicaExtraWeb
 
         protected void Application_BeginRequest(object sender, EventArgs e)
         {
-            // SI SE ESTA ACCEDIENDO A LA RAIZ DEL PROYECTO Y SE TIENE UN TOKEN, SE REDIRECCIONA AL USUARIO PARA LA VENTANA DE MENU.
             var url = HttpContext.Current.Request.RawUrl;
-            if (url == "/" && HttpContext.Current.Request.Cookies.Get("Authorization")?.Value != null)
-                Response.Redirect("~/SeleccionarEmpresa");
+            var token = HttpContext.Current.Request.Cookies.Get("Authorization")?.Value;
+
+            if (token != default)
+            {
+                //  VALIDAR EL REQUEST PARA COMPROBAR QUE EL ESTATUS DE LA EMPRESA DEL USUARIO QUE HACE EL REQUEST, ESTE ACTIVA.
+                if (url != "/" && url != "/API/Login/authenticate" && !url.StartsWith("/API/CONEXIONREMOTA/") && !url.StartsWith("/API/ReportesLocales/ReceiveDataFromWebSocketServer"))
+                {
+                    var claims = GetClaims();
+                    var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                        new { empresaId = "", userNivel = "" });
+
+                    if (json.userNivel != "0" && token != null && token.Length > 0)
+                    {
+                        var empresa = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId));
+
+                        if (empresa == default || empresa.Estatus == 0)
+                            Response.Redirect("/");
+                    }
+                }
+
+                //  SI SE ESTA ACCEDIENDO A LA RAIZ DEL PROYECTO Y SE TIENE UN TOKEN, SE REDIRECCIONA AL USUARIO PARA LA VENTANA DE MENU.
+                //if (url == "/")
+                //    Response.Redirect("~/SeleccionarEmpresa");
+            }
         }
     }
 }

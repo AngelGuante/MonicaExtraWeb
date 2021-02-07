@@ -65,6 +65,10 @@
                             <p>Esta se cambiará obligatoriamente al momento del primer acceso del usuario a su cuenta.</p>
                         </div>
 
+                        <div class="alert alert-info" role="alert">
+                            <p>Usuarios: {{usuariosRegistrados}} / {{usuariosPagados}}</p>
+                        </div>
+
                         <div class="row">
                             <div class="form-group col-12" v-if="!tipoModalStatus">
                                 <label>Nombre Usuario</label>
@@ -162,8 +166,8 @@
 
                         <hr />
 
-                        <button id="btnAgregarNuevoUsuario" v-on:click="NuevoUsuario()" v-if="tipoModalStatus" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
-                        <button v-on:click="ModificarUsuario()" v-else type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
+                        <button id="btnAgregarNuevoUsuario" v-on:click="NuevoUsuario()" v-if="tipoModalStatus && Number(usuariosRegistrados) < Number(usuariosPagados)" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">add</i>Agregar</button>
+                        <button v-on:click="ModificarUsuario()" v-if="!tipoModalStatus" type="button" class="btn btn-info" style="width:100%"><i class="material-icons" style="margin-right:10px; vertical-align:bottom">cached</i>Modificar</button>
                     </div>
 
                 </div>

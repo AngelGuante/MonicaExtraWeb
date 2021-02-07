@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using MonicaExtraWeb.Controllers.API;
 using MonicaExtraWeb.Models.DTO;
 using MonicaExtraWeb.Models.DTO.Control;
 using System.Linq;
@@ -18,13 +19,14 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             else
                 query.Append($"SELECT * ");
 
-            query.Append($"FROM {GlobalVariables.Control}dbo.EmpresaRegistrada ");
+            if (empresa?.IdEmpresa != default)
+                query.Append($", (SELECT COUNT(*) FROM Control.dbo.Usuario WHERE IdEmpresa = E.idEmpresa) usuariosRegistrados ");
+
+            query.Append($"FROM {GlobalVariables.Control}dbo.EmpresaRegistrada E ");
             query.Append($"WHERE idEmpresa != 1 ");
 
             if (empresa?.IdEmpresa != default)
                 query.Append($"AND idEmpresa = {empresa.IdEmpresa} ");
-            //else if (queryConfig?.Where_In != default)
-            //    query.Append($"AND idEmpresa IN ({queryConfig.Where_In}) ");
 
             return query.ToString();
         }
@@ -34,9 +36,10 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             var query = new StringBuilder();
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.EmpresaRegistrada ");
-            query.Append("(NombreEmpresa, Contacto, Telefono, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento, idEmpresasM) ");
+            query.Append("(NombreEmpresa, ConnectionString, Contacto, Telefono, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento, idEmpresasM) ");
             query.Append("VALUES ");
             query.Append("(@NombreEmpresa, ");
+            query.Append("@ConnectionString, ");
             query.Append("@Contacto, ");
             query.Append("@Telefono, ");
             query.Append("@Correo, ");
@@ -49,6 +52,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             var rslt = Conn.Query<int>(query.ToString(), new
             {
                 empresa.NombreEmpresa,
+                empresa.ConnectionString,
                 empresa.Contacto,
                 empresa.Telefono,
                 empresa.Correo,
@@ -144,13 +148,31 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     querySet.Append(",");
                 querySet.Append($"Vencimiento = '{empresa.Vencimiento}' ");
             }
-            //if (!string.IsNullOrWhiteSpace(empresa.idEmpresasM))
-            //{
-            if (querySet.Length > 0)
-                querySet.Append(",");
-            querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
-            //}
+            if (empresa.ConnectionString != default)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"ConnectionString = '{empresa.ConnectionString}' ");
+            }
+            if (empresa.idEmpresasM != default)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
+            }
+            if (empresa.Estatus.HasValue)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"ESTATUS = '{empresa.Estatus.Value}' ");
 
+                //  SI LA EMPRESA ES DESABILITADA, SE DESCONECTAN TODOS LOS USUARIOS DE ESA EMPRESA.
+                if (empresa.Estatus.Value == 0)
+                    new ConexionRemotaController().CerrarServidor(new Models.LoginRequest
+                    {
+                        IdEmpresa = empresa.IdEmpresa.Value
+                    });
+            }
             query.Append(querySet.ToString());
             query.Append($"WHERE IdEmpresa = {empresa.IdEmpresa} ");
 

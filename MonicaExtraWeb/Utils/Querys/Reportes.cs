@@ -1,14 +1,19 @@
 ﻿using MonicaExtraWeb.Models.DTO.Reportes;
+using Newtonsoft.Json;
 using System;
+using System.Configuration;
+using System.Linq;
 using System.Text;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using static MonicaExtraWeb.Utils.Helper;
+using static MonicaExtraWeb.Utils.Token.Claims;
 
 namespace MonicaExtraWeb.Utils
 {
     public class Reportes
     {
         #region REPORTES
-        public static string IndividualClientQuery(Filtros filtro, string DbName = "")
+        public static string IndividualClientQuery(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -332,7 +337,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string VentasDevolucionesCategoriaYVendedor(Filtros filtro, string DbName = "")
+        public static string VentasDevolucionesCategoriaYVendedor(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -971,7 +976,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string InventarioYLiquidacion(Filtros filtro, string DbName = "")
+        public static string InventarioYLiquidacion(Filtros filtro)
         {
             var query = new StringBuilder();
             var whereQuery = new StringBuilder();
@@ -1254,7 +1259,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ComprasDevolucionesCotizaciones(Filtros filtro, string DbName = "")
+        public static string ComprasDevolucionesCotizaciones(Filtros filtro)
         {
             var query = new StringBuilder();
 
@@ -1630,7 +1635,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ClientesProveedores(Filtros filtro, string DbName = "")
+        public static string ClientesProveedores(Filtros filtro)
         {
             var query = new StringBuilder();
             var queryWhere = new StringBuilder();
@@ -2026,7 +2031,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string ContabilidadBanco(Filtros filtro, string DbName = "")
+        public static string ContabilidadBanco(Filtros filtro)
         {
             var query = new StringBuilder();
             var queryWhere = new StringBuilder();
@@ -2187,7 +2192,7 @@ namespace MonicaExtraWeb.Utils
         #endregion
 
         #region DATA SUELTA
-        public static string EmpresaInformacionQuery(Filtros filter, string DbName = "")
+        public static string EmpresaInformacionQuery(Filtros filter)
         {
             var query = new StringBuilder();
 
@@ -2195,9 +2200,10 @@ namespace MonicaExtraWeb.Utils
             if (!string.IsNullOrEmpty(filter.SELECT))
                 query.Append($"{filter.SELECT} ");
             else
-                query.Append("empresa_id, TRIM(Nombre_empresa) Nombre_empresa, TRIM(base_de_datos) base_de_datos ");
+                query.Append("empresa_id, Nombre_empresa, base_de_datos ");
+                //query.Append("empresa_id, TRIM(Nombre_empresa) Nombre_empresa, TRIM(base_de_datos) base_de_datos ");
 
-            query.Append($"FROM {DbName}dbo.empresas ");
+            query.Append($"FROM {getConnectionString()}.dbo.empresas ");
 
             query.Append($"WHERE ");
             query.Append($"Condicion = 1 ");
@@ -2435,7 +2441,7 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string GetEstimadoQuery(Filtros filtro, string DbName = "")
+        public static string GetEstimadoQuery(Filtros filtro)
         {
             var query = new StringBuilder();
             var queryWhere = new StringBuilder();
@@ -2530,12 +2536,12 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
 
-        public static string Dolar(string dbName)
+        public static string Dolar()
         {
             var query = new StringBuilder();
 
             query.Append("SELECT TOP 1 dolar_venta ");
-            query.Append($"FROM {dbName}dbo.cambio_dolar ");
+            query.Append($"FROM {getConnectionString()}.dbo.cambio_dolar ");
             query.Append(" ORDER BY fecha_cambio DESC ");
 
             return query.ToString();
@@ -2582,5 +2588,16 @@ namespace MonicaExtraWeb.Utils
             return query.ToString();
         }
         #endregion
+
+        //  HELPER
+        private static string getConnectionString()
+        {
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { userId = "", empresaId = "" });
+
+            var connectionString = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId)).ConnectionString ?? "";
+            return ConfigurationManager.AppSettings[$"{connectionString}_DataBase"];
+        }
     }
 }

@@ -9,6 +9,8 @@
         nivelUsuarioSeleccionado: 2,
         permisoRemoto: 0,
         teniaEmpresasMSeleccionadas: false,
+        usuariosPagados: 0,
+        usuariosRegistrados: 0,
 
         nro_empresas: 0,
 
@@ -75,7 +77,10 @@
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
             });
-            this.usuarios = (await response.json()).usuarios;
+            var json = (await response.json());
+            this.usuarios = json.usuarios;
+            this.usuariosPagados = json.cantidadUsuariosPagados;
+            this.usuariosRegistrados = json.UsuariosRegistrados;
             document.getElementById('cargando').setAttribute('hidden', true);
         },
 
@@ -340,7 +345,7 @@
 
                 MostrarMensage({
                     title: '',
-                    message: `El nombre de usuario <b>${this.nombreUsuario}</b>, yá existe, ingrese uno manualmente.`,
+                    message: `El nombre de usuario <b>${this.nombreUsuario}</b>, yá existe o no puede ser usado, ingrese uno manualmente.`,
                     icon: 'warning'
                 });
             }

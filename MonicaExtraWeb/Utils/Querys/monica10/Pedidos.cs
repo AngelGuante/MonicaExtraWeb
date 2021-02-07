@@ -1,10 +1,14 @@
 ﻿using Dapper;
 using MonicaExtraWeb.Models.monica10;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using static MonicaExtraWeb.Utils.GlobalVariables;
+using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 
 namespace MonicaExtraWeb.Utils.Querys.monica10
 {
@@ -16,7 +20,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
             {
                 var query = new StringBuilder();
 
-                query.Append($"INSERT INTO {GlobalVariables.monica10}[dbo].[estimado] ");
+                query.Append($"INSERT INTO {getConnectionString()}.[dbo].[estimado] ");
                 query.Append("( ");
                 query.Append("[nro_estimado]");
                 query.Append(",[cliente_id] ");
@@ -42,7 +46,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                 query.Append(") ");
                 query.Append("VALUES ");
                 query.Append("( ");
-                query.Append($"(SELECT TOP 1 CASE WHEN nro_estimado IS NULL OR nro_estimado < 1000000001 THEN 1000000001 ELSE nro_estimado + 1 END nro_estimado FROM {GlobalVariables.monica10}dbo.estimado ORDER BY estimado_id DESC) ");
+                query.Append($"(SELECT TOP 1 CASE WHEN nro_estimado IS NULL OR nro_estimado < 1000000001 THEN 1000000001 ELSE nro_estimado + 1 END nro_estimado FROM {getConnectionString()}.dbo.estimado ORDER BY estimado_id DESC) ");
                 query.Append(",@cliente_id ");
                 query.Append(",@clte_direccion1");
                 query.Append(",@clte_direccion2");
@@ -96,7 +100,7 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
                     detalle.ForEach(prodcto =>
                     {
                         query.Clear();
-                        query.Append($"INSERT INTO {GlobalVariables.monica10}dbo.estimado_detalle ");
+                        query.Append($"INSERT INTO {getConnectionString()}.dbo.estimado_detalle ");
                         query.Append("(");
                         query.Append("[estimado_id]");
                         query.Append(",[fecha_emision]");
@@ -149,6 +153,16 @@ namespace MonicaExtraWeb.Utils.Querys.monica10
             {
                 return -1;
             }
+        }
+
+        private static string getConnectionString()
+        {
+            var claims = GetClaims();
+            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                new { userId = "", empresaId = "" });
+
+            var connectionString = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId)).ConnectionString;
+            return ConfigurationManager.AppSettings[$"{connectionString}_DataBase"];
         }
     }
 }

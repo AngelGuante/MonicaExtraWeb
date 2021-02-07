@@ -22,5 +22,6 @@ namespace MonicaExtraWeb.Models.DTO.Control
 
         // CONFIGURACIONES
         public bool desconectar { get; set; }
+        public string connSeleccionada { get; set; }
     }
 }

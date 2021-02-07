@@ -218,6 +218,7 @@
     <Compile Include="Models\DTO\Control\Modulos.cs" />
     <Compile Include="Models\DTO\Control\PermisosUsuario.cs" />
     <Compile Include="Models\DTO\Control\Usuario.cs" />
+    <Compile Include="Models\DTO\DataCacheada.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
     <Compile Include="Models\DTO\Impresion\CierreDTO.cs" />

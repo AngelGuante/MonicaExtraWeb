@@ -19,7 +19,6 @@ namespace MonicaExtraWeb.Utils.Token
             var signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
             // create a claimsIdentity
-            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, userId), new Claim("empresa", userEmpresa) });
             ClaimsIdentity claimsIdentity = new ClaimsIdentity(new[] { new Claim("userId", userId), new Claim("empresaId", userEmpresa), new Claim("userNivel", userNivel) });
 
             // create token to the user

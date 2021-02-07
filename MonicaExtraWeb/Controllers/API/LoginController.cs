@@ -41,15 +41,15 @@ namespace MonicaExtraWeb.Controllers.API
                     return Json(new { message = "ESTE USUARIO NO PUEDE ACCEDER YA QUE LA EMPRESA A LA QUE PERTENECE, ESTA INHABILITADA." });
 
                 //  SI EL PLAN DE LA EMPRESA EXPIRO.
-                //if (usuario.Vencimiento.Value > DateTime.Now)
-                //    return Json(new { message = "EL PLAN DE SU EMPRESA HA EXPIRADO." });
+                if (DateTime.Compare(usuario.Vencimiento.Value, DateTime.Now) < 0)
+                    return Json(new { message = "EL PLAN DE SU EMPRESA HA EXPIRADO." });
 
                 //  SI EL USUARIO SE ENCUENTRA INHABILITADO.
                 if (usuario.Estatus == 0)
                     return Json(new { message = "SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA." });
 
                 #region VALIDAR SI ES UN USUARIO SERVIDOR REMOTO AGREGAR LA MAC CON LA QUE SE REGISTRA
-                if (login.Username == "Remoto" && login.mac != string.Empty)
+                if (login.Username.StartsWith("Remoto") && login.mac != string.Empty)
                 {
                     #region VALIDAR LA MAC Y EL USUARIO SEAN VALIDOS PARA CONTINUAR
                     var EmpresasEquiposRegistrados = Conn.Query<EmpresasEquiposRegistrados>(
@@ -87,6 +87,7 @@ namespace MonicaExtraWeb.Controllers.API
                     return Ok();
                 }
                 #endregion
+
                 else if (login.Username != "Remoto" && usuario.Nivel != 0)
                 {
                     usuario.IdEmpresa = login.IdEmpresa;

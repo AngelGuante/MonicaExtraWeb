@@ -17,5 +17,9 @@ namespace MonicaExtraWeb.Models.DTO.Control
         public string ConexionServidor { get; set; }
         public int? Estatus { get; set; }
         public string idEmpresasM { get; set; }
+        public string ConnectionString { get; set; }
+
+        //  EXTRAS
+        public string? usuariosRegistrados { get; set; }
     }
 }

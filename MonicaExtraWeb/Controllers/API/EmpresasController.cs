@@ -4,6 +4,7 @@ using MonicaExtraWeb.Models.DTO.Control;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Control.Empresas;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using Dapper;
 using Newtonsoft.Json;
 using MonicaExtraWeb.Models.DTO;
@@ -39,7 +40,7 @@ namespace MonicaExtraWeb.Controllers.API
 
         [HttpPost]
         [Route("POST")]
-        public IHttpActionResult Post(Empresa empresa) => 
+        public IHttpActionResult Post(Empresa empresa) =>
             Json(new { numeroUnicoEmpresa = Insert(empresa) });
 
         [HttpPut]
@@ -52,6 +53,27 @@ namespace MonicaExtraWeb.Controllers.API
 
             if (json.userNivel != "0")
                 empresa.IdEmpresa = long.Parse(json.empresaId);
+
+            var empresaCacheada = cache_empresas.FirstOrDefault(x => x.IdEmpresa == empresa.IdEmpresa.Value);
+
+            if (empresaCacheada != default)
+            {
+                if (empresa.CantidadUsuariosPagados != default)
+                    empresaCacheada.CantidadUsuariosPagados = empresa.CantidadUsuariosPagados;
+                if (empresa.CantidadEmpresas != default)
+                    empresaCacheada.CantidadEmpresas = empresa.CantidadEmpresas;
+                if (empresa.ConnectionString != default)
+                    empresaCacheada.ConnectionString = empresa.ConnectionString;
+                if (empresa.Estatus != default)
+                    empresaCacheada.Estatus = empresa.Estatus;
+            }
+
+            if (empresa.idEmpresasM != default)
+            {
+                var cantidad_EmpresasM = (empresa.idEmpresasM.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries)).Length;
+                if (cantidad_EmpresasM > int.Parse(empresaCacheada.CantidadUsuariosPagados))
+                    return BadRequest();
+            }
 
             var query = Update(empresa);
             Conn.Execute(query.ToString());
