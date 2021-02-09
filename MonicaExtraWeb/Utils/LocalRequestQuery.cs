@@ -34,9 +34,17 @@ namespace MonicaExtraWeb.Utils
             var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                 new { userId = "", empresaId = "" });
             string _ip = default;
+            CompanyRemoteConnectionUsers.FirstOrDefault(x => x.Key == json.userId);
 
             if (CompanyRemoteConnectionUsers.ContainsKey(json.userId))
             {
+                var dataUsuario_cache = CompanyRemoteConnectionUsers.FirstOrDefault(x => x.Key == json.userId);
+
+                if (dataUsuario_cache.Value.connSeleccionada == default && filtro.conn != null)
+                    dataUsuario_cache.Value.connSeleccionada = filtro.conn.Trim();
+                else if (dataUsuario_cache.Value.connSeleccionada != default)
+                    filtro.conn = dataUsuario_cache.Value.connSeleccionada;
+
                 var usuario = Conn.Query<Usuario>(Select(new Usuario
                 {
                     IdEmpresa = long.Parse(json.empresaId),

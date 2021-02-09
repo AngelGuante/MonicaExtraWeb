@@ -49,24 +49,33 @@ namespace MonicaExtraWeb
             if (token != default)
             {
                 //  VALIDAR EL REQUEST PARA COMPROBAR QUE EL ESTATUS DE LA EMPRESA DEL USUARIO QUE HACE EL REQUEST, ESTE ACTIVA.
-                if (url != "/" && url != "/API/Login/authenticate" && !url.StartsWith("/API/CONEXIONREMOTA/") && !url.StartsWith("/API/ReportesLocales/ReceiveDataFromWebSocketServer"))
+                if (url != "/" && url != "/API/Login/authenticate" && !url.StartsWith("/API/CONEXIONREMOTA/") && !url.StartsWith("/API/ReportesLocales/"))
                 {
                     var claims = GetClaims();
                     var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
-                        new { empresaId = "", userNivel = "" });
+                        new { empresaId = "", userNivel = "", userId = "" });
 
                     if (json.userNivel != "0" && token != null && token.Length > 0)
                     {
                         var empresa = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId));
+                        var usuario = CompanyRemoteConnectionUsers.FirstOrDefault(x => x.Key == json.userId);
 
-                        if (empresa == default || empresa.Estatus == 0)
+                        if (empresa == default || empresa.Estatus == 0 || usuario.Value == default)
                             Response.Redirect("/");
+                        else if (json.userNivel != "1"
+                            && url != "/SeleccionarEmpresa"
+                            && usuario.Value.connSeleccionada == default
+                            || (json.userNivel == "1"
+                                && usuario.Value.connSeleccionada == default
+                                && url != "/SeleccionarEmpresa"
+                                && (!url.StartsWith("/Administracion")
+                                && !url.StartsWith("/API/USUARIOS/")
+                                && !url.StartsWith("/API/EMPRESAS/")
+                                && !url.StartsWith("/API/MODULOS/")
+                                && !url.StartsWith("/API/PERMISOSUSUARIO/"))))
+                            Response.Redirect("/SeleccionarEmpresa");
                     }
                 }
-
-                //  SI SE ESTA ACCEDIENDO A LA RAIZ DEL PROYECTO Y SE TIENE UN TOKEN, SE REDIRECCIONA AL USUARIO PARA LA VENTANA DE MENU.
-                //if (url == "/")
-                //    Response.Redirect("~/SeleccionarEmpresa");
             }
         }
     }

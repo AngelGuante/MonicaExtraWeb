@@ -29,6 +29,19 @@ namespace MonicaExtraWeb.Controllers.API
             if (usuario == default)
                 return Unauthorized();
 
+            var idUsuarioBloqueado = loginFailsUsers.FirstOrDefault(x => x.Key == usuario.IdUsuario.ToString()).Key;
+            if (idUsuarioBloqueado != default)
+                if (loginFailsUsers[idUsuarioBloqueado].Intentos >= 2)
+                {
+                    var usuarioBloqueado = loginFailsUsers[idUsuarioBloqueado];
+                    if (!usuarioBloqueado.TiempoBloqueo.HasValue)
+                        usuarioBloqueado.TiempoBloqueo = DateTime.Now.AddMinutes(30);
+                    else if (DateTime.Compare(usuarioBloqueado.TiempoBloqueo.Value, DateTime.Now) >= 0)
+                        return Json(new { message = $"El usuario alcanzó el maximo de intentos. Usuario bloqueado temporalmente. <br/> <center>Desbloque en: {loginFailsUsers[idUsuarioBloqueado].TiempoBloqueo.Value}</center>" });
+                    else
+                        loginFailsUsers.Remove(idUsuarioBloqueado);
+                }
+
             if (usuario != default &&
                login.Password == usuario.Clave)
             {
@@ -113,7 +126,13 @@ namespace MonicaExtraWeb.Controllers.API
                 return Json(new { token, usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, idEmpresasM });
             }
             else
-                return Unauthorized();
+            {
+                if (loginFailsUsers.ContainsKey(usuario.IdUsuario.ToString()))
+                    loginFailsUsers[idUsuarioBloqueado].Intentos = loginFailsUsers[idUsuarioBloqueado].Intentos + 1;
+                else
+                    loginFailsUsers.Add(usuario.IdUsuario.ToString(), new Usuario { Intentos = 1 });
+                return Json(new { message = $"Contraseña incorrecta, total de intentos: {loginFailsUsers[loginFailsUsers.FirstOrDefault(x => x.Key == usuario.IdUsuario.ToString()).Key].Intentos}/4." });
+            }
         }
 
 

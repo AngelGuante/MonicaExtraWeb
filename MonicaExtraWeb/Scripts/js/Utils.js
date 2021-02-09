@@ -196,7 +196,6 @@ const CloseUserSession = async () => {
     document.getElementById('cargando').removeAttribute('hidden');
     RemoveCookieElement('Authorization');
     window.localStorage.removeItem('NombreUsuario');
-    window.localStorage.removeItem('conn');
     window.localStorage.removeItem('Empresas');
     window.localStorage.removeItem('Number');
     window.localStorage.removeItem('Nivel');
@@ -478,7 +477,6 @@ const Print = (type, paramsa) => {
 const ApiReportesLocales = '/API/ReportesLocales/';
 const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
     let cargando = document.getElementById('cargando');
-    filtro.conn = localStorage.getItem('conn');
 
     if (cargando)
         cargando.removeAttribute('hidden');
@@ -495,7 +493,6 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                 }
             });
 
-            console.log(response.status);
             const content = await response.json();
             if (content.value === 'false') {
                 if (cargando)
