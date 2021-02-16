@@ -4,6 +4,7 @@ namespace MonicaExtraWeb.Models.DTO.Control
 {
     public class Usuario
     {
+#pragma warning disable CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
         public long? IdUsuario { get; set; } = null;
         public long IdEmpresa { get; set; }
         public string Login { get; set; }
@@ -18,12 +19,14 @@ namespace MonicaExtraWeb.Models.DTO.Control
         //  VARIABLES DE EMPRESA
         public int empresaEstatus { get; set; }
         public DateTime? Vencimiento { get; set; }
-        //public string Vencimiento { get; set; }
+        public string defaultPass { get; set; }
 
         // CONFIGURACIONES
         public bool desconectar { get; set; }
         public string connSeleccionada { get; set; }
         public int Intentos { get; set; }
         public DateTime? TiempoBloqueo { get; set; }
+        public string? Token { get; set; }
+#pragma warning restore CS8632 // The annotation for nullable reference types should only be used in code within a '#nullable' annotations context.
     }
 }

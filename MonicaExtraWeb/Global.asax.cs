@@ -7,7 +7,6 @@ using System.Web.Optimization;
 using System.Web.Routing;
 using static MonicaExtraWeb.Utils.Token.Claims;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using System.Linq;
 
 namespace MonicaExtraWeb
@@ -60,7 +59,7 @@ namespace MonicaExtraWeb
                         var empresa = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId));
                         var usuario = CompanyRemoteConnectionUsers.FirstOrDefault(x => x.Key == json.userId);
 
-                        if (empresa == default || empresa.Estatus == 0 || usuario.Value == default)
+                        if (empresa == default || empresa.Estatus == 0 || usuario.Value == default || usuario.Value.Token != token)
                             Response.Redirect("/");
                         else if (json.userNivel != "1"
                             && url != "/SeleccionarEmpresa"

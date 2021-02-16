@@ -23,10 +23,11 @@ namespace MonicaExtraWeb.Utils
         public static string DbName { get; } = "DB_A5E94C_monica10global.";
         public static string Control { get; } = "Control.";
 
-        public static Dictionary<string, string> DataWebsocketPerClient = new Dictionary<string, string>();
-        public static Dictionary<string, string> CompanyRemoteConnectionIP = new Dictionary<string, string>();
-        public static Dictionary<string, Usuario> CompanyRemoteConnectionUsers = new Dictionary<string, Usuario>();
-        public static Dictionary<string, string> CompanyRemoteConnectionUsersDisconected = new Dictionary<string, string>();
-        public static Dictionary<string, Usuario> loginFailsUsers = new Dictionary<string, Usuario>();
+        public static List<Empresa> cache_empresas { get; set; } = new List<Empresa>();
+        public static Dictionary<string, string> DataWebsocketPerClient { get; set; } = new Dictionary<string, string>();
+        public static Dictionary<string, string> CompanyRemoteConnectionIP { get; set; } = new Dictionary<string, string>();
+        public static Dictionary<string, Usuario> CompanyRemoteConnectionUsers { get; set; } = new Dictionary<string, Usuario>();
+        public static Dictionary<string, string> CompanyRemoteConnectionUsersDisconected { get; set; } = new Dictionary<string, string>();
+        public static Dictionary<string, Usuario> loginFailsUsers { get; set; } = new Dictionary<string, Usuario>();
     }
 }

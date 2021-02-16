@@ -9,7 +9,6 @@ using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
 using static MonicaExtraWeb.Utils.Helper;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using static MonicaExtraWeb.Utils.Querys.Control.Empresas;
 
 namespace MonicaExtraWeb.Controllers.API
@@ -35,9 +34,10 @@ namespace MonicaExtraWeb.Controllers.API
                     IdEmpresa = login.IdEmpresa
                 }, new Models.DTO.QueryConfigDTO
                 {
-                    Select = "idEmpresa, ConnectionString, CantidadEmpresas, CantidadUsuariosPagados, Estatus"
+                    Select = "idEmpresa, ConnectionString, CantidadEmpresas, CantidadUsuariosPagados, Estatus, defaultPass"
                 });
                 var empresas = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
+                empresas.usuariosRegistrados = (int.Parse(empresas.usuariosRegistrados) - 1).ToString(); // RESTAR 1 POR EL USUARIO REMOTO.
                 cache_empresas.Add(empresas);
                 #endregion
 
@@ -51,13 +51,6 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("CERRARSERVIDOR")]
         public IHttpActionResult CerrarServidor(LoginRequest login)
         {
-            var claims = GetClaims();
-            var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
-                new { userNivel = "" });
-
-            if (ValidarUsuarioLogin(login) == default && json.userNivel != "0")
-                return Unauthorized();
-
             if (CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
             {
                 CompanyRemoteConnectionIP.Remove(login.IdEmpresa.ToString());

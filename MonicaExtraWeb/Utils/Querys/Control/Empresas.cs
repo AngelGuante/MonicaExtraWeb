@@ -34,9 +34,10 @@ namespace MonicaExtraWeb.Utils.Querys.Control
         public static int Insert(Empresa empresa)
         {
             var query = new StringBuilder();
+            var defaultPass = System.Guid.NewGuid().ToString().Substring(0, 8);
 
             query.Append($"INSERT INTO {GlobalVariables.Control}dbo.EmpresaRegistrada ");
-            query.Append("(NombreEmpresa, ConnectionString, Contacto, Telefono, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento, idEmpresasM) ");
+            query.Append("(NombreEmpresa, ConnectionString, Contacto, Telefono, Correo, CantidadEmpresas, CantidadUsuariosPagados, Vencimiento, defaultPass, idEmpresasM) ");
             query.Append("VALUES ");
             query.Append("(@NombreEmpresa, ");
             query.Append("@ConnectionString, ");
@@ -46,6 +47,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
             query.Append("@CantidadEmpresas, ");
             query.Append("@CantidadUsuariosPagados, ");
             query.Append("@Vencimiento, ");
+            query.Append("@defaultPass, ");
             query.Append("@idEmpresasM) ");
             query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) ");
 
@@ -59,6 +61,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                 empresa.CantidadEmpresas,
                 empresa.CantidadUsuariosPagados,
                 empresa.Vencimiento,
+                defaultPass,
                 empresa.idEmpresasM,
             }).FirstOrDefault();
 
@@ -68,12 +71,13 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                 //  ADMINISTRADOR
                 query.Clear();
                 query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
-                query.Append("(idEmpresa, Login, Nivel, Remoto, NombreUsuario) ");
+                query.Append("(idEmpresa, Login, Nivel, Remoto, Clave, NombreUsuario) ");
                 query.Append("VALUES ");
                 query.Append("(@idEmpresa, ");
                 query.Append("@Login, ");
                 query.Append("@Nivel, ");
                 query.Append("@Remoto, ");
+                query.Append("@Clave, ");
                 query.Append("@NombreUsuario) ");
                 Conn.Query(query.ToString(), new
                 {
@@ -81,18 +85,20 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     Login = "Admin",
                     Nivel = "1",
                     NombreUsuario = "Usuario Administrador",
-                    Remoto = 1
+                    Remoto = 1,
+                    Clave = defaultPass
                 });
 
                 //  REMOTO
                 query.Clear();
                 query.Append($"INSERT INTO {GlobalVariables.Control}dbo.Usuario ");
-                query.Append("(idEmpresa, Login, Nivel, Remoto, NombreUsuario) ");
+                query.Append("(idEmpresa, Login, Nivel, Remoto, Clave, NombreUsuario) ");
                 query.Append("VALUES ");
                 query.Append("(@idEmpresa, ");
                 query.Append("@Login, ");
                 query.Append("@Nivel, ");
                 query.Append("@Remoto, ");
+                query.Append("@Clave, ");
                 query.Append("@NombreUsuario) ");
                 Conn.Query(query.ToString(), new
                 {
@@ -100,7 +106,8 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                     Login = "Remoto",
                     Nivel = "3",
                     NombreUsuario = "Remoto",
-                    Remoto = 1
+                    Remoto = 1,
+                    Clave = defaultPass
                 });
             }
             else

@@ -13,6 +13,8 @@
             clasificacion: '',
             valor: '',
             ConBalance: false,
+            incluirMenores250000: false,
+            incluirNotasDeCreditoDesdeCXC: false,
 
             periodoMesSeleccionado: '01',
             periodoAnioSeleccionado: new Date().getFullYear(),
@@ -80,6 +82,11 @@
                 case 'Informe_606':
                     filtro.mes = this.FILTROS.periodoMesSeleccionado;
                     filtro.anio = this.FILTROS.periodoAnioSeleccionado;
+
+                    if (this.FILTROS.incluirMenores250000)
+                        filtro.incluirMenores250000 = true;
+                    if (this.FILTROS.incluirNotasDeCreditoDesdeCXC)
+                        filtro.incluirNotasDeCreditoDesdeCXC = true;
                     break;
             }
 
@@ -104,7 +111,7 @@
                     item.VentaCredito = 0;
                     item.Bonos = 0;
                     item.Permuta = 0;
-                    item.MontoFacturado = Number(item.MontoFacturado) - Number(item.impuesto_monto) - Number(item.MontoPropina);
+                    item.MontoFacturado = item.MontoFacturado.toFixed(2);
 
                     switch (Number(item.LENcodigo_termino)) {
                         case 1:
@@ -195,7 +202,6 @@
 
         validarCeroParaExportarTXT(monto) {
             return monto == '0' ? '' : monto;
-
         },
 
         TipoConsultaSelectChanged() {

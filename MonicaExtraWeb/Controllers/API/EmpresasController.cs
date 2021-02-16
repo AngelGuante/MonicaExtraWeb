@@ -4,7 +4,6 @@ using MonicaExtraWeb.Models.DTO.Control;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Control.Empresas;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using Dapper;
 using Newtonsoft.Json;
 using MonicaExtraWeb.Models.DTO;
@@ -32,10 +31,20 @@ namespace MonicaExtraWeb.Controllers.API
             var query = Select(empresaDeserialized, queryConfigDeserialized);
             var empresas = Conn.Query<Empresa>(query.ToString()).ToList();
 
-            return Json(new
-            {
-                empresas
-            });
+            if (json.userNivel == "0")
+                return Json(new
+                {
+                    empresas,
+                    empresasConectadas = CompanyRemoteConnectionIP.Count,
+                    usuariosConectados = CompanyRemoteConnectionUsers.Count,
+                    usuariosIntentosFallidos = loginFailsUsers.Count
+                });
+
+            else
+                return Json(new
+                {
+                    empresas
+                });
         }
 
         [HttpPost]

@@ -7,7 +7,6 @@ using System.Web.Http;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -35,7 +34,8 @@ namespace MonicaExtraWeb.Controllers.API
             {
                 usuarios,
                 cantidadUsuariosPagados = datosEmpresaCaheada.CantidadUsuariosPagados,
-                UsuariosRegistrados = datosEmpresaCaheada.usuariosRegistrados
+                UsuariosRegistrados = datosEmpresaCaheada.usuariosRegistrados,
+                empresaDefaultPass = datosEmpresaCaheada.defaultPass
             });
         }
 
@@ -55,7 +55,7 @@ namespace MonicaExtraWeb.Controllers.API
                 IdEmpresa = long.Parse(json.empresaId),
                 NombreUsuario = param.usuario.Login
             }, new QueryConfigDTO { ExcluirUsuariosControl = true }).ToString()).ToList();
-            if (usuarios.Count > 0 || int.Parse(empresaCacheada.usuariosRegistrados) <= int.Parse(empresaCacheada.CantidadUsuariosPagados) || param.usuario.Login.StartsWith("Remoto"))
+            if (usuarios.Count > 0 || int.Parse(empresaCacheada.usuariosRegistrados) >= int.Parse(empresaCacheada.CantidadUsuariosPagados) || param.usuario.Login.StartsWith("Remoto"))
                 return Ok(false);
 
             Insert(param.usuario, param.modulos);

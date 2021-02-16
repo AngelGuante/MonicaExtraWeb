@@ -192,6 +192,7 @@
     <Compile Include="Controllers\AdministracionRecursos\AdministracionController.cs" />
     <Compile Include="Controllers\API\APISAPController.cs" />
     <Compile Include="Controllers\API\ConexionRemotaController.cs" />
+    <Compile Include="Controllers\API\DataController.cs" />
     <Compile Include="Controllers\API\EmpresasController.cs" />
     <Compile Include="Controllers\API\LoginController.cs" />
     <Compile Include="Controllers\API\ModulosController.cs" />
@@ -218,7 +219,6 @@
     <Compile Include="Models\DTO\Control\Modulos.cs" />
     <Compile Include="Models\DTO\Control\PermisosUsuario.cs" />
     <Compile Include="Models\DTO\Control\Usuario.cs" />
-    <Compile Include="Models\DTO\DataCacheada.cs" />
     <Compile Include="Models\DTO\DetallesMovimientosParaCierreDTO.cs" />
     <Compile Include="Models\DTO\GuardarMovimientoDTO.cs" />
     <Compile Include="Models\DTO\Impresion\CierreDTO.cs" />

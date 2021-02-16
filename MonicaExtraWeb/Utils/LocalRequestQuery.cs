@@ -12,7 +12,6 @@ using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using System.Linq;
 using MonicaExtraWeb.Models.DTO.Control;
 using Dapper;

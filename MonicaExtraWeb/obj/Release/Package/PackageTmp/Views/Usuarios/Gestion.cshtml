@@ -61,12 +61,14 @@
 
                     <div class="card-body">
                         <div class="alert alert-info" role="alert" v-if="tipoModalStatus">
-                            <p>La Contraseña por defecto del usuario será: @System.Configuration.ConfigurationManager.AppSettings["ContraseniaInicialUsuario"]</p>
+                            <p>
+                                La Contraseña por defecto del usuario será: {{empresaDefaultPass}}</p>
                             <p>Esta se cambiará obligatoriamente al momento del primer acceso del usuario a su cuenta.</p>
                         </div>
 
                         <div class="alert alert-info" role="alert">
-                            <p>Usuarios: {{usuariosRegistrados}} / {{usuariosPagados}}</p>
+                            <p>Usuarios: {{usuariosRegistrados}} / {{usuariosPagados}}
+                            </p>
                         </div>
 
                         <div class="row">

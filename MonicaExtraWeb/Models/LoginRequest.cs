@@ -7,5 +7,6 @@
         public string Password { get; set; }
         public string mac { get; set; } = string.Empty;
         public bool passwordEncriptado { get; set; } = false;
+        public bool desconectar { get; set; }
     }
 }

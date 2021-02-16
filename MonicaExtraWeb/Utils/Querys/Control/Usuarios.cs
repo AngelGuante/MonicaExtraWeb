@@ -6,7 +6,8 @@ using System.Configuration;
 using System.Linq;
 using System.Text;
 using static MonicaExtraWeb.Utils.GlobalVariables;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
+using static MonicaExtraWeb.Utils.Token.Claims;
+using Newtonsoft.Json;
 
 namespace MonicaExtraWeb.Utils.Querys
 {
@@ -135,7 +136,6 @@ namespace MonicaExtraWeb.Utils.Querys
         {
             var query = new StringBuilder();
             var queryAnd = new StringBuilder();
-            var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
 
             query.Append($"UPDATE dbo.Usuario SET  ");
 
@@ -158,7 +158,14 @@ namespace MonicaExtraWeb.Utils.Querys
                 if (queryAnd.Length > 0)
                     queryAnd.Append($", ");
                 if (user.Clave == "default")
+                {
+                    var claims = GetClaims();
+                    var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
+                        new { empresaId = "" });
+                    var initialPass = cache_empresas.FirstOrDefault(x => x.IdEmpresa == long.Parse(json.empresaId)).defaultPass;
+
                     queryAnd.Append($"Clave = '{initialPass}' ");
+                }
                 else
                     queryAnd.Append($"Clave = '{user.Clave}' ");
             }

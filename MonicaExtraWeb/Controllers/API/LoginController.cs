@@ -10,7 +10,6 @@ using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Helper;
 using static MonicaExtraWeb.Utils.Querys.Control.EmpresaEquiposRegistrados;
 using static MonicaExtraWeb.Utils.Querys.Control.EquiposAsignadosAUsuario;
-using static MonicaExtraWeb.Utils.Querys.Usuarios;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -22,32 +21,38 @@ namespace MonicaExtraWeb.Controllers.API
         [Route("authenticate")]
         public IHttpActionResult Authenticate(LoginRequest login)
         {
-            var initialPass = ConfigurationManager.AppSettings["ContraseniaInicialUsuario"];
             var empresaMaster = ConfigurationManager.AppSettings["idEMpresaMaster"];
             var usuario = ValidarUsuarioLogin(login);
+            var initialPass = "";
 
             if (usuario == default)
                 return Unauthorized();
 
+            #region VALIDAR LOS INTENTOS DEL USUARIO
             var idUsuarioBloqueado = loginFailsUsers.FirstOrDefault(x => x.Key == usuario.IdUsuario.ToString()).Key;
             if (idUsuarioBloqueado != default)
                 if (loginFailsUsers[idUsuarioBloqueado].Intentos >= 2)
                 {
                     var usuarioBloqueado = loginFailsUsers[idUsuarioBloqueado];
                     if (!usuarioBloqueado.TiempoBloqueo.HasValue)
-                        usuarioBloqueado.TiempoBloqueo = DateTime.Now.AddMinutes(30);
+                        usuarioBloqueado.TiempoBloqueo = DateTime.Now.AddMinutes(60);
                     else if (DateTime.Compare(usuarioBloqueado.TiempoBloqueo.Value, DateTime.Now) >= 0)
-                        return Json(new { message = $"El usuario alcanzó el maximo de intentos. Usuario bloqueado temporalmente. <br/> <center>Desbloque en: {loginFailsUsers[idUsuarioBloqueado].TiempoBloqueo.Value}</center>" });
+                        return Json(new { message = $"El usuario alcanzó el maximo de intentos. Usuario bloqueado temporalmente. <br/>Desbloqueo en: {Math.Ceiling((loginFailsUsers[idUsuarioBloqueado].TiempoBloqueo.Value - DateTime.Now).TotalMinutes)} Minutos." });
                     else
                         loginFailsUsers.Remove(idUsuarioBloqueado);
                 }
+            #endregion
+
+            if (CompanyRemoteConnectionUsers.ContainsKey(usuario.IdUsuario.ToString()) && login.desconectar)
+                CompanyRemoteConnectionUsers.Remove(usuario.IdUsuario.ToString());
 
             if (usuario != default &&
                login.Password == usuario.Clave)
             {
+
                 //  SI ES LA EMPRESA MASTER, NO HACE LAS VALIDACIONES
                 if (login.IdEmpresa == long.Parse(empresaMaster))
-                    return Json(new { token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString()), usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, idEmpresasM = "" });
+                    return Json(new { token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString()), usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass = "123456abc!", idEmpresasM = "" });
 
                 // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
                 if (usuario.empresaEstatus == 0)
@@ -64,6 +69,20 @@ namespace MonicaExtraWeb.Controllers.API
                 #region VALIDAR SI ES UN USUARIO SERVIDOR REMOTO AGREGAR LA MAC CON LA QUE SE REGISTRA
                 if (login.Username.StartsWith("Remoto") && login.mac != string.Empty)
                 {
+                    #region OBTENER LA CONTRASEñA POR DEFECTO
+                    var query = Utils.Querys.Control.Empresas.Select(new Empresa
+                    {
+                        IdEmpresa = long.Parse(login.IdEmpresa.ToString())
+                    }, new Models.DTO.QueryConfigDTO
+                    {
+                        Select = "defaultPass"
+                    });
+                    var empresa = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
+
+                    if (empresa.defaultPass == login.Password)
+                        return Unauthorized();
+                    #endregion
+
                     #region VALIDAR LA MAC Y EL USUARIO SEAN VALIDOS PARA CONTINUAR
                     var EmpresasEquiposRegistrados = Conn.Query<EmpresasEquiposRegistrados>(
                         Select(new EmpresasEquiposRegistrados
@@ -123,6 +142,9 @@ namespace MonicaExtraWeb.Controllers.API
                 #endregion
 
                 var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString());
+                if (!login.Username.StartsWith("Remoto"))
+                    CompanyRemoteConnectionUsers[usuario.IdUsuario.ToString()].Token = token;
+                initialPass = usuario.defaultPass;
                 return Json(new { token, usuario.NombreUsuario, usuario.Nivel, usuario.IdUsuario, initialPass, idEmpresasM });
             }
             else
@@ -130,7 +152,7 @@ namespace MonicaExtraWeb.Controllers.API
                 if (loginFailsUsers.ContainsKey(usuario.IdUsuario.ToString()))
                     loginFailsUsers[idUsuarioBloqueado].Intentos = loginFailsUsers[idUsuarioBloqueado].Intentos + 1;
                 else
-                    loginFailsUsers.Add(usuario.IdUsuario.ToString(), new Usuario { Intentos = 1 });
+                    loginFailsUsers.Add(usuario.IdUsuario.ToString(), new Usuario { Login = login.Username, Intentos = 1 });
                 return Json(new { message = $"Contraseña incorrecta, total de intentos: {loginFailsUsers[loginFailsUsers.FirstOrDefault(x => x.Key == usuario.IdUsuario.ToString()).Key].Intentos}/4." });
             }
         }

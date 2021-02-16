@@ -53,64 +53,95 @@
                 Password: this.DivLog.pass
             };
 
-            fetch('../API/Login/authenticate', {
+            var response = await fetch('../API/Login/authenticate', {
                 method: 'POST',
                 body: JSON.stringify(auth),
                 headers: {
                     'Content-Type': 'application/json'
                 }
-            }).then(response => {
-                if (response.status !== 200) {
-                    document.getElementById('cargando').setAttribute('hidden', true);
-                    this.DivLog.pass = '';
-                    document.getElementById('badPass').removeAttribute('hidden');
-                    return;
-                }
-                else
-                    return response;
-            })
-                .then(async content => {
-                    if (!content.url.includes('authenticate')) {
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        this.DivLog.pass = '';
-                        document.getElementById('badPass').removeAttribute('hidden');
-                        return;
-                    }
+            });
 
-                    const json = await content.json();
-                    if ('message' in json) {
-                        document.getElementById('ServerMessageDiv').removeAttribute('hidden')
-                        document.getElementById('serverLoginMessage').innerHTML = json.message;
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        return;
-                    }
-                    if (json.initialPass === this.DivLog.pass) {
-                        document.getElementById('log').setAttribute('hidden', true);
-                        document.getElementById('divCambiarContrasenia').removeAttribute('hidden');
-                        window.localStorage.setItem('Number', json.IdUsuario);
-                        this.provitional = json.token;
-                        document.getElementById('cargando').setAttribute('hidden', true);
-                        return;
-                    }
-                    localStorage.setItem('Number', json.IdUsuario);
-                    SetCoockie(`Authorization=${json.token}`);
-                    localStorage.setItem('NombreUsuario', json.NombreUsuario);
-                    localStorage.setItem('Empresas', json.idEmpresasM);
-                    localStorage.setItem('NumeroUnicoEmpresa', this.DivLog.empresaNumeroUnico);
-                    localStorage.setItem('Nivel', json.Nivel);
-                    if (json.Nivel === 0)
-                        window.location.href = `../Control`;
-                    else if (json.Nivel === 3) {
-                        alert("Este usuario está configurado para funcionar como remoto en la aplicación 'ExtraService Notification'.");
-                        await CloseUserSession();
-                        window.location.href = `../`;
-                        return;
-                    }
-                    else {
-                        localStorage.setItem('remoteConexion', true);
-                        window.location.href = `../SeleccionarEmpresa`;
-                    }
-                });
+            if (response.status !== 200) {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                this.DivLog.pass = '';
+                document.getElementById('badPass').removeAttribute('hidden');
+                return;
+            }
+            if (!response.url.includes('authenticate')) {
+                document.getElementById('cargando').setAttribute('hidden', true);
+                this.DivLog.pass = '';
+                document.getElementById('badPass').removeAttribute('hidden');
+                return;
+            }
+
+            const json = await response.json();
+            if ('message' in json) {
+                if (json.message.startsWith('Este usuario está conectado en otro equipo')) {
+                    Swal.fire({
+                        title: json.message,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Si',
+                        cancelButtonText: 'No'
+                    }).then(async result => {
+                        if (result.value) {
+                            document.getElementById('cargando').removeAttribute('hidden');
+
+                            auth.desconectar = true;
+                            response = await fetch('../API/Login/authenticate', {
+                                method: 'POST',
+                                body: JSON.stringify(auth),
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            this.procesoConexion(await response.json());
+                        }
+                    });
+                }
+                else {
+                    document.getElementById('ServerMessageDiv').removeAttribute('hidden')
+                    document.getElementById('serverLoginMessage').innerHTML = json.message;
+                }
+                document.getElementById('cargando').setAttribute('hidden', true);
+                return;
+            }
+
+            this.procesoConexion(json);
+        },
+
+        procesoConexion: async function (json) {
+            if (json.initialPass === this.DivLog.pass) {
+                document.getElementById('log').setAttribute('hidden', true);
+                document.getElementById('divCambiarContrasenia').removeAttribute('hidden');
+                window.localStorage.setItem('Number', json.IdUsuario);
+                this.provitional = json.token;
+                document.getElementById('cargando').setAttribute('hidden', true);
+                return;
+            }
+
+            localStorage.setItem('Number', json.IdUsuario);
+            SetCoockie(`Authorization=${json.token}`);
+            localStorage.setItem('NombreUsuario', json.NombreUsuario);
+            localStorage.setItem('Empresas', json.idEmpresasM);
+            localStorage.setItem('NumeroUnicoEmpresa', this.DivLog.empresaNumeroUnico);
+            localStorage.setItem('Nivel', json.Nivel);
+
+            if (json.Nivel === 0)
+                window.location.href = `../Control`;
+            else if (json.Nivel === 3) {
+                alert("Este usuario está configurado para funcionar como remoto en la aplicación 'ExtraService Notification'.");
+                await CloseUserSession();
+                window.location.href = `../`;
+                return;
+            }
+            else {
+                localStorage.setItem('remoteConexion', true);
+                window.location.href = `../SeleccionarEmpresa`;
+            }
         },
 
         CambiarContrasenia: async function () {

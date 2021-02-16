@@ -7,10 +7,11 @@
         nombreUsuario: '',
         nombreCompleto: '',
         nivelUsuarioSeleccionado: 2,
-        permisoRemoto: 0,
+        permisoRemoto: 1,
         teniaEmpresasMSeleccionadas: false,
         usuariosPagados: 0,
         usuariosRegistrados: 0,
+        empresaDefaultPass: '',
 
         nro_empresas: 0,
 
@@ -81,6 +82,7 @@
             this.usuarios = json.usuarios;
             this.usuariosPagados = json.cantidadUsuariosPagados;
             this.usuariosRegistrados = json.UsuariosRegistrados;
+            this.empresaDefaultPass = json.empresaDefaultPass;
             document.getElementById('cargando').setAttribute('hidden', true);
         },
 
@@ -124,9 +126,11 @@
                     }
                 });
 
-                this.empresas = ((await empresasRequest.json()).empresas[0].idEmpresasM).split(',');
-                this.empresas = this.empresas[0] === '' ? [] : this.empresas;
-
+                var empresasTemp = await empresasRequest.json();
+                if (empresasTemp.empresas[0].idEmpresasM) {
+                    this.empresas = ((empresasTemp).empresas[0].idEmpresasM).split(',');
+                    this.empresas = this.empresas[0] === '' ? [] : this.empresas;
+                }
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -148,7 +152,7 @@
                 this.nombre = '';
                 this.apellidos = '';
                 this.nivelUsuarioSeleccionado = '2';
-                this.permisoRemoto = '0';
+                this.permisoRemoto = '1';
                 inptNombreUsuario.removeAttribute('disabled');
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -464,7 +468,7 @@
             this.IdUsuarioSeleccionado = '';
             this.EstadoUsuarioSeleccionado = '';
             this.nivelUsuarioSeleccionado = 2;
-            this.permisoRemoto = 0;
+            this.permisoRemoto = 1;
             this.usuarios = [];
             this.nroEmpresasSeleccionadas = 0;
             this.teniaEmpresasMSeleccionadas = false;

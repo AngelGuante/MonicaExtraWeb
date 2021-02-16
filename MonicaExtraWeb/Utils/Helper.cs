@@ -4,7 +4,6 @@ using System.Linq;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using Dapper;
 using Newtonsoft.Json;
 
@@ -61,14 +60,14 @@ namespace MonicaExtraWeb.Utils
         {
             Usuario usuario = default;
 
-            if (login == default || login.IdEmpresa == default || login.Username == default || login.Password == default)
+            if (login == default || login.IdEmpresa == default || login.Username == default || login.Password == "")
                 return default;
 
             usuario = Conn.Query<Usuario>(Select(new Usuario
             {
                 IdEmpresa = login.IdEmpresa,
                 NombreUsuario = login.Username,
-            }, new Models.DTO.QueryConfigDTO { Select = "U.idEmpresasM, U.Remoto, E.ESTATUS empresaEstatus, E.Vencimiento ", ExcluirUsuariosControl = false, Usuario_Join_EmpresasRegistradas = true, TraerClave = true })).FirstOrDefault();
+            }, new Models.DTO.QueryConfigDTO { Select = "U.idEmpresasM, U.Remoto, E.ESTATUS empresaEstatus, E.Vencimiento, E.defaultPass ", ExcluirUsuariosControl = false, Usuario_Join_EmpresasRegistradas = true, TraerClave = true })).FirstOrDefault();
 
             #region VALIDACION PARA HACERSE CUANDO LA APLICACION 'ExtraService Notification.exe' INTENTA LOGEARSE UN CLIENTE.
             if (login.passwordEncriptado)
@@ -100,7 +99,7 @@ namespace MonicaExtraWeb.Utils
                 {
                     IdEmpresa = long.Parse(json.empresaId),
                     IdUsuario = long.Parse(json.userId),
-                }, new Models.DTO.QueryConfigDTO { Select = " U.Remoto", ExcluirUsuariosControl = false/*, Usuario_Join_IdEmpresaM = false*/ })).FirstOrDefault();
+                }, new Models.DTO.QueryConfigDTO { Select = " U.Remoto", ExcluirUsuariosControl = false })).FirstOrDefault();
             }
             else
             {
@@ -109,19 +108,20 @@ namespace MonicaExtraWeb.Utils
             }
 
             if (!usuario.Remoto.Value)
-                return "SU USUARIO NO TIENE PERMISOS PARA CONECTARSE DE MANERA REMOTA.";
+                return "Su usuario no tiene permisos para conectarse de manera remota.";
 
             if (CompanyRemoteConnectionIP.ContainsKey(IdEmpresa))
             {
                 if (!CompanyRemoteConnectionUsers.ContainsKey(IdUsuario))
                 {
-                    CompanyRemoteConnectionUsers.Add(IdUsuario, new Usuario {
+                    CompanyRemoteConnectionUsers.Add(IdUsuario, new Usuario
+                    {
                         IdUsuario = long.Parse(IdEmpresa)
                     });
                     return string.Empty;
                 }
                 else
-                    return "ESTE USUARIO YA ESTA CONECTADO.";
+                    return "Este usuario está conectado en otro equipo. <br/> Deséa desconectar su usuario del otro equipo y conectarse désde éste?";
             }
             else
                 return "No se puede establecer conexión con el servidor de datos de su empresa, favor comunicarse con un usuario administrador.";

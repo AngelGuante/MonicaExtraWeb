@@ -251,7 +251,6 @@
                 case 'manejoDeData_Pedidos':
                     //  CARGAR PARAMETROS
                     let filtro = {
-                        conn: localStorage.getItem('conn'),
                         WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
                     };
                     await this.BuscarData('parametros', filtro);

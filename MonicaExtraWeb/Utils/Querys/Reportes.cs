@@ -4,9 +4,9 @@ using System;
 using System.Configuration;
 using System.Linq;
 using System.Text;
-using static MonicaExtraWeb.Models.DTO.DataCacheada;
 using static MonicaExtraWeb.Utils.Helper;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Utils.GlobalVariables;
 
 namespace MonicaExtraWeb.Utils
 {
@@ -2135,7 +2135,7 @@ namespace MonicaExtraWeb.Utils
                     query.Append($",'' ncfModificado ");
                     query.Append($",fecha_emision ");
                     query.Append($",TS.reteiva_monto  ");
-                    query.Append($",TS.total MontoFacturado");
+                    query.Append($",(CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) MontoFacturado");
                     query.Append($",TS.impuesto_monto ");
                     query.Append($",TS.impuesto2_monto MontoPropina");
                     query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
@@ -2146,14 +2146,30 @@ namespace MonicaExtraWeb.Utils
                     query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON TS.termino_id = TP.termino_id  ");
                     query.Append($" AND TS.anulada = 0 ");
 
+
                     if (!string.IsNullOrEmpty(filtro.anio))
                         query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
                     if (!string.IsNullOrEmpty(filtro.mes))
                         query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
                     #endregion
 
-                    query.Append("UNION ");
+                    #region WHERE
+                    if (!filtro.incluirMenores250000)
+                    {
+                        query.Append($"WHERE ");
+                        //query.Append($" 02 = ");
+                        //query.Append($" CASE LEN(TS.ncf) ");
+                        //query.Append($" WHEN 11 THEN ");
+                        query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                        //query.Append($" ELSE ");
+                        //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
+                        //query.Append($" END ");
+                        query.Append($"AND ");
+                        query.Append($"(CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
+                    }
+                    #endregion
 
+                    query.Append("UNION ");
                     #region SELECT
                     query.Append("  SELECT ");
                     query.Append($" TS.registro_tributario ");
@@ -2182,6 +2198,73 @@ namespace MonicaExtraWeb.Utils
                         query.Append($"AND Month(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.mes}' ");
                     #endregion
 
+                    #region WHERE
+                    if (!filtro.incluirMenores250000)
+                    {
+                        query.Append($"AND ");
+                        //query.Append($" 02 = ");
+                        //query.Append($" CASE LEN(TS.ncf) ");
+                        //query.Append($" WHEN 11 THEN ");
+                        query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                        //query.Append($" ELSE ");
+                        //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
+                        //query.Append($" END ");
+                        query.Append($"AND ");
+                        query.Append($"(CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) <= 250000 ");
+                    }
+                    #endregion
+
+                    if (filtro.incluirNotasDeCreditoDesdeCXC)
+                    {
+                        query.Append("UNION ");
+                        #region SELECT
+                        query.Append(" SELECT ");
+                        query.Append($" CL.registro_tributario ");
+                        query.Append($",LEN(CL.registro_tributario) LENTipoIdentificacion ");
+                        query.Append($",'1' TipoIngreso ");
+                        query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
+                        query.Append($",Substring(RTRIM(docs_cc.ncf), 1, 19) ncfModificado ");
+                        query.Append($",REPLACE(TS.fecha_emision, '-', '') fecha_emision ");
+                        query.Append($",'' reteiva_monto ");
+                        query.Append($",(TS.Monto_dcmto - TS.impuesto_1 - TS.impuesto_2) MontoFacturado");
+                        query.Append($",TS.impuesto_1 impuesto_monto ");
+                        query.Append($",TS.impuesto_2 MontoPropina");
+                        query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
+                        #endregion
+
+                        #region FROM
+                        query.Append($" FROM {filtro.conn}.dbo.docs_cc TS ");
+                        query.Append($" JOIN {filtro.conn}.dbo.clientes CL ON TS.cliente_id = CL.cliente_id  ");
+                        query.Append($" LEFT JOIN {filtro.conn}.dbo.terminos_pago TP ON TS.termino_idpv = TP.termino_id  ");
+                        query.Append($" JOIN {filtro.conn}.dbo.docs_cc ON TS.nro_dcmto = docs_cc.nro_dcmto_pagado ");
+                        #endregion
+
+                        #region WHERE
+                        query.Append($"WHERE ");
+                        query.Append($"TS.modulo_origen = 'CC' ");
+                        query.Append($"AND LEN(RTRIM(TS.ncf)) > 10 ");
+                        query.Append($"AND TS.Estado_registro = 0 ");
+                        if (!string.IsNullOrEmpty(filtro.anio))
+                            query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
+                        if (!string.IsNullOrEmpty(filtro.mes))
+                            query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
+
+                        if (!filtro.incluirMenores250000)
+                        {
+                            query.Append($"AND ");
+                            //query.Append($" 02 = ");
+                            //query.Append($" CASE LEN(TS.ncf) ");
+                            //query.Append($" WHEN 11 THEN ");
+                            query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                            //query.Append($" ELSE ");
+                            //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
+                            //query.Append($" END ");
+                            query.Append($"AND ");
+                            query.Append($"(TS.Monto_dcmto - TS.impuesto_1 - TS.impuesto_2) >= 250000 ");
+                        }
+                        #endregion
+                    }
+
                     query.Append($"ORDER BY fecha_emision DESC ");
                     break;
 
@@ -2201,7 +2284,7 @@ namespace MonicaExtraWeb.Utils
                 query.Append($"{filter.SELECT} ");
             else
                 query.Append("empresa_id, Nombre_empresa, base_de_datos ");
-                //query.Append("empresa_id, TRIM(Nombre_empresa) Nombre_empresa, TRIM(base_de_datos) base_de_datos ");
+            //query.Append("empresa_id, TRIM(Nombre_empresa) Nombre_empresa, TRIM(base_de_datos) base_de_datos ");
 
             query.Append($"FROM {getConnectionString()}.dbo.empresas ");
 

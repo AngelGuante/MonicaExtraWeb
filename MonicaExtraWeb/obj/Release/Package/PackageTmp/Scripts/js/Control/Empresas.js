@@ -13,6 +13,9 @@
         vencimiento: '',
         database: '',
         idEmpresasM: '',
+        empresasConectadas: 0,
+        usuariosConectados: 0,
+        usuariosIntentosFallidos: 0,
 
         empresas: [],
 
@@ -26,7 +29,6 @@
         document.getElementById('btnBack').removeAttribute('hidden');
 
         this.fechaInicio = GetCurrentDate();
-
         this.BuscarEmpresas();
     },
 
@@ -40,6 +42,9 @@
                 .then(response => { return response.json(); })
                 .then(json => {
                     this.empresas = json.empresas;
+                    this.empresasConectadas = json.empresasConectadas;
+                    this.usuariosConectados = json.usuariosConectados;
+                    this.usuariosIntentosFallidos = json.usuariosIntentosFallidos;
                     document.getElementById('cargando').setAttribute('hidden', true);
                 })
                 .catch(err => {
@@ -67,6 +72,7 @@
                 this.database = config.ConnectionString;
                 this.fechaInicio = GetFormatedDate(config.FechaInicio);
                 this.vencimiento = GetFormatedDate(config.Vencimiento);
+                this.EstadoEmpresaSeleccionada = config.Estatus;
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -130,6 +136,26 @@
                 this.NuevaEmpresa();
             else
                 this.ModificarEmrpresa();
+        },
+
+        CambiarEstadoEmpresa: async function () {
+            document.getElementById('cargando').removeAttribute('hidden');
+
+            const json = {
+                IdEmpresa: this.IdEmpresa,
+                Estatus: this.EstadoEmpresaSeleccionada === 1 ? 0 : 1
+            };
+
+            await fetch('../../API/EMPRESAS/PUT', {
+                method: 'PUT',
+                body: JSON.stringify(json),
+                headers: {
+                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            this.Limpiar();
         },
 
         NuevaEmpresa: function () {
