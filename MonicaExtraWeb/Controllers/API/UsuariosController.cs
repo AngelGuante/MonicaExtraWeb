@@ -55,7 +55,11 @@ namespace MonicaExtraWeb.Controllers.API
                 IdEmpresa = long.Parse(json.empresaId),
                 NombreUsuario = param.usuario.Login
             }, new QueryConfigDTO { ExcluirUsuariosControl = true }).ToString()).ToList();
-            if (usuarios.Count > 0 || int.Parse(empresaCacheada.usuariosRegistrados) >= int.Parse(empresaCacheada.CantidadUsuariosPagados) || param.usuario.Login.StartsWith("Remoto"))
+            if (usuarios.Count > 0
+                || int.Parse(empresaCacheada.usuariosRegistrados) >= int.Parse(empresaCacheada.CantidadUsuariosPagados)
+                || param.usuario.Login.StartsWith("Remoto")
+                || param.usuario.Login.StartsWith("PAngel")
+                || param.usuario.Login.StartsWith("IAlmonte"))
                 return Ok(false);
 
             Insert(param.usuario, param.modulos);

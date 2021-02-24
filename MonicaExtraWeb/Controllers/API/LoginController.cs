@@ -31,15 +31,13 @@ namespace MonicaExtraWeb.Controllers.API
             #region VALIDAR LOS INTENTOS DEL USUARIO
             var idUsuarioBloqueado = loginFailsUsers.FirstOrDefault(x => x.Key == usuario.IdUsuario.ToString()).Key;
             if (idUsuarioBloqueado != default)
-                if (loginFailsUsers[idUsuarioBloqueado].Intentos >= 2)
+                if (loginFailsUsers[idUsuarioBloqueado].Intentos >= 1)
                 {
                     var usuarioBloqueado = loginFailsUsers[idUsuarioBloqueado];
                     if (!usuarioBloqueado.TiempoBloqueo.HasValue)
                         usuarioBloqueado.TiempoBloqueo = DateTime.Now.AddMinutes(60);
-                    else if (DateTime.Compare(usuarioBloqueado.TiempoBloqueo.Value, DateTime.Now) >= 0)
+                    else if (DateTime.Compare(usuarioBloqueado.TiempoBloqueo.Value, DateTime.Now) >= 0 && loginFailsUsers[idUsuarioBloqueado].Intentos >= 4)
                         return Json(new { message = $"El usuario alcanzó el maximo de intentos. Usuario bloqueado temporalmente. <br/>Desbloqueo en: {Math.Ceiling((loginFailsUsers[idUsuarioBloqueado].TiempoBloqueo.Value - DateTime.Now).TotalMinutes)} Minutos." });
-                    else
-                        loginFailsUsers.Remove(idUsuarioBloqueado);
                 }
             #endregion
 
@@ -49,6 +47,8 @@ namespace MonicaExtraWeb.Controllers.API
             if (usuario != default &&
                login.Password == usuario.Clave)
             {
+                if (idUsuarioBloqueado != null)
+                    loginFailsUsers.Remove(idUsuarioBloqueado);
 
                 //  SI ES LA EMPRESA MASTER, NO HACE LAS VALIDACIONES
                 if (login.IdEmpresa == long.Parse(empresaMaster))
@@ -130,15 +130,20 @@ namespace MonicaExtraWeb.Controllers.API
 
                 #region VALIDAR LAS EMPRESAS DISPONIBLES QUE TENGA EL USUARIO Y LAS QUE ESTAN SELECCIONADAS POR EL ADMINISTRADOR
                 var idEmpresasM = "";
-                if (usuario.Nivel != 0)
-                    if (usuario.idEmpresasM != null && usuario.idEmpresasM != string.Empty)
-                        foreach (var item in usuario.idEmpresasM.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries).ToList())
-                            if (usuario.EmpresaRegistrada_idEmpresasM.Split(new string[] { "," }, System.StringSplitOptions.RemoveEmptyEntries).ToList().FirstOrDefault(x => x == item) != default)
-                            {
-                                if (idEmpresasM.Length != 0)
-                                    idEmpresasM += ",";
-                                idEmpresasM += item;
-                            }
+                if (usuario.Nivel != 0 && usuario.Nivel != 4)
+                {
+                    if (usuario.Nivel != 0)
+                        if (usuario.idEmpresasM != null && usuario.idEmpresasM != string.Empty)
+                            foreach (var item in usuario.idEmpresasM.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList())
+                                if (usuario.EmpresaRegistrada_idEmpresasM.Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries).ToList().FirstOrDefault(x => x == item) != default)
+                                {
+                                    if (idEmpresasM.Length != 0)
+                                        idEmpresasM += ",";
+                                    idEmpresasM += item;
+                                }
+                }
+                else
+                    idEmpresasM = usuario.idEmpresasM;
                 #endregion
 
                 var token = TokenGenerator.GenerateTokenJwt(usuario.IdUsuario.ToString(), login.IdEmpresa.ToString(), usuario.Nivel.ToString());

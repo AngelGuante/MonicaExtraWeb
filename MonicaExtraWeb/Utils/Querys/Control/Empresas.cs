@@ -14,7 +14,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
         {
             var query = new StringBuilder();
 
-            if (queryConfig != null)
+            if (!string.IsNullOrEmpty(queryConfig.Select))
                 query.Append($"SELECT {queryConfig.Select} ");
             else
                 query.Append($"SELECT * ");
@@ -27,6 +27,20 @@ namespace MonicaExtraWeb.Utils.Querys.Control
 
             if (empresa?.IdEmpresa != default)
                 query.Append($"AND idEmpresa = {empresa.IdEmpresa} ");
+            if (empresa != default && empresa.Estatus.HasValue)
+                query.Append($"AND Estatus = {empresa.Estatus.Value} ");
+            if (queryConfig != default)
+            {
+                if (queryConfig.VencimientoEmpresa.HasValue && queryConfig.VencimientoEmpresa == 0)
+                    query.Append($"AND DATEDIFF(DAY, GETDATE(), Vencimiento) < 0 ");
+                else if (queryConfig.VencimientoEmpresa.HasValue && queryConfig.VencimientoEmpresa == 1)
+                    query.Append($"AND DATEDIFF(DAY, GETDATE(), Vencimiento) > 0 ");
+                else if (queryConfig.VencimientoEmpresa.HasValue && queryConfig.VencimientoEmpresa == 2)
+                {
+                    query.Append($"AND DATEDIFF(DAY, GETDATE(), Vencimiento) > 0 ");
+                    query.Append($"AND DATEDIFF(DAY, GETDATE(), Vencimiento) < 7 ");
+                }
+            }
 
             return query.ToString();
         }

@@ -17,10 +17,10 @@ namespace MonicaExtraWeb.Controllers.API
             return Json(new
             {
                 cache_empresas,
-                DataWebsocketPerClient,
+                //DataWebsocketPerClient,
                 CompanyRemoteConnectionIP,
-                CompanyRemoteConnectionUsers,
-                CompanyRemoteConnectionUsersDisconected,
+                //CompanyRemoteConnectionUsers,
+                //CompanyRemoteConnectionUsersDisconected,
                 loginFailsUsers,
             });
         }
@@ -32,7 +32,7 @@ namespace MonicaExtraWeb.Controllers.API
             cache_empresas = data.cache_empresas;
             //DataWebsocketPerClient = data.DataWebsocketPerClient;
             CompanyRemoteConnectionIP = data.CompanyRemoteConnectionIP;
-            CompanyRemoteConnectionUsers = data.CompanyRemoteConnectionUsers;
+            //CompanyRemoteConnectionUsers = data.CompanyRemoteConnectionUsers;
             //CompanyRemoteConnectionUsersDisconected = data.CompanyRemoteConnectionUsersDisconected;
             loginFailsUsers = data.loginFailsUsers;
             return Json(true);

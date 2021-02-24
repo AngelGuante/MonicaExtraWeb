@@ -12,6 +12,7 @@ using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
+using static MonicaExtraWeb.Utils.Helper;
 using System.Linq;
 using MonicaExtraWeb.Models.DTO.Control;
 using Dapper;
@@ -31,7 +32,7 @@ namespace MonicaExtraWeb.Utils
             #region VALIDAR SI ES UNA CONEXION REMOTA
             var claims = GetClaims();
             var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
-                new { userId = "", empresaId = "" });
+                new { userId = "", empresaId = "", userNivel = "" });
             string _ip = default;
             CompanyRemoteConnectionUsers.FirstOrDefault(x => x.Key == json.userId);
 
@@ -44,11 +45,17 @@ namespace MonicaExtraWeb.Utils
                 else if (dataUsuario_cache.Value.connSeleccionada != default)
                     filtro.conn = dataUsuario_cache.Value.connSeleccionada;
 
-                var usuario = Conn.Query<Usuario>(Select(new Usuario
-                {
-                    IdEmpresa = long.Parse(json.empresaId),
-                    IdUsuario = long.Parse(json.userId),
-                }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false })).FirstOrDefault();
+                Usuario usuario = default;
+                if (json.userNivel == "0" || json.userNivel == "4")
+                    usuario = new Usuario
+                    {
+                        Remoto = true
+                    };
+                else
+                    usuario = Conn.Query<Usuario>(Select(new Usuario
+                    {
+                        IdUsuario = long.Parse(json.userId),
+                    }, new QueryConfigDTO { Select = "U.Remoto", ExcluirUsuariosControl = false })).FirstOrDefault();
 
                 if (!usuario.Remoto.Value)
                     return "Error_RemoteConectionNotAllowed:No tiene permiso para acceder de manera remota.";
@@ -64,7 +71,7 @@ namespace MonicaExtraWeb.Utils
                 return "Error_RemoteConectionUserDisconected:Su usuario ha sido desconectado por un usuario Administrador.";
             }
             else
-                return default;
+                return "Error_UserNotConected:Su usuario no se encuentra logueado, puede que haya ocurrido un error o que se haya publicado una nueva version del sistema, Favor vuelva a la pantalla de login.";
 
             #endregion
 

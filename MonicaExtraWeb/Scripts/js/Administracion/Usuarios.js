@@ -349,7 +349,8 @@
 
                 MostrarMensage({
                     title: '',
-                    message: `El nombre de usuario <b>${this.nombreUsuario}</b>, yá existe o no puede ser usado, ingrese uno manualmente.`,
+                    message: `Error al crear el usuario <b>${this.nombreUsuario}</b>, le sugerimos colocar el otro nombre manualmente.`,
+                    //message: `El nombre de usuario <b>${this.nombreUsuario}</b>, yá existe o no puede ser usado, ingrese uno manualmente.`,
                     icon: 'warning'
                 });
             }

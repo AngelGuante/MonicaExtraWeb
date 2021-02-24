@@ -115,15 +115,15 @@
                     <input id="CDCcheckboxMostrarDetalles" type="checkbox" class="form-check-input" v-model="FILTROS.incluirMenores250000">
                     <label for="CDCcheckboxMostrarDetalles" class="form-check-label font-italic">Incluir facturas de consumo  < 250,000</label>
                 </div>
-            </div>
+            </div>                             
 
-            <div class="col-12 col-lg-2"
+            @*<div class="col-12 col-lg-2"
                  v-if="FILTROS.tipoConsulta === 'Informe_607'">
                 <div class="form-check">
                     <input id="CBNotasCreditoCXC" type="checkbox" class="form-check-input" v-model="FILTROS.incluirNotasDeCreditoDesdeCXC">
                     <label class="form-check-label" for="CBNotasCreditoCXC">Incluir Notas de Créditos desde CXC</label>
                 </div>
-            </div>
+            </div>*@
         </div>
 
         <hr style="margin: 10px;" />

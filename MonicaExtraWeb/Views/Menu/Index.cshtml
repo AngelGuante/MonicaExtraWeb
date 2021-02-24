@@ -58,7 +58,7 @@
     <script>
         ConfigurarVentana();
 
-        if (window.localStorage.getItem('Nivel') == 2)
+        if (window.localStorage.getItem('Nivel') != 1)
             document.getElementById('moduloAdministracion').setAttribute('hidden', true);
     </script>
     <script src="~/Scripts/js/Menu.js"></script>

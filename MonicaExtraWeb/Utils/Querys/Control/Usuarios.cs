@@ -2,12 +2,11 @@
 using MonicaExtraWeb.Models.DTO;
 using MonicaExtraWeb.Models.DTO.Control;
 using MonicaExtraWeb.Utils.Querys.Control;
-using System.Configuration;
+using Newtonsoft.Json;
 using System.Linq;
 using System.Text;
 using static MonicaExtraWeb.Utils.GlobalVariables;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using Newtonsoft.Json;
 
 namespace MonicaExtraWeb.Utils.Querys
 {

@@ -551,9 +551,12 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
             }
             else {
                 cargando.setAttribute('hidden', true);
-                if (content.value.startsWith('Error_RemoteConectionNotAllowed:') || content.value.startsWith('Error_RemoteConectionUserDisconected:')) {
+                if (content.value.startsWith('Error_RemoteConectionNotAllowed:')
+                    || content.value.startsWith('Error_RemoteConectionUserDisconected:')
+                    || content.value.startsWith('Error_UserNotConected:')) {
                     content.value = content.value.replace(/Error_RemoteConectionNotAllowed:/g, '');
                     content.value = content.value.replace(/Error_RemoteConectionUserDisconected:/g, '');
+                    content.value = content.value.replace(/Error_UserNotConected:/g, '');
 
                     localStorage.setItem('remoteConexion', false);
                     BotonesConexionesRemotas();

@@ -2146,7 +2146,6 @@ namespace MonicaExtraWeb.Utils
                     query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON TS.termino_id = TP.termino_id  ");
                     query.Append($" AND TS.anulada = 0 ");
 
-
                     if (!string.IsNullOrEmpty(filtro.anio))
                         query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
                     if (!string.IsNullOrEmpty(filtro.mes))
@@ -2157,15 +2156,10 @@ namespace MonicaExtraWeb.Utils
                     if (!filtro.incluirMenores250000)
                     {
                         query.Append($"WHERE ");
-                        //query.Append($" 02 = ");
-                        //query.Append($" CASE LEN(TS.ncf) ");
-                        //query.Append($" WHEN 11 THEN ");
-                        query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
-                        //query.Append($" ELSE ");
-                        //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
-                        //query.Append($" END ");
-                        query.Append($"AND ");
-                        query.Append($"(CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
+                        query.Append($"SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                        query.Append($"AND TS.total >= 250000 ");
+                        //query.Append($"AND (CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
+                        query.Append($"OR SUBSTRING(RTRIM(TS.ncf), 2, 2) <> 02 ");
                     }
                     #endregion
 
@@ -2189,6 +2183,9 @@ namespace MonicaExtraWeb.Utils
                     query.Append($" FROM {filtro.conn}.dbo.devolucion_clte TS ");
                     query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON REPLACE(TS.termino_id, '\"', '') = TP.termino_id  ");
                     query.Append($", {filtro.conn}.dbo.factura TSD  ");
+                    #endregion
+
+                    #region WHERE
                     query.Append($"WHERE SUBSTRING(rtrim(TS.Campo3), 4, 12) = TSD.nro_factura ");
                     query.Append($" AND REPLACE(TS.anulada, '\"', '') = 0 ");
 
@@ -2196,22 +2193,13 @@ namespace MonicaExtraWeb.Utils
                         query.Append($"AND Year(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.anio}' ");
                     if (!string.IsNullOrEmpty(filtro.mes))
                         query.Append($"AND Month(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.mes}' ");
-                    #endregion
 
-                    #region WHERE
-                    if (!filtro.incluirMenores250000)
-                    {
-                        query.Append($"AND ");
-                        //query.Append($" 02 = ");
-                        //query.Append($" CASE LEN(TS.ncf) ");
-                        //query.Append($" WHEN 11 THEN ");
-                        query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
-                        //query.Append($" ELSE ");
-                        //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
-                        //query.Append($" END ");
-                        query.Append($"AND ");
-                        query.Append($"(CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) <= 250000 ");
-                    }
+                    //if (!filtro.incluirMenores250000)
+                    //{
+                    //    query.Append($"AND SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                    //    query.Append($"AND (CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
+                    //    query.Append($"OR SUBSTRING(RTRIM(TS.ncf), 2, 2) <> 02 ");
+                    //}
                     #endregion
 
                     if (filtro.incluirNotasDeCreditoDesdeCXC)
@@ -2248,26 +2236,11 @@ namespace MonicaExtraWeb.Utils
                             query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
                         if (!string.IsNullOrEmpty(filtro.mes))
                             query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
-
-                        if (!filtro.incluirMenores250000)
-                        {
-                            query.Append($"AND ");
-                            //query.Append($" 02 = ");
-                            //query.Append($" CASE LEN(TS.ncf) ");
-                            //query.Append($" WHEN 11 THEN ");
-                            query.Append($" SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
-                            //query.Append($" ELSE ");
-                            //query.Append($" SUBSTRING(RTRIM(TS.ncf), 10, 2) ");
-                            //query.Append($" END ");
-                            query.Append($"AND ");
-                            query.Append($"(TS.Monto_dcmto - TS.impuesto_1 - TS.impuesto_2) >= 250000 ");
-                        }
                         #endregion
                     }
 
                     query.Append($"ORDER BY fecha_emision DESC ");
                     break;
-
             }
 
             return query.ToString();
