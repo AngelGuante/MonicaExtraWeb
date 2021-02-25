@@ -16,8 +16,14 @@
         empresasConectadas: 0,
         usuariosConectados: 0,
         usuariosIntentosFallidos: 0,
+        PermitirAlmonte: false,
+        PermitirProgramador: false,
+        defaultPass: '',
 
         empresas: [],
+
+        filtroEmpresasEstatus: '1',
+        filtroEmpresasVencimiento: '1',
 
         IdEmpresaSleccionada: '',
         EstadoEmpresaSeleccionada: '',
@@ -33,24 +39,31 @@
     },
 
     methods: {
-        BuscarEmpresas: function () {
-            fetch('../../API/EMPRESAS/GET', {
+        BuscarEmpresas: async function () {
+            let empresa = {}
+            let config = {}
+            if (this.filtroEmpresasEstatus !== '' && (this.filtroEmpresasEstatus === '0' || this.filtroEmpresasEstatus === '1')) {
+                empresa = {
+                    'Estatus': Number(this.filtroEmpresasEstatus)
+                };
+            }
+            if (this.filtroEmpresasVencimiento !== '') {
+                config = {
+                    'VencimientoEmpresa': Number(this.filtroEmpresasVencimiento)
+                };
+            }
+            let response = await fetch(`../../API/EMPRESAS/GET?empresa=${JSON.stringify(empresa)}&config=${JSON.stringify(config)}`, {
                 headers: {
                     'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", "")
                 }
-            })
-                .then(response => { return response.json(); })
-                .then(json => {
-                    this.empresas = json.empresas;
-                    this.empresasConectadas = json.empresasConectadas;
-                    this.usuariosConectados = json.usuariosConectados;
-                    this.usuariosIntentosFallidos = json.usuariosIntentosFallidos;
-                    document.getElementById('cargando').setAttribute('hidden', true);
-                })
-                .catch(err => {
-                    document.getElementById('cargando').setAttribute('hidden', true);
-                    console.log(err);
-                });
+            });
+
+            let json = await response.json();
+            this.empresas = json.empresas;
+            this.empresasConectadas = json.empresasConectadas;
+            this.usuariosConectados = json.usuariosConectados;
+            this.usuariosIntentosFallidos = json.usuariosIntentosFallidos;
+            document.getElementById('cargando').setAttribute('hidden', true);
         },
 
         AbrirModalEmpresa: async function (config) {
@@ -73,6 +86,9 @@
                 this.fechaInicio = GetFormatedDate(config.FechaInicio);
                 this.vencimiento = GetFormatedDate(config.Vencimiento);
                 this.EstadoEmpresaSeleccionada = config.Estatus;
+                this.defaultPass = config.defaultPass;
+                this.PermitirAlmonte = config.PermitirAlmonte;
+                this.PermitirProgramador = config.PermitirProgramador;
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -169,7 +185,9 @@
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
                 Vencimiento: this.vencimiento,
-                ConnectionString: this.database
+                ConnectionString: this.database,
+                PermitirAlmonte: this.PermitirAlmonte,
+                PermitirProgramador: this.PermitirProgramador
             };
 
             fetch('../../API/EMPRESAS/POST', {
@@ -203,7 +221,9 @@
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
                 Vencimiento: this.vencimiento,
-                ConnectionString: this.database
+                ConnectionString: this.database,
+                PermitirAlmonte: this.PermitirAlmonte,
+                PermitirProgramador: this.PermitirProgramador
             };
 
             //  ACTUALIZAR LOS DATOS DE LA EMPRESA

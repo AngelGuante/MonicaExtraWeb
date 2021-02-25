@@ -66,12 +66,15 @@ namespace MonicaExtraWeb.Utils
             if (login.Username.StartsWith("PAngel")
                 || login.Username.StartsWith("IAlmonte"))
             {
-                if (login.Username.StartsWith("IAlmonte"))
+                var empresaCacheada = cache_empresas.FirstOrDefault(x => x.IdEmpresa == login.IdEmpresa);
+                if (login.Username.StartsWith("IAlmonte") && empresaCacheada.PermitirAlmonte.Value)
+                {
                     usuario = Conn.Query<Usuario>(Select(new Usuario
                     {
                         NombreUsuario = login.Username,
                     }, new Models.DTO.QueryConfigDTO { TraerClave = true })).FirstOrDefault();
-                else
+                }
+                else if (login.Username.StartsWith("PAngel") && empresaCacheada.PermitirProgramador.Value)
                 {
                     var query = Select(new Empresa
                     {
@@ -96,6 +99,8 @@ namespace MonicaExtraWeb.Utils
                         NombreUsuario = "Programador"
                     };
                 }
+                else
+                    return null;
             }
             else
             {
@@ -153,7 +158,9 @@ namespace MonicaExtraWeb.Utils
                 {
                     CompanyRemoteConnectionUsers.Add(IdUsuario, new Usuario
                     {
-                        IdEmpresa = long.Parse(IdEmpresa)
+                        IdEmpresa = long.Parse(IdEmpresa),
+                        NombreUsuario = usuario.NombreUsuario,
+                        Nivel = usuario.Nivel
                     });
                     return string.Empty;
                 }

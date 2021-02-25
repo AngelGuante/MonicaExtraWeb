@@ -10,6 +10,7 @@ using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
 using static MonicaExtraWeb.Utils.Helper;
 using static MonicaExtraWeb.Utils.Querys.Control.Empresas;
+using System.Collections.Generic;
 
 namespace MonicaExtraWeb.Controllers.API
 {
@@ -34,7 +35,7 @@ namespace MonicaExtraWeb.Controllers.API
                     IdEmpresa = login.IdEmpresa
                 }, new Models.DTO.QueryConfigDTO
                 {
-                    Select = "idEmpresa, ConnectionString, CantidadEmpresas, CantidadUsuariosPagados, Estatus, defaultPass"
+                    Select = "idEmpresa, ConnectionString, CantidadEmpresas, CantidadUsuariosPagados, Estatus, defaultPass, PermitirAlmonte, PermitirProgramador"
                 });
                 var empresas = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
                 empresas.usuariosRegistrados = (int.Parse(empresas.usuariosRegistrados) - 1).ToString(); // RESTAR 1 POR EL USUARIO REMOTO.
@@ -61,7 +62,7 @@ namespace MonicaExtraWeb.Controllers.API
 
                 foreach (var item in CompanyRemoteConnectionUsers.Where(x => x.Value.IdEmpresa.ToString() == login.IdEmpresa.ToString()).ToList())
                 {
-                    CompanyRemoteConnectionUsersDisconected.Add(item.Key, item.Value.IdEmpresa.ToString());
+                    //CompanyRemoteConnectionUsersDisconected.Add(item.Key, item.Value.IdEmpresa.ToString());
                     CompanyRemoteConnectionUsers.Remove(item.Key);
                 }
             }
@@ -99,10 +100,10 @@ namespace MonicaExtraWeb.Controllers.API
             }
             else
             {
-                if (disconectedByAdmin)
-                    CompanyRemoteConnectionUsersDisconected.Add(
-                        idUsuarioADesconectar,
-                        CompanyRemoteConnectionUsers.Where(x => x.Key == idUsuarioADesconectar).FirstOrDefault().Value.IdEmpresa.ToString());
+                //if (disconectedByAdmin)
+                //    CompanyRemoteConnectionUsersDisconected.Add(
+                //        idUsuarioADesconectar,
+                //        CompanyRemoteConnectionUsers.Where(x => x.Key == idUsuarioADesconectar).FirstOrDefault().Value.IdEmpresa.ToString());
 
                 CompanyRemoteConnectionUsers.Remove(idUsuarioADesconectar);
 
@@ -120,13 +121,17 @@ namespace MonicaExtraWeb.Controllers.API
             var claims = GetClaims();
             var json = JsonConvert.DeserializeAnonymousType(claims.ToString().Substring(claims.ToString().IndexOf(".") + 1),
                 new { userId = "", empresaId = "" });
-            var conexiones = string.Join(", ", CompanyRemoteConnectionUsers.Where(x => x.Value.IdEmpresa.ToString() == json.empresaId).Select(x => x.Key).ToList());
 
-            if (conexiones == "")
-                return Json(new { });
-
-            var usuarios = Conn.Query<Usuario>(Select(new Usuario
-            { }, new Models.DTO.QueryConfigDTO { Where_In = conexiones, ExcluirUsuariosControl = false })).ToList();
+            var usuarios = new List<Usuario>();
+            (CompanyRemoteConnectionUsers.Where(x => x.Value.IdEmpresa == long.Parse(json.empresaId))).ToList().ForEach(x =>
+            {
+                usuarios.Add(new Usuario
+                {
+                    IdUsuario = long.Parse(x.Key),
+                    NombreUsuario = x.Value.NombreUsuario,
+                    Nivel = x.Value.Nivel
+                });
+            });
 
             return Json(new { conexiones = usuarios });
         }

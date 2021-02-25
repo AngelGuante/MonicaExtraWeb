@@ -75,6 +75,10 @@ namespace MonicaExtraWeb.Controllers.API
                     empresaCacheada.ConnectionString = empresa.ConnectionString;
                 if (empresa.Estatus != default)
                     empresaCacheada.Estatus = empresa.Estatus;
+                if (empresa.PermitirAlmonte.HasValue)
+                    empresaCacheada.PermitirAlmonte = empresa.PermitirAlmonte;
+                if (empresa.PermitirProgramador.HasValue)
+                    empresaCacheada.PermitirProgramador = empresa.PermitirProgramador;
             }
 
             if (empresa.idEmpresasM != default)

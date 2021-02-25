@@ -11,6 +11,6 @@ namespace MonicaExtraWeb.Models.DTO
         public bool ExcluirUsuariosRemotos { get; set; }
         public bool TraerClave { get; set; }
         public bool Usuario_Join_EmpresasRegistradas { get; set; }
-        public int? VencimientoEmpresa { get; set; }  // 0 : vencidas; 1 : No vencidas; 
+        public int? VencimientoEmpresa { get; set; }  // 0 : vencidas; 1 : No vencidas; 2 : Proximos a vencer
     }
 }

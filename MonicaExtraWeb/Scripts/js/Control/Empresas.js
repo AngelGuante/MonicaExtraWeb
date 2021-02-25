@@ -16,6 +16,8 @@
         empresasConectadas: 0,
         usuariosConectados: 0,
         usuariosIntentosFallidos: 0,
+        PermitirAlmonte: false,
+        PermitirProgramador: false,
         defaultPass: '',
 
         empresas: [],
@@ -85,6 +87,8 @@
                 this.vencimiento = GetFormatedDate(config.Vencimiento);
                 this.EstadoEmpresaSeleccionada = config.Estatus;
                 this.defaultPass = config.defaultPass;
+                this.PermitirAlmonte = config.PermitirAlmonte;
+                this.PermitirProgramador = config.PermitirProgramador;
 
                 document.getElementById('cargando').setAttribute('hidden', true);
             }
@@ -181,7 +185,9 @@
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
                 Vencimiento: this.vencimiento,
-                ConnectionString: this.database
+                ConnectionString: this.database,
+                PermitirAlmonte: this.PermitirAlmonte,
+                PermitirProgramador: this.PermitirProgramador
             };
 
             fetch('../../API/EMPRESAS/POST', {
@@ -215,7 +221,9 @@
                 CantidadEmpresas: this.nro_empresas,
                 CantidadUsuariosPagados: this.nro_usuarios,
                 Vencimiento: this.vencimiento,
-                ConnectionString: this.database
+                ConnectionString: this.database,
+                PermitirAlmonte: this.PermitirAlmonte,
+                PermitirProgramador: this.PermitirProgramador
             };
 
             //  ACTUALIZAR LOS DATOS DE LA EMPRESA

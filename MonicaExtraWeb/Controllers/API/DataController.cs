@@ -45,7 +45,7 @@ namespace MonicaExtraWeb.Controllers.API
         public Dictionary<string, string> DataWebsocketPerClient { get; } = new Dictionary<string, string>();
         public Dictionary<string, string> CompanyRemoteConnectionIP { get; } = new Dictionary<string, string>();
         public Dictionary<string, Usuario> CompanyRemoteConnectionUsers { get; } = new Dictionary<string, Usuario>();
-        public Dictionary<string, string> CompanyRemoteConnectionUsersDisconected { get; } = new Dictionary<string, string>();
+        //public Dictionary<string, string> CompanyRemoteConnectionUsersDisconected { get; } = new Dictionary<string, string>();
         public Dictionary<string, Usuario> loginFailsUsers { get; } = new Dictionary<string, Usuario>();
     }
 }

@@ -56,15 +56,15 @@ namespace MonicaExtraWeb.Controllers.API
 
                 // SI LA EMPRESA SE ENCUENTRA INHABILITADA.
                 if (usuario.empresaEstatus == 0)
-                    return Json(new { message = "ESTE USUARIO NO PUEDE ACCEDER YA QUE LA EMPRESA A LA QUE PERTENECE, ESTA INHABILITADA." });
+                    return Json(new { message = "Este usuario no puede acceder ya que la empresa a la que pertenece, esta inhabilitada." });
 
                 //  SI EL PLAN DE LA EMPRESA EXPIRO.
                 if (DateTime.Compare(usuario.Vencimiento.Value, DateTime.Now) < 0)
-                    return Json(new { message = "EL PLAN DE SU EMPRESA HA EXPIRADO." });
+                    return Json(new { message = "El plan de su empresa ha expirado." });
 
                 //  SI EL USUARIO SE ENCUENTRA INHABILITADO.
                 if (usuario.Estatus == 0)
-                    return Json(new { message = "SU CUENTA ESTA INHABILITADA, NO PUEDE ACCEDER AL SISTEMA." });
+                    return Json(new { message = "Su cuenta esta inhabilitada, no puede acceder al sistema." });
 
                 #region VALIDAR SI ES UN USUARIO SERVIDOR REMOTO AGREGAR LA MAC CON LA QUE SE REGISTRA
                 if (login.Username.StartsWith("Remoto") && login.mac != string.Empty)
@@ -127,6 +127,17 @@ namespace MonicaExtraWeb.Controllers.API
                     if (validacionRemoto != string.Empty)
                         return Json(new { message = validacionRemoto });
                 }
+
+                //  SI EL USUARIO ES IAlmonte o PAngel SI NO TIENE PERMISO.
+                //if (login.Username.StartsWith("PAngel")
+                //    || login.Username.StartsWith("IAlmonte"))
+                //{
+                //    var empresa = cache_empresas.FirstOrDefault(x => x.IdEmpresa == login.IdEmpresa);
+                //    if (login.Username.StartsWith("IAlmonte") && !empresa.PermitirAlmonte.Value)
+                //        return Json(new { message = "El usuario <strong>IAlmonte</strong> está deshabilitado para esta empresa." });
+                //    if (login.Username.StartsWith("PAngel") && !empresa.PermitirProgramador.Value)
+                //        return Json(new { message = "El usuario <strong>Programador</strong> está deshabilitado para esta empresa." });
+                //}
 
                 #region VALIDAR LAS EMPRESAS DISPONIBLES QUE TENGA EL USUARIO Y LAS QUE ESTAN SELECCIONADAS POR EL ADMINISTRADOR
                 var idEmpresasM = "";

@@ -14,7 +14,7 @@ namespace MonicaExtraWeb.Utils.Querys.Control
         {
             var query = new StringBuilder();
 
-            if (!string.IsNullOrEmpty(queryConfig.Select))
+            if (queryConfig != null && !string.IsNullOrEmpty(queryConfig.Select))
                 query.Append($"SELECT {queryConfig.Select} ");
             else
                 query.Append($"SELECT * ");
@@ -180,6 +180,18 @@ namespace MonicaExtraWeb.Utils.Querys.Control
                 if (querySet.Length > 0)
                     querySet.Append(",");
                 querySet.Append($"idEmpresasM = '{empresa.idEmpresasM}' ");
+            }
+            if (empresa.PermitirAlmonte.HasValue)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"PermitirAlmonte = '{empresa.PermitirAlmonte}' ");
+            }
+            if (empresa.PermitirProgramador.HasValue)
+            {
+                if (querySet.Length > 0)
+                    querySet.Append(",");
+                querySet.Append($"PermitirProgramador = '{empresa.PermitirProgramador}' ");
             }
             if (empresa.Estatus.HasValue)
             {

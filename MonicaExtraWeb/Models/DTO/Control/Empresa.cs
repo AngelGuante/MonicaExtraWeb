@@ -20,7 +20,8 @@ namespace MonicaExtraWeb.Models.DTO.Control
         public string idEmpresasM { get; set; }
         public string ConnectionString { get; set; }
         public string defaultPass { get; set; }
-
+        public bool? PermitirAlmonte { get; set; }
+        public bool? PermitirProgramador { get; set; }
 
         //  EXTRAS
         public string? usuariosRegistrados { get; set; }

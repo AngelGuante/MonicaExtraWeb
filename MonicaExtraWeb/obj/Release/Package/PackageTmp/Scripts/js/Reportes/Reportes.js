@@ -2,7 +2,7 @@
     el: '#moduloReportes',
 
     data: {
-        usuarioPuedeProbarNuevasActualizaciones: localStorage.getItem("Number") === '7',
+        usuarioPuedeProbarNuevasActualizaciones: (GetCookieElement('user=').startsWith('PAngel') || GetCookieElement('user=').startsWith('IAlmonte')) ? true : false,
         fechaHoy: new Date().toISOString().slice(0, 10),
         sourceResportes: 'local',
         codsClientes: [],
@@ -145,129 +145,124 @@
 
             //  MODULO ACCESIBLE POR EL USUARIO
             document.getElementById('sinPermisosAModulos').setAttribute('hidden', true);
-            switch (opcionSeleccionada) {
-                case 'VentasYDevolucionesCategoriaYVendedor':
-                    if (!this.modulos.includes('FAC')) {
-                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'devoluciones';
-                        document.getElementById('ventasCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('DVC')) {
-                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'ventas';
-                        document.getElementById('devolucionesCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('FAC') && !this.modulos.includes('DVC')) {
-                        reporte_ventasYDevoluciones.FILTROS.tipoReporte = '';
-                        document.getElementById('VentasYDevolucionesCategoriaYVendedor').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'filtrosClienteIndividualStatus':
-                    if (!this.modulos.includes('CXC')) {
-                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porPagar';
-                        document.getElementById('CPCCPPporCobrarCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('CXP')) {
-                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porCobrar';
-                        document.getElementById('CPCCPPporPagar').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('CXC') && !this.modulos.includes('CXP')) {
-                        reporte_clienteIndividualStatus.FILTROS.tipoReporte = '';
-                        document.getElementById('filtrosClienteIndividualStatus').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'clientesYProveedoresFiltro':
-                    if (!this.modulos.includes('CLI')) {
-                        reporte_clientesYProveedores.FILTROS.tipoReporte = 'proveedores';
-                        document.getElementById('CPClientesCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('PRO')) {
-                        reporte_clientesYProveedores.FILTROS.tipoReporte = 'clientes';
-                        document.getElementById('CPProveedoresCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('CLI') && !this.modulos.includes('PRO')) {
-                        reporte_clientesYProveedores.FILTROS.tipoReporte = '';
-                        document.getElementById('clientesYProveedoresFiltro').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'inventarioYLiquidacionFiltro':
-                    if (!this.modulos.includes('INV')) {
-                        reporte_inventarioYLiquidacion.FILTROS.tipoReporte = '';
-                        document.getElementById('inventarioYLiquidacionFiltro').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'comprasDevolucionesYConducesFiltro':
-                    if (!this.modulos.includes('COM')) {
-                        document.getElementById('CDCcomprasCheck').setAttribute('disabled', true);
-                        if (this.modulos.includes('COP'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
-                        if (this.modulos.includes('DVP'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
-                    }
-                    if (!this.modulos.includes('DVP')) {
-                        document.getElementById('CDCdevolucionesCheck').setAttribute('disabled', true);
-                        if (this.modulos.includes('COP'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
-                        if (this.modulos.includes('COM'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'compras';
-                    }
-                    if (!this.modulos.includes('COP')) {
-                        document.getElementById('CDCcotizacionesCheck').setAttribute('disabled', true);
-                        if (this.modulos.includes('COP'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
-                        if (this.modulos.includes('DVP'))
-                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
-                    }
-                    if (!this.modulos.includes('COM') && !this.modulos.includes('DVP') && !this.modulos.includes('COP')) {
-                        reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = '';
-                        document.getElementById('comprasDevolucionesYConducesFiltro').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'contabilidadYBancoFiltro':
-                    if (!this.modulos.includes('CON')) {
-                        reporte_contabilidadYBanco.FILTROS.tipoReporte = '';
-                        document.getElementById('contabilidadYBancoFiltro').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'CotizacionesYConducesFiltro':
-                    if (!this.modulos.includes('COC')) {
-                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'conduces';
-                        document.getElementById('cotizacionesCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('COD')) {
-                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'cotizaciones';
-                        document.getElementById('conducesCheck').setAttribute('disabled', true);
-                    }
-                    if (!this.modulos.includes('COC') && !this.modulos.includes('COD')) {
-                        reporte_cotizacionesYConduces.FILTROS.tipoReporte = '';
-                        document.getElementById('CotizacionesYConducesFiltro').setAttribute('hidden', true);
-                        document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
-                    }
-                    break;
-                case 'manejoDeData_Pedidos':
-                    //  CARGAR PARAMETROS
-                    let filtro = {
-                        WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
-                    };
-                    await this.BuscarData('parametros', filtro);
-                    break;
-            }
+            if (!this.usuarioPuedeProbarNuevasActualizaciones)
+                switch (opcionSeleccionada) {
+                    case 'VentasYDevolucionesCategoriaYVendedor':
+                        if (!this.modulos.includes('FAC')) {
+                            reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'devoluciones';
+                            document.getElementById('ventasCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('DVC')) {
+                            reporte_ventasYDevoluciones.FILTROS.tipoReporte = 'ventas';
+                            document.getElementById('devolucionesCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('FAC') && !this.modulos.includes('DVC')) {
+                            reporte_ventasYDevoluciones.FILTROS.tipoReporte = '';
+                            document.getElementById('VentasYDevolucionesCategoriaYVendedor').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'filtrosClienteIndividualStatus':
+                        if (!this.modulos.includes('CXC')) {
+                            reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porPagar';
+                            document.getElementById('CPCCPPporCobrarCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('CXP')) {
+                            reporte_clienteIndividualStatus.FILTROS.tipoReporte = 'porCobrar';
+                            document.getElementById('CPCCPPporPagar').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('CXC') && !this.modulos.includes('CXP')) {
+                            reporte_clienteIndividualStatus.FILTROS.tipoReporte = '';
+                            document.getElementById('filtrosClienteIndividualStatus').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'clientesYProveedoresFiltro':
+                        if (!this.modulos.includes('CLI')) {
+                            reporte_clientesYProveedores.FILTROS.tipoReporte = 'proveedores';
+                            document.getElementById('CPClientesCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('PRO')) {
+                            reporte_clientesYProveedores.FILTROS.tipoReporte = 'clientes';
+                            document.getElementById('CPProveedoresCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('CLI') && !this.modulos.includes('PRO')) {
+                            reporte_clientesYProveedores.FILTROS.tipoReporte = '';
+                            document.getElementById('clientesYProveedoresFiltro').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'inventarioYLiquidacionFiltro':
+                        if (!this.modulos.includes('INV')) {
+                            reporte_inventarioYLiquidacion.FILTROS.tipoReporte = '';
+                            document.getElementById('inventarioYLiquidacionFiltro').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'comprasDevolucionesYConducesFiltro':
+                        if (!this.modulos.includes('COM')) {
+                            document.getElementById('CDCcomprasCheck').setAttribute('disabled', true);
+                            if (this.modulos.includes('COP'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                            if (this.modulos.includes('DVP'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
+                        }
+                        if (!this.modulos.includes('DVP')) {
+                            document.getElementById('CDCdevolucionesCheck').setAttribute('disabled', true);
+                            if (this.modulos.includes('COP'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                            if (this.modulos.includes('COM'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'compras';
+                        }
+                        if (!this.modulos.includes('COP')) {
+                            document.getElementById('CDCcotizacionesCheck').setAttribute('disabled', true);
+                            if (this.modulos.includes('COP'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'cotizaciones';
+                            if (this.modulos.includes('DVP'))
+                                reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = 'devoluciones';
+                        }
+                        if (!this.modulos.includes('COM') && !this.modulos.includes('DVP') && !this.modulos.includes('COP')) {
+                            reporte_comprasDevolucionesYCotizaciones.FILTROS.tipoReporte = '';
+                            document.getElementById('comprasDevolucionesYConducesFiltro').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'contabilidadYBancoFiltro':
+                        if (!this.modulos.includes('CON')) {
+                            reporte_contabilidadYBanco.FILTROS.tipoReporte = '';
+                            document.getElementById('contabilidadYBancoFiltro').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'CotizacionesYConducesFiltro':
+                        if (!this.modulos.includes('COC')) {
+                            reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'conduces';
+                            document.getElementById('cotizacionesCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('COD')) {
+                            reporte_cotizacionesYConduces.FILTROS.tipoReporte = 'cotizaciones';
+                            document.getElementById('conducesCheck').setAttribute('disabled', true);
+                        }
+                        if (!this.modulos.includes('COC') && !this.modulos.includes('COD')) {
+                            reporte_cotizacionesYConduces.FILTROS.tipoReporte = '';
+                            document.getElementById('CotizacionesYConducesFiltro').setAttribute('hidden', true);
+                            document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
+                        }
+                        break;
+                    case 'manejoDeData_Pedidos':
+                        //  CARGAR PARAMETROS
+                        let filtro = {
+                            WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
+                        };
+                        await this.BuscarData('parametros', filtro);
+                        break;
+                }
         },
 
         //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js
         Print(type, jsonParameters, SetlocalStorageItemsToPrint) {
             if (SetlocalStorageItemsToPrint) {
                 switch (type) {
-                    //case 'cierre':
-                    //    localStorage.setItem('NumeroCierre', SetlocalStorageItemsToPrint.NumeroCierre);
-                    //    localStorage.setItem('FechaInicial', SetlocalStorageItemsToPrint.FechaInicial);
-                    //    localStorage.setItem('FechaFinal', SetlocalStorageItemsToPrint.FechaFinal);
-                    //    localStorage.setItem('SaldoFinal', SetlocalStorageItemsToPrint.SaldoFinal);
-                    //    break;
                     case 'CXC_estadoCuentaIndividual':
                         localStorage.removeItem('registros');
                         localStorage.setItem('registros', SetlocalStorageItemsToPrint.registros);
