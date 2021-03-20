@@ -2320,6 +2320,7 @@ namespace MonicaExtraWeb.Utils
                 query.Append("COUNT(*) count ");
             else
             {
+                query.Append("  cliente_id id, ");
                 query.Append("  TRIM(nombre_clte) nombre, ");
                 query.Append("  codigo_clte codigo ");
 
@@ -2640,6 +2641,117 @@ namespace MonicaExtraWeb.Utils
 
             if (!string.IsNullOrEmpty(filtro.NroCotizacion))
                 query.Append($"WHERE ltrim(str(nro_estimado)) = '{filtro.NroCotizacion}' ");
+
+            return query.ToString();
+        }
+
+        // ---------
+        public static string InsertarPedido(Filtros filtro)
+        {
+            var query = new StringBuilder();
+
+            query.Append($"INSERT INTO {filtro.conn}.dbo.estimado ");
+            query.Append("( ");
+            query.Append("nro_estimado");
+            query.Append(",cliente_id ");
+            query.Append(",clte_direccion1");
+            query.Append(",clte_direccion2");
+            query.Append(",clte_direccion3");
+            query.Append(",registro_tributario");
+            query.Append(",vendedor_id");
+            query.Append(",tipo_documento");
+            query.Append(",fecha_emision");
+            query.Append(",fecha_vcmto");
+            query.Append(",refer_cliente");
+            query.Append(",termino_id");
+            query.Append(",impto_en_precio");
+            query.Append(",comentario_Detalle");
+            query.Append(",subtotal");
+            query.Append(",dscto_monto");
+            query.Append(",impuesto_monto");
+            query.Append(",total");
+            query.Append(",dscto_pciento");
+            query.Append(",impuesto_pciento");
+            query.Append(",tipo_envio");
+            query.Append(",hora");
+            query.Append(") ");
+            query.Append("VALUES ");
+            query.Append("( ");
+            query.Append($"(SELECT TOP 1 CASE WHEN nro_estimado IS NULL OR nro_estimado < 1000000001 THEN 1000000001 ELSE nro_estimado + 1 END nro_estimado FROM {filtro.conn}.dbo.estimado ORDER BY estimado_id DESC) ");
+
+            query.Append($",'{filtro.Estimado.cliente_id}'");
+            query.Append($",'{filtro.Estimado.clte_direccion1}'");
+            query.Append($",'{filtro.Estimado.clte_direccion2}'");
+            query.Append($",'{filtro.Estimado.clte_direccion3}'");
+            query.Append($",'{filtro.Estimado.registro_tributario}'");
+            query.Append($",'{filtro.Estimado.vendedor_id}'");
+            query.Append($",'{filtro.Estimado.tipo_documento}'");
+            query.Append($",'{filtro.Estimado.fecha_emision}'");
+            query.Append($",'{filtro.Estimado.fecha_vcmto}'");
+            query.Append($",'{filtro.Estimado.refer_cliente}'");
+            query.Append($",'{filtro.Estimado.termino_id}'");
+            query.Append($",'{filtro.Estimado.impto_en_precio}'");
+            query.Append($",'{filtro.Estimado.comentario_Detalle}'");
+            query.Append($",'{filtro.Estimado.subtotal}'");
+            query.Append($",'{filtro.Estimado.dscto_monto}'");
+            query.Append($",'{filtro.Estimado.impuesto_monto}'");
+            query.Append($",'{filtro.Estimado.total}'");
+            query.Append($",'{filtro.Estimado.dscto_pciento}'");
+            query.Append($",'{filtro.Estimado.impuesto_pciento}'");
+            query.Append(",'P'");
+            query.Append(",CURRENT_TIMESTAMP");
+            query.Append(") ");
+            query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) pedidoId ");
+
+            return query.ToString();
+        }
+
+        public static string InsertarDetallesPedido(Filtros filtro)
+        {
+            if (filtro.EstimadoDetalles.Count == 0)
+                return "";
+
+            var query = new StringBuilder();
+            var queryProductos = new StringBuilder();
+
+            query.Append($"INSERT INTO {filtro.conn}.dbo.estimado_detalle ");
+            query.Append("(");
+            query.Append("estimado_id");
+            query.Append(",fecha_emision");
+            query.Append(",cliente_id");
+            query.Append(",producto_id");
+            query.Append(",cantidad");
+            query.Append(",precio_estimado");
+            query.Append(",impto_pciento");
+            query.Append(",impto_monto");
+            query.Append(",descto_pciento");
+            query.Append(",descto_monto");
+            query.Append(",comentario");
+            query.Append(",bodega_id");
+            query.Append(") ");
+            query.Append("VALUES ");
+
+            filtro.EstimadoDetalles.ForEach(prodcto =>
+            {
+                if (queryProductos.Length > 0)
+                    queryProductos.Append(",");
+
+                queryProductos.Append("( ");
+                queryProductos.Append($"'{filtro.Estimado.estimado_id}'");
+                queryProductos.Append($",'{filtro.Estimado.fecha_emision}'");
+                queryProductos.Append($",'{filtro.Estimado.cliente_id}'");
+                queryProductos.Append($",'{prodcto.producto_id}'");
+                queryProductos.Append($",'{prodcto.cantidad}'");
+                queryProductos.Append($",'{prodcto.precio_estimado}'");
+                queryProductos.Append($",'{prodcto.impto_pciento}'");
+                queryProductos.Append($",'{prodcto.impto_monto}'");
+                queryProductos.Append($",'{prodcto.descto_pciento}'");
+                queryProductos.Append($",'{prodcto.descto_monto}'");
+                queryProductos.Append($",'{prodcto.comentario}'");
+                queryProductos.Append($",'{prodcto.bodega_id}'");
+                queryProductos.Append(") ");
+            });
+            query.Append(queryProductos.ToString());
 
             return query.ToString();
         }

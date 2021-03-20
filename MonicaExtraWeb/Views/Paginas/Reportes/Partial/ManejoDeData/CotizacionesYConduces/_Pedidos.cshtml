@@ -248,7 +248,7 @@
                                         <td>{{item.cant}}</td>
                                         <td>
                                             <a style="cursor:pointer;" v-on:click="detallesProducto({codigo_producto: item.codigo_producto})"><i class="material-icons" style="color:#17A2B8">remove_red_eye</i></a>
-                                            <a style="cursor:pointer;"v-on:click="agregarProductoALista({codigo_producto: item.codigo_producto, descrip_producto: item.descrip_producto, precio: item.precio, cantidad: 1, cant: item.cant, factura_sin_stock: item.factura_sin_stock})"><i class="material-icons" style="color:#17A2B8">add_circle</i></a>
+                                            <a style="cursor:pointer;"v-on:click="agregarProductoALista({bodega_id: item.bodega_id, codigo_producto: item.codigo_producto, descrip_producto: item.descrip_producto, precio: item.precio, cantidad: 1, cant: item.cant, factura_sin_stock: item.factura_sin_stock})"><i class="material-icons" style="color:#17A2B8">add_circle</i></a>
                                         </td>
                                     </tr>
                             </table>

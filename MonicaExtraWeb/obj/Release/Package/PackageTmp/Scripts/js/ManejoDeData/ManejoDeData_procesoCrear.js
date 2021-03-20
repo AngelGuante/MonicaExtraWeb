@@ -101,7 +101,7 @@
                 this.LlenarSelect(['terminoDePago', 'vendedores']);
                 this.ProcesoCrear.codClienteCorrecto = true;
                 this.ProcesoCrear.Pedidos.cliente.nombre = data[0].nombre;
-                this.ProcesoCrear.Pedidos.cliente.direcciones = data[0].direcciones;
+                this.ProcesoCrear.Pedidos.cliente.direcciones = data[0].direcciones.substr(0, 79);
                 this.ProcesoCrear.Pedidos.cliente.telefonos = data[0].telefonos;
                 this.ProcesoCrear.Pedidos.cliente.emails = data[0].emails.toString().trim().length > 1 ? `ATENCION: ${data[0].emails}` : '';
                 this.ProcesoCrear.Pedidos.cliente.rnc = data[0].rnc;
@@ -253,7 +253,7 @@
                     return;
                 }
                 //  VALIDAR EL PRECIO DEL PRODUCTO.
-                if (Number(valorPrecio) < this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto).costo ) {
+                if (Number(valorPrecio) < this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto).costo) {
                     document.getElementById(`itemPrecio_${config.codigo_producto}`).value = this.ProcesoCrear.Pedidos.productosTabla1.find(x => x.codigo_producto === config.codigo_producto).costo;
 
                     MostrarMensage({
@@ -302,9 +302,9 @@
 
         async ModalClienteSleccionado(value) {
             $('#procesoCrearBuscarClienteModal').modal('hide');
-            const seleccionado = value.split(' - ');
-            this.ProcesoCrear.Pedidos.cliente.codigo = seleccionado[0];
-            this.ProcesoCrear.Pedidos.cliente.nombre = seleccionado[1];
+            this.ProcesoCrear.Pedidos.cliente.codigo = value.codigo;
+            this.ProcesoCrear.Pedidos.cliente.nombre = value.nombre;
+            this.ProcesoCrear.Pedidos.cliente.id = value.id;
             //this.ProcesoCrear.codClienteCorrecto = true;
             await this.validarCodigo();
         },
@@ -318,7 +318,7 @@
                 return;
 
             let filtro = {
-                SELECT: `, cant_total cant, precio1 precio, factura_sin_stock `,
+                SELECT: `, cant_total cant, precio1 precio, factura_sin_stock, bodega_id `,
                 estatus: `> 0`,
                 take: 8
             };
@@ -334,7 +334,6 @@
 
             this.FILTROS.valor = '';
             var data = await monicaReportes.BuscarData('productosList', filtro);
-
             if (data.length === 1) {
                 let itemData = data[0];
                 itemData.cantidad = 1;
@@ -397,9 +396,33 @@
         },
 
         async GuardarPedido() {
-            const json = {
-                estimado: {
-                    cliente_id: this.ProcesoCrear.Pedidos.cliente.codigo,
+            let error = '';
+            if (!MatchRegex(1, this.ProcesoCrear.Pedidos.cliente.rnc))
+                error = 'RNC invalido.';
+            else if (!this.ProcesoCrear.Pedidos.cliente.tipo_empresaUsuario)
+                error = 'Débe seleccionar el NCF.';
+            else if (!this.ProcesoCrear.Pedidos.cliente.termino)
+                error = 'Débe seleccionar el término.';
+            else if (!this.ProcesoCrear.Pedidos.cliente.vendedor)
+                error = 'Débe seleccionar el vendedor.';
+            else if (!this.ProcesoCrear.Pedidos.productosTabla1.length)
+                error = 'Débe ingresar almenos un producto.';
+
+            if (error.length) {
+                MostrarMensage({
+                    title: 'No se puede crear el pedido.',
+                    message: error,
+                    icon: 'error'
+                });
+                return;
+            }
+
+            let filtro = '';
+
+            //  PRIMERO SE GUARDA EL PEDIDO PARA OBTENER EL ID.
+            filtro = {
+                Estimado: {
+                    cliente_id: this.ProcesoCrear.Pedidos.cliente.id,
                     clte_direccion1: this.ProcesoCrear.Pedidos.cliente.direcciones,
                     clte_direccion2: this.ProcesoCrear.Pedidos.cliente.telefonos,
                     clte_direccion3: this.ProcesoCrear.Pedidos.cliente.emails,
@@ -418,37 +441,39 @@
                     total: this.ProcesoCrear.total,
                     dscto_pciento: this.ProcesoCrear.Pedidos.cliente.descuento,
                     impuesto_pciento: this.ProcesoCrear.Pedidos.itbis
-                },
-                detalle: this.ProcesoCrear.Pedidos.productosTabla1
-            };
-
-            json.detalle.forEach(item => {
-                delete item.descrip_producto;
-                delete item.codigo_producto;
-                delete item.cant;
-            });
-
-            const response = await fetch('../../API/PEDIDO/POST', {
-                method: 'POST',
-                body: JSON.stringify(json),
-                headers: {
-                    'Authorization': 'Bearer ' + GetCookieElement(`Authorization`).replace("=", ""),
-                    'Content-Type': 'application/json'
                 }
-            });
+            };
+            var data = await monicaReportes.BuscarData('guardarPedido', filtro);
+            
+            //  LUEGO SE GUARDAN LOS DETALLES DEL PEDIDO.
+            if (data && data.length && data[0].pedidoId && data[0].pedidoId > 0) {
+                filtro = {
+                    Estimado: {
+                        estimado_id: data[0].pedidoId,
+                        fecha_emision: this.FILTROS.fechaInicio,
+                        cliente_id: this.ProcesoCrear.Pedidos.cliente.id,
+                    },
+                    EstimadoDetalles: this.ProcesoCrear.Pedidos.productosTabla1
+                }
 
-            this.Limpiar({
-                limpiarTablas: true,
-                limpiarFechas: true,
-            });
+                filtro.EstimadoDetalles.forEach(item => {
+                    delete item.descrip_producto;
+                    delete item.codigo_producto;
+                    delete item.cant;
+                });
+                await monicaReportes.BuscarData('guardarDetallesPedido', filtro, false);
 
-            let id = (await response.json()).rst;
-            if (id)
+                this.Limpiar({
+                    limpiarTablas: true,
+                    limpiarFechas: true,
+                });
+
                 MostrarMensage({
                     title: 'Pedido Creado.',
-                    message: `Se ha creado el pedido ${id}`,
+                    message: `Se ha creado el pedido ${data[0].pedidoId}`,
                     icon: 'success'
                 });
+            }
             else
                 MostrarMensage({
                     title: 'Algo a ocurrido.',

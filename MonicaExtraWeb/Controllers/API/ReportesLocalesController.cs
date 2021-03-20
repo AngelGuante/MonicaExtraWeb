@@ -25,7 +25,10 @@ namespace MonicaExtraWeb.Controllers
             if (data.data.IndexOf("-->>") > 0)
                 IP = data.data.Split(new string[] { "-->>" }, System.StringSplitOptions.None)[1];
 
-            DataWebsocketPerClient.Add(IP, JsonConvert.SerializeObject(data));
+            if (DataWebsocketPerClient.ContainsKey(IP))
+                DataWebsocketPerClient.Remove(IP);
+
+                DataWebsocketPerClient.Add(IP, JsonConvert.SerializeObject(data));
         }
 
         [HttpGet]

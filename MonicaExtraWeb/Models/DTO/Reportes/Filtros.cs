@@ -1,4 +1,6 @@
-﻿namespace MonicaExtraWeb.Models.DTO.Reportes
+﻿using MonicaExtraWeb.Models.monica10;
+
+namespace MonicaExtraWeb.Models.DTO.Reportes
 {
     public class Filtros
     {
@@ -96,7 +98,8 @@
             set => _take = value;
         }
 
-        //// Control
-        //public bool remote { get; set; } = false;
+        //  OBJETOS
+        public Estimado Estimado { get; set; }
+        public System.Collections.Generic.List<EstimadoDetalle> EstimadoDetalles { get; set; }
     }
 }

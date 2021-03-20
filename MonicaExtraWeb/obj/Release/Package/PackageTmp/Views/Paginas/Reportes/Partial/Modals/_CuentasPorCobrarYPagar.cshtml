@@ -30,7 +30,8 @@
                         <tr v-for="item in modalData.clientes">
                             <td>{{ item.codigo }}</td>
                             <td>{{ item.nombre }}</td>
-                            <td style="text-align:right;"> <button class="btn btn-info" style="padding:0;" v-on:click="ModalClienteSleccionado(item.codigo + ' - ' + item.nombre)"><i class="material-icons" style="vertical-align:bottom">person</i> Seleccionar</button> </td>
+                            <td style="text-align:right;"> <button class="btn btn-info" style="padding:0;" v-on:click="ModalClienteSleccionado(item)"><i class="material-icons" style="vertical-align:bottom">person</i> Seleccionar</button> </td>
+                            <td style="text-align:right;"> @*<button class="btn btn-info" style="padding:0;" v-on:click="ModalClienteSleccionado(item.codigo + ' - ' + item.nombre)"><i class="material-icons" style="vertical-align:bottom">person</i> Seleccionar</button>*@ </td>
                         </tr>
                     </tbody>
                 </table>

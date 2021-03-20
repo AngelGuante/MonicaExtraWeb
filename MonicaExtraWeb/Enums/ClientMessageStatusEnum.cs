@@ -31,5 +31,8 @@
         Productos = 25,
         Dolar = 26,
         Paramtro = 27,
+
+        InsertPedido = 28,
+        InsertDetallePedido = 29,
     }
 }

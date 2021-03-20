@@ -249,14 +249,17 @@
                             document.getElementById('sinPermisosAModulos').removeAttribute('hidden');
                         }
                         break;
-                    case 'manejoDeData_Pedidos':
-                        //  CARGAR PARAMETROS
-                        let filtro = {
-                            WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
-                        };
-                        await this.BuscarData('parametros', filtro);
-                        break;
                 }
+
+            //  CARGAR PARAMETROS
+            switch (opcionSeleccionada) {
+                case 'manejoDeData_Pedidos':
+                    let filtro = {
+                        WHRER_IN: "'USO_IMPTO_ESTIMADO', 'CAMBIA_PRECIO_ESTIMADO', 'P_BUSQPRDFAB_ESTIMADO'"
+                    };
+                    await this.BuscarData('parametros', filtro);
+                    break;
+            }
         },
 
         //  PARA PODER IMPRIMIR USANDO EL METODO EN Utils.js
@@ -273,8 +276,8 @@
             Print(type, jsonParameters);
         },
 
-        //  BUSCAR INFORMACION SI ES NECESARIA.
-        async BuscarData(data, filtro) {
+        //  BUSCAR INFORMACION.
+        async BuscarData(data, filtro, mostrarAlerta) {
             if (typeof (data) === "string") {
                 switch (data) {
                     case 'terminoDePago':
@@ -357,6 +360,14 @@
                         return await BuscarInformacionLocal('SendWebsocketServer/13', filtro);
                     case 'actualizarEstimado':
                         return await BuscarInformacionLocal('SendWebsocketServer/14', filtro, true);
+
+                    //  ---------------
+                    //  INSERTAR DATA.
+                    //  ---------------
+                    case 'guardarPedido':
+                        return await BuscarInformacionLocal('SendWebsocketServer/28', filtro);
+                    case 'guardarDetallesPedido':
+                        return await BuscarInformacionLocal('SendWebsocketServer/29', filtro, mostrarAlerta);
 
                     default:
                         alert('Console Error');

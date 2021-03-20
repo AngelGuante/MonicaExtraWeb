@@ -67,24 +67,34 @@ namespace MonicaExtraWeb.Utils
                 || login.Username.StartsWith("IAlmonte"))
             {
                 var empresaCacheada = cache_empresas.FirstOrDefault(x => x.IdEmpresa == login.IdEmpresa);
+                if (empresaCacheada == null)
+                    return null;
+
+                var query = Select(new Empresa
+                {
+                    IdEmpresa = login.IdEmpresa
+                }, new Models.DTO.QueryConfigDTO
+                {
+                    Select = "idEmpresa, idEmpresasM, ESTATUS, Vencimiento"
+                });
+                var empresa = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
+
                 if (login.Username.StartsWith("IAlmonte") && empresaCacheada.PermitirAlmonte.Value)
                 {
                     usuario = Conn.Query<Usuario>(Select(new Usuario
                     {
                         NombreUsuario = login.Username,
                     }, new Models.DTO.QueryConfigDTO { TraerClave = true })).FirstOrDefault();
+                    usuario.IdEmpresa = login.IdEmpresa;
+                    usuario.Remoto = true;
+                    usuario.idEmpresasM = empresa.idEmpresasM;
+                    usuario.IdEmpresa = empresa.IdEmpresa.Value;
+                    usuario.empresaEstatus = empresa.Estatus.Value;
+                    usuario.Vencimiento = empresa.Vencimiento;
+                    usuario.Estatus = 1;
                 }
                 else if (login.Username.StartsWith("PAngel") && empresaCacheada.PermitirProgramador.Value)
                 {
-                    var query = Select(new Empresa
-                    {
-                        IdEmpresa = login.IdEmpresa
-                    }, new Models.DTO.QueryConfigDTO
-                    {
-                        Select = "idEmpresa, idEmpresasM, ESTATUS, Vencimiento"
-                    });
-                    var empresa = Conn.Query<Empresa>(query.ToString()).FirstOrDefault();
-
                     usuario = new Usuario
                     {
                         IdUsuario = 0,

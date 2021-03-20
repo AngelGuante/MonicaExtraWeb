@@ -128,20 +128,9 @@ namespace MonicaExtraWeb.Controllers.API
                         return Json(new { message = validacionRemoto });
                 }
 
-                //  SI EL USUARIO ES IAlmonte o PAngel SI NO TIENE PERMISO.
-                //if (login.Username.StartsWith("PAngel")
-                //    || login.Username.StartsWith("IAlmonte"))
-                //{
-                //    var empresa = cache_empresas.FirstOrDefault(x => x.IdEmpresa == login.IdEmpresa);
-                //    if (login.Username.StartsWith("IAlmonte") && !empresa.PermitirAlmonte.Value)
-                //        return Json(new { message = "El usuario <strong>IAlmonte</strong> está deshabilitado para esta empresa." });
-                //    if (login.Username.StartsWith("PAngel") && !empresa.PermitirProgramador.Value)
-                //        return Json(new { message = "El usuario <strong>Programador</strong> está deshabilitado para esta empresa." });
-                //}
-
                 #region VALIDAR LAS EMPRESAS DISPONIBLES QUE TENGA EL USUARIO Y LAS QUE ESTAN SELECCIONADAS POR EL ADMINISTRADOR
                 var idEmpresasM = "";
-                if (usuario.Nivel != 0 && usuario.Nivel != 4)
+                if (usuario.Nivel != 0 && !login.Username.StartsWith("IAlmonte") && usuario.Nivel != 4)
                 {
                     if (usuario.Nivel != 0)
                         if (usuario.idEmpresasM != null && usuario.idEmpresasM != string.Empty)

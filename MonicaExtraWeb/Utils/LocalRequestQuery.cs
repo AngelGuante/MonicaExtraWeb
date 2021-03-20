@@ -12,7 +12,7 @@ using static MonicaExtraWeb.Utils.Reportes;
 using static MonicaExtraWeb.Utils.RequestsHTTP;
 using static MonicaExtraWeb.Utils.Querys.Usuarios;
 using static MonicaExtraWeb.Utils.Token.Claims;
-using static MonicaExtraWeb.Utils.Helper;
+//using static MonicaExtraWeb.Utils.Helper;
 using System.Linq;
 using MonicaExtraWeb.Models.DTO.Control;
 using Dapper;
@@ -23,8 +23,11 @@ namespace MonicaExtraWeb.Utils
     {
         private static string _websocketServerPATH = ConfigurationManager.AppSettings["websocketServerPATH"];
 
-        public static async Task<string> SendQueryToClient(ClientMessageStatusEnum status, Filtros filtro)
+        public static async Task<string> SendQueryToClient(ClientMessageStatusEnum status, Filtros filtro, HttpContext context = null)
         {
+            if (context != default)
+                HttpContext.Current = context;
+
             var IP = HttpContext.Current.Request.UserHostAddress;
             var query = "";
             var datosConeccion = "";
@@ -157,6 +160,13 @@ namespace MonicaExtraWeb.Utils
                 case ClientMessageStatusEnum.Paramtro:
                     query = Parametro(filtro);
                     break;
+
+                case ClientMessageStatusEnum.InsertPedido:
+                    query = InsertarPedido(filtro);
+                    break;
+                case ClientMessageStatusEnum.InsertDetallePedido:
+                    query = InsertarDetallesPedido(filtro);
+                    break;
             }
 
             query += datosConeccion;
@@ -171,8 +181,11 @@ namespace MonicaExtraWeb.Utils
             return await POST($"{_websocketServerPATH}/SendToClient/{(_ip != default ? _ip : IP)}", content);
         }
 
-        public static void RequestClientData(out string resultset)
+        public static void RequestClientData(out string resultset, HttpContext context = null)
         {
+            if (context != default)
+                HttpContext.Current = context;
+
             var IP = HttpContext.Current.Request.UserHostAddress;
             DataWebsocketPerClient.TryGetValue(IP, out resultset);
 
