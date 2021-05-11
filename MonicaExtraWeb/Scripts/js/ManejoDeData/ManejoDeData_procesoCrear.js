@@ -87,7 +87,7 @@
 
     methods: {
         async validarCodigo() {
-            if (!this.ProcesoCrear.Pedidos.cliente.codigo.length || this.ProcesoCrear.codClienteCorrecto)
+            if (!String(this.ProcesoCrear.Pedidos.cliente.codigo).length || this.ProcesoCrear.codClienteCorrecto)
                 return;
 
             let filtro = {
@@ -440,11 +440,13 @@
                     impuesto_monto: this.ProcesoCrear.itbis,
                     total: this.ProcesoCrear.total,
                     dscto_pciento: this.ProcesoCrear.Pedidos.cliente.descuento,
-                    impuesto_pciento: this.ProcesoCrear.Pedidos.itbis
+                    impuesto_pciento: this.ProcesoCrear.Pedidos.itbis,
+                    tipo_cambio: parseFloat((await monicaReportes.BuscarData('dolar_venta'))[0].dolar_venta)
                 }
             };
+
             var data = await monicaReportes.BuscarData('guardarPedido', filtro);
-            
+
             //  LUEGO SE GUARDAN LOS DETALLES DEL PEDIDO.
             if (data && data.length && data[0].pedidoId && data[0].pedidoId > 0) {
                 filtro = {

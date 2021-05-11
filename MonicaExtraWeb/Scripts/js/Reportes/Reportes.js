@@ -327,8 +327,9 @@
                     case 'dolar_venta':
                         if (this.dolar)
                             return this.dolar;
-                        else
+                        else {
                             return this.dolar = await BuscarInformacionLocal('SendWebsocketServer/26', {});
+                        }
                     case 'parametros':
                         filtro.WHRER_IN = filtro.WHRER_IN.split(',');
                         this.parametros.forEach(item => {

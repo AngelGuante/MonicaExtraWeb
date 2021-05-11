@@ -194,7 +194,7 @@
 
             this.DATA.forEach(item => {
                 txtContent += (
-                    `${item.registro_tributario}|${this.$options.filters.FilterTipoIdentificacion(item.LENTipoIdentificacion)}|${item.ncf}|${item.ncfModificado}|${item.TipoIngreso}|${item.fecha_emision}|${item.FechaRetencion}|${item.MontoFacturado}|${item.impuesto_monto}|${item.reteiva_monto}||||||${this.validarCeroParaExportarTXT(item.MontoPropina)}|${this.validarCeroParaExportarTXT(item.Efectivo)}|${this.validarCeroParaExportarTXT(item.Cheque)}|${this.validarCeroParaExportarTXT(item.TarjetaDebito)}|${this.validarCeroParaExportarTXT(item.VentaCredito)}|${this.validarCeroParaExportarTXT(item.Bonos)}|${this.validarCeroParaExportarTXT(item.Permuta)}|${this.validarCeroParaExportarTXT(item.OtrasFormas)}--\n`).replaceAll(/ /g, '').replaceAll(/-/g, '').replaceAll(/\|0\|/g, '||');
+                    `${item.registro_tributario}|${this.$options.filters.FilterTipoIdentificacion(item.LENTipoIdentificacion)}|${item.ncf}|${item.ncfModificado}|${item.TipoIngreso}|${this.validarFechaParaExportarTXT(item.fecha_emision)}|${item.FechaRetencion}|${item.MontoFacturado}|${item.impuesto_monto}|${item.reteiva_monto}||||||${this.validarCeroParaExportarTXT(item.MontoPropina)}|${this.validarCeroParaExportarTXT(item.Efectivo)}|${this.validarCeroParaExportarTXT(item.Cheque)}|${this.validarCeroParaExportarTXT(item.TarjetaDebito)}|${this.validarCeroParaExportarTXT(item.VentaCredito)}|${this.validarCeroParaExportarTXT(item.Bonos)}|${this.validarCeroParaExportarTXT(item.Permuta)}|${this.validarCeroParaExportarTXT(item.OtrasFormas)}--\n`).replaceAll(/ /g, '').replaceAll(/-/g, '').replaceAll(/\|0\|/g, '||');
             });
 
             saveDownloadedData(`${informe}_${new Date().toISOString().substr(0, 10)}`, txtContent);
@@ -202,6 +202,13 @@
 
         validarCeroParaExportarTXT(monto) {
             return monto == '0' ? '' : monto;
+        },
+
+        validarFechaParaExportarTXT(fecha) {
+            if (!fecha.includes('T'))
+                return fecha;
+
+            return fecha.substr(0, fecha.indexOf('T'));
         },
 
         TipoConsultaSelectChanged() {

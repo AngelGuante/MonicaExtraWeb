@@ -69,6 +69,16 @@ namespace MonicaExtraWeb.Controllers.API
             return Ok(true);
         }
 
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("CAMBIARIP")]
+        public IHttpActionResult CambiarIp(LoginRequest login)
+        {
+            if (CompanyRemoteConnectionIP.ContainsKey(login.IdEmpresa.ToString()))
+                CompanyRemoteConnectionIP[login.IdEmpresa.ToString()] = HttpContext.Current.Request.UserHostAddress;
+            return Ok(true);
+        }
+
         [Authorize]
         [HttpGet]
         [Route("ESTABLECER")]

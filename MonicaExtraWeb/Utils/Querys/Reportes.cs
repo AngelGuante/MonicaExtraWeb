@@ -2334,10 +2334,14 @@ namespace MonicaExtraWeb.Utils
                 if (filtro.JOIN.Contains("impuestos"))
                     query.Append($"JOIN {filtro.conn}.dbo.impuestos I ON I.Abreviatura = C.impto ");
 
+            #region WHERE
+            query.Append($"WHERE C.clte_Activo = 'A' ");
+
             if (!string.IsNullOrEmpty(filtro.code))
-                query.Append($"WHERE codigo_clte = '{filtro.code}'");
+                query.Append($"AND codigo_clte = '{filtro.code}'");
             if (!string.IsNullOrEmpty(filtro.name))
-                query.Append($"WHERE nombre_clte LIKE '%{filtro.name}%'");
+                query.Append($"AND nombre_clte LIKE '%{filtro.name}%'");
+            #endregion
 
             if (!filtro.SUM)
             {
@@ -2597,7 +2601,7 @@ namespace MonicaExtraWeb.Utils
         {
             var query = new StringBuilder();
 
-            query.Append("SELECT TOP 1 dolar_venta ");
+            query.Append("SELECT TOP 1 CAST(dolar_venta AS VARCHAR) dolar_venta ");
             query.Append($"FROM {getConnectionString()}.dbo.cambio_dolar ");
             query.Append(" ORDER BY fecha_cambio DESC ");
 
@@ -2672,6 +2676,7 @@ namespace MonicaExtraWeb.Utils
             query.Append(",total");
             query.Append(",dscto_pciento");
             query.Append(",impuesto_pciento");
+            query.Append(",tipo_cambio");
             query.Append(",tipo_envio");
             query.Append(",hora");
             query.Append(") ");
@@ -2698,6 +2703,7 @@ namespace MonicaExtraWeb.Utils
             query.Append($",'{filtro.Estimado.total}'");
             query.Append($",'{filtro.Estimado.dscto_pciento}'");
             query.Append($",'{filtro.Estimado.impuesto_pciento}'");
+            query.Append($",'{filtro.Estimado.tipo_cambio}'");
             query.Append(",'P'");
             query.Append(",CURRENT_TIMESTAMP");
             query.Append(") ");
