@@ -367,6 +367,7 @@ namespace MonicaExtraWeb.Utils
                     TableSourceComprobante = "ncf";
                     break;
                 case "cotizaciones":
+                case "pedidos":
                     TableSource = "estimado TS";
                     TableDetilsSource = "estimado_detalle TDS";
                     TableSourceID = "estimado_id";
@@ -642,8 +643,13 @@ namespace MonicaExtraWeb.Utils
                 if (!string.IsNullOrEmpty(filtro.Codigo_vendedor))
                     query.Append($"AND V.Codigo_vendedor = '{filtro.Codigo_vendedor}' ");
             }
-            else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+            else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "pedidos" || filtro.tipoReporte == "conduces")
             {
+                if (filtro.tipoReporte == "cotizaciones")
+                    query.Append(" AND tipo_envio <> 'P' ");
+                else if (filtro.tipoReporte == "pedidos")
+                    query.Append(" AND tipo_envio = 'P' ");
+
                 if (!string.IsNullOrEmpty(filtro.estatus))
                     switch (filtro.estatus)
                     {
@@ -744,7 +750,7 @@ namespace MonicaExtraWeb.Utils
                 case "RFA09":
                     if (!string.IsNullOrEmpty(filtro.comprobante))
                     {
-                        if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                        if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "pedidos" || filtro.tipoReporte == "conduces")
                             query.Append($"AND TS.tipo_documento = '{ComprobanteDictionary(filtro.comprobante, true)}' ");
                         else
                         {
@@ -831,7 +837,7 @@ namespace MonicaExtraWeb.Utils
                             break;
                     }
                 }
-                else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "conduces")
+                else if (filtro.tipoReporte == "cotizaciones" || filtro.tipoReporte == "pedidos" || filtro.tipoReporte == "conduces")
                 {
                     switch (filtro.tipoConsulta)
                     {
@@ -2163,81 +2169,81 @@ namespace MonicaExtraWeb.Utils
                     }
                     #endregion
 
-                    query.Append("UNION ");
-                    #region SELECT
-                    query.Append("  SELECT ");
-                    query.Append($" TS.registro_tributario ");
-                    query.Append($",LEN(TS.registro_tributario) LENTipoIdentificacion ");
-                    query.Append($",'1' TipoIngreso ");
-                    query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
-                    query.Append($",SUBSTRING(rtrim(TSD.ncf), 1, 19) ncfModificado ");
-                    query.Append($",TS.fecha_emision ");
-                    query.Append($",TS.reteiva_monto  ");
-                    query.Append($",TS.total MontoFacturado");
-                    query.Append($",TS.impuesto_monto ");
-                    query.Append($",TS.impuesto2_monto MontoPropina");
-                    query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
-                    #endregion
+                    //query.Append("UNION ");
+                    //#region SELECT
+                    //query.Append("  SELECT ");
+                    //query.Append($" TS.registro_tributario ");
+                    //query.Append($",LEN(TS.registro_tributario) LENTipoIdentificacion ");
+                    //query.Append($",'1' TipoIngreso ");
+                    //query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
+                    //query.Append($",SUBSTRING(rtrim(TSD.ncf), 1, 19) ncfModificado ");
+                    //query.Append($",TS.fecha_emision ");
+                    //query.Append($",TS.reteiva_monto  ");
+                    //query.Append($",TS.total MontoFacturado");
+                    //query.Append($",TS.impuesto_monto ");
+                    //query.Append($",TS.impuesto2_monto MontoPropina");
+                    //query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
+                    //#endregion
 
-                    #region FROM
-                    query.Append($" FROM {filtro.conn}.dbo.devolucion_clte TS ");
-                    query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON REPLACE(TS.termino_id, '\"', '') = TP.termino_id  ");
-                    query.Append($", {filtro.conn}.dbo.factura TSD  ");
-                    #endregion
+                    //#region FROM
+                    //query.Append($" FROM {filtro.conn}.dbo.devolucion_clte TS ");
+                    //query.Append($" JOIN {filtro.conn}.dbo.terminos_pago TP ON REPLACE(TS.termino_id, '\"', '') = TP.termino_id  ");
+                    //query.Append($", {filtro.conn}.dbo.factura TSD  ");
+                    //#endregion
 
-                    #region WHERE
-                    query.Append($"WHERE SUBSTRING(rtrim(TS.Campo3), 4, 12) = TSD.nro_factura ");
-                    query.Append($" AND REPLACE(TS.anulada, '\"', '') = 0 ");
+                    //#region WHERE
+                    //query.Append($"WHERE SUBSTRING(rtrim(TS.Campo3), 4, 12) = TSD.nro_factura ");
+                    //query.Append($" AND REPLACE(TS.anulada, '\"', '') = 0 ");
 
-                    if (!string.IsNullOrEmpty(filtro.anio))
-                        query.Append($"AND Year(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.anio}' ");
-                    if (!string.IsNullOrEmpty(filtro.mes))
-                        query.Append($"AND Month(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.mes}' ");
+                    //if (!string.IsNullOrEmpty(filtro.anio))
+                    //    query.Append($"AND Year(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.anio}' ");
+                    //if (!string.IsNullOrEmpty(filtro.mes))
+                    //    query.Append($"AND Month(REPLACE(TS.fecha_emision, '\"', '')) = '{ filtro.mes}' ");
 
-                    //if (!filtro.incluirMenores250000)
+                    ////if (!filtro.incluirMenores250000)
+                    ////{
+                    ////    query.Append($"AND SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
+                    ////    query.Append($"AND (CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
+                    ////    query.Append($"OR SUBSTRING(RTRIM(TS.ncf), 2, 2) <> 02 ");
+                    ////}
+                    //#endregion
+
+                    //if (filtro.incluirNotasDeCreditoDesdeCXC)
                     //{
-                    //    query.Append($"AND SUBSTRING(RTRIM(TS.ncf), 2, 2) = 02 ");
-                    //    query.Append($"AND (CAST(TS.total AS INT) - CAST(TS.impuesto_monto AS INT) - CAST(TS.impuesto2_monto AS INT)) >= 250000 ");
-                    //    query.Append($"OR SUBSTRING(RTRIM(TS.ncf), 2, 2) <> 02 ");
+                    //    query.Append("UNION ");
+                    //    #region SELECT
+                    //    query.Append(" SELECT ");
+                    //    query.Append($" CL.registro_tributario ");
+                    //    query.Append($",LEN(CL.registro_tributario) LENTipoIdentificacion ");
+                    //    query.Append($",'1' TipoIngreso ");
+                    //    query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
+                    //    query.Append($",Substring(RTRIM(docs_cc.ncf), 1, 19) ncfModificado ");
+                    //    query.Append($",REPLACE(TS.fecha_emision, '-', '') fecha_emision ");
+                    //    query.Append($",'' reteiva_monto ");
+                    //    query.Append($",(TS.Monto_dcmto - TS.impuesto_1 - TS.impuesto_2) MontoFacturado");
+                    //    query.Append($",TS.impuesto_1 impuesto_monto ");
+                    //    query.Append($",TS.impuesto_2 MontoPropina");
+                    //    query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
+                    //    #endregion
+
+                    //    #region FROM
+                    //    query.Append($" FROM {filtro.conn}.dbo.docs_cc TS ");
+                    //    query.Append($" JOIN {filtro.conn}.dbo.clientes CL ON TS.cliente_id = CL.cliente_id  ");
+                    //    query.Append($" LEFT JOIN {filtro.conn}.dbo.terminos_pago TP ON TS.termino_idpv = TP.termino_id  ");
+                    //    query.Append($" JOIN {filtro.conn}.dbo.docs_cc ON TS.nro_dcmto = docs_cc.nro_dcmto_pagado ");
+                    //    #endregion
+
+                    //    #region WHERE
+                    //    query.Append($"WHERE ");
+                    //    query.Append($"TS.modulo_origen = 'CC' ");
+                    //    query.Append($"AND LEN(RTRIM(TS.ncf)) > 10 ");
+                    //    query.Append($"AND TS.Estado_registro = 0 ");
+                    //    if (!string.IsNullOrEmpty(filtro.anio))
+                    //        query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
+                    //    if (!string.IsNullOrEmpty(filtro.mes))
+                    //        query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
+                    //    #endregion
                     //}
-                    #endregion
-
-                    if (filtro.incluirNotasDeCreditoDesdeCXC)
-                    {
-                        query.Append("UNION ");
-                        #region SELECT
-                        query.Append(" SELECT ");
-                        query.Append($" CL.registro_tributario ");
-                        query.Append($",LEN(CL.registro_tributario) LENTipoIdentificacion ");
-                        query.Append($",'1' TipoIngreso ");
-                        query.Append($",Substring(RTRIM(TS.ncf), 1, 19) ncf ");
-                        query.Append($",Substring(RTRIM(docs_cc.ncf), 1, 19) ncfModificado ");
-                        query.Append($",REPLACE(TS.fecha_emision, '-', '') fecha_emision ");
-                        query.Append($",'' reteiva_monto ");
-                        query.Append($",(TS.Monto_dcmto - TS.impuesto_1 - TS.impuesto_2) MontoFacturado");
-                        query.Append($",TS.impuesto_1 impuesto_monto ");
-                        query.Append($",TS.impuesto_2 MontoPropina");
-                        query.Append($",SUBSTRING(LTRIM(TP.codigo_termino), 1, 1) LENcodigo_termino ");
-                        #endregion
-
-                        #region FROM
-                        query.Append($" FROM {filtro.conn}.dbo.docs_cc TS ");
-                        query.Append($" JOIN {filtro.conn}.dbo.clientes CL ON TS.cliente_id = CL.cliente_id  ");
-                        query.Append($" LEFT JOIN {filtro.conn}.dbo.terminos_pago TP ON TS.termino_idpv = TP.termino_id  ");
-                        query.Append($" JOIN {filtro.conn}.dbo.docs_cc ON TS.nro_dcmto = docs_cc.nro_dcmto_pagado ");
-                        #endregion
-
-                        #region WHERE
-                        query.Append($"WHERE ");
-                        query.Append($"TS.modulo_origen = 'CC' ");
-                        query.Append($"AND LEN(RTRIM(TS.ncf)) > 10 ");
-                        query.Append($"AND TS.Estado_registro = 0 ");
-                        if (!string.IsNullOrEmpty(filtro.anio))
-                            query.Append($"AND YEAR(TS.fecha_emision) = '{filtro.anio}' ");
-                        if (!string.IsNullOrEmpty(filtro.mes))
-                            query.Append($"AND Month(TS.fecha_emision) = '{filtro.mes}' ");
-                        #endregion
-                    }
 
                     query.Append($"ORDER BY fecha_emision DESC ");
                     break;
@@ -2679,11 +2685,13 @@ namespace MonicaExtraWeb.Utils
             query.Append(",tipo_cambio");
             query.Append(",tipo_envio");
             query.Append(",hora");
+            query.Append(",actualizado");
+            query.Append(",moneda");
+            query.Append(",monto_base");
             query.Append(") ");
             query.Append("VALUES ");
             query.Append("( ");
             query.Append($"(SELECT TOP 1 CASE WHEN nro_estimado IS NULL OR nro_estimado < 1000000001 THEN 1000000001 ELSE nro_estimado + 1 END nro_estimado FROM {filtro.conn}.dbo.estimado ORDER BY estimado_id DESC) ");
-
             query.Append($",'{filtro.Estimado.cliente_id}'");
             query.Append($",'{filtro.Estimado.clte_direccion1}'");
             query.Append($",'{filtro.Estimado.clte_direccion2}'");
@@ -2701,11 +2709,24 @@ namespace MonicaExtraWeb.Utils
             query.Append($",'{filtro.Estimado.dscto_monto}'");
             query.Append($",'{filtro.Estimado.impuesto_monto}'");
             query.Append($",'{filtro.Estimado.total}'");
-            query.Append($",'{filtro.Estimado.dscto_pciento}'");
-            query.Append($",'{filtro.Estimado.impuesto_pciento}'");
+
+            if (filtro.Estimado.impuesto_monto > 0 && filtro.Estimado.dscto_monto > 0)
+            {
+                query.Append($",'{filtro.Estimado.dscto_pciento}'");
+                query.Append($",'{filtro.Estimado.impuesto_pciento}'");
+            }
+            else
+            {
+                query.Append($",'0'");
+                query.Append($",'0'");
+            }
+
             query.Append($",'{filtro.Estimado.tipo_cambio}'");
             query.Append(",'P'");
-            query.Append(",CURRENT_TIMESTAMP");
+            query.Append($",'{DateTime.Now:hh:mm:ss}'");
+            query.Append($",'{DateTime.Now:yyyy-MM-dd hh:mm:ss}'");
+            query.Append($",'1'");
+            query.Append($",'{filtro.Estimado.total - filtro.Estimado.impuesto_monto}'");
             query.Append(") ");
             query.Append("SELECT CAST(SCOPE_IDENTITY() AS INT) pedidoId ");
 

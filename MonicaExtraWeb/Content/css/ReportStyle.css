@@ -21,6 +21,7 @@ a:focus {
     color: #fff;
     transition: all 0.3s;
     height: 100vh;
+    z-index: 99;
 }
 
 #sidebar.active {
@@ -97,6 +98,12 @@ a.article,
 a.article:hover {
     background: #17A2B8!important;
     color: #fff !important;
+}
+
+.sticky {
+    position: fixed;
+    top: 20px;
+    width: 100%;
 }
 
 /* ---------------------------------------------------

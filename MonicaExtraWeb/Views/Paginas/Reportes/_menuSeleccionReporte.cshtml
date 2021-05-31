@@ -217,3 +217,14 @@
         </div>
     </div>
 </div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    window.onscroll = () => {
+        
+        if (window.pageYOffset >= (sidebar.offsetTop + 20))
+            sidebar.classList.add("sticky");
+        else 
+            sidebar.classList.remove("sticky");
+    }
+</script>

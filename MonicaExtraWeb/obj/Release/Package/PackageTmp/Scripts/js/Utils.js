@@ -11,7 +11,7 @@ const patterns = [
 
 //  COMPROBAR QUE UNA CADENA CUMPLE CON UN REGEX.
 const MatchRegex = (patternIndex, text) =>
-    text.match(patterns[patternIndex]);
+    String(text).match(patterns[patternIndex]);
 
 //  RETORNA LA DIFERENCIA DE DIAS ENTRE DOS FECHAS.
 //  PARAMETROS RECIVIDOS EN FORMATO MM/dd/yy.

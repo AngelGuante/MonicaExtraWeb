@@ -501,7 +501,6 @@ const BuscarInformacionLocal = (ruta, filtro, mostrarAlerta) => {
                 MostrarMensage({
                     title: 'No se pudo conectar a la Base de Datos de si empresa..',
                     message: `Reintentelo de nuevo en 60 segundos mientras se reintenta reestablecer su conexión.<br/> si el problema persiste comuniquese con su administador.`,
-                    //message: `Reintentelo de nuevo en 60 segundos mientras se reintenta conectar su conexión,<br/> si Asegúrese de que la PC-Servidor de Monica o el servicio ExtraService se encuentren disponibles y en ejecución.`,
                     icon: 'error'
                 });
             }

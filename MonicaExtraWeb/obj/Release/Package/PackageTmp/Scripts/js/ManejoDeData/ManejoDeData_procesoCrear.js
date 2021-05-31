@@ -28,6 +28,7 @@
                 parametro_producto_comenta_factura: false,
                 mostrarDetallesProducto: false,
                 itbis: 0,
+                itbisBk: 0,
                 comentario: '',
                 cliente: {
                     codigo: '',
@@ -69,14 +70,28 @@
         'ProcesoCrear.Pedidos.cliente.descuento': function () {
             if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) < 0)
                 this.ProcesoCrear.Pedidos.cliente.descuento = 0;
-            else if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) > Number(this.ProcesoCrear.Pedidos.cliente.descuentoBk))
+            else if (Number(this.ProcesoCrear.Pedidos.cliente.descuento) > Number(this.ProcesoCrear.Pedidos.cliente.descuentoBk)) {
+                MostrarMensage({
+                    title: 'No se puede colocar este descuento.',
+                    message: `Este valor excede el máximo descuento para este cliente.`,
+                    icon: 'error'
+                });
                 this.ProcesoCrear.Pedidos.cliente.descuento = this.ProcesoCrear.Pedidos.cliente.descuentoBk;
+            }
             else
                 this.SumarPreciosProductos();
         },
         'ProcesoCrear.Pedidos.itbis': function () {
             if (Number(this.ProcesoCrear.Pedidos.itbis) < 0)
                 this.ProcesoCrear.Pedidos.itbis = 0;
+            else if (this.ProcesoCrear.Pedidos.itbis !== '0' && this.ProcesoCrear.Pedidos.itbis != this.ProcesoCrear.Pedidos.itbisBk) {
+                MostrarMensage({
+                    title: 'No se puede colocar este ITBIS.',
+                    message: `Solo puede colocar como ITBS 0 o ${this.ProcesoCrear.Pedidos.itbisBk}.`,
+                    icon: 'error'
+                });
+                this.ProcesoCrear.Pedidos.itbis = this.ProcesoCrear.Pedidos.itbisBk;
+            }
             else
                 this.SumarPreciosProductos();
         },
@@ -87,7 +102,7 @@
 
     methods: {
         async validarCodigo() {
-            if (!this.ProcesoCrear.Pedidos.cliente.codigo.length || this.ProcesoCrear.codClienteCorrecto)
+            if (!String(this.ProcesoCrear.Pedidos.cliente.codigo).length || this.ProcesoCrear.codClienteCorrecto)
                 return;
 
             let filtro = {
@@ -116,6 +131,7 @@
                 this.ProcesoCrear.Pedidos.cliente.descuentoBk = data[0].Descuento;
                 this.ProcesoCrear.Pedidos.cliente.aplica_impto = data[0].aplica_impto;
                 this.ProcesoCrear.Pedidos.itbis = data[0].valor_impto;
+                this.ProcesoCrear.Pedidos.itbisBk = data[0].valor_impto;
             }
             else {
                 this.Limpiar();
@@ -423,7 +439,7 @@
             filtro = {
                 Estimado: {
                     cliente_id: this.ProcesoCrear.Pedidos.cliente.id,
-                    clte_direccion1: this.ProcesoCrear.Pedidos.cliente.direcciones,
+                    clte_direccion1: this.ProcesoCrear.Pedidos.cliente.nombre,
                     clte_direccion2: this.ProcesoCrear.Pedidos.cliente.telefonos,
                     clte_direccion3: this.ProcesoCrear.Pedidos.cliente.emails,
                     registro_tributario: this.ProcesoCrear.Pedidos.cliente.rnc,
@@ -440,11 +456,13 @@
                     impuesto_monto: this.ProcesoCrear.itbis,
                     total: this.ProcesoCrear.total,
                     dscto_pciento: this.ProcesoCrear.Pedidos.cliente.descuento,
-                    impuesto_pciento: this.ProcesoCrear.Pedidos.itbis
+                    impuesto_pciento: this.ProcesoCrear.Pedidos.itbis,
+                    tipo_cambio: parseFloat((await monicaReportes.BuscarData('dolar_venta'))[0].dolar_venta)
                 }
             };
+
             var data = await monicaReportes.BuscarData('guardarPedido', filtro);
-            
+
             //  LUEGO SE GUARDAN LOS DETALLES DEL PEDIDO.
             if (data && data.length && data[0].pedidoId && data[0].pedidoId > 0) {
                 filtro = {
@@ -453,13 +471,16 @@
                         fecha_emision: this.FILTROS.fechaInicio,
                         cliente_id: this.ProcesoCrear.Pedidos.cliente.id,
                     },
-                    EstimadoDetalles: this.ProcesoCrear.Pedidos.productosTabla1
+                    EstimadoDetalles: []
                 }
 
-                filtro.EstimadoDetalles.forEach(item => {
-                    delete item.descrip_producto;
-                    delete item.codigo_producto;
-                    delete item.cant;
+                this.ProcesoCrear.Pedidos.productosTabla1.forEach(item => {
+                    filtro.EstimadoDetalles.push({
+                        producto_id: item.producto_id,
+                        cantidad: item.cantidad,
+                        precio_estimado: item.precio,
+                        bodega_id: item.bodega_id
+                    });
                 });
                 await monicaReportes.BuscarData('guardarDetallesPedido', filtro, false);
 

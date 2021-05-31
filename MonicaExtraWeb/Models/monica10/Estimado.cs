@@ -9,7 +9,7 @@
         public string clte_direccion2 { get; set; }
         public string clte_direccion3 { get; set; }
         public string clte_direccion4 { get; set; }
-        public float registro_tributario { get; set; }
+        public string registro_tributario { get; set; }
         public string enviar { get; set; }
         public string enviar_direccion1 { get; set; }
         public string enviar_direccion2 { get; set; }
